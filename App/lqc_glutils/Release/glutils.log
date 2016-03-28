@@ -1,0 +1,48 @@
+﻿Build started 22/03/2016 17:16:46.
+     1>Project "D:\rustam\VolumeRendering\App\lqc_glutils\glutils.vcxproj" on node 4 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\GLArrayObject.cpp src\GLBufferObject.cpp src\GLCamera.cpp src\GLFrameBufferObject.cpp src\GLShader.cpp src\GLStackMatrix.cpp src\GLTexture1D.cpp src\GLTexture2D.cpp src\GLTexture3D.cpp src\GLUtils.cpp src\Shapes\GLCube.cpp src\Shapes\GLGrid.cpp
+         GLArrayObject.cpp
+         GLBufferObject.cpp
+         GLCamera.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\GLCamera.cpp(39): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         GLFrameBufferObject.cpp
+         GLShader.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\GLShader.cpp(669): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+         GLStackMatrix.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         GLTexture1D.cpp
+         GLTexture2D.cpp
+         GLTexture3D.cpp
+         GLUtils.cpp
+     1>src\GLUtils.cpp(93): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>src\GLUtils.cpp(155): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+         GLCube.cpp
+         GLGrid.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\VolumeRendering\App\\lib\glutils\glutils.lib" /LIBPATH:..\lib /NOLOGO /LTCG Release\GLArrayObject.obj
+         Release\GLBufferObject.obj
+         Release\GLCamera.obj
+         Release\GLFrameBufferObject.obj
+         Release\GLShader.obj
+         Release\GLStackMatrix.obj
+         Release\GLTexture1D.obj
+         Release\GLTexture2D.obj
+         Release\GLTexture3D.obj
+         Release\GLUtils.obj
+         Release\GLCube.obj
+         Release\GLGrid.obj
+         glutils.vcxproj -> D:\rustam\VolumeRendering\App\\lib\glutils\glutils.lib
+     1>Done Building Project "D:\rustam\VolumeRendering\App\lqc_glutils\glutils.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:07.87

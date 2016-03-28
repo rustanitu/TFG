@@ -1,0 +1,58 @@
+﻿Build started 22/03/2016 17:16:46.
+     1>Project "D:\rustam\VolumeRendering\App\lqc_math\math.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\Camera.cpp src\Camera_glm.cpp src\convexhull.cpp src\diicooksvd.cpp src\grudicsvd.cpp src\MGeometry.cpp src\MPolygon.cpp src\MSVD.cpp src\MUtils.cpp src\Quaternion.cpp src\Vector2.cpp src\Vector3.cpp src\Vector4.cpp
+         Camera.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera.cpp(205): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Camera_glm.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera_glm.cpp(40): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera_glm.cpp(41): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+         convexhull.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         diicooksvd.cpp
+         grudicsvd.cpp
+         MGeometry.cpp
+     1>src\MGeometry.cpp(137): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+         MPolygon.cpp
+         MSVD.cpp
+         MUtils.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Quaternion.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\Quaternion.cpp(170): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>src\Quaternion.cpp(171): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>src\Quaternion.cpp(172): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>src\Quaternion.cpp(202): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>src\Quaternion.cpp(202): warning C4552: '/' : operator has no effect; expected operator with side-effect
+         Vector2.cpp
+         Vector3.cpp
+         Vector4.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\VolumeRendering\App\\lib\math\math.lib" /LIBPATH:..\lib /NOLOGO /LTCG Release\Camera.obj
+         Release\Camera_glm.obj
+         Release\convexhull.obj
+         Release\diicooksvd.obj
+         Release\grudicsvd.obj
+         Release\MGeometry.obj
+         Release\MPolygon.obj
+         Release\MSVD.obj
+         Release\MUtils.obj
+         Release\Quaternion.obj
+         Release\Vector2.obj
+         Release\Vector3.obj
+         Release\Vector4.obj
+         math.vcxproj -> D:\rustam\VolumeRendering\App\\lib\math\math.lib
+     1>Done Building Project "D:\rustam\VolumeRendering\App\lqc_math\math.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.91

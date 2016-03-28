@@ -1,0 +1,190 @@
+﻿Build started 23/03/2016 17:41:03.
+     1>Project "D:\rustam\VolumeRendering\App\VolumeRendering\IupVolumeRendering.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /I..\include\pthreads_w32 /I..\include\iup_3_11_1 /I...\include\cd_5_8\Win32 /I..\include\im_3_9 /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\\" /Fd"D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\CPU\RendererCPU.cpp src\CPU\ViewMethodCPU.cpp
+         RendererCPU.cpp
+     1>D:\rustam\VolumeRendering\App\include\volrend/Volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\raytracer/Camera/RTCamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\volumerendering\app\volumerendering\src\cpu\Evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\volumerendering\app\volumerendering\src\cpu\Evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\volumerendering\app\volumerendering\src\cpu\Evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+         ViewMethodCPU.cpp
+     1>D:\rustam\VolumeRendering\App\include\volrend/Volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\raytracer/Camera/RTCamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\volumerendering\app\volumerendering\src\cpu\Evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\volumerendering\app\volumerendering\src\cpu\Evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\volumerendering\app\volumerendering\src\cpu\Evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>src\CPU\ViewMethodCPU.cpp(888): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(924): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(925): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(926): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(927): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(928): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(929): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(930): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(932): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(933): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(934): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(935): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(936): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(937): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(938): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(940): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(941): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(942): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(943): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(944): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(945): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(946): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1029): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1055): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1056): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1057): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1058): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1086): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1329): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1370): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1419): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1420): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1421): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1426): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1427): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1428): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1433): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1434): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1435): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1440): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1441): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1442): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1447): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1448): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1449): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1463): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1468): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1473): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1479): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1484): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1489): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1507): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1512): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1517): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1523): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1528): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1533): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1552): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1557): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1562): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1568): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1573): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1578): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1596): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1601): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1606): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1612): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1617): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1622): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1644): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1649): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1654): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1660): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1665): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1670): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1689): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1694): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1699): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1705): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1710): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1715): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1733): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1738): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1743): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1749): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1754): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1759): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1781): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1786): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1791): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1797): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1802): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1807): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1826): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1831): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1836): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1842): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1847): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1852): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1870): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1875): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1880): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1886): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1891): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1896): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>src\CPU\ViewMethodCPU.cpp(1921): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1946): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1951): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1956): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1961): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1966): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1971): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1976): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1981): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>src\CPU\ViewMethodCPU.cpp(1986): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:..\lib /LIBPATH:..\lib\raytracer /LIBPATH:..\lib\volrend /LIBPATH:..\lib\glutils /LIBPATH:..\lib\lqc /LIBPATH:..\lib\math /LIBPATH:..\lib\pthreads_w32\x86 /LIBPATH:..\lib\iup_3_11_1\Win32 /LIBPATH:..\lib\cd_5_8\Win32 /LIBPATH:..\lib\im_3_9 iupgl.lib iup.lib im.lib pthreadVSE2.lib raytracer.lib volrend.lib glutils.lib lqc.lib math.lib glew32.lib glew32s.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup.lib" /MACHINE:X86 /SAFESEH D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\RendererAdaptive.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\UserInterfaceAdaptive.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ViewMethodAdaptive.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\CPUTimer.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\Coupled.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\Decoupled.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\Evaluator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\RendererCPU.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\RiemannSummation.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonErrorHalfProjectionIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonErrorIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonErrorHalfIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonErrorProjectionIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonErrorQuadraticIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonHalfIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonHalfIterateIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonHalfIteratorRiemannError.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonHalfQueueIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonIntegrator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\SimpsonRule.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\UserInterfaceCPU.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ViewMethodCPU.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\VolumeEvaluator.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\RendererEquidistant.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\UserInterfaceEquidistant.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ViewMethodEquidistant.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ERN2DRenderer.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ERN2DUserInterface.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ERN2DViewMethod.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\Volume2D.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ERNRenderer.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ERNUserInterface.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ERNViewMethod.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\gbuffer.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\RendererGLSL2P.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\UserInterfaceGLSL2P.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ViewMethodGLSL2P.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\RendererIAS.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\UserInterfaceIAS.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ViewMethodIAS.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\main.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\TransferFunctionsViewer.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\Viewer.obj
+         D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup\ViewerInterface.obj
+         raytracer.lib(RTCamera.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+         Generating code
+         Finished generating code
+         IupVolumeRendering.vcxproj -> D:\rustam\VolumeRendering\App\\bin\Win32\Release\volumerenderingiup.exe
+     1>Done Building Project "D:\rustam\VolumeRendering\App\VolumeRendering\IupVolumeRendering.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.77

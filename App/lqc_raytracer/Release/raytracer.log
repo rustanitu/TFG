@@ -1,0 +1,40 @@
+﻿Build started 22/03/2016 17:16:46.
+     1>Project "D:\rustam\VolumeRendering\App\lqc_raytracer\raytracer.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\Camera\RTCamera.cpp src\RTRay.cpp src\Shapes\RTAABB.cpp src\Shapes\RTBox.cpp src\Shapes\RTDisk.cpp src\Shapes\RTLight.cpp src\Shapes\RTObject.cpp src\Shapes\RTRectangle.cpp src\Shapes\RTSphere.cpp src\Shapes\RTTriangle.cpp src\Shapes\RTVolume.cpp
+         RTCamera.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\raytracer/Camera/RTCamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>src\Camera\RTCamera.cpp(197): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera\RTCamera.cpp(198): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera\RTCamera.cpp(199): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>src\Camera\RTCamera.cpp(200): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         RTRay.cpp
+         RTAABB.cpp
+         RTBox.cpp
+         RTDisk.cpp
+         RTLight.cpp
+         RTObject.cpp
+         RTRectangle.cpp
+         RTSphere.cpp
+         RTTriangle.cpp
+         RTVolume.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\VolumeRendering\App\\lib\raytracer\raytracer.lib" /LIBPATH:..\lib /NOLOGO /LTCG Release\RTCamera.obj
+         Release\RTRay.obj
+         Release\RTAABB.obj
+         Release\RTBox.obj
+         Release\RTDisk.obj
+         Release\RTLight.obj
+         Release\RTObject.obj
+         Release\RTRectangle.obj
+         Release\RTSphere.obj
+         Release\RTTriangle.obj
+         Release\RTVolume.obj
+         raytracer.vcxproj -> D:\rustam\VolumeRendering\App\\lib\raytracer\raytracer.lib
+     1>Done Building Project "D:\rustam\VolumeRendering\App\lqc_raytracer\raytracer.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.87

@@ -1,0 +1,20 @@
+﻿Build started 23/03/2016 17:54:08.
+     1>Project "D:\rustam\VolumeRendering\App\lqc_raytracer\raytracer.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\VolumeRendering\App\\lib\raytracer\raytracer_d.lib" math\math_d.lib /LIBPATH:..\lib /NOLOGO Debug\RTCamera.obj
+         Debug\RTRay.obj
+         Debug\RTAABB.obj
+         Debug\RTBox.obj
+         Debug\RTDisk.obj
+         Debug\RTLight.obj
+         Debug\RTObject.obj
+         Debug\RTRectangle.obj
+         Debug\RTSphere.obj
+         Debug\RTTriangle.obj
+         Debug\RTVolume.obj
+         raytracer.vcxproj -> D:\rustam\VolumeRendering\App\\lib\raytracer\raytracer_d.lib
+     1>Done Building Project "D:\rustam\VolumeRendering\App\lqc_raytracer\raytracer.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.12

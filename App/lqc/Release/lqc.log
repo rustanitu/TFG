@@ -1,0 +1,44 @@
+﻿Build started 22/03/2016 17:16:56.
+     1>Project "D:\rustam\VolumeRendering\App\lqc\lqc.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\Clustering\meanshift.cpp src\File\RAWLoader.cpp src\image\image.cpp src\Sampling\PoissonDisk.cpp src\Sampling\RangeList.cpp src\Sampling\ScallopedRegion.cpp src\Utils\Camera.cpp src\Utils\Color.cpp src\Utils\LHHistogram.cpp src\Utils\NumericalIntegration.cpp src\Utils\SievePrimes.cpp src\Utils\simplearoundcamera.cpp src\Utils\Utils.cpp src\Utils\Voxel.cpp
+         meanshift.cpp
+         RAWLoader.cpp
+     1>src\File\RAWLoader.cpp(15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+         image.cpp
+         PoissonDisk.cpp
+         RangeList.cpp
+         ScallopedRegion.cpp
+         Camera.cpp
+         Color.cpp
+         LHHistogram.cpp
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>D:\rustam\VolumeRendering\App\include\math/Matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         NumericalIntegration.cpp
+         SievePrimes.cpp
+         simplearoundcamera.cpp
+         Utils.cpp
+     1>src\Utils\Utils.cpp(245): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+         Voxel.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\VolumeRendering\App\\lib\lqc\lqc.lib" /LIBPATH:..\lib /NOLOGO /LTCG Release\meanshift.obj
+         Release\RAWLoader.obj
+         Release\image.obj
+         Release\PoissonDisk.obj
+         Release\RangeList.obj
+         Release\ScallopedRegion.obj
+         Release\Camera.obj
+         Release\Color.obj
+         Release\LHHistogram.obj
+         Release\NumericalIntegration.obj
+         Release\SievePrimes.obj
+         Release\simplearoundcamera.obj
+         Release\Utils.obj
+         Release\Voxel.obj
+         lqc.vcxproj -> D:\rustam\VolumeRendering\App\\lib\lqc\lqc.lib
+     1>Done Building Project "D:\rustam\VolumeRendering\App\lqc\lqc.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.05
