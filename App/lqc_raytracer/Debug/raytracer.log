@@ -1,7 +1,28 @@
-﻿Build started 23/03/2016 17:54:08.
-     1>Project "D:\rustam\VolumeRendering\App\lqc_raytracer\raytracer.vcxproj" on node 2 (Build target(s)).
-     1>Lib:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\VolumeRendering\App\\lib\raytracer\raytracer_d.lib" math\math_d.lib /LIBPATH:..\lib /NOLOGO Debug\RTCamera.obj
+﻿Build started 29/03/2016 17:47:30.
+     1>Project "D:\rustam\Projects\TFG\App\lqc_raytracer\raytracer.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\Camera\RTCamera.cpp src\RTRay.cpp src\Shapes\RTAABB.cpp src\Shapes\RTBox.cpp src\Shapes\RTDisk.cpp src\Shapes\RTLight.cpp src\Shapes\RTObject.cpp src\Shapes\RTRectangle.cpp src\Shapes\RTSphere.cpp src\Shapes\RTTriangle.cpp src\Shapes\RTVolume.cpp
+         RTVolume.cpp
+         RTTriangle.cpp
+         RTSphere.cpp
+         RTRectangle.cpp
+         RTObject.cpp
+         RTLight.cpp
+         RTDisk.cpp
+         RTBox.cpp
+         RTAABB.cpp
+         RTRay.cpp
+         RTCamera.cpp
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\raytracer\camera\rtcamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\projects\tfg\app\lqc_raytracer\src\camera\rtcamera.cpp(197): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\lqc_raytracer\src\camera\rtcamera.cpp(198): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\lqc_raytracer\src\camera\rtcamera.cpp(199): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\lqc_raytracer\src\camera\rtcamera.cpp(200): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         Generating Code...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\rustam\Projects\TFG\App\\lib\raytracer\raytracer_d.lib" math\math_d.lib /LIBPATH:..\lib /NOLOGO Debug\RTCamera.obj
          Debug\RTRay.obj
          Debug\RTAABB.obj
          Debug\RTBox.obj
@@ -12,9 +33,9 @@
          Debug\RTSphere.obj
          Debug\RTTriangle.obj
          Debug\RTVolume.obj
-         raytracer.vcxproj -> D:\rustam\VolumeRendering\App\\lib\raytracer\raytracer_d.lib
-     1>Done Building Project "D:\rustam\VolumeRendering\App\lqc_raytracer\raytracer.vcxproj" (Build target(s)).
+         raytracer.vcxproj -> D:\rustam\Projects\TFG\App\\lib\raytracer\raytracer_d.lib
+     1>Done Building Project "D:\rustam\Projects\TFG\App\lqc_raytracer\raytracer.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.12
+Time Elapsed 00:00:06.36

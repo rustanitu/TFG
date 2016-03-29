@@ -1,53 +1,595 @@
-﻿Build started 23/03/2016 17:54:08.
-     1>Project "D:\rustam\VolumeRendering\App\VolumeRendering\IupVolumeRendering.vcxproj" on node 2 (Build target(s)).
-     1>Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup.exe" /INCREMENTAL /NOLOGO /LIBPATH:..\lib /LIBPATH:..\lib\raytracer /LIBPATH:..\lib\volrend /LIBPATH:..\lib\glutils /LIBPATH:..\lib\lqc /LIBPATH:..\lib\math /LIBPATH:..\lib\pthreads_w32\x86 /LIBPATH:..\lib\iup_3_11_1\Win32 /LIBPATH:..\lib\cd_5_8\Win32 /LIBPATH:..\lib\im_3_9 cd.lib iupgl.lib iup.lib im.lib pthreadVC2.lib raytracer_d.lib volrend_d.lib glutils_d.lib lqc_d.lib math_d.lib glew32.lib glew32s.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup.lib" /MACHINE:X86 D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\RendererAdaptive.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceAdaptive.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodAdaptive.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\CPUTimer.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\Coupled.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\Decoupled.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\Evaluator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\RendererCPU.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\RiemannSummation.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorHalfProjectionIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorHalfIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorProjectionIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorQuadraticIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfIterateIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfIteratorRiemannError.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfQueueIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonIntegrator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\SimpsonRule.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceCPU.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodCPU.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\VolumeEvaluator.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\RendererEquidistant.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceEquidistant.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodEquidistant.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ERN2DRenderer.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ERN2DUserInterface.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ERN2DViewMethod.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\Volume2D.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ERNRenderer.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ERNUserInterface.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ERNViewMethod.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\gbuffer.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\RendererGLSL2P.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceGLSL2P.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodGLSL2P.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\RendererIAS.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceIAS.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodIAS.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\main.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\TransferFunctionsViewer.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\Viewer.obj
-         D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup\ViewerInterface.obj
-         IupVolumeRendering.vcxproj -> D:\rustam\VolumeRendering\App\\bin\Win32\Debug\volumerenderingiup.exe
-     1>Done Building Project "D:\rustam\VolumeRendering\App\VolumeRendering\IupVolumeRendering.vcxproj" (Build target(s)).
+﻿Build started 29/03/2016 17:47:47.
+     1>Project "D:\rustam\Projects\TFG\App\VolumeRendering\IupVolumeRendering.vcxproj" on node 4 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\include /I..\include\pthreads_w32 /I..\include\iup_3_11_1 /I..\include\cd_5_8\Win32 /I..\include\im_3_9 /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\\" /Fd"D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\AdaptiveEvaluation\RendererAdaptive.cpp src\AdaptiveEvaluation\UserInterfaceAdaptive.cpp src\AdaptiveEvaluation\ViewMethodAdaptive.cpp src\CPUTimer.cpp src\CPU\Coupled.cpp src\CPU\Decoupled.cpp src\CPU\Evaluator.cpp src\CPU\RendererCPU.cpp src\CPU\RiemannSummation.cpp src\CPU\SimpsonErrorHalfProjectionIntegrator.cpp src\CPU\SimpsonErrorIntegrator.cpp src\CPU\SimpsonErrorHalfIntegrator.cpp src\CPU\SimpsonErrorProjectionIntegrator.cpp src\CPU\SimpsonErrorQuadraticIntegrator.cpp src\CPU\SimpsonHalfIntegrator.cpp src\CPU\SimpsonHalfIterateIntegrator.cpp src\CPU\SimpsonHalfIteratorRiemannError.cpp src\CPU\SimpsonHalfQueueIntegrator.cpp src\CPU\SimpsonIntegrator.cpp src\CPU\SimpsonRule.cpp src\CPU\UserInterfaceCPU.cpp src\CPU\ViewMethodCPU.cpp src\CPU\VolumeEvaluator.cpp src\EquidistantEvaluation\RendererEquidistant.cpp src\EquidistantEvaluation\UserInterfaceEquidistant.cpp src\EquidistantEvaluation\ViewMethodEquidistant.cpp src\ERN2D\ERN2DRenderer.cpp src\ERN2D\ERN2DUserInterface.cpp src\ERN2D\ERN2DViewMethod.cpp src\ERN2D\Volume2D.cpp src\ERN\ERNRenderer.cpp src\ERN\ERNUserInterface.cpp src\ERN\ERNViewMethod.cpp src\gbuffer.cpp src\GLSL2P\RendererGLSL2P.cpp src\GLSL2P\UserInterfaceGLSL2P.cpp src\GLSL2P\ViewMethodGLSL2P.cpp src\IAS\RendererIAS.cpp src\IAS\UserInterfaceIAS.cpp src\IAS\ViewMethodIAS.cpp src\main.cpp src\TransferFunctionViewer\TransferFunctionsViewer.cpp src\Viewer.cpp src\ViewerInterface.cpp
+         ViewerInterface.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+         Viewer.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\raytracer\camera\rtcamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+         TransferFunctionsViewer.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\transferfunctionviewer\transferfunctionsviewer.cpp(113): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\transferfunctionviewer\transferfunctionsviewer.cpp(114): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\transferfunctionviewer\transferfunctionsviewer.cpp(115): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\transferfunctionviewer\transferfunctionsviewer.cpp(120): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\transferfunctionviewer\transferfunctionsviewer.cpp(121): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\transferfunctionviewer\transferfunctionsviewer.cpp(122): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         main.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+         ViewMethodIAS.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         UserInterfaceIAS.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(230): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(237): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(244): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(251): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(258): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(265): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\userinterfaceias.cpp(272): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+         RendererIAS.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ias\rendererias.cpp(453): warning C4305: 'argument' : truncation from 'double' to 'float'
+         ViewMethodGLSL2P.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         UserInterfaceGLSL2P.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(192): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(199): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(206): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(213): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(220): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(227): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\userinterfaceglsl2p.cpp(234): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+         RendererGLSL2P.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\volumerendering\src\glsl2p\rendererglsl2p.cpp(700): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         gbuffer.cpp
+         ERNViewMethod.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         ERNUserInterface.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(35): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(173): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(252): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(259): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(276): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(283): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(290): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(297): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(304): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(311): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern\ernuserinterface.cpp(318): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+         ERNRenderer.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+         Volume2D.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+         ERN2DViewMethod.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         ERN2DUserInterface.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(174): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(181): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(188): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(195): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(202): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(209): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\ern2d\ern2duserinterface.cpp(216): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+         ERN2DRenderer.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         ViewMethodEquidistant.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         UserInterfaceEquidistant.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Generating Code...
+         Compiling...
+         RendererEquidistant.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         VolumeEvaluator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\volumeevaluator.cpp(409): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\volumeevaluator.cpp(421): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\volumeevaluator.cpp(422): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\volumeevaluator.cpp(423): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\volumeevaluator.cpp(424): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         ViewMethodCPU.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\raytracer\camera\rtcamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(888): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(924): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(925): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(926): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(927): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(928): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(929): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(930): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(932): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(933): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(934): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(935): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(936): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(937): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(938): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(940): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(941): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(942): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(943): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(944): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(945): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(946): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1029): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1055): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1056): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1057): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1058): warning C4244: '=' : conversion from 'double' to 'err_type', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1086): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1329): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1370): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1419): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1420): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1421): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1426): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1427): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1428): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1433): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1434): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1435): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1440): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1441): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1442): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1447): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1448): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1449): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1463): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1468): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1473): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1479): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1484): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1489): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1507): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1512): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1517): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1523): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1528): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1533): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1552): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1557): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1562): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1568): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1573): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1578): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1596): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1601): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1606): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1612): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1617): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1622): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1644): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1649): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1654): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1660): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1665): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1670): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1689): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1694): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1699): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1705): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1710): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1715): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1733): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1738): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1743): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1749): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1754): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1759): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1781): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1786): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1791): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1797): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1802): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1807): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1826): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1831): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1836): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1842): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1847): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1852): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1870): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1875): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1880): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1886): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1891): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1896): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1921): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1946): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1951): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1956): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1961): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1966): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1971): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1976): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1981): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\viewmethodcpu.cpp(1986): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         UserInterfaceCPU.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\raytracer\camera\rtcamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(31): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(55): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(71): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(127): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(177): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(184): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(192): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(227): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(228): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(229): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(274): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(281): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(288): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(290): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(292): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(301): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(308): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\userinterfacecpu.cpp(315): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 12.0\vc\include\stdio.h(356) : see declaration of 'sprintf'
+         SimpsonRule.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonrule.cpp(23): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonrule.cpp(24): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonrule.cpp(25): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonrule.cpp(26): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonrule.cpp(27): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonintegrator.cpp(66): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonHalfQueueIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(331): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(332): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(343): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(344): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(363): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(383): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(384): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfqueueintegrator.cpp(402): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         SimpsonHalfIteratorRiemannError.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(142): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(153): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(154): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(175): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(194): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(195): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiteratorriemannerror.cpp(214): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         SimpsonHalfIterateIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(135): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(137): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(154): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(156): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(177): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(178): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(199): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(231): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(232): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(252): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(311): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(313): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(330): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(332): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(358): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(359): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(380): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(413): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(414): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(434): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(495): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(497): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(514): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(516): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(548): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(549): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(587): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(588): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(608): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(622): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(623): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(647): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(676): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(677): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(697): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(726): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(727): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(748): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(781): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(782): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(802): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(862): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(864): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(881): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(883): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(901): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(902): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(934): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(935): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(981): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(982): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1342): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1344): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1367): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1369): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1382): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1384): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1409): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1410): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1444): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1445): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1472): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1500): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1501): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1532): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1533): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfiterateintegrator.cpp(1553): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         SimpsonHalfIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfintegrator.cpp(96): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfintegrator.cpp(97): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfintegrator.cpp(153): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfintegrator.cpp(154): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonhalfintegrator.cpp(450): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonErrorQuadraticIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonerrorquadraticintegrator.cpp(343): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonErrorProjectionIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonerrorprojectionintegrator.cpp(376): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonErrorHalfIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonerrorhalfintegrator.cpp(369): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonErrorIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonerrorintegrator.cpp(329): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         SimpsonErrorHalfProjectionIntegrator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\simpsonerrorhalfprojectionintegrator.cpp(346): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         RiemannSummation.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\riemannsummation.cpp(28): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\riemannsummation.cpp(110): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\riemannsummation.cpp(174): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\riemannsummation.cpp(186): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         RendererCPU.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\raytracer\camera\rtcamera.h(22): warning C4091: 'typedef ' : ignored on left of 'rt::Struct_RTCamera_init' when no variable is declared
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+         Evaluator.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.cpp(85): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Decoupled.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+         Coupled.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(373): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(384): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\rustam\projects\tfg\app\volumerendering\src\cpu\evaluator.h(399): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+         Compiling...
+         CPUTimer.cpp
+         ViewMethodAdaptive.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         UserInterfaceAdaptive.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         RendererAdaptive.cpp
+     1>d:\rustam\projects\tfg\app\include\volrend\utils.h(4): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>d:\rustam\projects\tfg\app\include\volrend\volume.h(41): warning C4244: 'return' : conversion from 'float' to 'int', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(55): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>d:\rustam\projects\tfg\app\include\math\matrix4.h(56): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup.exe" /INCREMENTAL /NOLOGO /LIBPATH:..\lib /LIBPATH:..\lib\raytracer /LIBPATH:..\lib\volrend /LIBPATH:..\lib\glutils /LIBPATH:..\lib\lqc /LIBPATH:..\lib\math /LIBPATH:..\lib\pthreads_w32\x86 /LIBPATH:..\lib\iup_3_11_1\Win32 /LIBPATH:..\lib\cd_5_8\Win32 /LIBPATH:..\lib\im_3_9 cd.lib iupgl.lib iup.lib im.lib pthreadVC2.lib raytracer_d.lib volrend_d.lib glutils_d.lib lqc_d.lib math_d.lib glew32.lib glew32s.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup.lib" /MACHINE:X86 D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\RendererAdaptive.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceAdaptive.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodAdaptive.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\CPUTimer.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\Coupled.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\Decoupled.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\Evaluator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\RendererCPU.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\RiemannSummation.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorHalfProjectionIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorHalfIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorProjectionIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonErrorQuadraticIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfIterateIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfIteratorRiemannError.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonHalfQueueIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonIntegrator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\SimpsonRule.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceCPU.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodCPU.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\VolumeEvaluator.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\RendererEquidistant.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceEquidistant.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodEquidistant.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ERN2DRenderer.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ERN2DUserInterface.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ERN2DViewMethod.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\Volume2D.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ERNRenderer.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ERNUserInterface.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ERNViewMethod.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\gbuffer.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\RendererGLSL2P.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceGLSL2P.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodGLSL2P.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\RendererIAS.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\UserInterfaceIAS.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ViewMethodIAS.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\main.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\TransferFunctionsViewer.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\Viewer.obj
+         D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup\ViewerInterface.obj
+         IupVolumeRendering.vcxproj -> D:\rustam\Projects\TFG\App\\bin\Win32\Debug\volumerenderingiup.exe
+     1>Done Building Project "D:\rustam\Projects\TFG\App\VolumeRendering\IupVolumeRendering.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.99
+Time Elapsed 00:00:35.31
