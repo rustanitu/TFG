@@ -20,7 +20,9 @@ m_y_rotation (0.0f),
 m_glfbo (NULL),
 m_iterate (false),
 m_glsl_volume (NULL),
-m_glsl_transfer_function (NULL)
+m_glsl_transfer_function (NULL),
+m_shader_firstpass(NULL),
+m_shader_secondpass(NULL)
 {
   m_fvao = NULL; m_fvbo = NULL; m_fibo = NULL;
   m_svao = NULL; m_svbo = NULL; m_sibo = NULL;
@@ -105,10 +107,16 @@ void RendererGLSL2P::Resize (int Width, int Height)
     100.0f
     );
 
+  if (!m_shader_firstpass)
+    return;
+
   m_shader_firstpass->Bind ();
   m_shader_firstpass->SetUniformMatrix4f ("ProjectionMatrix", m_ProjectionMatrix);
   m_shader_firstpass->BindUniform ("ProjectionMatrix");
   m_shader_firstpass->Unbind ();
+
+  if (!m_shader_secondpass)
+    return;
 
   m_shader_secondpass->Bind ();
   m_shader_secondpass->SetUniformMatrix4f ("ProjectionMatrix", m_ProjectionMatrix);
