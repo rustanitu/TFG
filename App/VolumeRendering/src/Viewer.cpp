@@ -166,13 +166,24 @@ void Viewer::GenerateVolHistogram ()
   for (int i = 0; i < 256; i++)
     h[i] = 0;
 
-  for (int x = 0; x < m_volume->GetWidth (); x++)
-    for (int y = 0; y < m_volume->GetHeight (); y++)
-      for (int z = 0; z < m_volume->GetDepth (); z++)
-        if (m_volume->SampleVolume (x, y, z) < 256)
-          h[m_volume->SampleVolume (x, y, z)]++;
+  int out = 0;
+  for (int x = 0; x < m_volume->GetWidth(); x++)
+  {
+    for (int y = 0; y < m_volume->GetHeight(); y++)
+    {
+      for (int z = 0; z < m_volume->GetDepth(); z++)
+      {
+        int v = m_volume->SampleVolume(x, y, z);
+        if (v < 256)
+          h[v]++;
         else
-          printf ("Fudeu\n");
+          ++out;
+      }
+    }
+  }
+
+  if (out > 0)
+    printf ("%d values > 255.\n", out);
 
   std::ofstream state_file;
   state_file.open ("histogram.txt");
@@ -309,6 +320,7 @@ bool Viewer::FileDlg_VolumeModel ()
 
   Ihandle *dlg = IupFileDlg ();
 
+  IupSetAttribute(dlg, "DIRECTORY", "../../Modelos/VolumeModels");
   IupSetAttribute (dlg, "DIALOGTYPE", "OPEN");
   IupSetAttribute (dlg, "TITLE", "Load Volume Model");
   IupSetAttributes (dlg, "FILTER = \"*.vol;*.ele;*.node;*.raw;*.med\", FILTERINFO = \"Volume Files [.vol, .ele, .node, .raw, .med]\"");
@@ -338,6 +350,7 @@ bool Viewer::FileDlg_TransferFunction ()
 
   Ihandle *dlg = IupFileDlg ();
 
+  IupSetAttribute(dlg, "DIRECTORY", "../../Modelos/TransferFunctions");
   IupSetAttribute (dlg, "DIALOGTYPE", "OPEN");
   IupSetAttribute (dlg, "TITLE", "Load Transfer Function");
   IupSetAttributes (dlg, "FILTER = \"*.tf1d;*.tf;*.tfg1d;*.tfgersa\", FILTERINFO = \"TF1D Files;TF Files\"");
