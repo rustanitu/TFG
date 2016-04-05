@@ -34,6 +34,7 @@ namespace vr
     lqc::Vector3f GetAnchorMax ();
     void SetAnchors (lqc::Vector3f pmin, lqc::Vector3f pmax);
 
+    int SampleGradient (int x, int y, int z);
     int SampleVolume (int x, int y, int z);
     int SampleVolume (float x, float y, float z);
     int SampleVolume (int id)
@@ -63,6 +64,11 @@ namespace vr
       return m_scalar_values != NULL;
     }
 
+    void FillGradientField ();
+
+  private:
+    int GradientSample (int x, int y, int z);
+
   private: 
     std::string m_name;
 
@@ -71,6 +77,7 @@ namespace vr
 
     unsigned int m_width, m_height, m_depth;
     float* m_scalar_values;
+    float* m_scalar_gradient;
 
     lqc::Vector3f GenGradientSampleNxNxN (int x, int y, int z, int n);
   };

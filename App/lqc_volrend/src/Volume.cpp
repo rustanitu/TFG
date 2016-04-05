@@ -13,10 +13,18 @@
 
 namespace vr
 {
+  int SOBEL_MASK[27] =
+  {
+    -1, -2, -1, -2, -4, -2, -1, -2, -1,
+     0,  0,  0,  0,  0,  0,  0,  0,  0,
+     1,  2,  1,  2,  4,  2,  1,  2,  1
+  };
+
   Volume::Volume ()
     : m_width (0), m_height (0), m_depth (0)
   {
     m_scalar_values = NULL;
+    m_scalar_gradient = NULL;
   }
 
   Volume::Volume (unsigned int width, unsigned int height, unsigned int depth)
@@ -25,8 +33,14 @@ namespace vr
     m_scalar_values = NULL;
     m_scalar_values = new float[m_width*m_height*m_depth];
 
+    m_scalar_gradient = NULL;
+    m_scalar_gradient = new float[m_width*m_height*m_depth];;
+
     for (int i = 0; i < (int)(width*height*depth); i++)
+    {
       m_scalar_values[i] = 0.0f;
+      m_scalar_gradient[i] = 0.0f;
+    }
   }
 
   Volume::Volume (unsigned int width, unsigned int height, unsigned int depth, float* scalars)
@@ -35,9 +49,17 @@ namespace vr
     m_scalar_values = NULL;
     m_scalar_values = new float[m_width*m_height*m_depth];
 
-    if (scalars != NULL)
+    m_scalar_gradient = NULL;
+    m_scalar_gradient = new float[m_width*m_height*m_depth];;
+
+    if (scalars != NULL && m_scalar_gradient != NULL)
+    {
       for (int i = 0; i < (int)(width*height*depth); i++)
+      {
         m_scalar_values[i] = (float)scalars[i];
+        m_scalar_gradient[i] = 0.0f;
+      }
+    }
   }
 
   Volume::~Volume ()
@@ -76,7 +98,16 @@ namespace vr
     m_pmax = pmax;
   }
 
-  int Volume::SampleVolume (int x, int y, int z)
+  int Volume::SampleGradient (int x, int y, int z)
+  {
+    x = lqc::Clamp(x, 0, m_width - 1);
+    y = lqc::Clamp(y, 0, m_height - 1);
+    z = lqc::Clamp(z, 0, m_depth - 1);
+
+    return (int)m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)];
+  }
+  
+  int Volume::SampleVolume(int x, int y, int z)
   {
     x = lqc::Clamp (x, 0, m_width - 1);
     y = lqc::Clamp (y, 0, m_height - 1);
@@ -254,7 +285,70 @@ namespace vr
           && (z >= 0 && z < m_depth));
   }
 
+  void Volume::FillGradientField ()
+  {
+    for (int x = 1; x < m_width - 1; x++)
+    {
+      for (int y = 1; y < m_height - 1; y++)
+      {
+        for (int z = 1; z < m_depth - 1; z++)
+        {
+          m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)] = GradientSample(x, y, z);
+        }
+      }
+    }
+  }
+
   /////////////////////
   // Private Methods //
   /////////////////////
+
+  int Volume::GradientSample(int x, int y, int z)
+  {
+    int s;
+    
+    // X direction
+    s = 0;
+    int gx = 0;
+    for (int i = x - 1; i <= x + 1; ++i)
+    {
+      for (int j = y - 1; j <= y + 1; ++j)
+      {
+        for (int k = z - 1; k <= z + 1; ++k)
+        {
+          gx += SOBEL_MASK[s++] * SampleVolume(i, j, k);
+        }
+      }
+    }
+
+    // Y direction
+    s = 0;
+    int gy = 0;
+    for (int j = y - 1; j <= y + 1; ++j)
+    {
+      for (int i = x - 1; i <= x + 1; ++i)
+      {
+        for (int k = z - 1; k <= z + 1; ++k)
+        {
+          gy += SOBEL_MASK[s++] * SampleVolume(i, j, k);
+        }
+      }
+    }
+
+    // Z direction
+    s = 0;
+    int gz = 0;
+    for (int k = z - 1; k <= z + 1; ++k)
+    {
+      for (int i = x - 1; i <= x + 1; ++i)
+      {
+        for (int j = y - 1; j <= y + 1; ++j)
+        {
+          gz += SOBEL_MASK[s++] * SampleVolume(i, j, k);
+        }
+      }
+    }
+
+    return gx + gy + gz;
+  }
 }

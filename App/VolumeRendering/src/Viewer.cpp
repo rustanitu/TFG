@@ -125,6 +125,7 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     m_volume_file = file;
 
     GenerateVolHistogram();
+    m_volume->FillGradientField();
   }
 }
 

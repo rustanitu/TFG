@@ -448,6 +448,7 @@ void RendererGLSL2P::ReloadVolume (vr::Volume* volume, bool resetslicesizes)
   }
 
   m_glsl_volume = vr::GenerateRTexture (volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
+  //m_glsl_volume = vr::GenerateGradientTexture(volume, 1, 0, false, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
   if (m_glsl_volume)
   {
     m_shader_secondpass->Bind ();
