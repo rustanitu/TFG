@@ -34,7 +34,6 @@ namespace vr
     lqc::Vector3f GetAnchorMax ();
     void SetAnchors (lqc::Vector3f pmin, lqc::Vector3f pmax);
 
-    int SampleGradient (int x, int y, int z);
     int SampleVolume (int x, int y, int z);
     int SampleVolume (float x, float y, float z);
     int SampleVolume (int id)
@@ -64,10 +63,22 @@ namespace vr
       return m_scalar_values != NULL;
     }
 
-    void FillGradientField ();
-
+    
   private:
-    int GradientSample (int x, int y, int z);
+    float CalculateGradient (int x, int y, int z);
+    float CalculateLaplacian (int x, int y, int z);
+    
+    float GetValue (int x, int y, int z);
+    float GetGradient (int x, int y, int z);
+    float GetLaplacian (int x, int y, int z);
+
+    void FillGradientField ();
+    void FillLaplacianField ();
+
+    float* GetBoundaryDistancies ();
+
+    bool GenerateHistogram ();
+    void GenerateTransferFunction ();
 
   private: 
     std::string m_name;
@@ -76,10 +87,19 @@ namespace vr
     lqc::Vector3f m_pmax;
 
     unsigned int m_width, m_height, m_depth;
-    float* m_scalar_values;
-    float* m_scalar_gradient;
+    long m_max_gradient, m_max_laplacian, m_min_laplacian;
+    
+    float* m_scalar_values;               // Voxels' values.
+    float* m_scalar_gradient;             // Voxels' gradients.
+    float* m_scalar_laplacian;            // Voxels' laplacians.
 
-    lqc::Vector3f GenGradientSampleNxNxN (int x, int y, int z, int n);
+    float m_average_gradient[256];        // Average gradient for each value.
+    unsigned int m_value_qtd[256];
+    
+    float* m_average_laplacian;           // Average laplacian for each pair value x gradient.
+    unsigned int* m_gradient_qtd;
+
+    unsigned char* m_scalar_histogram;    // Histogram of occurences for each triple value x gradient x laplacian.
   };
 
 }

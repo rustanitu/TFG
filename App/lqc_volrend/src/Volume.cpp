@@ -11,55 +11,90 @@
 #include <cstdlib>
 #include <fstream>
 
+#define sqrte 1.6487212707
+
 namespace vr
 {
-  int SOBEL_MASK[27] =
+  int SOBEL_X_MASK[27] =
   {
     -1, -2, -1, -2, -4, -2, -1, -2, -1,
      0,  0,  0,  0,  0,  0,  0,  0,  0,
      1,  2,  1,  2,  4,  2,  1,  2,  1
   };
 
-  Volume::Volume ()
-    : m_width (0), m_height (0), m_depth (0)
+  int SOBEL_Y_MASK[27] =
   {
-    m_scalar_values = NULL;
-    m_scalar_gradient = NULL;
+    -1, -2, -1,  0,  0,  0,  1,  2,  1,
+    -2, -4, -2,  0,  0,  0,  2,  4,  2,
+    -1, -2, -1,  0,  0,  0,  1,  2,  1
+  };
+
+  int SOBEL_Z_MASK[27] =
+  {
+    -1,  0,  1, -2,  0,  2, -1,  0,  1,
+    -2,  0,  2, -4,  0,  4, -2,  0,  2,
+    -1,  0,  1, -2,  0,  2, -1,  0,  1
+  };
+
+  int LAPLACE_MASK[27] =
+  {
+    0,  0,  0,  0,  1,  0,  0,  0,  0,
+    0,  1,  0,  0, -6,  0,  0,  1,  0,
+    0,  0,  0,  0,  1,  0,  0,  0,  0
+  };
+
+  Volume::Volume ()
+  : m_width(0), m_height(0), m_depth(0), m_max_gradient(0), m_min_laplacian(0), m_max_laplacian(0),
+    m_scalar_values(NULL), m_scalar_gradient(NULL), m_scalar_laplacian(NULL), m_scalar_histogram(NULL)
+  {
   }
 
   Volume::Volume (unsigned int width, unsigned int height, unsigned int depth)
-    : m_width (width), m_height (height), m_depth (depth)
+  : m_width(width), m_height(height), m_depth(depth), m_max_gradient(0), m_min_laplacian(0), m_max_laplacian(0), m_scalar_histogram(NULL)
   {
     m_scalar_values = NULL;
     m_scalar_values = new float[m_width*m_height*m_depth];
 
     m_scalar_gradient = NULL;
-    m_scalar_gradient = new float[m_width*m_height*m_depth];;
+    m_scalar_gradient = new float[m_width*m_height*m_depth];
+    
+    m_scalar_laplacian = NULL;
+    m_scalar_laplacian = new float[m_width*m_height*m_depth];
 
     for (int i = 0; i < (int)(width*height*depth); i++)
     {
       m_scalar_values[i] = 0.0f;
-      m_scalar_gradient[i] = 0.0f;
+      m_scalar_gradient[i] = 0;
+      m_scalar_laplacian[i] = 0;
     }
   }
 
   Volume::Volume (unsigned int width, unsigned int height, unsigned int depth, float* scalars)
-  : m_width (width), m_height (height), m_depth (depth)
+  : m_width(width), m_height(height), m_depth(depth), m_max_gradient(0), m_min_laplacian(0), m_max_laplacian(0), m_scalar_histogram(NULL)
   {
     m_scalar_values = NULL;
     m_scalar_values = new float[m_width*m_height*m_depth];
 
     m_scalar_gradient = NULL;
-    m_scalar_gradient = new float[m_width*m_height*m_depth];;
+    m_scalar_gradient = new float[m_width*m_height*m_depth];
+
+    m_scalar_laplacian = NULL;
+    m_scalar_laplacian = new float[m_width*m_height*m_depth];
 
     if (scalars != NULL && m_scalar_gradient != NULL)
     {
       for (int i = 0; i < (int)(width*height*depth); i++)
       {
         m_scalar_values[i] = (float)scalars[i];
-        m_scalar_gradient[i] = 0.0f;
+        m_scalar_gradient[i] = 0;
+        m_scalar_laplacian[i] = 0;
       }
     }
+
+    FillGradientField();
+    FillLaplacianField();
+    if (GenerateHistogram())
+      GenerateTransferFunction();
   }
 
   Volume::~Volume ()
@@ -98,15 +133,6 @@ namespace vr
     m_pmax = pmax;
   }
 
-  int Volume::SampleGradient (int x, int y, int z)
-  {
-    x = lqc::Clamp(x, 0, m_width - 1);
-    y = lqc::Clamp(y, 0, m_height - 1);
-    z = lqc::Clamp(z, 0, m_depth - 1);
-
-    return (int)m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)];
-  }
-  
   int Volume::SampleVolume(int x, int y, int z)
   {
     x = lqc::Clamp (x, 0, m_width - 1);
@@ -285,7 +311,107 @@ namespace vr
           && (z >= 0 && z < m_depth));
   }
 
-  void Volume::FillGradientField ()
+  
+  /////////////////////
+  // Private Methods //
+  /////////////////////
+
+  float Volume::CalculateGradient (int x, int y, int z)
+  {
+    int s = 0;
+    float gx = 0;
+    float gy = 0;
+    float gz = 0;
+    for (int i = x - 1; i <= x + 1; ++i)
+    {
+      for (int j = y - 1; j <= y + 1; ++j)
+      {
+        for (int k = z - 1; k <= z + 1; ++k)
+        {
+          float v = GetValue(i, j, k);
+          gx += SOBEL_X_MASK[s] * v;
+          gy += SOBEL_Y_MASK[s] * v;
+          gz += SOBEL_Z_MASK[s] * v;
+          ++s;
+        }
+      }
+    }
+
+    gx /= 16.0f;
+    gy /= 16.0f;
+    gz /= 16.0f;
+    
+    float g = sqrt(gx*gx + gy*gy + gz*gz);
+    if (g > m_max_gradient)
+      m_max_gradient = g + 0.5f;
+
+    return g;
+  }
+
+  float Volume::CalculateLaplacian (int x, int y, int z)
+  {
+    int s = 0;
+    float lx = 0;
+    float ly = 0;
+    float lz = 0;
+    for (int i = x - 1; i <= x + 1; ++i)
+    {
+      for (int j = y - 1; j <= y + 1; ++j)
+      {
+        for (int k = z - 1; k <= z + 1; ++k)
+        {
+          //float v = GetValue(i, j, k);
+          //lx += SOBEL_X_MASK[s] * v;
+          //ly += SOBEL_Y_MASK[s] * v;
+          //lz += SOBEL_Z_MASK[s] * v;
+          //++s;
+          lx += LAPLACE_MASK[s] * GetValue(i, j, k);
+          ++s;
+        }
+      }
+    }
+
+    //lx /= 16.0f;
+    //ly /= 16.0f;
+    //lz /= 16.0f;
+
+    float l = lx;// sqrt(lx*lx + ly*ly + lz*lz);
+    if (l > m_max_laplacian)
+      m_max_laplacian = l + 0.5f;
+    if (l < m_min_laplacian)
+      m_min_laplacian = l - 0.5f;
+
+    return l;
+  }
+
+  float Volume::GetValue(int x, int y, int z)
+  {
+    x = lqc::Clamp(x, 0, m_width - 1);
+    y = lqc::Clamp(y, 0, m_height - 1);
+    z = lqc::Clamp(z, 0, m_depth - 1);
+
+    return m_scalar_values[x + (y * m_width) + (z * m_width * m_height)];
+  }
+
+  float Volume::GetGradient(int x, int y, int z)
+  {
+    x = lqc::Clamp(x, 0, m_width - 1);
+    y = lqc::Clamp(y, 0, m_height - 1);
+    z = lqc::Clamp(z, 0, m_depth - 1);
+
+    return m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)];
+  }
+
+  float Volume::GetLaplacian(int x, int y, int z)
+  {
+    x = lqc::Clamp(x, 0, m_width - 1);
+    y = lqc::Clamp(y, 0, m_height - 1);
+    z = lqc::Clamp(z, 0, m_depth - 1);
+
+    return m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)];
+  }
+
+  void Volume::FillGradientField()
   {
     for (int x = 1; x < m_width - 1; x++)
     {
@@ -293,62 +419,182 @@ namespace vr
       {
         for (int z = 1; z < m_depth - 1; z++)
         {
-          m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)] = GradientSample(x, y, z);
+          m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)] = CalculateGradient(x, y, z);
+          m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)] = CalculateLaplacian(x, y, z);
         }
       }
     }
   }
 
-  /////////////////////
-  // Private Methods //
-  /////////////////////
-
-  int Volume::GradientSample(int x, int y, int z)
+  void Volume::FillLaplacianField()
   {
-    int s;
+    return;
+    for (int x = 1; x < m_width - 1; x++)
+    {
+      for (int y = 1; y < m_height - 1; y++)
+      {
+        for (int z = 1; z < m_depth - 1; z++)
+        {
+          m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)] = CalculateLaplacian(x, y, z);
+        }
+      }
+    }
+  }
+
+  float* Volume::GetBoundaryDistancies()
+  {
+    float sigma = m_max_gradient / ((float)m_max_laplacian * sqrte);
+
+    float x[256];
+
+    for (size_t v = 0; v < 256; ++v)
+    {
+      float g = m_average_gradient[v];
+      float l = m_average_laplacian[v + 256 * (unsigned int)g];
+      if (g <= 0.0f)
+      {
+        x[v] = 0.0f;
+        continue;
+      }
+
+      x[v] = -(sigma * sigma * l) / g;
+    }
+
+    return x;
+  }
+
+  bool Volume::GenerateHistogram()
+  {
+    if (m_scalar_histogram)
+      delete m_scalar_histogram;
+
+    unsigned long size = 256 * (m_max_gradient + 1) * (m_max_laplacian - m_min_laplacian + 1);
+    m_scalar_histogram = new unsigned char[size];
+    if (!m_scalar_histogram)
+    {
+      printf("Insuficient memory to generate histogram!\n");
+      return false;
+    }
+
+    for (unsigned int i = 0; i < size; ++i)
+    {
+      m_scalar_histogram[i] = 0;
+    }
+
+    size = 256 * (m_max_gradient + 1);
+    m_gradient_qtd = new unsigned int[size];
+    m_average_laplacian = new float[size];
+    if (!m_gradient_qtd || !m_average_laplacian)
+    {
+      printf("Insuficient memory to generate histogram!\n");
+      return false;
+    }
+
+    for (unsigned int i = 0; i < size; ++i)
+    {
+      m_gradient_qtd[i] = 0;
+      m_average_laplacian[i] = -FLT_MAX;
+    }
+
+    for (size_t i = 0; i < 256; i++)
+    {
+      m_average_gradient[i] = 0;
+      m_value_qtd[i] = 0;
+    }
+
+    //alocate avereage h(g,v)
+
+    for (int x = 0; x < m_width; x++)
+    {
+      for (int y = 0; y < m_height; y++)
+      {
+        for (int z = 0; z < m_depth; z++)
+        {
+          unsigned int vol_id = x + (y * m_width) + (z * m_width * m_height);
+          float v = m_scalar_values[vol_id];
+          float g = m_scalar_gradient[vol_id];
+          float l = m_scalar_laplacian[vol_id];
+
+          if (v < 0.0f || v > 255.0f)
+            continue;
+
+          unsigned int vid = v;
+          m_average_gradient[vid] += g;
+          ++m_value_qtd[vid];
+
+          unsigned long lid = v + g * 256;
+          if (m_average_laplacian[lid] == -FLT_MAX)
+            m_average_laplacian[lid] = l;
+          else
+            m_average_laplacian[lid] += l;
+          ++m_gradient_qtd[lid];
+
+          unsigned long hid = lid + ((l - m_min_laplacian) * 256 * (m_max_gradient + 1));
+          if (m_scalar_histogram[hid] < 255)
+            ++m_scalar_histogram[hid];
+        }
+      }
+    }
+
+    for (size_t i = 0; i < 256; i++)
+    {
+      if (m_value_qtd[i] > 0)
+        m_average_gradient[i] /= m_value_qtd[i];
+    }
+
+    for (unsigned long i = 0; i < size; i++)
+    {
+      if (m_gradient_qtd[i] > 0)
+        m_average_laplacian[i] /= m_gradient_qtd[i];
+    }
+
+    return true;
+  }
+
+  void Volume::GenerateTransferFunction()
+  {
+    std::ofstream state_file;
+    state_file.open("../../Modelos//TransferFunctions//AutomaticTransferFunction.tf1d");
     
-    // X direction
-    s = 0;
-    int gx = 0;
-    for (int i = x - 1; i <= x + 1; ++i)
+    state_file << "linear" << "\n";
+    state_file << "0" << "\n";
+    state_file << "9" << "\n";
+    state_file << "1   1   1   0" << "\n";
+    state_file << "1   0   0   32" << "\n";
+    state_file << "0   1   0   64" << "\n";
+    state_file << "0   0   1   96" << "\n";
+    state_file << "0.5 0.5 0   128" << "\n";
+    state_file << "0.5 0   0.5 160" << "\n";
+    state_file << "0   0.5 0.5 192" << "\n";
+    state_file << "0.3 0.3 0.3 224" << "\n";
+    state_file << "0   0   0   256" << "\n";
+    state_file << 256 << "\n";
+
+    float* x = GetBoundaryDistancies();
+    if (!x)
     {
-      for (int j = y - 1; j <= y + 1; ++j)
-      {
-        for (int k = z - 1; k <= z + 1; ++k)
-        {
-          gx += SOBEL_MASK[s++] * SampleVolume(i, j, k);
-        }
-      }
+      state_file.close();
+      return;
     }
 
-    // Y direction
-    s = 0;
-    int gy = 0;
-    for (int j = y - 1; j <= y + 1; ++j)
+    for (size_t v = 0; v < 256; ++v)
     {
-      for (int i = x - 1; i <= x + 1; ++i)
+      float base = 0.8f;
+      if (x[v] >= -base && x[v] <= base)
       {
-        for (int k = z - 1; k <= z + 1; ++k)
-        {
-          gy += SOBEL_MASK[s++] * SampleVolume(i, j, k);
-        }
-      }
-    }
+        float a = 0.0f;
+        float amax = 0.5f;
+        if (x[v] >= 0.0)
+          a = -(amax * x[v]) / base;
+        else
+          a = (amax * x[v]) / base;
 
-    // Z direction
-    s = 0;
-    int gz = 0;
-    for (int k = z - 1; k <= z + 1; ++k)
-    {
-      for (int i = x - 1; i <= x + 1; ++i)
-      {
-        for (int j = y - 1; j <= y + 1; ++j)
-        {
-          gz += SOBEL_MASK[s++] * SampleVolume(i, j, k);
-        }
+        a += amax;
+        state_file << a << "\t" << v << "\n";
       }
+      else
+        state_file << 0 << "\t" << v << "\n";
     }
-
-    return gx + gy + gz;
+    state_file.close();
   }
 }

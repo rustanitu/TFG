@@ -26,8 +26,7 @@ namespace vr
       for (int j = 0; j < size_y; j++)
         for (int i = 0; i < size_x; i++)
         {
-          //scalar_values[i + (j * size_x) + (k * size_x * size_y)] = (GLfloat)vol->SampleVolume((i + init_x), (j + init_y), (k + init_z)) / 255.f;
-          scalar_values[i + (j * size_x) + (k * size_x * size_y)] = (GLfloat)vol->SampleGradient((i + init_x), (j + init_y), (k + init_z)) / 255.f;
+          scalar_values[i + (j * size_x) + (k * size_x * size_y)] = (GLfloat)vol->SampleVolume((i + init_x), (j + init_y), (k + init_z)) / 255.f;
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
