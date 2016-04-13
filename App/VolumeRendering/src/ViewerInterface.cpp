@@ -358,11 +358,17 @@ int ViewerInterface::BlendOption_GL_DST_COLOR_GL_SRC_ALPHA (Ihandle* ih)
   return IUP_DEFAULT;
 }
 
+int ViewerInterface::tgl_SetAutomaticTransferFunction_CB(Ihandle* ih)
+{
+  return 0;
+}
+
 ////////////////////
 // Public Methods //
 ////////////////////
 
 ViewerInterface::ViewerInterface ()
+:m_iup_vbox_atf(NULL)
 {
 }
 
@@ -414,9 +420,21 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
   IupSetAttribute (selected_int_label, "EXPAND", "HORIZONTAL");
   IupSetAttribute (selected_int_label, "ALIGNMENT", "ACENTER");
+  
+  /* Interface de Função de Transferência Automática */
+  Ihandle* atf_label = IupLabel("Função de Transferência Automática");
+  IupSetAttribute(atf_label, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(atf_label, "ALIGNMENT", "ACENTER");
+
+  Ihandle* atf_toggle = IupToggle("Gerar Automaticamente", NULL);
+  IupSetAttribute(atf_toggle, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(atf_label, "ALIGNMENT", "ACENTER");
+  IupSetCallback(atf_toggle, "ACTION", (Icallback)ViewerInterface::tgl_SetAutomaticTransferFunction_CB);
+  
+  m_iup_vbox_atf = IupVbox(atf_label, atf_toggle, NULL);
 
   m_iup_frame_adinterface = Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->GetIupUserInterface ();
-  m_iup_vbox_GUI = IupVbox (common_int_label, m_iup_vbox_commoninterface, vbox_sep, selected_int_label, m_iup_frame_adinterface, NULL);
+  m_iup_vbox_GUI = IupVbox(common_int_label, m_iup_vbox_commoninterface, vbox_sep, selected_int_label, m_iup_frame_adinterface, m_iup_vbox_atf, NULL);
   //IupSetAttribute (m_iup_vbox_GUI, "NGAP", "20");
   IupSetAttribute (m_iup_vbox_GUI, "NMARGIN", "1x1");
   m_iup_hbox_dialog = 

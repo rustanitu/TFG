@@ -339,3 +339,13 @@ App/lib/raytracer/raytracer.lib
 App/lib/raytracer/raytracer_d.lib
 App/lib/volrend/volrend.lib
 App/lib/volrend/volrend_d.lib
+App/bin/Win32/Debug/glutvr.exe
+App/bin/Win32/Debug/glutvr.ilk
+App/bin/Win32/Debug/glutvr.pdb
+App/bin/Win32/Release/histogram.txt
+App/lqc/x64/
+App/lqc_glutils/x64/
+App/lqc_math/x64/
+App/lqc_raytracer/x64/
+App/lqc_volrend/x64/
+Modelos/TransferFunctions/AutomaticTransferFunction.tf1d

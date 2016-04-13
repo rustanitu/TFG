@@ -66,6 +66,8 @@ public:
   static int BlendOption_GL_DST_COLOR_GL_SRC_COLOR (Ihandle* ih);
   static int BlendOption_GL_DST_COLOR_GL_SRC_ALPHA (Ihandle* ih);
 
+  static int tgl_SetAutomaticTransferFunction_CB (Ihandle* ih);
+
 public:
   ViewerInterface ();
   ~ViewerInterface ();
@@ -87,6 +89,7 @@ public:
 
   Ihandle* m_iup_vbox_GUI;
   Ihandle* m_iup_vbox_commoninterface;
+  Ihandle* m_iup_vbox_atf;
 
   Ihandle* m_iup_menu;
 

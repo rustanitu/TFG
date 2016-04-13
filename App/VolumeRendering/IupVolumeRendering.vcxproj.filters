@@ -91,6 +91,9 @@
     <Filter Include="OldFiles\shader\IAS\Optimized">
       <UniqueIdentifier>{98e09c5d-2f55-4c94-80c5-5341549dd8ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AutomaticTransferFunction">
+      <UniqueIdentifier>{05093617-58c2-4e0c-8f23-7c6fbe357b58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -224,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="src\CPU\ViewMethodCPU.cpp">
       <Filter>Source Files\5. CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\AutomaticTransferFunctionGenerator.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -364,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="src\CPU\ViewMethodCPU.h">
       <Filter>Source Files\5. CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\AutomaticTransferFunctionGenerator.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

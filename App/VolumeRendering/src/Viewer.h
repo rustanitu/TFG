@@ -15,6 +15,7 @@
 
 #include "ViewerInterface.h"
 #include "ViewMethod/ViewMethod.h"
+#include "AutomaticTransferFunction\AutomaticTransferFunctionGenerator.h"
 
 #include <iup.h>
 #include <iupgl.h>
@@ -88,6 +89,9 @@ public:
   vr::TransferFunction* m_transfer_function;
   std::string m_transfer_function_file;
   std::string m_volume_file;
+
+  /*! Automatic Transfer Function Generator*/
+  ATFG* m_atfg;
 
   /*! The current ViewMethod being used.*/
   VRVIEWS m_current_view;

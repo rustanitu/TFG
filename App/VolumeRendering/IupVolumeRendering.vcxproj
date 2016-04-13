@@ -96,6 +96,7 @@
     <ClCompile Include="src\AdaptiveEvaluation\RendererAdaptive.cpp" />
     <ClCompile Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.cpp" />
     <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\AutomaticTransferFunctionGenerator.cpp" />
     <ClCompile Include="src\CPUTimer.cpp" />
     <ClCompile Include="src\CPU\Coupled.cpp" />
     <ClCompile Include="src\CPU\Decoupled.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="src\AdaptiveEvaluation\RendererAdaptive.h" />
     <ClInclude Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.h" />
     <ClInclude Include="src\AdaptiveEvaluation\ViewMethodAdaptive.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\AutomaticTransferFunctionGenerator.h" />
     <ClInclude Include="src\CPUTimer.h" />
     <ClInclude Include="src\CPU\CommonSimpsonIntegrationFunctions.hpp" />
     <ClInclude Include="src\CPU\defines.h" />
