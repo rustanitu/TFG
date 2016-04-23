@@ -47,10 +47,10 @@ private:
   float m_average_gradient[256];            // Average gradient for each value.
   unsigned int m_value_qtd[256];
 
-  float* m_average_laplacian;               // Average laplacian for each pair value x gradient.
-  unsigned int* m_gradient_qtd;
+  float** m_average_laplacian;               // Average laplacian for each pair value x gradient.
+  unsigned int** m_gradient_qtd;
 
-  unsigned char* m_scalar_histogram;        // Histogram of occurences for each triple value x gradient x laplacian.
+  unsigned char*** m_scalar_histogram;        // Histogram of occurences for each triple value x gradient x laplacian.
 };
 
 #endif

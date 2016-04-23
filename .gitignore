@@ -1,351 +1,253 @@
-App/bin/Win32/Debug/volumerenderingiup.exe
-App/bin/Win32/Debug/volumerenderingiup.ilk
-App/bin/Win32/Debug/volumerenderingiup.pdb
-App/bin/Win32/Debug/volumerenderingiup/CPUTimer.obj
-App/bin/Win32/Debug/volumerenderingiup/Coupled.obj
-App/bin/Win32/Debug/volumerenderingiup/Decoupled.obj
-App/bin/Win32/Debug/volumerenderingiup/ERN2DRenderer.obj
-App/bin/Win32/Debug/volumerenderingiup/ERN2DUserInterface.obj
-App/bin/Win32/Debug/volumerenderingiup/ERN2DViewMethod.obj
-App/bin/Win32/Debug/volumerenderingiup/ERNRenderer.obj
-App/bin/Win32/Debug/volumerenderingiup/ERNUserInterface.obj
-App/bin/Win32/Debug/volumerenderingiup/ERNViewMethod.obj
-App/bin/Win32/Debug/volumerenderingiup/Evaluator.obj
-App/bin/Win32/Debug/volumerenderingiup/RendererAdaptive.obj
-App/bin/Win32/Debug/volumerenderingiup/RendererCPU.obj
-App/bin/Win32/Debug/volumerenderingiup/RendererEquidistant.obj
-App/bin/Win32/Debug/volumerenderingiup/RendererGLSL2P.obj
-App/bin/Win32/Debug/volumerenderingiup/RendererIAS.obj
-App/bin/Win32/Debug/volumerenderingiup/RiemannSummation.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonErrorHalfIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonErrorHalfProjectionIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonErrorIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonErrorProjectionIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonErrorQuadraticIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonHalfIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonHalfIterateIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonHalfIteratorRiemannError.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonHalfQueueIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonIntegrator.obj
-App/bin/Win32/Debug/volumerenderingiup/SimpsonRule.obj
-App/bin/Win32/Debug/volumerenderingiup/TransferFunctionsViewer.obj
-App/bin/Win32/Debug/volumerenderingiup/UserInterfaceAdaptive.obj
-App/bin/Win32/Debug/volumerenderingiup/UserInterfaceCPU.obj
-App/bin/Win32/Debug/volumerenderingiup/UserInterfaceEquidistant.obj
-App/bin/Win32/Debug/volumerenderingiup/UserInterfaceGLSL2P.obj
-App/bin/Win32/Debug/volumerenderingiup/UserInterfaceIAS.obj
-App/bin/Win32/Debug/volumerenderingiup/ViewMethodAdaptive.obj
-App/bin/Win32/Debug/volumerenderingiup/ViewMethodCPU.obj
-App/bin/Win32/Debug/volumerenderingiup/ViewMethodEquidistant.obj
-App/bin/Win32/Debug/volumerenderingiup/ViewMethodGLSL2P.obj
-App/bin/Win32/Debug/volumerenderingiup/ViewMethodIAS.obj
-App/bin/Win32/Debug/volumerenderingiup/Viewer.obj
-App/bin/Win32/Debug/volumerenderingiup/ViewerInterface.obj
-App/bin/Win32/Debug/volumerenderingiup/Volume2D.obj
-App/bin/Win32/Debug/volumerenderingiup/VolumeEvaluator.obj
-App/bin/Win32/Debug/volumerenderingiup/gbuffer.obj
-App/bin/Win32/Debug/volumerenderingiup/main.obj
-App/bin/Win32/Debug/volumerenderingiup/vc120.idb
-App/bin/Win32/Debug/volumerenderingiup/vc120.pdb
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/CL.read.1.tlog
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/CL.write.1.tlog
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/cl.command.1.tlog
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/link.command.1.tlog
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/link.read.1.tlog
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/link.write.1.tlog
-App/bin/Win32/Debug/volumerenderingiup/volumere.F897DAB0.tlog/volumerenderingiup.lastbuildstate
-App/bin/Win32/Debug/volumerenderingiup/volumerenderingiup.Build.CppClean.log
-App/bin/Win32/Debug/volumerenderingiup/IupVolumeRendering.log
-App/bin/Win32/Release/volumerenderingiup.exe
-App/bin/Win32/Release/volumerenderingiup.pdb
-App/bin/Win32/Release/volumerenderingiup/CPUTimer.obj
-App/bin/Win32/Release/volumerenderingiup/Coupled.obj
-App/bin/Win32/Release/volumerenderingiup/Decoupled.obj
-App/bin/Win32/Release/volumerenderingiup/ERN2DUserInterface.obj
-App/bin/Win32/Release/volumerenderingiup/ERN2DViewMethod.obj
-App/bin/Win32/Release/volumerenderingiup/ERNRenderer.obj
-App/bin/Win32/Release/volumerenderingiup/ERNUserInterface.obj
-App/bin/Win32/Release/volumerenderingiup/Evaluator.obj
-App/bin/Win32/Release/volumerenderingiup/ERN2DRenderer.obj
-App/bin/Win32/Release/volumerenderingiup/ERNViewMethod.obj
-App/bin/Win32/Release/volumerenderingiup/RendererAdaptive.obj
-App/bin/Win32/Release/volumerenderingiup/RendererCPU.obj
-App/bin/Win32/Release/volumerenderingiup/RendererEquidistant.obj
-App/bin/Win32/Release/volumerenderingiup/RendererGLSL2P.obj
-App/bin/Win32/Release/volumerenderingiup/RendererIAS.obj
-App/bin/Win32/Release/volumerenderingiup/RiemannSummation.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonErrorHalfIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonErrorHalfProjectionIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonErrorIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonErrorProjectionIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonErrorQuadraticIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonHalfIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonHalfIterateIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonHalfIteratorRiemannError.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonHalfQueueIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonIntegrator.obj
-App/bin/Win32/Release/volumerenderingiup/SimpsonRule.obj
-App/bin/Win32/Release/volumerenderingiup/TransferFunctionsViewer.obj
-App/bin/Win32/Release/volumerenderingiup/UserInterfaceAdaptive.obj
-App/bin/Win32/Release/volumerenderingiup/UserInterfaceCPU.obj
-App/bin/Win32/Release/volumerenderingiup/UserInterfaceEquidistant.obj
-App/bin/Win32/Release/volumerenderingiup/UserInterfaceGLSL2P.obj
-App/bin/Win32/Release/volumerenderingiup/UserInterfaceIAS.obj
-App/bin/Win32/Release/volumerenderingiup/ViewMethodAdaptive.obj
-App/bin/Win32/Release/volumerenderingiup/ViewMethodCPU.obj
-App/bin/Win32/Release/volumerenderingiup/ViewMethodEquidistant.obj
-App/bin/Win32/Release/volumerenderingiup/ViewMethodGLSL2P.obj
-App/bin/Win32/Release/volumerenderingiup/ViewMethodIAS.obj
-App/bin/Win32/Release/volumerenderingiup/Viewer.obj
-App/bin/Win32/Release/volumerenderingiup/ViewerInterface.obj
-App/bin/Win32/Release/volumerenderingiup/Volume2D.obj
-App/bin/Win32/Release/volumerenderingiup/VolumeEvaluator.obj
-App/bin/Win32/Release/volumerenderingiup/gbuffer.obj
-App/bin/Win32/Release/volumerenderingiup/main.obj
-App/bin/Win32/Release/volumerenderingiup/vc120.pdb
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/CL.read.1.tlog
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/CL.write.1.tlog
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/cl.command.1.tlog
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/link.command.1.tlog
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/link.read.1.tlog
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/link.write.1.tlog
-App/bin/Win32/Release/volumerenderingiup/volumere.F897DAB0.tlog/volumerenderingiup.lastbuildstate
-App/bin/Win32/Release/volumerenderingiup/IupVolumeRendering.log
-App/VolumeRendering/histogram.txt
-App/VolumeRendering/iup_volume_redering_state.vrstate
-App/lqc/Debug/Camera.obj
-App/lqc/Debug/Color.obj
-App/lqc/Debug/LHHistogram.obj
-App/lqc/Debug/NumericalIntegration.obj
-App/lqc/Debug/PoissonDisk.obj
-App/lqc/Debug/RAWLoader.obj
-App/lqc/Debug/RangeList.obj
-App/lqc/Debug/ScallopedRegion.obj
-App/lqc/Debug/SievePrimes.obj
-App/lqc/Debug/Utils.obj
-App/lqc/Debug/Voxel.obj
-App/lqc/Debug/_lib_lqc.tlog/CL.read.1.tlog
-App/lqc/Debug/_lib_lqc.tlog/CL.write.1.tlog
-App/lqc/Debug/_lib_lqc.tlog/Lib-link.read.1.tlog
-App/lqc/Debug/_lib_lqc.tlog/Lib-link.write.1.tlog
-App/lqc/Debug/_lib_lqc.tlog/_lib_lqc.lastbuildstate
-App/lqc/Debug/_lib_lqc.tlog/cl.command.1.tlog
-App/lqc/Debug/_lib_lqc.tlog/lib.command.1.tlog
-App/lqc/Debug/image.obj
-App/lqc/Debug/lqc.log
-App/lqc/Debug/lqc_d.Build.CppClean.log
-App/lqc/Debug/meanshift.obj
-App/lqc/Debug/simplearoundcamera.obj
-App/lqc/Debug/vc120.idb
-App/lqc/Debug/vc120.pdb
-App/lqc/Release/Camera.obj
-App/lqc/Release/Color.obj
-App/lqc/Release/LHHistogram.obj
-App/lqc/Release/NumericalIntegration.obj
-App/lqc/Release/PoissonDisk.obj
-App/lqc/Release/RAWLoader.obj
-App/lqc/Release/RangeList.obj
-App/lqc/Release/ScallopedRegion.obj
-App/lqc/Release/SievePrimes.obj
-App/lqc/Release/Utils.obj
-App/lqc/Release/Voxel.obj
-App/lqc/Release/_lib_lqc.tlog/CL.read.1.tlog
-App/lqc/Release/_lib_lqc.tlog/CL.write.1.tlog
-App/lqc/Release/_lib_lqc.tlog/Lib-link.read.1.tlog
-App/lqc/Release/_lib_lqc.tlog/Lib-link.write.1.tlog
-App/lqc/Release/_lib_lqc.tlog/_lib_lqc.lastbuildstate
-App/lqc/Release/_lib_lqc.tlog/cl.command.1.tlog
-App/lqc/Release/_lib_lqc.tlog/lib.command.1.tlog
-App/lqc/Release/image.obj
-App/lqc/Release/lqc.log
-App/lqc/Release/meanshift.obj
-App/lqc/Release/simplearoundcamera.obj
-App/lqc/Release/vc120.pdb
-App/lqc_glutils/Debug/GLArrayObject.obj
-App/lqc_glutils/Debug/GLBufferObject.obj
-App/lqc_glutils/Debug/GLCamera.obj
-App/lqc_glutils/Debug/GLCube.obj
-App/lqc_glutils/Debug/GLFrameBufferObject.obj
-App/lqc_glutils/Debug/GLGrid.obj
-App/lqc_glutils/Debug/GLShader.obj
-App/lqc_glutils/Debug/GLStackMatrix.obj
-App/lqc_glutils/Debug/GLTexture1D.obj
-App/lqc_glutils/Debug/GLTexture2D.obj
-App/lqc_glutils/Debug/GLTexture3D.obj
-App/lqc_glutils/Debug/GLUtils.obj
-App/lqc_glutils/Debug/_lib_glutils.tlog/CL.read.1.tlog
-App/lqc_glutils/Debug/_lib_glutils.tlog/CL.write.1.tlog
-App/lqc_glutils/Debug/_lib_glutils.tlog/Lib-link.read.1.tlog
-App/lqc_glutils/Debug/_lib_glutils.tlog/Lib-link.write.1.tlog
-App/lqc_glutils/Debug/_lib_glutils.tlog/_lib_glutils.lastbuildstate
-App/lqc_glutils/Debug/_lib_glutils.tlog/cl.command.1.tlog
-App/lqc_glutils/Debug/_lib_glutils.tlog/lib.command.1.tlog
-App/lqc_glutils/Debug/glutils.log
-App/lqc_glutils/Debug/glutils_d.Build.CppClean.log
-App/lqc_glutils/Debug/vc120.idb
-App/lqc_glutils/Debug/vc120.pdb
-App/lqc_glutils/Release/GLArrayObject.obj
-App/lqc_glutils/Release/GLBufferObject.obj
-App/lqc_glutils/Release/GLCamera.obj
-App/lqc_glutils/Release/GLCube.obj
-App/lqc_glutils/Release/GLFrameBufferObject.obj
-App/lqc_glutils/Release/GLGrid.obj
-App/lqc_glutils/Release/GLShader.obj
-App/lqc_glutils/Release/GLStackMatrix.obj
-App/lqc_glutils/Release/GLTexture1D.obj
-App/lqc_glutils/Release/GLTexture2D.obj
-App/lqc_glutils/Release/GLTexture3D.obj
-App/lqc_glutils/Release/GLUtils.obj
-App/lqc_glutils/Release/_lib_glutils.tlog/CL.read.1.tlog
-App/lqc_glutils/Release/_lib_glutils.tlog/CL.write.1.tlog
-App/lqc_glutils/Release/_lib_glutils.tlog/Lib-link.read.1.tlog
-App/lqc_glutils/Release/_lib_glutils.tlog/Lib-link.write.1.tlog
-App/lqc_glutils/Release/_lib_glutils.tlog/_lib_glutils.lastbuildstate
-App/lqc_glutils/Release/_lib_glutils.tlog/cl.command.1.tlog
-App/lqc_glutils/Release/_lib_glutils.tlog/lib.command.1.tlog
-App/lqc_glutils/Release/glutils.log
-App/lqc_glutils/Release/vc120.pdb
-App/lqc_math/Debug/Camera.obj
-App/lqc_math/Debug/Camera_glm.obj
-App/lqc_math/Debug/MGeometry.obj
-App/lqc_math/Debug/MPolygon.obj
-App/lqc_math/Debug/MSVD.obj
-App/lqc_math/Debug/MUtils.obj
-App/lqc_math/Debug/Quaternion.obj
-App/lqc_math/Debug/Vector2.obj
-App/lqc_math/Debug/Vector3.obj
-App/lqc_math/Debug/Vector4.obj
-App/lqc_math/Debug/_lib_math.tlog/CL.read.1.tlog
-App/lqc_math/Debug/_lib_math.tlog/CL.write.1.tlog
-App/lqc_math/Debug/_lib_math.tlog/Lib-link.read.1.tlog
-App/lqc_math/Debug/_lib_math.tlog/Lib-link.write.1.tlog
-App/lqc_math/Debug/_lib_math.tlog/_lib_math.lastbuildstate
-App/lqc_math/Debug/_lib_math.tlog/cl.command.1.tlog
-App/lqc_math/Debug/_lib_math.tlog/lib.command.1.tlog
-App/lqc_math/Debug/convexhull.obj
-App/lqc_math/Debug/diicooksvd.obj
-App/lqc_math/Debug/grudicsvd.obj
-App/lqc_math/Debug/math.log
-App/lqc_math/Debug/math_d.Build.CppClean.log
-App/lqc_math/Debug/vc120.idb
-App/lqc_math/Debug/vc120.pdb
-App/lqc_math/Release/Camera.obj
-App/lqc_math/Release/Camera_glm.obj
-App/lqc_math/Release/MGeometry.obj
-App/lqc_math/Release/MPolygon.obj
-App/lqc_math/Release/MSVD.obj
-App/lqc_math/Release/MUtils.obj
-App/lqc_math/Release/Quaternion.obj
-App/lqc_math/Release/Vector2.obj
-App/lqc_math/Release/Vector3.obj
-App/lqc_math/Release/Vector4.obj
-App/lqc_math/Release/_lib_math.tlog/CL.read.1.tlog
-App/lqc_math/Release/_lib_math.tlog/CL.write.1.tlog
-App/lqc_math/Release/_lib_math.tlog/Lib-link.read.1.tlog
-App/lqc_math/Release/_lib_math.tlog/Lib-link.write.1.tlog
-App/lqc_math/Release/_lib_math.tlog/_lib_math.lastbuildstate
-App/lqc_math/Release/_lib_math.tlog/cl.command.1.tlog
-App/lqc_math/Release/_lib_math.tlog/lib.command.1.tlog
-App/lqc_math/Release/convexhull.obj
-App/lqc_math/Release/diicooksvd.obj
-App/lqc_math/Release/grudicsvd.obj
-App/lqc_math/Release/math.log
-App/lqc_math/Release/vc120.pdb
-App/lqc_raytracer/Debug/RTAABB.obj
-App/lqc_raytracer/Debug/RTBox.obj
-App/lqc_raytracer/Debug/RTCamera.obj
-App/lqc_raytracer/Debug/RTDisk.obj
-App/lqc_raytracer/Debug/RTLight.obj
-App/lqc_raytracer/Debug/RTObject.obj
-App/lqc_raytracer/Debug/RTRay.obj
-App/lqc_raytracer/Debug/RTRectangle.obj
-App/lqc_raytracer/Debug/RTSphere.obj
-App/lqc_raytracer/Debug/RTTriangle.obj
-App/lqc_raytracer/Debug/RTVolume.obj
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/CL.read.1.tlog
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/CL.write.1.tlog
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/Lib-link.read.1.tlog
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/Lib-link.write.1.tlog
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/_lib_raytracer.lastbuildstate
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/cl.command.1.tlog
-App/lqc_raytracer/Debug/_lib_raytracer.tlog/lib.command.1.tlog
-App/lqc_raytracer/Debug/raytracer.log
-App/lqc_raytracer/Debug/raytracer_d.Build.CppClean.log
-App/lqc_raytracer/Debug/vc120.idb
-App/lqc_raytracer/Debug/vc120.pdb
-App/lqc_raytracer/Release/RTAABB.obj
-App/lqc_raytracer/Release/RTBox.obj
-App/lqc_raytracer/Release/RTCamera.obj
-App/lqc_raytracer/Release/RTDisk.obj
-App/lqc_raytracer/Release/RTLight.obj
-App/lqc_raytracer/Release/RTObject.obj
-App/lqc_raytracer/Release/RTRay.obj
-App/lqc_raytracer/Release/RTRectangle.obj
-App/lqc_raytracer/Release/RTSphere.obj
-App/lqc_raytracer/Release/RTTriangle.obj
-App/lqc_raytracer/Release/RTVolume.obj
-App/lqc_raytracer/Release/_lib_raytracer.tlog/CL.read.1.tlog
-App/lqc_raytracer/Release/_lib_raytracer.tlog/CL.write.1.tlog
-App/lqc_raytracer/Release/_lib_raytracer.tlog/Lib-link.read.1.tlog
-App/lqc_raytracer/Release/_lib_raytracer.tlog/Lib-link.write.1.tlog
-App/lqc_raytracer/Release/_lib_raytracer.tlog/_lib_raytracer.lastbuildstate
-App/lqc_raytracer/Release/_lib_raytracer.tlog/cl.command.1.tlog
-App/lqc_raytracer/Release/_lib_raytracer.tlog/lib.command.1.tlog
-App/lqc_raytracer/Release/raytracer.log
-App/lqc_raytracer/Release/vc120.pdb
-App/lqc_volrend/Debug/Reader.obj
-App/lqc_volrend/Debug/TransferFunction.obj
-App/lqc_volrend/Debug/TransferFunction1D.obj
-App/lqc_volrend/Debug/TransferFunctionGersa.obj
-App/lqc_volrend/Debug/TransferFunctionGroups.obj
-App/lqc_volrend/Debug/Utils.obj
-App/lqc_volrend/Debug/Volume.obj
-App/lqc_volrend/Debug/_lib_volrend.tlog/CL.read.1.tlog
-App/lqc_volrend/Debug/_lib_volrend.tlog/CL.write.1.tlog
-App/lqc_volrend/Debug/_lib_volrend.tlog/Lib-link.read.1.tlog
-App/lqc_volrend/Debug/_lib_volrend.tlog/Lib-link.write.1.tlog
-App/lqc_volrend/Debug/_lib_volrend.tlog/_lib_volrend.lastbuildstate
-App/lqc_volrend/Debug/_lib_volrend.tlog/cl.command.1.tlog
-App/lqc_volrend/Debug/_lib_volrend.tlog/lib.command.1.tlog
-App/lqc_volrend/Debug/vc120.idb
-App/lqc_volrend/Debug/vc120.pdb
-App/lqc_volrend/Debug/volrend.log
-App/lqc_volrend/Debug/volrend_d.Build.CppClean.log
-App/lqc_volrend/Release/Reader.obj
-App/lqc_volrend/Release/TransferFunction.obj
-App/lqc_volrend/Release/TransferFunction1D.obj
-App/lqc_volrend/Release/TransferFunctionGersa.obj
-App/lqc_volrend/Release/TransferFunctionGroups.obj
-App/lqc_volrend/Release/Utils.obj
-App/lqc_volrend/Release/Volume.obj
-App/lqc_volrend/Release/_lib_volrend.tlog/CL.read.1.tlog
-App/lqc_volrend/Release/_lib_volrend.tlog/CL.write.1.tlog
-App/lqc_volrend/Release/_lib_volrend.tlog/Lib-link.read.1.tlog
-App/lqc_volrend/Release/_lib_volrend.tlog/Lib-link.write.1.tlog
-App/lqc_volrend/Release/_lib_volrend.tlog/_lib_volrend.lastbuildstate
-App/lqc_volrend/Release/_lib_volrend.tlog/cl.command.1.tlog
-App/lqc_volrend/Release/_lib_volrend.tlog/lib.command.1.tlog
-App/lqc_volrend/Release/vc120.pdb
-App/lqc_volrend/Release/volrend.log
-App/vriup.sdf
-App/vriup.v12.suo
-App/lib/glutils/glutils.lib
-App/lib/glutils/glutils_d.lib
-App/lib/lqc/lqc.lib
-App/lib/lqc/lqc_d.lib
-App/lib/math/math.lib
-App/lib/math/math_d.lib
-App/lib/raytracer/raytracer.lib
-App/lib/raytracer/raytracer_d.lib
-App/lib/volrend/volrend.lib
-App/lib/volrend/volrend_d.lib
-App/bin/Win32/Debug/glutvr.exe
-App/bin/Win32/Debug/glutvr.ilk
-App/bin/Win32/Debug/glutvr.pdb
-App/bin/Win32/Release/histogram.txt
-App/lqc/x64/
-App/lqc_glutils/x64/
-App/lqc_math/x64/
-App/lqc_raytracer/x64/
-App/lqc_volrend/x64/
-Modelos/TransferFunctions/AutomaticTransferFunction.tf1d
+### VisualStudio ###
+## Ignore Visual Studio temporary files, build results, and
+## files generated by popular Visual Studio add-ons.
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio 2015 cache/options directory
+.vs/
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUNIT
+*.VisualState.xml
+TestResult.xml
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# DNX
+project.lock.json
+artifacts/
+
+*_i.c
+*_p.c
+*_i.h
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Chutzpah Test files
+_Chutzpah*
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# TFS 2012 Local Workspace
+$tf/
+
+# Guidance Automation Toolkit
+*.gpState
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustCode is a .NET coding add-in
+.JustCode
+
+# TeamCity is a build add-in
+_TeamCity*
+
+# DotCover is a Code Coverage Tool
+*.dotCover
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# MightyMoose
+*.mm.*
+AutoTest.Net/
+
+# Web workbench (sass)
+.sass-cache/
+
+# Installshield output folder
+[Ee]xpress/
+
+# DocProject is a documentation generator add-in
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# Click-Once directory
+publish/
+
+# Publish Web Output
+*.[Pp]ublish.xml
+*.azurePubxml
+# TODO: Comment the next line if you want to checkin your web deploy settings
+# but database connection strings (with potential passwords) will be unencrypted
+*.pubxml
+*.publishproj
+
+# Microsoft Azure Web App publish settings. Comment the next line if you want to
+# checkin your Azure Web App publish settings, but sensitive information contained
+# in these scripts will be unencrypted
+PublishScripts/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/packages/repositories.config
+# NuGet v3's project.json files produces more ignoreable files
+*.nuget.props
+*.nuget.targets
+
+# Microsoft Azure Build Output
+csx/
+*.build.csdef
+
+# Microsoft Azure Emulator
+ecf/
+rcf/
+
+# Windows Store app package directories and files
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!*.[Cc]ache/
+
+# Others
+ClientBin/
+~$*
+*~
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
+node_modules/
+orleans.codegen.cs
+
+# Since there are multiple workflows, uncomment next line to ignore bower_components
+# (https://github.com/github/gitignore/pull/1529#issuecomment-104372622)
+#bower_components/
+
+# RIA/Silverlight projects
+Generated_Code/
+
+# Backup & report files from converting an old project file
+# to a newer Visual Studio version. Backup files are not needed,
+# because we have git ;-)
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+
+# SQL Server files
+*.mdf
+*.ldf
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+
+# Microsoft Fakes
+FakesAssemblies/
+
+# GhostDoc plugin setting file
+*.GhostDoc.xml
+
+# Node.js Tools for Visual Studio
+.ntvs_analysis.dat
+
+# Visual Studio 6 build log
+*.plg
+
+# Visual Studio 6 workspace options file
+*.opt
+
+# Visual Studio LightSwitch build output
+**/*.HTMLClient/GeneratedArtifacts
+**/*.DesktopClient/GeneratedArtifacts
+**/*.DesktopClient/ModelManifest.xml
+**/*.Server/GeneratedArtifacts
+**/*.Server/ModelManifest.xml
+_Pvt_Extensions
+
+# Paket dependency manager
+.paket/paket.exe
+paket-files/
+
+# FAKE - F# Make
+.fake/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
