@@ -31,6 +31,9 @@ private:
 
   float* GetBoundaryDistancies();
   bool GenerateHistogram();
+
+  void GenerateValueGradientSlice();
+  void GenerateValueLaplaceSlice();
 public:
   void GenerateTransferFunction();
 
