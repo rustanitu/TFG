@@ -15,6 +15,16 @@
 #define SQRT_E 1.6487212707
 #define MAX_V 256
 
+#define LINEAR
+
+//#define NOLINEAR
+
+//#define NOLINEAR
+//#define NORM
+
+//#define NOLINEAR
+//#define SOBEL_LAPLACE
+
 const int SOBEL_X_MASK[27] =
 {
   -1, -2, -1, -2, -4, -2, -1, -2, -1,
@@ -39,7 +49,7 @@ const int SOBEL_Z_MASK[27] =
 const int LAPLACE_MASK[27] =
 {
    0,  0,  0,  0,  1,  0,  0,  0,  0,
-   0,  1,  0,  1, -6,  1,  0,  1,  0,
+   0,  1,  0,  0, -6,  0,  0,  1,  0,
    0,  0,  0,  0,  1,  0,  0,  0,  0
 };
 
@@ -50,7 +60,7 @@ const int LAPLACE_MASK[27] =
 
 ATFG::ATFG()
 :m_width(0), m_height(0), m_depth(0), m_max_gradient(-LONG_MAX), m_min_laplacian(LONG_MAX), m_max_laplacian(-LONG_MAX),
- m_scalar_gradient(NULL), m_scalar_laplacian(NULL), m_scalar_histogram(NULL), m_average_laplacian(NULL), m_gradient_qtd(NULL)
+ m_scalar_gradient(NULL), m_scalar_laplacian(NULL), m_scalar_histogram(NULL), m_average_laplacian(NULL)
 {
 }
 
@@ -84,12 +94,6 @@ void ATFG::CleanUp()
   m_max_laplacian = -LONG_MAX;
   m_min_laplacian = LONG_MAX;
 
-  for (int v = 0; v < MAX_V; ++v)
-  {
-    m_average_gradient[v] = 0.0f;
-    m_value_qtd[v] = 0.0f;
-  }
-  
   if (m_scalar_gradient)
   {
     delete m_scalar_gradient;
@@ -106,12 +110,6 @@ void ATFG::CleanUp()
   {
     delete m_average_laplacian;
     m_average_laplacian = NULL;
-  }
-
-  if (m_gradient_qtd)
-  {
-    delete m_gradient_qtd;
-    m_gradient_qtd = NULL;
   }
 
   if (m_scalar_histogram)
@@ -168,57 +166,58 @@ void ATFG::SetVolume(vr::Volume* vol)
 
 float ATFG::CalculateGradient(int x, int y, int z)
 {
-  //int s = 0;
-  float glx = 0.5f * (m_volume->GetValue(x + 1, y, z) - m_volume->GetValue(x - 1, y, z));
-  float gly = 0.5f * (m_volume->GetValue(x, y + 1, z) - m_volume->GetValue(x, y - 1, z));
-  float glz = 0.5f * (m_volume->GetValue(x, y, z + 1) - m_volume->GetValue(x, y, z - 1));
+  int s = 0;
+  float g = 0.0f;
+  float gx = 0.0f;
+  float gy = 0.0f;
+  float gz = 0.0f;
 
-  //float g = 0.0f;
-  //float gx = 0.0f;
-  //float gy = 0.0f;
-  //float gz = 0.0f;
-  //float kernel[3] = { -0.5f, 0.0f, 0.5f };
-  //for (int i = x - 1; i <= x + 1; ++i)
-  //{
-  //  for (int j = y - 1; j <= y + 1; ++j)
-  //  {
-  //    for (int k = z - 1; k <= z + 1; ++k)
-  //    {
-  //      float v = m_volume->GetValue(i, j, k);
-  //      g += v * kernel[i - x + 1] * kernel[j - y + 1] * kernel[k - z + 1];
-  //      gx += v * kernel[i - x + 1];
-  //      gy += v * kernel[j - y + 1];
-  //      gz += v * kernel[k - z + 1];
-  //      //gx += SOBEL_X_MASK[s] * v;
-  //      //gy += SOBEL_Y_MASK[s] * v;
-  //      //gz += SOBEL_Z_MASK[s] * v;
-  //      //++s;
-  //    }
-  //  }
-  //}
+#ifdef LINEAR
+  gx = 0.5f * (m_volume->GetValue(x + 1, y, z) - m_volume->GetValue(x - 1, y, z));
+  gy = 0.5f * (m_volume->GetValue(x, y + 1, z) - m_volume->GetValue(x, y - 1, z));
+  gz = 0.5f * (m_volume->GetValue(x, y, z + 1) - m_volume->GetValue(x, y, z - 1));
+#else
+  float kernel[3] = { -0.5f, 0.0f, 0.5f };
+  for (int i = x - 1; i <= x + 1; ++i)
+  {
+    for (int j = y - 1; j <= y + 1; ++j)
+    {
+      for (int k = z - 1; k <= z + 1; ++k)
+      {
+        float v = m_volume->GetValue(i, j, k);
+#ifdef NORM
+        gx += v * kernel[i - x + 1];
+        gy += v * kernel[j - y + 1];
+        gz += v * kernel[k - z + 1];
+#else
+        g += v * kernel[i - x + 1] * kernel[j - y + 1] * kernel[k - z + 1];
+#endif
 
-  //for (int i = x - 1; i <= x + 1; ++i)
-  //{
-  //  for (int j = y - 1; j <= y + 1; ++j)
-  //  {
-  //    for (int k = z - 1; k <= z + 1; ++k)
-  //    {
-  //      float v = m_volume->GetValue(i, j, k);
-  //      gx += SOBEL_X_MASK[s] * v;
-  //      gy += SOBEL_Y_MASK[s] * v;
-  //      gz += SOBEL_Z_MASK[s] * v;
-  //      ++s;
-  //    }
-  //  }
-  //}
+#ifdef SOBEL_LAPLACE
+        gx += SOBEL_X_MASK[s] * v;
+        gy += SOBEL_Y_MASK[s] * v;
+        gz += SOBEL_Z_MASK[s] * v;
+        ++s;
+#endif
+      }
+    }
+  }
+#endif
 
-  //gx /= 16.0f;
-  //gy /= 16.0f;
-  //gz /= 16.0f;
+#ifdef SOBEL_LAPLACE
+  gx /= 16.0f;
+  gy /= 16.0f;
+  gz /= 16.0f;
+#endif
 
-  //g = sqrt(gx*gx + gy*gy + gz*gz);
-  float g = sqrt(glx*glx + gly*gly + glz*glz);
-  // Comparar g e gg
+#if defined(LINEAR) || defined(SOBEL_LAPLACE) || defined(NORM)
+  g = sqrt(gx*gx + gy*gy + gz*gz);
+#endif
+
+  //float v = m_volume->GetValue(x, y, z);
+  //if (v >= 17.9f && v <= 19.1f)//&& g >= 30.9f && g <= 32.1f)
+  //  printf("g: %.2f\n", g);
+
   g = fmax(0.0f, g);
   if (g > m_max_gradient)
     m_max_gradient = g + 0.5f;
@@ -228,61 +227,46 @@ float ATFG::CalculateGradient(int x, int y, int z)
 
 float ATFG::CalculateLaplacian(int x, int y, int z)
 {
-  //int s = 0;
+  int s = 0;
+  float l = 0.0f;
+  float lx = 0.0f;
+  float ly = 0.0f;
+  float lz = 0.0f;
+
+#ifdef LINEAR
   float g = 2 * m_volume->GetValue(x, y, z);
-  float lx = m_volume->GetValue(x + 1, y, z) - g + m_volume->GetValue(x - 1, y, z);
-  float ly = m_volume->GetValue(x, y + 1, z) - g + m_volume->GetValue(x, y - 1, z);
-  float lz = m_volume->GetValue(x, y, z + 1) - g + m_volume->GetValue(x, y, z - 1);
+  lx = m_volume->GetValue(x + 1, y, z) - g + m_volume->GetValue(x - 1, y, z);
+  ly = m_volume->GetValue(x, y + 1, z) - g + m_volume->GetValue(x, y - 1, z);
+  lz = m_volume->GetValue(x, y, z + 1) - g + m_volume->GetValue(x, y, z - 1);
+#else
+  float kernel[3] = { -1.0f, 2.0f, 1.0f };
+  for (int i = x - 1; i <= x + 1; ++i) {
+    for (int j = y - 1; j <= y + 1; ++j) {
+      for (int k = z - 1; k <= z + 1; ++k) {
+        float v = m_volume->GetValue(i, j, k);
+#ifdef NORM
+        lx += v * kernel[i - x + 1];
+        ly += v * kernel[j - y + 1];
+        lz += v * kernel[k - z + 1];
+#else
+        l += v * kernel[i - x + 1] * kernel[j - y + 1] * kernel[k - z + 1];
+#endif
 
-  //float lx = 0.25f * (m_volume->GetValue(x + 1, y, z) - m_volume->GetValue(x - 1, y, z));
-  //float ly = 0.25f * (m_volume->GetValue(x, y + 1, z) - m_volume->GetValue(x, y - 1, z));
-  //float lz = 0.25f * (m_volume->GetValue(x, y, z + 1) - m_volume->GetValue(x, y, z - 1));
+#ifdef SOBEL_LAPLACE
+        l += LAPLACE_MASK[s] * v;
+        ++s;
+#endif
+      }
+    }
+  }
+#endif
 
-  //float lx = 0.0f;
-  //float ly = 0.0f;
-  //float lz = 0.0f;
+#ifdef LINEAR
+  l = lx + ly + lz;
+#elif defined(NORM)
+  l = sqrt(lx*lx + ly*ly + lz*lz);
+#endif
 
-  //float l = 0.0f;
-  //float kernel[3] = { -1.0f, 2.0f, 1.0f };
-  //for (int i = x - 1; i <= x + 1; ++i) {
-  //  for (int j = y - 1; j <= y + 1; ++j) {
-  //    for (int k = z - 1; k <= z + 1; ++k) {
-  //      float v = m_volume->GetValue(i, j, k);
-  //      l += v * kernel[i - x + 1] * kernel[j - y + 1] * kernel[k - z + 1];
-  //      lx += v * kernel[i - x + 1];
-  //      ly += v * kernel[j - y + 1];
-  //      lz += v * kernel[k - z + 1];
-  //      //gx += SOBEL_X_MASK[s] * v;
-  //      //gy += SOBEL_Y_MASK[s] * v;
-  //      //gz += SOBEL_Z_MASK[s] * v;
-  //      //++s;
-  //    }
-  //  }
-  //}
-
-  //for (int i = x - 1; i <= x + 1; ++i)
-  //{
-  //  for (int j = y - 1; j <= y + 1; ++j)
-  //  {
-  //    for (int k = z - 1; k <= z + 1; ++k)
-  //    {
-  //      float v = m_scalar_gradient[i + (j * m_width) + (k * m_width * m_height)];// m_volume->GetValue(i, j, k);
-  //      lx += SOBEL_X_MASK[s] * v;
-  //      ly += SOBEL_Y_MASK[s] * v;
-  //      lz += SOBEL_Z_MASK[s] * v;
-  //      //++s;
-  //      //lx += LAPLACE_MASK[s] * m_volume->GetValue(i, j, k);
-  //      //++s;
-  //    }
-  //  }
-  //}
-
-  //lx /= 4.0f;
-  //ly /= 4.0f;
-  //lz /= 4.0f;
-
-  //float l = sqrt(lx*lx + ly*ly + lz*lz);
-  float l = lx + ly + lz;
   if (l > m_max_laplacian)
     m_max_laplacian = l + 0.5f;
   if (l < m_min_laplacian)
@@ -354,9 +338,8 @@ bool ATFG::GenerateHistogram()
   
   // Histogram memory allocation and initialization
   m_scalar_histogram = new unsigned char**[MAX_V];
-  m_gradient_qtd = new unsigned int*[MAX_V];
   m_average_laplacian = new float*[MAX_V];
-  if (!m_scalar_histogram || !m_gradient_qtd || !m_average_laplacian)
+  if (!m_scalar_histogram || !m_average_laplacian)
   {
     printf("Insuficient memory to generate histogram!\n");
     return false;
@@ -364,20 +347,15 @@ bool ATFG::GenerateHistogram()
 
   for (unsigned long i = 0; i < MAX_V; ++i)
   {
-    m_average_gradient[i] = 0;
-    m_value_qtd[i] = 0;
-
     m_scalar_histogram[i] = new unsigned char*[hg_size];
-    m_gradient_qtd[i] = new unsigned int[hg_size];
     m_average_laplacian[i] = new float[hg_size];
-    if (!m_scalar_histogram[i] || !m_gradient_qtd[i] || !m_average_laplacian[i]) {
+    if (!m_scalar_histogram[i] || !m_average_laplacian[i]) {
       printf("Insuficient memory to generate histogram!\n");
       return false;
     }
     
     for (unsigned long j = 0; j < hg_size; ++j)
     {
-      m_gradient_qtd[i][j] = 0;
       m_average_laplacian[i][j] = -FLT_MAX;
       m_scalar_histogram[i][j] = new unsigned char[hl_size];
       if (!m_scalar_histogram[i][j]) {
@@ -402,17 +380,13 @@ bool ATFG::GenerateHistogram()
         unsigned long g = (unsigned long)m_scalar_gradient[vol_id];
         long l = (long)m_scalar_laplacian[vol_id];
 
-        if (v < 0.0f || v > 255.0f)
-          continue;
+        if (g > m_max_gradient)
+          g = m_max_gradient;
 
-        m_average_gradient[v] += g;
-        ++m_value_qtd[v];
-
-        if (m_average_laplacian[v][g] == -FLT_MAX)
-          m_average_laplacian[v][g] = l;
-        else
-          m_average_laplacian[v][g] += l;
-        ++m_gradient_qtd[v][g];
+        if (l > m_max_laplacian)
+          l = m_max_laplacian;
+        else if (l < m_min_laplacian)
+          l = m_min_laplacian;
 
         if (m_scalar_histogram[v][g][l - m_min_laplacian] < MAX_V - 1)
           ++m_scalar_histogram[v][g][l - m_min_laplacian];
@@ -422,14 +396,31 @@ bool ATFG::GenerateHistogram()
 
   for (size_t i = 0; i < MAX_V; i++)
   {
-    if (m_value_qtd[i] > 0)
-      m_average_gradient[i] /= m_value_qtd[i];
-
-    for (unsigned long j = 0; j < hg_size; j++)
+    float g = 0.0f;
+    float l = 0.0f;
+    for (int j = 0; j < m_max_gradient + 1; ++j)
     {
-      if (m_gradient_qtd[i][j] > 0)
-        m_average_laplacian[i][j] /= m_gradient_qtd[i][j];
+      for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++)
+      {
+        float weight = m_scalar_histogram[i][j][k] / 255.0f;
+        g += weight * j;
+        l += weight * k;
+      }
     }
+
+    g /= ((m_max_laplacian - m_min_laplacian + 1) * (m_max_gradient + 1));
+    l /= ((m_max_laplacian - m_min_laplacian + 1) * (m_max_gradient + 1));
+
+    m_average_gradient[i] = g;
+    float gl = 0.0f;
+    for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++) {
+      float weight = m_scalar_histogram[i][(unsigned long)g][k] / 255.0f;
+      gl += weight * k;
+    }
+
+    gl /= (m_max_laplacian - m_min_laplacian + 1);
+
+    m_average_laplacian[i][(unsigned long)g] = gl;
   }
 
   GenerateValueGradientSlice();
@@ -452,7 +443,12 @@ void ATFG::GenerateValueGradientSlice()
       unsigned char sum = 0;
       for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++)
       {
-        sum += m_scalar_histogram[i][j][k];
+        if ((int)sum + m_scalar_histogram[i][j][k] >= 255) {
+          sum = 255;
+          break;
+        }
+        else
+          sum += m_scalar_histogram[i][j][k];
       }
       
       fprintf(fp, "%d ", 255 - sum);
@@ -476,7 +472,12 @@ void ATFG::GenerateValueLaplaceSlice()
       unsigned char sum = 0;
       for (int j = 0; j < m_max_gradient; ++j)
       {
-        sum += m_scalar_histogram[i][j][k];
+        if ((int)sum + m_scalar_histogram[i][j][k] >= 255) {
+          sum = 255;
+          break;
+        }
+        else
+          sum += m_scalar_histogram[i][j][k];
       }
 
       fprintf(fp, "%d ", 255 - sum);
