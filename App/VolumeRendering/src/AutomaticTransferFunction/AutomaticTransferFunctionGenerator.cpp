@@ -157,6 +157,9 @@ void ATFG::SetVolume(vr::Volume* vol)
   FillGradientField();
   FillLaplacianField();
   GenerateHistogram();
+  //GenerateHistogramSlices();
+  GenerateValueGradientSummedHistogram();
+  GenerateValueLaplaceSummedHistogram();
 }
 
 
@@ -313,7 +316,7 @@ float* ATFG::GetBoundaryDistancies()
 
   for (size_t v = 0; v < MAX_V; ++v)
   {
-    float g_tresh = m_average_gradient[v] * 0.1f;
+    float g_tresh = 0.0f;// m_average_gradient[v] * 0.1f;
     float g = m_average_gradient[v];
     float l = m_average_laplacian[v][(unsigned long)g];
     if (g <= 0.0f)
@@ -396,53 +399,72 @@ bool ATFG::GenerateHistogram()
 
   for (size_t i = 0; i < MAX_V; i++)
   {
+    float wg = 0.0f;
     float g = 0.0f;
-    float l = 0.0f;
     for (int j = 0; j < m_max_gradient + 1; ++j)
     {
+      float wl = 0.0f;
+      float l = 0.0f;
       for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++)
       {
-        float weight = m_scalar_histogram[i][j][k] / 255.0f;
-        g += weight * j;
-        l += weight * k;
+        float w = m_scalar_histogram[i][j][k] / 255.0f;
+        wl += w;
+        g += w * j;
+        l += w * k;
       }
+      wg += wl;
+      l /= wl;
+      m_average_laplacian[i][j] = l;
     }
 
-    g /= ((m_max_laplacian - m_min_laplacian + 1) * (m_max_gradient + 1));
-    l /= ((m_max_laplacian - m_min_laplacian + 1) * (m_max_gradient + 1));
-
+    g /= wg;
     m_average_gradient[i] = g;
-    float gl = 0.0f;
-    for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++) {
-      float weight = m_scalar_histogram[i][(unsigned long)g][k] / 255.0f;
-      gl += weight * k;
-    }
-
-    gl /= (m_max_laplacian - m_min_laplacian + 1);
-
-    m_average_laplacian[i][(unsigned long)g] = gl;
   }
-
-  GenerateValueGradientSlice();
-  GenerateValueLaplaceSlice();
 
   return true;
 }
 
-void ATFG::GenerateValueGradientSlice()
+void ATFG::GenerateHistogramSlices()
+{
+  for (int i = 0; i < MAX_V; ++i)
+    GenerateHistogramSlice(i);
+}
+
+void ATFG::GenerateHistogramSlice(int v)
+{
+  FILE* fp;
+  char filename[24];
+  sprintf(filename, "Histogram Slice %d.pgm", v);
+  fopen_s(&fp, filename, "wb");
+  fprintf(fp, "P2\n%d %d\n255\n", m_max_laplacian - m_min_laplacian + 1, m_max_gradient + 1);
+
+  for (int j = m_max_gradient; j >= 0; j--)
+  {
+    for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++)
+    {
+      int h;
+      if (m_scalar_histogram[v][j][k] >= 255)
+        h = 255;
+      else
+        h = m_scalar_histogram[v][j][k];
+      
+      fprintf(fp, "%d ", 255 - h);
+    }
+    fprintf(fp, "\n");
+  }
+  fclose(fp);
+}
+
+void ATFG::GenerateValueGradientSummedHistogram()
 {
   FILE* fp;
   fopen_s(&fp, "Histogram Gradient Slice.pgm", "wb");
   fprintf(fp, "P2\n%d %d\n255\n", MAX_V, m_max_gradient + 1);
 
-  int d = 0;
-  for (int j = m_max_gradient; j >= 0; j--)
-  {
-    for (int i = 0; i < MAX_V; ++i)
-    {
+  for (int j = m_max_gradient; j >= 0; j--) {
+    for (int i = 0; i < MAX_V; ++i) {
       unsigned char sum = 0;
-      for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++)
-      {
+      for (int k = 0; k < m_max_laplacian - m_min_laplacian + 1; k++) {
         if ((int)sum + m_scalar_histogram[i][j][k] >= 255) {
           sum = 255;
           break;
@@ -450,7 +472,7 @@ void ATFG::GenerateValueGradientSlice()
         else
           sum += m_scalar_histogram[i][j][k];
       }
-      
+
       fprintf(fp, "%d ", 255 - sum);
     }
     fprintf(fp, "\n");
@@ -458,20 +480,16 @@ void ATFG::GenerateValueGradientSlice()
   fclose(fp);
 }
 
-void ATFG::GenerateValueLaplaceSlice()
+void ATFG::GenerateValueLaplaceSummedHistogram()
 {
   FILE* fp;
   fopen_s(&fp, "Histogram Laplace Slice.pgm", "wb");
   fprintf(fp, "P2\n%d %d\n255\n", MAX_V, m_max_laplacian - m_min_laplacian + 1);
 
-  int d = 0;
-  for (int k = m_max_laplacian - m_min_laplacian; k >= 0; --k)
-  {
-    for (int i = 0; i < MAX_V; ++i)
-    {
+  for (int k = m_max_laplacian - m_min_laplacian; k >= 0; --k) {
+    for (int i = 0; i < MAX_V; ++i) {
       unsigned char sum = 0;
-      for (int j = 0; j < m_max_gradient; ++j)
-      {
+      for (int j = 0; j < m_max_gradient; ++j) {
         if ((int)sum + m_scalar_histogram[i][j][k] >= 255) {
           sum = 255;
           break;
@@ -514,7 +532,7 @@ void ATFG::GenerateTransferFunction()
   }
 
   float sigma = m_max_gradient / ((float)m_max_laplacian * SQRT_E);
-  float base = sigma;
+  float base = 4 * sigma;
   float amax = 0.4f;
 
   for (size_t v = 0; v < MAX_V; ++v)
