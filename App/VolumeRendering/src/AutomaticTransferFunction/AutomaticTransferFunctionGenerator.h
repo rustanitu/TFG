@@ -37,6 +37,8 @@ private:
 
   void GenerateValueGradientSummedHistogram();
   void GenerateValueLaplaceSummedHistogram();
+
+  float Sigma(unsigned char v);
 public:
   void GenerateTransferFunction();
 
@@ -44,8 +46,8 @@ private:
   unsigned int m_width, m_height, m_depth;  // Volume dimensions.
   vr::Volume* m_volume;                     // Volume attached.
 
-  long m_max_gradient;                      // Extrema gradient value.
-  long m_max_laplacian, m_min_laplacian;    // Extrema laplacian value.
+  long m_max_gradient[256];                      // Extrema gradient value.
+  long m_max_laplacian[256], m_min_laplacian[256];    // Extrema laplacian value.
 
   float* m_scalar_gradient;                 // Voxels' gradients.
   float* m_scalar_laplacian;                // Voxels' laplacians.
