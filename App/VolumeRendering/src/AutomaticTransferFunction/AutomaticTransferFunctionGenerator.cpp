@@ -535,8 +535,13 @@ void ATFG::GenerateValueLaplaceSummedHistogram()
 
 void ATFG::GenerateTransferFunction()
 {
+  std::string filename = m_volume->GetName();
+  std::size_t init = filename.find_last_of("\\") + 1;
+  std::size_t end = filename.find_first_of(".");
+  filename = filename.substr(init, end - init);
+  filename = "../../Modelos//TransferFunctions//AutomaticTransferFunction" + filename + ".tf1d";
   std::ofstream state_file;
-  state_file.open("../../Modelos//TransferFunctions//AutomaticTransferFunction.tf1d");
+  state_file.open(filename);
 
   state_file << "linear" << "\n";
   state_file << "0" << "\n";
@@ -564,7 +569,7 @@ void ATFG::GenerateTransferFunction()
   for (size_t v = 0; v < MAX_V; ++v)
   {
     float sigma = Sigma(v);
-    float base = 3 * sigma;
+    float base = 3*sigma;
     if (x[v] >= -base && x[v] <= base)
     {
       float a = 0.0f;
