@@ -124,7 +124,6 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     m_volumename = vol->GetName();
     m_volume_file = file;
     m_atfg->SetVolume(vol);
-    m_atfg->GenerateTransferFunction();
   }
 }
 

@@ -26,8 +26,7 @@ private:
   float CalculateGradient(int x, int y, int z);
   float CalculateLaplacian(int x, int y, int z);
 
-  void FillGradientField();
-  void FillLaplacianField();
+  void CalculateVolumeDerivatives();
 
   float* GetBoundaryDistancies();
   bool GenerateHistogram();
@@ -48,6 +47,8 @@ private:
 
   long m_max_gradient[256];                      // Extrema gradient value.
   long m_max_laplacian[256], m_min_laplacian[256];    // Extrema laplacian value.
+  long m_max_global_gradient;                      // Extrema global gradient value.
+  long m_max_global_laplacian, m_min_global_laplacian;    // Extrema global laplacian value.
 
   float* m_scalar_gradient;                 // Voxels' gradients.
   float* m_scalar_laplacian;                // Voxels' laplacians.
