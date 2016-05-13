@@ -7,6 +7,8 @@
 #ifndef VIEWERINTERFACE_H
 #define VIEWERINTERFACE_H
 
+#include "AutomaticTransferFunction/ATFInterface.h"
+
 #include <iup.h>
 #include <iupgl.h>
 
@@ -146,6 +148,8 @@ public:
 
 protected:
 private:
+
+  ATFInterface* m_atfg_interface;
 
 };
 

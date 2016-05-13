@@ -15,7 +15,7 @@
 
 #include "ViewerInterface.h"
 #include "ViewMethod/ViewMethod.h"
-#include "AutomaticTransferFunction\AutomaticTransferFunctionGenerator.h"
+#include "AutomaticTransferFunction\ATFGenerator.h"
 
 #include <iup.h>
 #include <iupgl.h>

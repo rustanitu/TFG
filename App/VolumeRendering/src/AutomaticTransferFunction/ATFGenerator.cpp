@@ -1,4 +1,4 @@
-#include "AutomaticTransferFunctionGenerator.h"
+#include "ATFGenerator.h"
 
 #include <cstdlib>
 #include <iostream>

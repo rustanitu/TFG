@@ -612,8 +612,11 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
     //m_iup_item_glblend[11],
     NULL);
   m_iup_submenu_glblendoptions = IupSubmenu ("Blending", m_iup_menu_glblendoptions);
-  
-  m_iup_menu = IupMenu (m_iup_sub_menu_file, m_iup_sub_menu_visualizations, m_iup_submenu_clearcolors, m_iup_submenu_glblendoptions, NULL);
+
+  m_atfg_interface = ATFInterface::Instance();
+  m_atfg_interface->Build();
+
+  m_iup_menu = IupMenu(m_iup_sub_menu_file, m_iup_sub_menu_visualizations, m_iup_submenu_clearcolors, m_iup_submenu_glblendoptions, m_atfg_interface->GetMenu(), NULL);
   IupSetHandle ("ViewerInterfaceIupMenu", m_iup_menu);
 
   m_iup_main_dialog = IupDialog (m_iup_hbox_dialog);
