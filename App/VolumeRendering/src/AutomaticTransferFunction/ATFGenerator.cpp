@@ -19,19 +19,19 @@
 /* Management Functions */
 /************************/
 
-ATFG::ATFG()
+ATFGenerator::ATFGenerator()
 :m_width(0), m_height(0), m_depth(0),
  m_scalar_gradient(NULL), m_scalar_laplacian(NULL), m_scalar_histogram(NULL), m_average_laplacian(NULL)
 {
 }
 
 
-ATFG::~ATFG()
+ATFGenerator::~ATFGenerator()
 {
   CleanUp();
 }
 
-void ATFG::Init()
+void ATFGenerator::Init()
 {
   m_scalar_gradient = NULL;
   m_scalar_gradient = new float[m_width*m_height*m_depth];
@@ -52,7 +52,7 @@ void ATFG::Init()
   }
 }
 
-void ATFG::CleanUp()
+void ATFGenerator::CleanUp()
 {
   m_width = 0;
   m_height = 0;
@@ -93,7 +93,7 @@ void ATFG::CleanUp()
 /* Getters and Setters */
 /************************/
 
-float ATFG::GetGradient(int x, int y, int z)
+float ATFGenerator::GetGradient(int x, int y, int z)
 {
   x = lqc::Clamp(x, 0, m_width - 1);
   y = lqc::Clamp(y, 0, m_height - 1);
@@ -102,7 +102,7 @@ float ATFG::GetGradient(int x, int y, int z)
   return m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)];
 }
 
-float ATFG::GetLaplacian(int x, int y, int z)
+float ATFGenerator::GetLaplacian(int x, int y, int z)
 {
   x = lqc::Clamp(x, 0, m_width - 1);
   y = lqc::Clamp(y, 0, m_height - 1);
@@ -111,7 +111,7 @@ float ATFG::GetLaplacian(int x, int y, int z)
   return m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)];
 }
 
-void ATFG::SetVolume(vr::Volume* vol)
+void ATFGenerator::SetVolume(vr::Volume* vol)
 {
   CleanUp();
 
@@ -134,7 +134,7 @@ void ATFG::SetVolume(vr::Volume* vol)
 /* Transfer Function Generation Helpers */
 /****************************************/
 
-float ATFG::CalculateGradient(int x, int y, int z)
+float ATFGenerator::CalculateGradient(int x, int y, int z)
 {
   int s = 0;
   float g = 0.0f;
@@ -158,7 +158,7 @@ float ATFG::CalculateGradient(int x, int y, int z)
   return g;
 }
 
-float ATFG::CalculateLaplacian(int x, int y, int z)
+float ATFGenerator::CalculateLaplacian(int x, int y, int z)
 {
   int s = 0;
   float l = 0.0f;
@@ -188,7 +188,7 @@ float ATFG::CalculateLaplacian(int x, int y, int z)
   return l;
 }
 
-void ATFG::CalculateVolumeDerivatives()
+void ATFGenerator::CalculateVolumeDerivatives()
 {
   for (int x = 1; x < m_width - 1; x++)
   {
@@ -212,7 +212,7 @@ void ATFG::CalculateVolumeDerivatives()
   }
 }
 
-float* ATFG::GetBoundaryDistancies()
+float* ATFGenerator::GetBoundaryDistancies()
 {
 
   float* x = new float[MAX_V];
@@ -235,7 +235,7 @@ float* ATFG::GetBoundaryDistancies()
   return x;
 }
 
-bool ATFG::GenerateHistogram()
+bool ATFGenerator::GenerateHistogram()
 {
   if (m_scalar_histogram)
     delete m_scalar_histogram;
@@ -319,25 +319,25 @@ bool ATFG::GenerateHistogram()
   return true;
 }
 
-float ATFG::Sigma(unsigned char v)
+float ATFGenerator::Sigma(unsigned char v)
 {
   float sigma = 2 * SQRT_E * ((float)m_max_gradient[v] / (m_max_laplacian[v] - m_min_laplacian[v]));
   return sigma;
 }
 
-void ATFG::GenerateHistogramSlices()
+void ATFGenerator::GenerateHistogramSlices()
 {
   for (int i = 0; i < MAX_V; ++i)
     GenerateHistogramSlice(i);
 }
 
-void ATFG::GenerateHistogramSlice(int v)
+void ATFGenerator::GenerateHistogramSlice(int v)
 {
   FILE* fp;
   char filename[24];
   sprintf(filename, "Histogram Slice %d.pgm", v);
   fopen_s(&fp, filename, "wb");
-  fprintf(fp, "P2\n%d %d\n255\n", m_max_laplacian[v] - m_min_laplacian[v] + 1, m_max_gradient[v] + 1);
+  fprintf(fp, "P5\n%d %d\n255\n", m_max_laplacian[v] - m_min_laplacian[v] + 1, m_max_gradient[v] + 1);
 
   for (int j = m_max_gradient[v]; j >= 0; j--)
   {
@@ -356,11 +356,11 @@ void ATFG::GenerateHistogramSlice(int v)
   fclose(fp);
 }
 
-void ATFG::GenerateValueGradientSummedHistogram()
+void ATFGenerator::GenerateValueGradientSummedHistogram()
 {
   FILE* fp;
   fopen_s(&fp, "Gradient Summed Histogram.pgm", "wb");
-  fprintf(fp, "P2\n%d %d\n255\n", MAX_V, m_max_global_gradient + 1);
+  fprintf(fp, "P5\n%d %d\n255\n", MAX_V, m_max_global_gradient + 1);
 
   for (long j = m_max_global_gradient; j >= 0; --j) {
     for (int i = 0; i < MAX_V; ++i) {
@@ -382,11 +382,11 @@ void ATFG::GenerateValueGradientSummedHistogram()
   fclose(fp);
 }
 
-void ATFG::GenerateValueLaplaceSummedHistogram()
+void ATFGenerator::GenerateValueLaplaceSummedHistogram()
 {
   FILE* fp;
   fopen_s(&fp, "Laplacian Summed Histogram.pgm", "wb");
-  fprintf(fp, "P2\n%d %d\n255\n", MAX_V, m_max_global_laplacian - m_min_global_laplacian + 1);
+  fprintf(fp, "P5\n%d %d\n255\n", MAX_V, m_max_global_laplacian - m_min_global_laplacian + 1);
 
   for (long k = m_max_global_laplacian - m_min_global_laplacian; k >= 0; --k) {
     for (int i = 0; i < MAX_V; ++i) {
@@ -408,7 +408,7 @@ void ATFG::GenerateValueLaplaceSummedHistogram()
   fclose(fp);
 }
 
-void ATFG::GenerateTransferFunction()
+void ATFGenerator::GenerateTransferFunction()
 {
   std::string filename = m_volume->GetName();
   std::size_t init = filename.find_last_of("\\") + 1;
@@ -439,13 +439,13 @@ void ATFG::GenerateTransferFunction()
     return;
   }
 
-  float amax = 0.4f;
+  float amax = 1.0f;
   float base = 0.0f;
   for (size_t v = 0; v < MAX_V; ++v)
   {
     float sigma = Sigma(v);
     //if (sigma > 1.177f)
-      base = 15 * sigma;
+      base = 40 * sigma;
     if (x[v] >= -base && x[v] <= base)
     {
       float a = 0.0f;

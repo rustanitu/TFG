@@ -448,7 +448,7 @@ Viewer::Viewer ()
   m_volume = NULL;
   m_volumename = "NULL";
 
-  m_atfg = new ATFG();
+  m_atfg = new ATFGenerator();
 }
 
 Viewer::~Viewer ()

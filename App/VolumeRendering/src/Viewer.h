@@ -91,7 +91,7 @@ public:
   std::string m_volume_file;
 
   /*! Automatic Transfer Function Generator*/
-  ATFG* m_atfg;
+  ATFGenerator* m_atfg;
 
   /*! The current ViewMethod being used.*/
   VRVIEWS m_current_view;

@@ -1,27 +1,27 @@
-#ifndef ATFG_H
-#define ATFG_H
+#ifndef ATFGenerator_H
+#define ATFGenerator_H
 
 /* Includes */
 #include <volrend/Volume.h>
 
-class ATFG
+class ATFGenerator
 {
 public:
   /* Management Functions*/
-  ATFG();
-  ~ATFG();
+  ATFGenerator();
+  ~ATFGenerator();
+
 private:
   void Init();
   void CleanUp();
-public:
 
+public:
   /* Getters and Setters */
   float GetGradient(int x, int y, int z);
   float GetLaplacian(int x, int y, int z);
   void SetVolume(vr::Volume* vol);
 
 private:
-  
   /* Transfer Function Generation Helpers */
   float CalculateGradient(int x, int y, int z);
   float CalculateLaplacian(int x, int y, int z);
@@ -38,6 +38,7 @@ private:
   void GenerateValueLaplaceSummedHistogram();
 
   float Sigma(unsigned char v);
+
 public:
   void GenerateTransferFunction();
 

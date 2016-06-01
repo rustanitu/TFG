@@ -237,6 +237,12 @@
     <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\PgmFile.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ViewMethod\ViewMethod.h">
@@ -384,6 +390,18 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\PgmFile.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>

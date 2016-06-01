@@ -177,6 +177,8 @@
     <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFInterface.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\PgmFile.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp" />
     <ClCompile Include="src\CPUTimer.cpp" />
     <ClCompile Include="src\CPU\Coupled.cpp" />
@@ -226,7 +228,11 @@
     <ClInclude Include="src\AdaptiveEvaluation\ViewMethodAdaptive.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ATFInterface.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h" />
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\PgmFile.h" />
     <ClInclude Include="src\CPUTimer.h" />
     <ClInclude Include="src\CPU\CommonSimpsonIntegrationFunctions.hpp" />
     <ClInclude Include="src\CPU\defines.h" />
