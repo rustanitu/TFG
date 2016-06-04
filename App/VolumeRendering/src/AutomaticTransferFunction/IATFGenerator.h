@@ -1,14 +1,12 @@
 #ifndef IATFGenerator_H
 #define IATFGenerator_H
 
-class TFWriter;
+class ITransferFunction;
 
-class ATFGenerator
+class IATFGenerator
 {
 public:
-
-  TFWriter GenerateTransferFunction();
-
+  virtual ITransferFunction* GetTransferFunction() = 0;
 };
 
 #endif

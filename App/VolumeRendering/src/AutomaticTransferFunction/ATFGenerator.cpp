@@ -7,6 +7,8 @@
 #include <lqc/File/RAWLoader.h>
 #include <math/MUtils.h>
 
+#include "TransferFunction.h"
+
 
 /*************************/
 /* Constants Definitions */
@@ -126,7 +128,7 @@ void ATFGenerator::SetVolume(vr::Volume* vol)
   //GenerateHistogramSlices();
   GenerateValueGradientSummedHistogram();
   GenerateValueLaplaceSummedHistogram();
-  GenerateTransferFunction();
+  GetTransferFunction();
 }
 
 
@@ -408,58 +410,38 @@ void ATFGenerator::GenerateValueLaplaceSummedHistogram()
   fclose(fp);
 }
 
-void ATFGenerator::GenerateTransferFunction()
+ITransferFunction* ATFGenerator::GetTransferFunction()
 {
   std::string filename = m_volume->GetName();
   std::size_t init = filename.find_last_of("\\") + 1;
   std::size_t end = filename.find_first_of(".");
   filename = filename.substr(init, end - init);
   filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename + ".tf1d";
-  std::ofstream state_file;
-  state_file.open(filename);
 
-  state_file << "linear" << "\n";
-  state_file << "0" << "\n";
-  state_file << "9" << "\n";
-  state_file << "1   1   1   0" << "\n";
-  state_file << "1   0   0   32" << "\n";
-  state_file << "0   1   0   64" << "\n";
-  state_file << "0   0   1   96" << "\n";
-  state_file << "0.5 0.5 0   128" << "\n";
-  state_file << "0.5 0   0.5 160" << "\n";
-  state_file << "0   0.5 0.5 192" << "\n";
-  state_file << "0.3 0.3 0.3 224" << "\n";
-  state_file << "0   0   0   255" << "\n";
-  state_file << MAX_V << "\n";
+  TransferFunction* ft = new TransferFunction();
+  ft->SetValueColor(0, 255, 255, 255);
+  ft->SetValueColor(32, 255, 0, 0);
+  ft->SetValueColor(64, 0, 255, 0);
+  ft->SetValueColor(96, 0, 0, 255);
+  ft->SetValueColor(128, 127, 127, 0);
+  ft->SetValueColor(160, 127, 0, 127);
+  ft->SetValueColor(192, 0, 127, 127);
+  ft->SetValueColor(224, 84, 84, 85);
+  ft->SetValueColor(255, 0, 0, 0);
 
   float* x = GetBoundaryDistancies();
-  if (!x)
+  unsigned char values[MAX_V];
+  float sigmas[MAX_V];
+
+  for (int i = 0; i < MAX_V; ++i)
   {
-    state_file.close();
-    return;
+    values[i] = i;
+    sigmas[i] = Sigma(i);
   }
 
-  float amax = 1.0f;
-  float base = 0.0f;
-  for (size_t v = 0; v < MAX_V; ++v)
-  {
-    float sigma = Sigma(v);
-    //if (sigma > 1.177f)
-      base = 40 * sigma;
-    if (x[v] >= -base && x[v] <= base)
-    {
-      float a = 0.0f;
-      if (x[v] >= 0.0)
-        a = -(amax * x[v]) / base;
-      else
-        a = (amax * x[v]) / base;
+  ft->SetClosestBoundaryDistances(values, x, sigmas, MAX_V);
+  ft->Generate(filename.c_str());
 
-      a += amax;
-      state_file << a << "\t" << v << "\n";
-    }
-    else
-      state_file << 0 << "\t" << v << "\n";
-  }
-  state_file.close();
   delete x;
+  return ft;
 }

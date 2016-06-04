@@ -17,8 +17,8 @@ public:
   /// - Next 'no' lines: O V. Where O is an opacity
   /// associated to a value V.
   /// </summary>
-  /// <param name="file">The file.</param>
-  virtual void Generate(const char* file) = 0;
+  /// <param name="path">The transfer function file's path.</param>
+  virtual bool Generate(const char* path) = 0;
 };
 
 #endif

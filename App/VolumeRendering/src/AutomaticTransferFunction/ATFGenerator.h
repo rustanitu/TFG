@@ -1,7 +1,7 @@
 #ifndef ATFGenerator_H
 #define ATFGenerator_H
 
-/* Includes */
+#include "IATFGenerator.h"
 #include <volrend/Volume.h>
 
 class ATFGenerator
@@ -40,7 +40,7 @@ private:
   float Sigma(unsigned char v);
 
 public:
-  void GenerateTransferFunction();
+  virtual ITransferFunction* GetTransferFunction();
 
 private:
   unsigned int m_width, m_height, m_depth;  // Volume dimensions.
