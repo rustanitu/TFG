@@ -1,9 +1,36 @@
+/// ITransferFunction.h
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #ifndef I_TRANSFER_FUNCTION_H
 #define I_TRANSFER_FUNCTION_H
 
+#include <string.h>
+
+/// <summary>
+/// This interface encapsulates the Transfer Function
+/// baic concept to this project, which is to be able
+/// to generate a transfer funciton file in a specific
+/// manner.
+/// </summary>
 class ITransferFunction
 {
 public:
+  /// <summary>
+  /// Initializes a new instance of the <see cref="ITransferFunction" /> class.
+  /// </summary>
+  /// <param name="path">The full path to the transfer
+  /// function file.</param>
+  /// <param name="ext">The file extension.</param>
+  ITransferFunction(const char* path, const char* ext)
+  {
+    int path_len = strlen(path);
+    int length = path_len + strlen(ext);
+    m_path = new char[length + 1];
+    m_path = strcpy(m_path, path);
+    strcpy(m_path + path_len, ext);
+    m_path[length] = '\0';
+  }
   /// <summary>
   /// The implementation of this function must generate a
   /// transfer function at the given path.
@@ -17,8 +44,20 @@ public:
   /// - Next 'no' lines: O V. Where O is an opacity
   /// associated to a value V.
   /// </summary>
-  /// <param name="path">The transfer function file's path.</param>
-  virtual bool Generate(const char* path) = 0;
+  virtual bool Generate() = 0;
+  /// <summary>Gets the path.</summary>
+  /// <returns>Returns the complete file path to the
+  /// transfer function file.</returns>
+  char* GetPath()
+  {
+    return m_path;
+  }
+
+protected:
+  /// <summary>
+  /// The transfer function file path.
+  /// </summary>
+  char* m_path;
 };
 
 #endif

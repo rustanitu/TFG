@@ -178,7 +178,7 @@
     <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFInterface.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\PgmFile.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp" />
     <ClCompile Include="src\CPUTimer.cpp" />
     <ClCompile Include="src\CPU\Coupled.cpp" />
@@ -232,7 +232,7 @@
     <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h" />
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
     <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\PgmFile.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h" />
     <ClInclude Include="src\CPUTimer.h" />
     <ClInclude Include="src\CPU\CommonSimpsonIntegrationFunctions.hpp" />
     <ClInclude Include="src\CPU\defines.h" />

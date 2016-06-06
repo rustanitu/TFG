@@ -12,8 +12,11 @@
 #include "ERN\ERNViewMethod.h"
 
 #include "volrend\Reader.h"
+#include "AutomaticTransferFunction\ITransferFunction.h"
 
 #include <cstdlib>
+
+#define ATFG
 
 Viewer *Viewer::m_instance = 0;
 
@@ -123,7 +126,11 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     m_volume = vol;
     m_volumename = vol->GetName();
     m_volume_file = file;
-    m_atfg->SetVolume(vol);
+
+    if (m_atfg)
+      delete m_atfg;
+    
+    m_atfg = new ATFGenerator(m_volume);
   }
 }
 
@@ -334,6 +341,20 @@ bool Viewer::FileDlg_VolumeModel ()
     if (v)
     {
       Viewer::Instance ()->SetVolumeModel (v, file);
+
+#ifdef ATFG
+      if (m_atfg->ExtractTransferFunction())
+      {
+        ITransferFunction* tf = m_atfg->GetTransferFunction();
+        if (tf->Generate())
+        {
+          char* tf_file = tf->GetPath();
+          vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+          SetTransferFunction(tfr, tf_file);
+        }
+      }
+#endif
+
       ret = true;
     }
   }
@@ -448,7 +469,7 @@ Viewer::Viewer ()
   m_volume = NULL;
   m_volumename = "NULL";
 
-  m_atfg = new ATFGenerator();
+  m_atfg = NULL;
 }
 
 Viewer::~Viewer ()

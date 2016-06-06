@@ -1,3 +1,7 @@
+/// ATFInterface.h
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #ifndef ATF_INTERFACE_H
 #define ATF_INTERFACE_H
 

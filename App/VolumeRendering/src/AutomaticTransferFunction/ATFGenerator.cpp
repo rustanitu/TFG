@@ -1,3 +1,7 @@
+/// ATFGenerator.cpp
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #include "ATFGenerator.h"
 
 #include <cstdlib>
@@ -7,33 +11,25 @@
 #include <lqc/File/RAWLoader.h>
 #include <math/MUtils.h>
 
+#include "PGMFile.h"
 #include "TransferFunction.h"
 
 
-/*************************/
-/* Constants Definitions */
-/*************************/
-
-#define SQRT_E 1.6487212707
-#define MAX_V 256
-
-/************************/
-/* Management Functions */
-/************************/
-
-ATFGenerator::ATFGenerator()
-:m_width(0), m_height(0), m_depth(0),
- m_scalar_gradient(NULL), m_scalar_laplacian(NULL), m_scalar_histogram(NULL), m_average_laplacian(NULL)
-{
-}
-
-
-ATFGenerator::~ATFGenerator()
-{
-  CleanUp();
-}
-
-void ATFGenerator::Init()
+/// <summary>
+/// Initializes a new instance of the 
+/// <see cref="ATFGenerator" /> class.
+/// </summary>
+/// <param name="volume">The volume whose transfer 
+/// function one wants to extract.</param>
+ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
+, m_scalar_gradient(NULL)
+, m_scalar_laplacian(NULL)
+, m_scalar_histogram(NULL)
+, m_average_laplacian(NULL)
+, m_transfer_function(NULL)
+, m_max_global_gradient(-LONG_MAX)
+, m_min_global_laplacian(LONG_MAX)
+, m_max_global_laplacian(-LONG_MAX)
 {
   m_scalar_gradient = NULL;
   m_scalar_gradient = new float[m_width*m_height*m_depth];
@@ -41,7 +37,8 @@ void ATFGenerator::Init()
   m_scalar_laplacian = NULL;
   m_scalar_laplacian = new float[m_width*m_height*m_depth];
 
-  for (size_t i = 0; i < MAX_V; ++i) {
+  for (size_t i = 0; i < MAX_V; ++i)
+  {
     m_max_gradient[i] = -LONG_MAX;
     m_min_laplacian[i] = LONG_MAX;
     m_max_laplacian[i] = -LONG_MAX;
@@ -54,15 +51,12 @@ void ATFGenerator::Init()
   }
 }
 
-void ATFGenerator::CleanUp()
+/// <summary>
+/// Finalizes an instance of the 
+/// <see cref="ATFGenerator"/> class.
+/// </summary>
+ATFGenerator::~ATFGenerator()
 {
-  m_width = 0;
-  m_height = 0;
-  m_depth = 0;
-  m_max_global_gradient = -LONG_MAX;
-  m_min_global_laplacian = LONG_MAX;
-  m_max_global_laplacian = -LONG_MAX;
-
   if (m_scalar_gradient)
   {
     delete m_scalar_gradient;
@@ -90,13 +84,65 @@ void ATFGenerator::CleanUp()
   m_volume = NULL;
 }
 
+/// <summary>
+/// Extract a transfer function from the volume, based in 
+/// Kindlmann's paper.
+/// </summary>
+/// <returns>Returns true if the transfer function can be
+/// generated. False, otherwise.</returns>
+bool ATFGenerator::ExtractTransferFunction()
+{
+  assert(!m_transfer_function);
 
-/************************/
-/* Getters and Setters */
-/************************/
+  if (!CalculateVolumeDerivatives())
+    return false;
+  
+  if (!GenerateHistogram())
+    return false;
+  
+  std::string filename = m_volume->GetName();
+  std::size_t init = filename.find_last_of("\\") + 1;
+  std::size_t end = filename.find_first_of(".");
+  filename = filename.substr(init, end - init);
+  filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename;
 
+  m_transfer_function = new TransferFunction(filename.c_str());
+  m_transfer_function->SetValueColor(0, 255, 255, 255);
+  m_transfer_function->SetValueColor(32, 255, 0, 0);
+  m_transfer_function->SetValueColor(64, 0, 255, 0);
+  m_transfer_function->SetValueColor(96, 0, 0, 255);
+  m_transfer_function->SetValueColor(128, 127, 127, 0);
+  m_transfer_function->SetValueColor(160, 127, 0, 127);
+  m_transfer_function->SetValueColor(192, 0, 127, 127);
+  m_transfer_function->SetValueColor(224, 84, 84, 85);
+  m_transfer_function->SetValueColor(255, 0, 0, 0);
+
+  float* x = GetBoundaryDistancies();
+  unsigned char* values = new unsigned char[MAX_V];
+  float* sigmas = new float[MAX_V];
+
+  for (int i = 0; i < MAX_V; ++i)
+  {
+    values[i] = i;
+    sigmas[i] = GetSigma(i);
+  }
+
+  m_transfer_function->SetClosestBoundaryDistances(values, x, sigmas, MAX_V);
+  return m_transfer_function->Generate();
+}
+
+/// <summary>
+/// Gets an aproximation of the voxel's gradient, using 
+/// its first derivatives.
+/// </summary>
+/// <param name="x">The voxel's x component.</param>
+/// <param name="y">The voxel's y component.</param>
+/// <param name="z">The voxel's z component.</param>
+/// <returns>Returns the float aproximated gradient.</returns>
 float ATFGenerator::GetGradient(int x, int y, int z)
 {
+  assert(m_scalar_gradient);
+
   x = lqc::Clamp(x, 0, m_width - 1);
   y = lqc::Clamp(y, 0, m_height - 1);
   z = lqc::Clamp(z, 0, m_depth - 1);
@@ -104,8 +150,18 @@ float ATFGenerator::GetGradient(int x, int y, int z)
   return m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)];
 }
 
+/// <summary>
+/// Gets an aproximation of the voxel's laplacian, using 
+/// its second derivatives.
+/// </summary>
+/// <param name="x">The voxel's x component.</param>
+/// <param name="y">The voxel's y component.</param>
+/// <param name="z">The voxel's z component.</param>
+/// <returns>Returns the float aproximated laplacian.</returns>
 float ATFGenerator::GetLaplacian(int x, int y, int z)
 {
+  assert(m_scalar_laplacian);
+
   x = lqc::Clamp(x, 0, m_width - 1);
   y = lqc::Clamp(y, 0, m_height - 1);
   z = lqc::Clamp(z, 0, m_depth - 1);
@@ -113,31 +169,157 @@ float ATFGenerator::GetLaplacian(int x, int y, int z)
   return m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)];
 }
 
-void ATFGenerator::SetVolume(vr::Volume* vol)
+/// <summary>
+/// Generates a PGM image file with a histogram slice.
+/// The image is generated in the working directory and 
+/// it's named "Histogram Slice v", where 'v' is the 
+/// value input.
+/// </summary>
+/// <param name="v">The value whose slice it's desired.</param>
+void ATFGenerator::GenerateHistogramSlice(int v)
 {
-  CleanUp();
+  assert(m_max_laplacian && m_min_laplacian && m_max_gradient);
 
-  m_volume = vol;
-  m_width = vol->GetWidth();
-  m_height = vol->GetHeight();
-  m_depth = vol->GetDepth();
+  char* filename = new char[19];
+  sprintf(filename, "Histogram Slice %d", v);
 
-  Init();
-  CalculateVolumeDerivatives();
-  GenerateHistogram();
-  //GenerateHistogramSlices();
-  GenerateValueGradientSummedHistogram();
-  GenerateValueLaplaceSummedHistogram();
-  GetTransferFunction();
+  PGMFile pgmfile(filename, m_max_laplacian[v] - m_min_laplacian[v] + 1, m_max_gradient[v] + 1);
+
+  if (!pgmfile.Open())
+  {
+    printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
+    return;
+  }
+  delete filename;
+
+  assert(m_scalar_histogram);
+
+  for (int j = m_max_gradient[v]; j >= 0; j--)
+  {
+    for (int k = 0; k < m_max_laplacian[v] - m_min_laplacian[v] + 1; k++)
+    {
+      int h;
+      if (m_scalar_histogram[v][j][k] >= 255)
+        h = 255;
+      else
+        h = m_scalar_histogram[v][j][k];
+
+      pgmfile.WriteByte(255 - h);
+    }
+    pgmfile.WriteEndLine();
+  }
+  pgmfile.Close();
 }
 
+/// <summary>
+/// Generates the all the 256 histogram slices, trhought
+/// calls to void GenerateHistogramSlice(int v).
+/// </summary>
+void ATFGenerator::GenerateHistogramSlices()
+{
+  for (int i = 0; i < MAX_V; ++i)
+    GenerateHistogramSlice(i);
+}
 
-/****************************************/
-/* Transfer Function Generation Helpers */
-/****************************************/
+/// <summary>
+/// Acumulates the gradient values of the 3D histogram, 
+/// generating a 2D hitogram of laplacian values per 
+/// intensity values. This 2D histogram is generated
+/// as an PGM image file in the working directory, 
+/// named "Gradient Summed Histogram".
+/// </summary>
+void ATFGenerator::GenerateGradientSummedHistogram()
+{
+  PGMFile pgmfile("Gradient Summed Histogram", MAX_V, m_max_global_gradient + 1);
+  if (!pgmfile.Open())
+  {
+    printf("Erro - O Histograma 'Gradient Summed Histogram' nao pode ser gerado!\n");
+    return;
+  }
 
+  for (long j = m_max_global_gradient; j >= 0; --j)
+  {
+    for (int i = 0; i < MAX_V; ++i)
+    {
+      unsigned char sum = 0;
+      for (long k = 0; k < m_max_global_laplacian - m_min_global_laplacian + 1; ++k)
+      {
+        if ((int)sum + m_scalar_histogram[i][j][k] >= 255)
+        {
+          sum = 255;
+          break;
+        }
+        else
+          sum += m_scalar_histogram[i][j][k];
+      }
+
+      pgmfile.WriteByte(255 - sum);
+    }
+    pgmfile.WriteEndLine();
+  }
+  pgmfile.Close();
+}
+
+/// <summary>
+/// Acumulates the laplacian values of the 3D histogram, 
+/// generating a 2D hitogram of gradient values per 
+/// intensity values. This 2D histogram is generated
+/// as an PGM image file in the working directory, 
+/// named "Laplacian Summed Histogram".
+/// </summary>
+void ATFGenerator::GenerateLaplacianSummedHistogram()
+{
+  PGMFile pgmfile("Laplacian Summed Histogram", MAX_V, m_max_global_laplacian - m_min_global_laplacian + 1);
+  if (!pgmfile.Open())
+  {
+    printf("Erro - O Histograma 'Laplacian Summed Histogram' nao pode ser gerado!\n");
+    return;
+  }
+
+  for (long k = m_max_global_laplacian - m_min_global_laplacian; k >= 0; --k)
+  {
+    for (int i = 0; i < MAX_V; ++i)
+    {
+      unsigned char sum = 0;
+      for (long j = 0; j < m_max_global_gradient; ++j)
+      {
+        if ((int)sum + m_scalar_histogram[i][j][k] >= 255)
+        {
+          sum = 255;
+          break;
+        }
+        else
+          sum += m_scalar_histogram[i][j][k];
+      }
+
+      pgmfile.WriteByte(255 - sum);
+    }
+    pgmfile.WriteEndLine();
+  }
+  pgmfile.Close();
+}
+
+/// <summary>
+/// Gets the transfer function.
+/// </summary>
+/// <returns>Returns a pointer to the transfer function generated automatically.</returns>
+ITransferFunction* ATFGenerator::GetTransferFunction()
+{
+  return m_transfer_function;
+}
+
+/// <summary>
+/// Calculates an aproximation of the voxel's gradient, 
+/// using its first derivatives.
+/// </summary>
+/// <param name="x">The voxel's x component.</param>
+/// <param name="y">The voxel's y component.</param>
+/// <param name="z">The voxel's z component.</param>
+/// <returns>Returns the float aproximated gradient.</returns>
 float ATFGenerator::CalculateGradient(int x, int y, int z)
 {
+  assert(m_volume);
+
   int s = 0;
   float g = 0.0f;
   float gx = 0.0f;
@@ -147,8 +329,9 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   gx = 0.5f * (m_volume->GetValue(x + 1, y, z) - m_volume->GetValue(x - 1, y, z));
   gy = 0.5f * (m_volume->GetValue(x, y + 1, z) - m_volume->GetValue(x, y - 1, z));
   gz = 0.5f * (m_volume->GetValue(x, y, z + 1) - m_volume->GetValue(x, y, z - 1));
-
   g = sqrt(gx*gx + gy*gy + gz*gz);
+
+  assert(m_volume && m_max_gradient);
 
   unsigned char v = m_volume->GetValue(x, y, z);
   g = fmax(0.0f, g);
@@ -160,8 +343,18 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   return g;
 }
 
+/// <summary>
+/// Calculates an aproximation of the voxel's laplacian, 
+/// using its second derivatives.
+/// </summary>
+/// <param name="x">The voxel's x component.</param>
+/// <param name="y">The voxel's y component.</param>
+/// <param name="z">The voxel's z component.</param>
+/// <returns>Returns the float aproximated laplacian.</returns>
 float ATFGenerator::CalculateLaplacian(int x, int y, int z)
 {
+  assert(m_volume);
+
   int s = 0;
   float l = 0.0f;
   float lx = 0.0f;
@@ -172,9 +365,9 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   lx = m_volume->GetValue(x + 1, y, z) - g + m_volume->GetValue(x - 1, y, z);
   ly = m_volume->GetValue(x, y + 1, z) - g + m_volume->GetValue(x, y - 1, z);
   lz = m_volume->GetValue(x, y, z + 1) - g + m_volume->GetValue(x, y, z - 1);
-
   l = lx + ly + lz;
-  //l = sqrt(lx*lx + ly*ly + lz*lz);
+
+  assert(m_max_laplacian && m_min_laplacian);
 
   unsigned char v = m_volume->GetValue(x, y, z);
   if (l > m_max_laplacian[v])
@@ -190,8 +383,24 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   return l;
 }
 
-void ATFGenerator::CalculateVolumeDerivatives()
+/// <summary>
+/// Iterates over the volume, calculating the gradient 
+/// and the laplacian values for each voxel.
+/// </summary>
+/// <returns>Returns true if all the memory needed 
+/// was successfully created. Otherwise, it returns false.</returns>
+bool ATFGenerator::CalculateVolumeDerivatives()
 {
+  assert(!m_scalar_gradient && !m_scalar_laplacian);
+
+  m_scalar_gradient = new float[m_width * m_height * m_depth];
+  if (!m_scalar_gradient)
+    return false;
+
+  m_scalar_laplacian = new float[m_width * m_height * m_depth];
+  if (!m_scalar_laplacian)
+    return false;
+
   for (int x = 1; x < m_width - 1; x++)
   {
     for (int y = 1; y < m_height - 1; y++)
@@ -204,6 +413,8 @@ void ATFGenerator::CalculateVolumeDerivatives()
     }
   }
 
+  assert(m_max_gradient && m_max_laplacian && m_min_laplacian);
+
   for (size_t i = 0; i < MAX_V; ++i) {
     if (m_max_gradient[i] == -LONG_MAX)
       m_max_gradient[i] = 0;
@@ -212,42 +423,28 @@ void ATFGenerator::CalculateVolumeDerivatives()
     if (m_min_laplacian[i] == LONG_MAX)
       m_min_laplacian[i] = 0;
   }
+
+  return true;
 }
 
-float* ATFGenerator::GetBoundaryDistancies()
-{
-
-  float* x = new float[MAX_V];
-
-  for (size_t v = 0; v < MAX_V; ++v)
-  {
-    float sigma = Sigma(v);
-    float g_tresh = 0.0f;// m_average_gradient[v] * 0.1f;
-    float g = m_average_gradient[v];
-    float l = m_average_laplacian[v][(unsigned long)g];
-    if (g <= 0.0f)
-    {
-      x[v] = 0.0f;
-      continue;
-    }
-
-    x[v] = -sigma * sigma * (l / fmax(g - g_tresh, 0));
-  }
-
-  return x;
-}
-
+/// <summary>
+/// Generates a 3D histogram which accumulates 
+/// occurrences of value-gradient-laplacian triplets.
+/// The volume derivatives must have been calculated 
+/// before this call.
+/// </summary>
+/// <returns>Returns true if the histogram could be generated. 
+/// False, otherwise.</returns>
 bool ATFGenerator::GenerateHistogram()
 {
-  if (m_scalar_histogram)
-    delete m_scalar_histogram;
-  
+  assert(!m_scalar_histogram && !m_average_laplacian);
+
   // Histogram memory allocation and initialization
   m_scalar_histogram = new unsigned char**[MAX_V];
   m_average_laplacian = new float*[MAX_V];
   if (!m_scalar_histogram || !m_average_laplacian)
   {
-    printf("Insuficient memory to generate histogram!\n");
+    printf("Erro - Nao ha memoria suficiente para gerar o histograma!\n");
     return false;
   }
 
@@ -258,7 +455,7 @@ bool ATFGenerator::GenerateHistogram()
     m_scalar_histogram[i] = new unsigned char*[hg_size];
     m_average_laplacian[i] = new float[hg_size];
     if (!m_scalar_histogram[i] || !m_average_laplacian[i]) {
-      printf("Insuficient memory to generate histogram!\n");
+      printf("Erro - Nao ha memoria suficiente para gerar o histograma!\n");
       return false;
     }
 
@@ -267,7 +464,7 @@ bool ATFGenerator::GenerateHistogram()
       m_average_laplacian[i][j] = -FLT_MAX;
       m_scalar_histogram[i][j] = new unsigned char[hl_size];
       if (!m_scalar_histogram[i][j]) {
-        printf("Insuficient memory to generate histogram!\n");
+        printf("Erro - Nao ha memoria suficiente para gerar o histograma!\n");
         return false;
       }
       for (long k = 0; k < hl_size; ++k)
@@ -321,127 +518,44 @@ bool ATFGenerator::GenerateHistogram()
   return true;
 }
 
-float ATFGenerator::Sigma(unsigned char v)
+/// <summary>
+/// Gets, for each value, the distance to the closest 
+/// boundary associated to it. This information is 
+/// extracted from the summed voxel histogram.
+/// </summary>
+/// <returns>Returns a float array with the distances associated 
+/// to all 256 values, ordered by value.</returns>
+float* ATFGenerator::GetBoundaryDistancies()
+{
+  assert(m_average_gradient && m_average_laplacian);
+
+  float* x = new float[MAX_V];
+
+  for (size_t v = 0; v < MAX_V; ++v)
+  {
+    float sigma = GetSigma(v);
+    float g_tresh = 0.0f;// m_average_gradient[v] * 0.1f;
+    float g = m_average_gradient[v];
+    float l = m_average_laplacian[v][(unsigned long)g];
+    if (g <= 0.0f)
+    {
+      x[v] = 0.0f;
+      continue;
+    }
+
+    x[v] = -sigma * sigma * (l / fmax(g - g_tresh, 0));
+  }
+
+  return x;
+}
+
+/// <summary>
+/// Gets the sigma value of the closest boundary associated the specified value.
+/// </summary>
+/// <param name="v">The intendity value.</param>
+/// <returns>Returns the float sigma value.</returns>
+float ATFGenerator::GetSigma(unsigned char v)
 {
   float sigma = 2 * SQRT_E * ((float)m_max_gradient[v] / (m_max_laplacian[v] - m_min_laplacian[v]));
   return sigma;
-}
-
-void ATFGenerator::GenerateHistogramSlices()
-{
-  for (int i = 0; i < MAX_V; ++i)
-    GenerateHistogramSlice(i);
-}
-
-void ATFGenerator::GenerateHistogramSlice(int v)
-{
-  FILE* fp;
-  char filename[24];
-  sprintf(filename, "Histogram Slice %d.pgm", v);
-  fopen_s(&fp, filename, "wb");
-  fprintf(fp, "P5\n%d %d\n255\n", m_max_laplacian[v] - m_min_laplacian[v] + 1, m_max_gradient[v] + 1);
-
-  for (int j = m_max_gradient[v]; j >= 0; j--)
-  {
-    for (int k = 0; k < m_max_laplacian[v] - m_min_laplacian[v] + 1; k++)
-    {
-      int h;
-      if (m_scalar_histogram[v][j][k] >= 255)
-        h = 255;
-      else
-        h = m_scalar_histogram[v][j][k];
-      
-      fprintf(fp, "%d ", 255 - h);
-    }
-    fprintf(fp, "\n");
-  }
-  fclose(fp);
-}
-
-void ATFGenerator::GenerateValueGradientSummedHistogram()
-{
-  FILE* fp;
-  fopen_s(&fp, "Gradient Summed Histogram.pgm", "wb");
-  fprintf(fp, "P5\n%d %d\n255\n", MAX_V, m_max_global_gradient + 1);
-
-  for (long j = m_max_global_gradient; j >= 0; --j) {
-    for (int i = 0; i < MAX_V; ++i) {
-      unsigned char sum = 0;
-      for (long k = 0; k < m_max_global_laplacian - m_min_global_laplacian + 1; ++k) {
-        if ((int)sum + m_scalar_histogram[i][j][k] >= 255)
-        {
-          sum = 255;
-          break;
-        }
-        else
-          sum += m_scalar_histogram[i][j][k];
-      }
-
-      fprintf(fp, "%d ", 255 - sum);
-    }
-    fprintf(fp, "\n");
-  }
-  fclose(fp);
-}
-
-void ATFGenerator::GenerateValueLaplaceSummedHistogram()
-{
-  FILE* fp;
-  fopen_s(&fp, "Laplacian Summed Histogram.pgm", "wb");
-  fprintf(fp, "P5\n%d %d\n255\n", MAX_V, m_max_global_laplacian - m_min_global_laplacian + 1);
-
-  for (long k = m_max_global_laplacian - m_min_global_laplacian; k >= 0; --k) {
-    for (int i = 0; i < MAX_V; ++i) {
-      unsigned char sum = 0;
-      for (long j = 0; j < m_max_global_gradient; ++j) {
-        if ((int)sum + m_scalar_histogram[i][j][k] >= 255)
-        {
-          sum = 255;
-          break;
-        }
-        else
-          sum += m_scalar_histogram[i][j][k];
-      }
-
-      fprintf(fp, "%d ", 255 - sum);
-    }
-    fprintf(fp, "\n");
-  }
-  fclose(fp);
-}
-
-ITransferFunction* ATFGenerator::GetTransferFunction()
-{
-  std::string filename = m_volume->GetName();
-  std::size_t init = filename.find_last_of("\\") + 1;
-  std::size_t end = filename.find_first_of(".");
-  filename = filename.substr(init, end - init);
-  filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename + ".tf1d";
-
-  TransferFunction* ft = new TransferFunction();
-  ft->SetValueColor(0, 255, 255, 255);
-  ft->SetValueColor(32, 255, 0, 0);
-  ft->SetValueColor(64, 0, 255, 0);
-  ft->SetValueColor(96, 0, 0, 255);
-  ft->SetValueColor(128, 127, 127, 0);
-  ft->SetValueColor(160, 127, 0, 127);
-  ft->SetValueColor(192, 0, 127, 127);
-  ft->SetValueColor(224, 84, 84, 85);
-  ft->SetValueColor(255, 0, 0, 0);
-
-  float* x = GetBoundaryDistancies();
-  unsigned char values[MAX_V];
-  float sigmas[MAX_V];
-
-  for (int i = 0; i < MAX_V; ++i)
-  {
-    values[i] = i;
-    sigmas[i] = Sigma(i);
-  }
-
-  ft->SetClosestBoundaryDistances(values, x, sigmas, MAX_V);
-  ft->Generate(filename.c_str());
-
-  delete x;
-  return ft;
 }

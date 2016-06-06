@@ -1,15 +1,18 @@
+/// TransferFunction.cpp
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #include "TransferFunction.h"
 
 #include <assert.h>
-#include <cstdlib>
 #include <iostream>
 #include <fstream>
 
 /// <summary>
 /// Initializes a new instance of the <see cref="TransferFunction"/> class.
 /// </summary>
-TransferFunction::TransferFunction()
-: m_value(NULL)
+TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, TF_EXT)
+, m_value(NULL)
 , m_distance(NULL)
 , m_sigma(NULL)
 {
@@ -28,18 +31,23 @@ TransferFunction::TransferFunction()
 /// If a file with the same path already exists, it'll
 /// be replaced.
 /// </summary>
-/// <param name="path">The transfer function file's path.</param>
-bool TransferFunction::Generate(const char* path)
+/// <returns>Returns true if the transfer function can
+/// be generated, false otherwise.</returns>
+bool TransferFunction::Generate()
 {
-  if (!m_value || !m_distance || !m_sigma)
-    return false;
+  assert(m_value && m_distance && m_sigma && m_path);
 
   std::ofstream file;
-  file.open(path);
+  file.open(m_path);
+  
+  if (!file.is_open())
+    return false;
 
   file << "linear" << "\n";
   file << "0" << "\n";
   file << m_color_size << "\n";
+
+  // Assign color to transfer function
   for (int i = 0; i < MAX_V; ++i)
   {
     if (m_has_color[i])
@@ -56,37 +64,42 @@ bool TransferFunction::Generate(const char* path)
   }
 
   file << m_values_size << "\n";
-
+  
+  //  boundary center
+  //         .
+  //        / \       |
+  //       / | \      |
+  //      /  |  \     |
+  //     /   |   \    | amax
+  //    /    |    \   |
+  //   /     |     \  |
+  //  /      |      \ |
+  //  ------ 0 ++++++ 
+  // |---------------|
+  //       base
+  
   float amax = 1.0f;
   float base = 0.0f;
 
-  try
+  // Assign opacity to transfer function
+  for (int i = 0; i < m_values_size; ++i)
   {
-    for (int i = 0; i < m_values_size; ++i)
+    base = 15.0f * m_sigma[i];
+    unsigned int value = (unsigned int)m_value[i];
+    float x = m_distance[value];
+    if (x >= -base && x <= base)
     {
-      base = 15 * m_sigma[i];
-      unsigned int value = (unsigned int)m_value[i];
-      float x = m_distance[value];
-      if (x >= -base && x <= base)
-      {
-        float a = 0.0f;
-        if (x >= 0.0)
-          a = -(amax * x) / base;
-        else
-          a = (amax * x) / base;
-
-        a += amax;
-        file << a << "\t" << value << "\n";
-      }
+      float a = 0.0f;
+      if (x >= 0.0)
+        a = -(amax * x) / base;
       else
-        file << 0 << "\t" << value << "\n";
+        a = (amax * x) / base;
+
+      a += amax;
+      file << a << "\t" << value << std::endl;
     }
-  }
-  catch (std::overflow_error e)
-  {
-    printf("A funcao de transferencia nao pode ser gerada\n");
-    file.close();
-    return false;
+    else
+      file << 0 << "\t" << value << std::endl;
   }
 
   file.close();

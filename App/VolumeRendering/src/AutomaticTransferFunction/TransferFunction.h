@@ -1,26 +1,35 @@
+/// TransferFunction.h
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #ifndef TRANSFER_FUNCTION_H
 #define TRANSFER_FUNCTION_H
 
 #include "ITransferFunction.h"
 
 #define MAX_V 256
+#define TF_EXT ".tf1d"
 
 class TransferFunction : public ITransferFunction
 {
 public:
 
   /// <summary>
-  /// Initializes a new instance of the <see cref="TransferFunction"/> class.
+  /// Initializes a new instance of the <see cref="TransferFunction" /> class.
   /// </summary>
-  TransferFunction();
+  /// <param name="path">The full path to the transfer
+  /// function file. Extension isn't needed and it'll be
+  /// considered part of the file's name, if passed.</param>
+  TransferFunction(const char* path);
 
   /// <summary>
   /// Generates a transfer function file at a given path.
   /// If a file with the same path already exists, it'll
   /// be replaced.
   /// </summary>
-  /// <param name="path">The transfer function file's path.</param>
-  bool Generate(const char* path);
+  /// <returns>Returns true if the transfer function can
+  /// be generated, false otherwise.</returns>
+  bool Generate();
 
   /// <summary>
   /// Sets the color associated to the intensity value.
@@ -42,6 +51,12 @@ public:
   /// <param name="sigmas">The sigmas of the boundaries.</param>
   /// <param name="n">The input arrays' size.</param>
   void SetClosestBoundaryDistances(unsigned char* values, float* distances, float* sigmas, int n);
+  
+  /// <summary>
+  /// Gets the file's path.
+  /// </summary>
+  /// <returns>Returns the full path to the file.</returns>
+  char* GetPath();
 
 private:
   /// <summary>

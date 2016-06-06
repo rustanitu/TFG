@@ -1,3 +1,7 @@
+/// ATFInterface.cpp
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #include "ATFInterface.h"
 
 #include <stdio.h>
