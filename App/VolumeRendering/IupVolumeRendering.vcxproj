@@ -278,6 +278,7 @@
     <ClInclude Include="src\ViewMethod\ViewMethod.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="shader\StructuredDataset\AdaptiveEvaluation\coupled.frag" />
     <None Include="shader\StructuredDataset\AdaptiveEvaluation\decoupled.frag" />
     <None Include="shader\StructuredDataset\backface.frag" />
@@ -315,6 +316,9 @@
     <None Include="shader\StructuredDataset\IterativeAdaptiveSimpson\f_decoupled.frag" />
     <None Include="shader\StructuredDataset\raycasting.vert" />
     <None Include="shader\StructuredDataset\RiemannSummation\raycasting.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ClassInteraction.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

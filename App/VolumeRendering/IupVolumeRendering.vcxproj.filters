@@ -517,5 +517,13 @@
     <None Include="shader\StructuredDataset\EquidistantEvaluation\riemann.frag">
       <Filter>Shader Files\StructuredDataset\3. Equidistant Evaluation</Filter>
     </None>
+    <None Include="ClassDiagram.cd">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ClassInteraction.png">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </Image>
   </ItemGroup>
 </Project>
