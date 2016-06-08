@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ATFGenerator">
+    <Position X="4.75" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IgQJgAIgAAABGAAAAgQAAIAAAARgwAIQIIACAgAEAIg=</HashCode>
+      <FileName>src\AutomaticTransferFunction\ATFGenerator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IATFGenerator">
+    <Position X="5.25" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAgABAAQAAAAAAAAAAgCAAAAAAAAAAAA=</HashCode>
+      <FileName>src\AutomaticTransferFunction\IATFGenerator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ITransferFunction">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAACAAAAAAAAAEAAQAA=</HashCode>
+      <FileName>src\AutomaticTransferFunction\ITransferFunction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PGMFile">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAABAIAAAACAAAAAAACjAAAAAACgAAA=</HashCode>
+      <FileName>src\AutomaticTransferFunction\PGMFile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TransferFunction">
+    <Position X="8.25" Y="3" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAACAASAAAAQChAAAAAAAAEgAwAA=</HashCode>
+      <FileName>src\AutomaticTransferFunction\TransferFunction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
