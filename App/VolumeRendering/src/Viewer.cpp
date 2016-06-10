@@ -127,10 +127,19 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     m_volumename = vol->GetName();
     m_volume_file = file;
 
-    if (m_atfg)
-      delete m_atfg;
+    delete m_atfg;
     
+#ifdef ATFG
     m_atfg = new ATFGenerator(m_volume);
+    if (m_atfg->ExtractTransferFunction()) {
+      ITransferFunction* tf = m_atfg->GetTransferFunction();
+      if (tf->Generate()) {
+        char* tf_file = tf->GetPath();
+        vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+        SetTransferFunction(tfr, tf_file);
+      }
+    }
+#endif
   }
 }
 
@@ -341,20 +350,6 @@ bool Viewer::FileDlg_VolumeModel ()
     if (v)
     {
       Viewer::Instance ()->SetVolumeModel (v, file);
-
-#ifdef ATFG
-      if (m_atfg->ExtractTransferFunction())
-      {
-        ITransferFunction* tf = m_atfg->GetTransferFunction();
-        if (tf->Generate())
-        {
-          char* tf_file = tf->GetPath();
-          vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-          SetTransferFunction(tfr, tf_file);
-        }
-      }
-#endif
-
       ret = true;
     }
   }

@@ -31,23 +31,11 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_min_global_laplacian(LONG_MAX)
 , m_max_global_laplacian(-LONG_MAX)
 {
-  m_scalar_gradient = NULL;
-  m_scalar_gradient = new float[m_width*m_height*m_depth];
-
-  m_scalar_laplacian = NULL;
-  m_scalar_laplacian = new float[m_width*m_height*m_depth];
-
   for (size_t i = 0; i < MAX_V; ++i)
   {
     m_max_gradient[i] = -LONG_MAX;
     m_min_laplacian[i] = LONG_MAX;
     m_max_laplacian[i] = -LONG_MAX;
-  }
-
-  for (unsigned int i = 0; i < m_width*m_height*m_depth; i++)
-  {
-    m_scalar_gradient[i] = 0.0f;
-    m_scalar_laplacian[i] = 0.0f;
   }
 }
 
@@ -57,31 +45,21 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 /// </summary>
 ATFGenerator::~ATFGenerator()
 {
-  if (m_scalar_gradient)
+  delete [] m_scalar_gradient;
+  delete [] m_scalar_laplacian;
+
+  for (int i = 0; i < MAX_V; ++i)
   {
-    delete m_scalar_gradient;
-    m_scalar_gradient = NULL;
+    delete [] m_average_laplacian[i];
+
+    for (long j = 0; j < m_max_global_gradient + 1; ++j)
+      delete [] m_scalar_histogram[i][j];
+    
+    delete[] m_scalar_histogram[i];
   }
 
-  if (m_scalar_laplacian)
-  {
-    delete m_scalar_laplacian;
-    m_scalar_laplacian = NULL;
-  }
-
-  if (m_average_laplacian)
-  {
-    delete m_average_laplacian;
-    m_average_laplacian = NULL;
-  }
-
-  if (m_scalar_histogram)
-  {
-    delete m_scalar_histogram;
-    m_scalar_histogram = NULL;
-  }
-
-  m_volume = NULL;
+  delete [] m_average_laplacian;
+  delete [] m_scalar_histogram;
 }
 
 /// <summary>
@@ -92,8 +70,33 @@ ATFGenerator::~ATFGenerator()
 /// generated. False, otherwise.</returns>
 bool ATFGenerator::ExtractTransferFunction()
 {
-  assert(!m_transfer_function);
+  unsigned int size = m_width * m_height * m_depth;
+  if (size < (unsigned long)m_width * m_height * m_depth) {
+    printf("Erro - O volume e grande demais para ser processado!\n");
+    return false;
+  }
 
+  if (size == 0)
+  {
+    printf("Erro - O volume nao possui uma dimensao valida!\n");
+    return false;
+  }
+
+  m_scalar_gradient = new float[size];
+  m_scalar_laplacian = new float[size];
+
+  if (!m_scalar_gradient || !m_scalar_laplacian) {
+    printf("Erro - Nao ha memoria suficiente para processar o volume!\n");
+    return false;
+  }
+
+  for (unsigned int i = 0; i < size; i++) {
+    m_scalar_gradient[i] = 0.0f;
+    m_scalar_laplacian[i] = 0.0f;
+  }
+
+  assert(!m_transfer_function);
+  
   if (!CalculateVolumeDerivatives())
     return false;
   
@@ -120,6 +123,12 @@ bool ATFGenerator::ExtractTransferFunction()
   float* x = GetBoundaryDistancies();
   unsigned char* values = new unsigned char[MAX_V];
   float* sigmas = new float[MAX_V];
+  
+  if (!x || !values || !sigmas)
+  {
+    printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+    return false;
+  }
 
   for (int i = 0; i < MAX_V; ++i)
   {
@@ -190,7 +199,7 @@ void ATFGenerator::GenerateHistogramSlice(int v)
     printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
     return;
   }
-  delete filename;
+  delete [] filename;
 
   assert(m_scalar_histogram);
 
@@ -448,8 +457,8 @@ bool ATFGenerator::GenerateHistogram()
     return false;
   }
 
-  unsigned int hl_size = m_max_global_laplacian - m_min_global_laplacian + 1;
-  unsigned int hg_size = m_max_global_gradient + 1;
+  unsigned long hl_size = (unsigned long)m_max_global_laplacian - m_min_global_laplacian + 1;
+  unsigned long hg_size = m_max_global_gradient + 1;
   for (int i = 0; i < MAX_V; ++i)
   {
     m_scalar_histogram[i] = new unsigned char*[hg_size];
@@ -459,7 +468,7 @@ bool ATFGenerator::GenerateHistogram()
       return false;
     }
 
-    for (long j = 0; j < hg_size; ++j)
+    for (unsigned long j = 0; j < hg_size; ++j)
     {
       m_average_laplacian[i][j] = -FLT_MAX;
       m_scalar_histogram[i][j] = new unsigned char[hl_size];
@@ -467,7 +476,7 @@ bool ATFGenerator::GenerateHistogram()
         printf("Erro - Nao ha memoria suficiente para gerar o histograma!\n");
         return false;
       }
-      for (long k = 0; k < hl_size; ++k)
+      for (unsigned long k = 0; k < hl_size; ++k)
         m_scalar_histogram[i][j][k] = 0;
     }
   }
@@ -495,11 +504,11 @@ bool ATFGenerator::GenerateHistogram()
   {
     float wg = 0.0f;
     float g = 0.0f;
-    for (long j = 0; j < m_max_global_gradient + 1; ++j)
+    for (unsigned long j = 0; j < m_max_global_gradient + 1; ++j)
     {
       float wl = 0.0f;
       float l = 0.0f;
-      for (long k = 0; k < m_max_global_laplacian - m_min_global_laplacian + 1; ++k)
+      for (unsigned long k = 0; k < m_max_global_laplacian - m_min_global_laplacian + 1; ++k)
       {
         float w = m_scalar_histogram[i][j][k] / 255.0f;
         wl += w;
@@ -530,8 +539,10 @@ float* ATFGenerator::GetBoundaryDistancies()
   assert(m_average_gradient && m_average_laplacian);
 
   float* x = new float[MAX_V];
+  if (!x)
+    return NULL;
 
-  for (size_t v = 0; v < MAX_V; ++v)
+  for (int v = 0; v < MAX_V; ++v)
   {
     float sigma = GetSigma(v);
     float g_tresh = 0.0f;// m_average_gradient[v] * 0.1f;
