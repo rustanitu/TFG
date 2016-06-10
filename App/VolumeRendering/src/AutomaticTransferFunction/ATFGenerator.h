@@ -44,11 +44,6 @@ public:
   ~ATFGenerator();
 
 public:
-  /// <summary>Prepare this instance creating the
-  /// necessary memory.</summary>
-  /// <returns>Returns true if all the memory needed 
-  /// was successfully created. Otherwise, it returns false.</returns>
-  bool Init();
   /// <summary>
   /// Extract a transfer function from the volume, based in 
   /// Kindlmann's paper. This function needs to be called

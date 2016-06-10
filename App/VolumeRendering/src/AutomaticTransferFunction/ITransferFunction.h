@@ -25,10 +25,11 @@ public:
   ITransferFunction(const char* path, const char* ext)
   {
     int path_len = strlen(path);
-    int length = path_len + strlen(ext);
+    int ext_len = strlen(ext);
+    int length = path_len + ext_len;
     m_path = new char[length + 1];
-    m_path = strcpy(m_path, path);
-    strcpy(m_path + path_len, ext);
+    m_path = (char*)memcpy(m_path, path, path_len);
+    memcpy(m_path + path_len, ext, ext_len);
     m_path[length] = '\0';
   }
   /// <summary>

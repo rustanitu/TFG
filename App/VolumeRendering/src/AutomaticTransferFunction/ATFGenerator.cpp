@@ -70,33 +70,8 @@ ATFGenerator::~ATFGenerator()
 /// generated. False, otherwise.</returns>
 bool ATFGenerator::ExtractTransferFunction()
 {
-  unsigned int size = m_width * m_height * m_depth;
-  if (size < (unsigned long)m_width * m_height * m_depth) {
-    printf("Erro - O volume e grande demais para ser processado!\n");
-    return false;
-  }
-
-  if (size == 0)
-  {
-    printf("Erro - O volume nao possui uma dimensao valida!\n");
-    return false;
-  }
-
-  m_scalar_gradient = new float[size];
-  m_scalar_laplacian = new float[size];
-
-  if (!m_scalar_gradient || !m_scalar_laplacian) {
-    printf("Erro - Nao ha memoria suficiente para processar o volume!\n");
-    return false;
-  }
-
-  for (unsigned int i = 0; i < size; i++) {
-    m_scalar_gradient[i] = 0.0f;
-    m_scalar_laplacian[i] = 0.0f;
-  }
-
   assert(!m_transfer_function);
-  
+
   if (!CalculateVolumeDerivatives())
     return false;
   
@@ -402,22 +377,44 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 {
   assert(!m_scalar_gradient && !m_scalar_laplacian);
 
-  m_scalar_gradient = new float[m_width * m_height * m_depth];
-  if (!m_scalar_gradient)
+  unsigned int size = m_width * m_height * m_depth;
+  if (size < (unsigned long)m_width * m_height * m_depth) {
+    printf("Erro - O volume e grande demais para ser processado!\n");
     return false;
+  }
 
-  m_scalar_laplacian = new float[m_width * m_height * m_depth];
-  if (!m_scalar_laplacian)
+  if (size == 0) {
+    printf("Erro - O volume nao possui uma dimensao valida!\n");
     return false;
+  }
 
-  for (int x = 1; x < m_width - 1; x++)
+  m_scalar_gradient = new float[size];
+  m_scalar_laplacian = new float[size];
+
+  if (!m_scalar_gradient || !m_scalar_laplacian) {
+    printf("Erro - Nao ha memoria suficiente para processar o volume!\n");
+    return false;
+  }
+
+  for (int x = 0; x < m_width; x++)
   {
-    for (int y = 1; y < m_height - 1; y++)
+    bool x_border = (x == 0) | (x == (m_width - 1));
+    for (int y = 0; y < m_height; y++)
     {
-      for (int z = 1; z < m_depth - 1; z++)
+      bool y_border = (y == 0) | (y == (m_height - 1));
+      for (int z = 0; z < m_depth; z++)
       {
-        m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)] = CalculateGradient(x, y, z);
-        m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)] = CalculateLaplacian(x, y, z);
+        bool z_border = (z == 0) | (z == (m_depth - 1));
+        if (x_border || y_border || z_border)
+        {
+          m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)] = 0;
+          m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)] = 0;
+        }
+        else
+        {
+          m_scalar_gradient[x + (y * m_width) + (z * m_width * m_height)] = CalculateGradient(x, y, z);
+          m_scalar_laplacian[x + (y * m_width) + (z * m_width * m_height)] = CalculateLaplacian(x, y, z);
+        }
       }
     }
   }
