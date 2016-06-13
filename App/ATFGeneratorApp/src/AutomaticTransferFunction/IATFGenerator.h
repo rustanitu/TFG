@@ -23,7 +23,9 @@ public:
   /// <param name="volume">The volume whose tranfer function will be constructed.</param>
   IATFGenerator(vr::Volume* volume)
   {
-    assert(volume);
+    if (!volume)
+      throw std::exception_ptr();
+
     m_volume = volume;
     m_width = volume->GetWidth();
     m_height = volume->GetHeight();

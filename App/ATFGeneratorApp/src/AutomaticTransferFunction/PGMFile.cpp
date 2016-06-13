@@ -3,8 +3,8 @@
 /// rustam@tecgraf.puc-rio.br
 
 #include "PGMFile.h"
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 
 /// <summary>
 /// Initializes a new instance of the <see cref="PGMFile"/> class.
@@ -15,6 +15,9 @@
 /// <param name="height">The image height.</param>
 PGMFile::PGMFile(const char* path, unsigned int width, unsigned int height)
 {
+  if (!path)
+    throw std::exception_ptr();
+
   int path_len = strlen(path);
   int length = path_len + strlen(PGM_EXT);
   m_path = new char[length + 1];
@@ -50,7 +53,8 @@ PGMFile::~PGMFile()
 /// Otherwise it returns false.</returns>
 bool PGMFile::Open()
 {
-  assert(!m_file);
+  if (m_file)
+    throw std::domain_error("The file is already opened!");
 
   int error = fopen_s(&m_file, m_path, "wb");
   if (error)

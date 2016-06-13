@@ -83,8 +83,9 @@ public:
   /// it's named "Histogram Slice v", where 'v' is the 
   /// value input.
   /// </summary>
-  /// <param name="v">The value whose slice it's desired.</param>
-  void GenerateHistogramSlice(int v);
+  /// <param name="v">The value whose slice it's desired.
+  /// The value must range from 0 to 255</param>
+  void GenerateHistogramSlice(unsigned int v);
   /// <summary>
   /// Generates the all the 256 histogram slices, trhought
   /// calls to void GenerateHistogramSlice(int v).
@@ -211,6 +212,11 @@ private:
   /// The transfer function generated automatically.
   /// </summary>
   TransferFunction* m_transfer_function;
+  /// <summary>
+  /// Inidicates if the instance has already been
+  /// initialized.
+  /// </summary>
+  bool m_initialized;
 };
 
 #endif

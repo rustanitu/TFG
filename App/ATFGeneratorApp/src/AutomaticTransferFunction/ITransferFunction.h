@@ -5,6 +5,7 @@
 #ifndef I_TRANSFER_FUNCTION_H
 #define I_TRANSFER_FUNCTION_H
 
+#include <stdexcept>
 #include <string.h>
 
 /// <summary>
@@ -24,6 +25,9 @@ public:
   /// <param name="ext">The file extension.</param>
   ITransferFunction(const char* path, const char* ext)
   {
+    if (!path)
+      throw std::exception_ptr();
+
     int path_len = strlen(path);
     int ext_len = strlen(ext);
     int length = path_len + ext_len;

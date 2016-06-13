@@ -35,7 +35,8 @@ TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, T
 /// be generated, false otherwise.</returns>
 bool TransferFunction::Generate()
 {
-  assert(m_value && m_distance && m_sigma && m_path);
+  if (!m_value || !m_distance || !m_sigma && !m_path)
+    throw std::exception_ptr();
 
   std::ofstream file;
   file.open(m_path);
@@ -45,6 +46,10 @@ bool TransferFunction::Generate()
 
   file << "linear" << "\n";
   file << "0" << "\n";
+
+  if (!m_color_size)
+    throw std::domain_error("At least one color must be set!");
+
   file << m_color_size << "\n";
 
   // Assign color to transfer function
@@ -134,8 +139,8 @@ void TransferFunction::SetValueColor(unsigned char value, unsigned char red, uns
 /// <param name="n">The input arrays' size.</param>
 void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, float* sigmas, int n)
 {
-  // At least 2 values are needed to interpolate the transfer funciton.
-  assert(n >= 2 && n <= MAX_V);
+  if (n < 2 || n > MAX_V)
+    throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");
 
   m_values_size = n;
 

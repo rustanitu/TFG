@@ -30,6 +30,7 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_max_global_gradient(-LONG_MAX)
 , m_min_global_laplacian(LONG_MAX)
 , m_max_global_laplacian(-LONG_MAX)
+, m_initialized(false)
 {
   for (size_t i = 0; i < MAX_V; ++i)
   {
@@ -73,12 +74,16 @@ ATFGenerator::~ATFGenerator()
 /// initialized and false otherwise.</returns>
 bool ATFGenerator::Init()
 {
+  if (m_initialized)
+    return true;
+
   if (!CalculateVolumeDerivatives())
     return false;
 
   if (!GenerateHistogram())
     return false;
 
+  m_initialized = true;
   return true;
 }
 
@@ -90,7 +95,8 @@ bool ATFGenerator::Init()
 /// generated. False, otherwise.</returns>
 bool ATFGenerator::ExtractTransferFunction()
 {
-  assert(!m_transfer_function);
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
   
   std::string filename = m_volume->GetName();
   std::size_t init = filename.find_last_of("\\") + 1;
@@ -98,6 +104,7 @@ bool ATFGenerator::ExtractTransferFunction()
   filename = filename.substr(init, end - init);
   filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename;
 
+  delete m_transfer_function;
   m_transfer_function = new TransferFunction(filename.c_str());
   m_transfer_function->SetValueColor(0, 255, 255, 255);
   m_transfer_function->SetValueColor(32, 255, 0, 0);
@@ -139,6 +146,9 @@ bool ATFGenerator::ExtractTransferFunction()
 /// <returns>Returns the float aproximated gradient.</returns>
 float ATFGenerator::GetGradient(int x, int y, int z)
 {
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+
   assert(m_scalar_gradient);
 
   x = lqc::Clamp(x, 0, m_width - 1);
@@ -158,6 +168,9 @@ float ATFGenerator::GetGradient(int x, int y, int z)
 /// <returns>Returns the float aproximated laplacian.</returns>
 float ATFGenerator::GetLaplacian(int x, int y, int z)
 {
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+
   assert(m_scalar_laplacian);
 
   x = lqc::Clamp(x, 0, m_width - 1);
@@ -173,10 +186,15 @@ float ATFGenerator::GetLaplacian(int x, int y, int z)
 /// it's named "Histogram Slice v", where 'v' is the 
 /// value input.
 /// </summary>
-/// <param name="v">The value whose slice it's desired.</param>
-void ATFGenerator::GenerateHistogramSlice(int v)
+/// <param name="v">The value whose slice it's desired.
+/// The value must range from 0 to 255</param>
+void ATFGenerator::GenerateHistogramSlice(unsigned int v)
 {
-  assert(m_max_laplacian && m_min_laplacian && m_max_gradient);
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+
+  if (v >= MAX_V)
+    throw std::domain_error("The value must range from 0 to 255!\n");
 
   char* filename = new char[19];
   sprintf(filename, "Histogram Slice %d", v);
@@ -228,14 +246,14 @@ void ATFGenerator::GenerateHistogramSlices()
 /// </summary>
 void ATFGenerator::GenerateGradientSummedHistogram()
 {
-  assert(m_scalar_histogram);
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
   PGMFile pgmfile("Gradient Summed Histogram", MAX_V, m_max_global_gradient + 1);
   if (!pgmfile.Open())
-  {
-    printf("Erro - O Histograma 'Gradient Summed Histogram' nao pode ser gerado!\n");
-    return;
-  }
+    throw std::runtime_error("PGM file could not be created!");
+
+  assert(m_scalar_histogram);
 
   for (long j = m_max_global_gradient; j >= 0; --j)
   {
@@ -269,14 +287,14 @@ void ATFGenerator::GenerateGradientSummedHistogram()
 /// </summary>
 void ATFGenerator::GenerateLaplacianSummedHistogram()
 {
-  assert(m_scalar_histogram);
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
   PGMFile pgmfile("Laplacian Summed Histogram", MAX_V, m_max_global_laplacian - m_min_global_laplacian + 1);
   if (!pgmfile.Open())
-  {
-    printf("Erro - O Histograma 'Laplacian Summed Histogram' nao pode ser gerado!\n");
-    return;
-  }
+    throw std::runtime_error("PGM file could not be created!");
+
+  assert(m_scalar_histogram);
 
   for (long k = m_max_global_laplacian - m_min_global_laplacian; k >= 0; --k)
   {
@@ -320,7 +338,8 @@ ITransferFunction* ATFGenerator::GetTransferFunction()
 /// <returns>Returns the float aproximated gradient.</returns>
 float ATFGenerator::CalculateGradient(int x, int y, int z)
 {
-  assert(m_volume);
+  if (!m_volume)
+    throw std::exception_ptr();
 
   int s = 0;
   float g = 0.0f;
@@ -332,8 +351,6 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   gy = 0.5f * (m_volume->GetValue(x, y + 1, z) - m_volume->GetValue(x, y - 1, z));
   gz = 0.5f * (m_volume->GetValue(x, y, z + 1) - m_volume->GetValue(x, y, z - 1));
   g = sqrt(gx*gx + gy*gy + gz*gz);
-
-  assert(m_volume && m_max_gradient);
 
   unsigned char v = m_volume->GetValue(x, y, z);
   g = fmax(0.0f, g);
@@ -355,7 +372,8 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
 /// <returns>Returns the float aproximated laplacian.</returns>
 float ATFGenerator::CalculateLaplacian(int x, int y, int z)
 {
-  assert(m_volume);
+  if (!m_volume)
+    throw std::exception_ptr();
 
   int s = 0;
   float l = 0.0f;
@@ -368,8 +386,6 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   ly = m_volume->GetValue(x, y + 1, z) - g + m_volume->GetValue(x, y - 1, z);
   lz = m_volume->GetValue(x, y, z + 1) - g + m_volume->GetValue(x, y, z - 1);
   l = lx + ly + lz;
-
-  assert(m_max_laplacian && m_min_laplacian);
 
   unsigned char v = m_volume->GetValue(x, y, z);
   if (l > m_max_laplacian[v])
@@ -397,13 +413,11 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 
   unsigned int size = m_width * m_height * m_depth;
   if (size < (unsigned long)m_width * m_height * m_depth) {
-    printf("Erro - O volume e grande demais para ser processado!\n");
-    return false;
+    throw std::out_of_range("The volume dimensions are too big!\n");
   }
 
   if (size == 0) {
-    printf("Erro - O volume nao possui uma dimensao valida!\n");
-    return false;
+    throw std::out_of_range("The volume dimensions are not valid!\n");
   }
 
   m_scalar_gradient = new float[size];

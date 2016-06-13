@@ -130,15 +130,27 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     delete m_atfg;
     
 #ifdef ATFG
-    m_atfg = new ATFGenerator(m_volume);
-    if (m_atfg->Init() && m_atfg->ExtractTransferFunction())
+    try
     {
-      ITransferFunction* tf = m_atfg->GetTransferFunction();
-      if (tf->Generate()) {
-        char* tf_file = tf->GetPath();
-        vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-        SetTransferFunction(tfr, tf_file);
+      m_atfg = new ATFGenerator(m_volume);
+      if (m_atfg->Init() && m_atfg->ExtractTransferFunction())
+      {
+        ITransferFunction* tf = m_atfg->GetTransferFunction();
+        if (tf->Generate())
+        {
+          char* tf_file = tf->GetPath();
+          vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+          SetTransferFunction(tfr, tf_file);
+        }
       }
+    }
+    catch (const std::out_of_range& e)
+    {
+      printf("\nEste volume nao pode ser processado, devido a suas dimensoes!\n\n");
+    }
+    catch (const std::exception&)
+    {
+      printf("\nOcorreu um erro inesperado!\n\n");
     }
 #endif
   }

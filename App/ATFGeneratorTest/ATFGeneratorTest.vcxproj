@@ -87,7 +87,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MainTest.cpp" />
+    <ClCompile Include="GeneratorTest.cpp" />
+    <ClCompile Include="PGMFileTest.cpp" />
+    <ClCompile Include="TransferFunctionTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
