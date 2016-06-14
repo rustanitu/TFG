@@ -520,5 +520,8 @@
     <None Include="ClassDiagram.cd">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </None>
+    <None Include="IncludeFileDependencies.dgml">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </None>
   </ItemGroup>
 </Project>
