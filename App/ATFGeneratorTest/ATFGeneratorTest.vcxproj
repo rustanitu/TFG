@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\GeneratorTest.cpp" />
+    <ClCompile Include="src\PGMFileTest.cpp" />
+    <ClCompile Include="src\TransferFunctionTest.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5D1C26F1-0270-4B26-9B85-EF947C255BA3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -90,11 +95,6 @@
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="GeneratorTest.cpp" />
-    <ClCompile Include="PGMFileTest.cpp" />
-    <ClCompile Include="TransferFunctionTest.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

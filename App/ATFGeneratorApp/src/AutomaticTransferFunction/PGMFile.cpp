@@ -14,6 +14,9 @@
 /// <param name="width">The image width.</param>
 /// <param name="height">The image height.</param>
 PGMFile::PGMFile(const char* path, unsigned int width, unsigned int height)
+: m_width(width)
+, m_height(height)
+, m_file(NULL)
 {
   if (!path)
     throw std::exception_ptr();
@@ -24,10 +27,6 @@ PGMFile::PGMFile(const char* path, unsigned int width, unsigned int height)
   m_path = strcpy(m_path, path);
   strcpy(m_path + path_len, PGM_EXT);
   m_path[length] = '\0';
-
-  m_width = width;
-  m_height = height;
-  m_file = NULL;
 }
 
 
@@ -80,7 +79,7 @@ bool PGMFile::Open()
 /// before.
 /// </summary>
 /// <param name="byte">The byte.</param>
-void PGMFile::WriteByte(unsigned char byte)
+void PGMFile::WriteByte(unsigned int byte)
 {
   fprintf_s(m_file, "%d ", byte);
 }

@@ -44,14 +44,17 @@ protected:
   /// The width of the volume.
   /// </summary>
   unsigned int m_width;
+
   /// <summary>
   /// The height of the volume.
   /// </summary>
   unsigned int m_height;
+
   /// <summary>
   /// The depth of the volume.
   /// </summary>
   unsigned int m_depth;
+
   /// <summary>
   /// A reference to the volume.
   /// </summary>

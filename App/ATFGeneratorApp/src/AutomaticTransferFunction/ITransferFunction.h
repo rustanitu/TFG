@@ -8,6 +8,9 @@
 #include <stdexcept>
 #include <string.h>
 
+#define MAX_V 256
+#define TF_EXT ".tf1d"
+
 /// <summary>
 /// This interface encapsulates the Transfer Function
 /// baic concept to this project, which is to be able
@@ -36,6 +39,7 @@ public:
     memcpy(m_path + path_len, ext, ext_len);
     m_path[length] = '\0';
   }
+  
   /// <summary>
   /// The implementation of this function must generate a
   /// transfer function at the given path.
@@ -50,6 +54,23 @@ public:
   /// associated to a value V.
   /// </summary>
   virtual bool Generate() = 0;
+  
+  /// <summary>
+  /// Sets the color associated to the intensity value.
+  /// </summary>
+  /// <param name="value">The intensity voxel value.</param>
+  /// <param name="red">The red color component.</param>
+  /// <param name="green">The green color component.</param>
+  /// <param name="blue">The blue color component.</param>
+  void SetValueColor(unsigned char value, unsigned char red, unsigned char green, unsigned char blue)
+  {
+    m_color_size++;
+    m_has_color[value] = true;
+    m_color[(value * 3)] = red;
+    m_color[(value * 3) + 1] = green;
+    m_color[(value * 3) + 2] = blue;
+  }
+  
   /// <summary>Gets the path.</summary>
   /// <returns>Returns the complete file path to the
   /// transfer function file.</returns>
@@ -63,6 +84,28 @@ protected:
   /// The transfer function file path.
   /// </summary>
   char* m_path;
+  
+  /// <summary>
+  /// The number of color-value associations.
+  /// </summary>
+  int m_color_size;
+
+  /// <summary>
+  /// The number of intensity values whose distance to
+  /// closest boundary was given.
+  /// </summary>
+  int m_values_size;
+
+  /// <summary>
+  /// It storages if a color was setted by SetValueColor
+  /// for each intensity value.
+  /// </summary>
+  bool m_has_color[MAX_V];
+
+  /// <summary>
+  /// It storages the color values setted by SetValueColor.
+  /// </summary>
+  unsigned char m_color[3 * MAX_V];
 };
 
 #endif

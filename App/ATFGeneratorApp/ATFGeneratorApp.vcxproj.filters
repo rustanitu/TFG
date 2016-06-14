@@ -521,9 +521,4 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="ClassInteraction.png">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </Image>
-  </ItemGroup>
 </Project>

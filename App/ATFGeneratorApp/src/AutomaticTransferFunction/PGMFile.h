@@ -8,7 +8,7 @@
 #include <fstream>
 
 #define PGM_EXT ".pgm"
-#define PGM_CODE "P5"
+#define PGM_CODE "P2"
 
 /// <summary>
 /// This class implements an imagne file writer in a pgm
@@ -40,23 +40,27 @@ public:
   /// <returns>Returns true if the file was successfully openned.
   /// Otherwise it returns false.</returns>
   bool Open();
+
   /// <summary>
   /// Writes a byte to the image. The file must be openned
   /// before.
   /// </summary>
   /// <param name="byte">The byte.</param>
-  void WriteByte(unsigned char byte);
+  void WriteByte(unsigned int byte);
+
   /// <summary>
   /// Writes a byte sequence to the image. The file must be
   /// openned before.
   /// </summary>
   /// <param name="byte">The byte.</param>
   void WriteByte(const char* byte);
+
   /// <summary>
   /// Writes a end line to the image. The file must be openned
   /// before.
   /// </summary>
   void WriteEndLine();
+
   /// <summary>
   /// Closes the image file.
   /// </summary>
@@ -67,14 +71,17 @@ private:
   /// The file path.
   /// </summary>
   char* m_path;
+
   /// <summary>
   /// The image width.
   /// </summary>
   unsigned int m_width;
+
   /// <summary>
   /// The image height.
   /// </summary>
   unsigned int m_height;
+
   /// <summary>
   /// Reference to the file.
   /// </summary>

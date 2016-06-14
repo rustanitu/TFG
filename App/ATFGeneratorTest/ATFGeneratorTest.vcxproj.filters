@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GeneratorTest.cpp">
+    <ClCompile Include="src\GeneratorTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransferFunctionTest.cpp">
+    <ClCompile Include="src\PGMFileTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PGMFileTest.cpp">
+    <ClCompile Include="src\TransferFunctionTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -37,6 +37,7 @@ public:
   /// <param name="volume">The volume whose transfer 
   /// function one wants to extract.</param>
   ATFGenerator(vr::Volume* volume);
+
   /// <summary>
   /// Finalizes an instance of the 
   /// <see cref="ATFGenerator"/> class.
@@ -51,6 +52,7 @@ public:
   /// <returns>Returns true if the instance was correctly
   /// initialized and false otherwise.</returns>
   bool Init();
+
   /// <summary>
   /// Extract a transfer function from the volume, based in 
   /// Kindlmann's paper. This function needs to be called
@@ -59,6 +61,7 @@ public:
   /// <returns>Returns true if the transfer function can be
   /// generated. False, otherwise.</returns>
   bool ExtractTransferFunction();
+
   /// <summary>
   /// Gets an aproximation of the voxel's gradient, using 
   /// its first derivatives.
@@ -68,6 +71,7 @@ public:
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
   float GetGradient(int x, int y, int z);
+
   /// <summary>
   /// Gets an aproximation of the voxel's laplacian, using 
   /// its second derivatives.
@@ -77,6 +81,7 @@ public:
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated laplacian.</returns>
   float GetLaplacian(int x, int y, int z);
+
   /// <summary>
   /// Generates a PGM image file with a histogram slice.
   /// The image is generated in the working directory and 
@@ -86,11 +91,13 @@ public:
   /// <param name="v">The value whose slice it's desired.
   /// The value must range from 0 to 255</param>
   void GenerateHistogramSlice(unsigned int v);
+
   /// <summary>
   /// Generates the all the 256 histogram slices, trhought
   /// calls to void GenerateHistogramSlice(int v).
   /// </summary>
   void GenerateHistogramSlices();
+
   /// <summary>
   /// Acumulates the gradient values of the 3D histogram, 
   /// generating a 2D hitogram of laplacian values per 
@@ -99,6 +106,7 @@ public:
   /// named "Gradient Summed Histogram".
   /// </summary>
   void GenerateGradientSummedHistogram();
+
   /// <summary>
   /// Acumulates the laplacian values of the 3D histogram, 
   /// generating a 2D hitogram of gradient values per 
@@ -107,6 +115,7 @@ public:
   /// named "Laplacian Summed Histogram".
   /// </summary>
   void GenerateLaplacianSummedHistogram();
+
   /// <summary>
   /// Gets the transfer function.
   /// </summary>
@@ -123,6 +132,7 @@ private:
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
   float CalculateGradient(int x, int y, int z);
+
   /// <summary>
   /// Calculates an aproximation of the voxel's laplacian, 
   /// using its second derivatives.
@@ -132,6 +142,7 @@ private:
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated laplacian.</returns>
   float CalculateLaplacian(int x, int y, int z);
+
   /// <summary>
   /// Iterates over the volume, calculating the gradient 
   /// and the laplacian values for each voxel.
@@ -139,6 +150,7 @@ private:
   /// <returns>Returns true if all the memory needed 
   /// was successfully created. Otherwise, it returns false.</returns>
   bool CalculateVolumeDerivatives();
+
   /// <summary>
   /// Generates a 3D histogram which accumulates 
   /// occurrences of value-gradient-laplacian triplets.
@@ -148,6 +160,7 @@ private:
   /// <returns>Returns true if the histogram could be generated. 
   /// False, otherwise.</returns>
   bool GenerateHistogram();
+
   /// <summary>
   /// Gets, for each value, the distance to the closest 
   /// boundary associated to it. This information is 
@@ -156,6 +169,7 @@ private:
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
   float* GetBoundaryDistancies();
+
   /// <summary>
   /// Gets the sigma value of the closest boundary associated the specified value.
   /// </summary>
@@ -168,50 +182,62 @@ private:
   /// An array that storages the maximum gradient value for every intensity value.
   /// </summary>
   long m_max_gradient[256];
+
   /// <summary>
   /// An array that storages the maximum laplacian value for every intensity value.
   /// </summary>
   long m_max_laplacian[256];
+
   /// <summary>
   /// An array that storages the minimum laplacian value for every intensity value.
   /// </summary>
   long m_min_laplacian[256];
+
   /// <summary>
   /// The global maximum gradient value.
   /// </summary>
   long m_max_global_gradient;
+
   /// <summary>
   /// The global maximum laplacian value.
   /// </summary>
   long m_max_global_laplacian;
+
   /// <summary>
   /// The global minimum laplacian value.
   /// </summary>
   long m_min_global_laplacian;
+
   /// <summary>
   /// The gradient of each volume voxel.
   /// </summary>
   float* m_scalar_gradient;
+
   /// <summary>
   /// The laplacian of each volume voxel.
   /// </summary>
   float* m_scalar_laplacian;
+
   /// <summary>
   /// The average gradient of each intensity value.
   /// </summary>
   float m_average_gradient[256];
+
   /// <summary>
   /// The average laplacian of each intensity value.
   /// </summary>
   float** m_average_laplacian;
+
   /// <summary>
   /// Histogram of occurences for each triple value x gradient x laplacian.
   /// </summary>
   unsigned char*** m_scalar_histogram;
+
   /// <summary>
   /// The transfer function generated automatically.
   /// </summary>
   TransferFunction* m_transfer_function;
+
   /// <summary>
   /// Inidicates if the instance has already been
   /// initialized.

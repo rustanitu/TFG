@@ -112,22 +112,6 @@ bool TransferFunction::Generate()
 }
 
 /// <summary>
-/// Sets the color associated to the intensity value.
-/// </summary>
-/// <param name="value">The intensity voxel value.</param>
-/// <param name="red">The red color component.</param>
-/// <param name="green">The green color component.</param>
-/// <param name="blue">The blue color component.</param>
-void TransferFunction::SetValueColor(unsigned char value, unsigned char red, unsigned char green, unsigned char blue)
-{
-  m_color_size++;
-  m_has_color[value] = true;
-  m_color[(value*3)] = red;
-  m_color[(value*3) + 1] = green;
-  m_color[(value*3) + 2] = blue;
-}
-
-/// <summary>
 /// Specifies the distance between a intensity value
 /// and its closest boundary. Thus, the input arrays'
 /// size must range from 2 to 256. Any array content

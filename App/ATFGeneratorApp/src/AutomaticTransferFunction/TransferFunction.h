@@ -7,9 +7,6 @@
 
 #include "ITransferFunction.h"
 
-#define MAX_V 256
-#define TF_EXT ".tf1d"
-
 class TransferFunction : public ITransferFunction
 {
 public:
@@ -32,15 +29,6 @@ public:
   bool Generate();
 
   /// <summary>
-  /// Sets the color associated to the intensity value.
-  /// </summary>
-  /// <param name="value">The intensity voxel value.</param>
-  /// <param name="red">The red color component.</param>
-  /// <param name="green">The green color component.</param>
-  /// <param name="blue">The blue color component.</param>
-  void SetValueColor(unsigned char value, unsigned char red, unsigned char green, unsigned char blue);
-
-  /// <summary>
   /// Specifies the distance between a intensity value
   /// and its closest boundary. Thus, the input arrays'
   /// size must range from 2 to 256. Any array content
@@ -51,32 +39,8 @@ public:
   /// <param name="sigmas">The sigmas of the boundaries.</param>
   /// <param name="n">The input arrays' size.</param>
   void SetClosestBoundaryDistances(unsigned char* values, float* distances, float* sigmas, int n);
-  
-  /// <summary>
-  /// Gets the file's path.
-  /// </summary>
-  /// <returns>Returns the full path to the file.</returns>
-  char* GetPath();
 
 private:
-  /// <summary>
-  /// The number of color-value associations.
-  /// </summary>
-  int m_color_size;
-  /// <summary>
-  /// The number of intensity values whose distance to
-  /// closest boundary was given.
-  /// </summary>
-  int m_values_size;
-  /// <summary>
-  /// It storages if a color was setted by SetValueColor
-  /// for each intensity value.
-  /// </summary>
-  bool m_has_color[MAX_V];
-  /// <summary>
-  /// It storages the color values setted by SetValueColor.
-  /// </summary>
-  unsigned char m_color[3 * MAX_V];
   /// <summary>
   /// It storages the values setted by
   /// SetClosestBoundaryDistances.

@@ -325,9 +325,6 @@
     <None Include="shader\StructuredDataset\raycasting.vert" />
     <None Include="shader\StructuredDataset\RiemannSummation\raycasting.frag" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="ClassInteraction.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

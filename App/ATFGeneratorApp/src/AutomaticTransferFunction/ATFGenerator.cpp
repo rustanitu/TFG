@@ -259,19 +259,19 @@ void ATFGenerator::GenerateGradientSummedHistogram()
   {
     for (int i = 0; i < MAX_V; ++i)
     {
-      unsigned char sum = 0;
+      unsigned char sum = UCHAR_MAX;
       for (long k = 0; k < m_max_global_laplacian - m_min_global_laplacian + 1; ++k)
       {
-        if ((int)sum + m_scalar_histogram[i][j][k] >= 255)
+        if ((int)sum - m_scalar_histogram[i][j][k] <= 0)
         {
-          sum = 255;
+          sum = 0;
           break;
         }
         else
-          sum += m_scalar_histogram[i][j][k];
+          sum -= m_scalar_histogram[i][j][k];
       }
 
-      pgmfile.WriteByte(255 - sum);
+      pgmfile.WriteByte(sum);
     }
     pgmfile.WriteEndLine();
   }
@@ -300,19 +300,19 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
   {
     for (int i = 0; i < MAX_V; ++i)
     {
-      unsigned char sum = 0;
+      unsigned char sum = UCHAR_MAX;
       for (long j = 0; j < m_max_global_gradient; ++j)
       {
-        if ((int)sum + m_scalar_histogram[i][j][k] >= 255)
+        if ((int)sum - m_scalar_histogram[i][j][k] <= 0)
         {
-          sum = 255;
+          sum = 0;
           break;
         }
         else
-          sum += m_scalar_histogram[i][j][k];
+          sum -= m_scalar_histogram[i][j][k];
       }
 
-      pgmfile.WriteByte(255 - sum);
+      pgmfile.WriteByte(sum);
     }
     pgmfile.WriteEndLine();
   }
