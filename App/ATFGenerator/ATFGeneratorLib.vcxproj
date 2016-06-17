@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0B7C9691-E776-4C00-B01C-32AC14C6E7B3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ATFGenerator</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\DistribuitionSheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\DistribuitionSheet.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)\lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>d.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <BrowseInformation>true</BrowseInformation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AdaptiveEvaluation\RendererAdaptive.cpp" />
+    <ClCompile Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.cpp" />
+    <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\ATFInterface.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp" />
+    <ClCompile Include="src\CPUTimer.cpp" />
+    <ClCompile Include="src\CPU\Coupled.cpp" />
+    <ClCompile Include="src\CPU\Decoupled.cpp" />
+    <ClCompile Include="src\CPU\Evaluator.cpp" />
+    <ClCompile Include="src\CPU\RendererCPU.cpp" />
+    <ClCompile Include="src\CPU\RiemannSummation.cpp" />
+    <ClCompile Include="src\CPU\SimpsonErrorHalfProjectionIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonErrorIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonErrorHalfIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonErrorProjectionIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonErrorQuadraticIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonHalfIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonHalfIterateIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonHalfIteratorRiemannError.cpp" />
+    <ClCompile Include="src\CPU\SimpsonHalfQueueIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonIntegrator.cpp" />
+    <ClCompile Include="src\CPU\SimpsonRule.cpp" />
+    <ClCompile Include="src\CPU\UserInterfaceCPU.cpp" />
+    <ClCompile Include="src\CPU\ViewMethodCPU.cpp" />
+    <ClCompile Include="src\CPU\VolumeEvaluator.cpp" />
+    <ClCompile Include="src\EquidistantEvaluation\RendererEquidistant.cpp" />
+    <ClCompile Include="src\EquidistantEvaluation\UserInterfaceEquidistant.cpp" />
+    <ClCompile Include="src\EquidistantEvaluation\ViewMethodEquidistant.cpp" />
+    <ClCompile Include="src\ERN2D\ERN2DRenderer.cpp" />
+    <ClCompile Include="src\ERN2D\ERN2DUserInterface.cpp" />
+    <ClCompile Include="src\ERN2D\ERN2DViewMethod.cpp" />
+    <ClCompile Include="src\ERN2D\Volume2D.cpp" />
+    <ClCompile Include="src\ERN\ERNRenderer.cpp" />
+    <ClCompile Include="src\ERN\ERNUserInterface.cpp" />
+    <ClCompile Include="src\ERN\ERNViewMethod.cpp" />
+    <ClCompile Include="src\gbuffer.cpp" />
+    <ClCompile Include="src\GLSL2P\RendererGLSL2P.cpp" />
+    <ClCompile Include="src\GLSL2P\UserInterfaceGLSL2P.cpp" />
+    <ClCompile Include="src\GLSL2P\ViewMethodGLSL2P.cpp" />
+    <ClCompile Include="src\IAS\RendererIAS.cpp" />
+    <ClCompile Include="src\IAS\UserInterfaceIAS.cpp" />
+    <ClCompile Include="src\IAS\ViewMethodIAS.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\TransferFunctionViewer\TransferFunctionsViewer.cpp" />
+    <ClCompile Include="src\Viewer.cpp" />
+    <ClCompile Include="src\ViewerInterface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\AdaptiveEvaluation\RendererAdaptive.h" />
+    <ClInclude Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.h" />
+    <ClInclude Include="src\AdaptiveEvaluation\ViewMethodAdaptive.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\ATFInterface.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h" />
+    <ClInclude Include="src\CPUTimer.h" />
+    <ClInclude Include="src\CPU\CommonSimpsonIntegrationFunctions.hpp" />
+    <ClInclude Include="src\CPU\defines.h" />
+    <ClInclude Include="src\CPU\Evaluator.h" />
+    <ClInclude Include="src\CPU\RendererCPU.h" />
+    <ClInclude Include="src\CPU\RiemannSummation.hpp" />
+    <ClInclude Include="src\CPU\SimpsonErrorHalfProjectionIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonErrorIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonErrorHalfIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonErrorProjectionIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonErrorQuadraticIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonEvaluation.h" />
+    <ClInclude Include="src\CPU\SimpsonHalfIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonHalfIterateIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonHalfIteratorRiemannError.h" />
+    <ClInclude Include="src\CPU\SimpsonHalfQueueIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonIntegrator.h" />
+    <ClInclude Include="src\CPU\SimpsonRule.hpp" />
+    <ClInclude Include="src\CPU\UserInterfaceCPU.h" />
+    <ClInclude Include="src\CPU\ViewMethodCPU.h" />
+    <ClInclude Include="src\CPU\VolumeEvaluator.h" />
+    <ClInclude Include="src\EquidistantEvaluation\RendererEquidistant.h" />
+    <ClInclude Include="src\EquidistantEvaluation\UserInterfaceEquidistant.h" />
+    <ClInclude Include="src\EquidistantEvaluation\ViewMethodEquidistant.h" />
+    <ClInclude Include="src\ERN2D\ERN2DRenderer.h" />
+    <ClInclude Include="src\ERN2D\ERN2DUserInterface.h" />
+    <ClInclude Include="src\ERN2D\ERN2DViewMethod.h" />
+    <ClInclude Include="src\ERN2D\Volume2D.h" />
+    <ClInclude Include="src\ERN\ERNRenderer.h" />
+    <ClInclude Include="src\ERN\ERNUserInterface.h" />
+    <ClInclude Include="src\ERN\ERNViewMethod.h" />
+    <ClInclude Include="src\gbuffer.h" />
+    <ClInclude Include="src\GLSL2P\RendererGLSL2P.h" />
+    <ClInclude Include="src\GLSL2P\UserInterfaceGLSL2P.h" />
+    <ClInclude Include="src\GLSL2P\ViewMethodGLSL2P.h" />
+    <ClInclude Include="src\IAS\RendererIAS.h" />
+    <ClInclude Include="src\IAS\UserInterfaceIAS.h" />
+    <ClInclude Include="src\IAS\ViewMethodIAS.h" />
+    <ClInclude Include="src\TransferFunctionViewer\TransferFunctionsViewer.h" />
+    <ClInclude Include="src\Viewer.h" />
+    <ClInclude Include="src\ViewerInterface.h" />
+    <ClInclude Include="src\ViewMethod\GLSLViewMethod.h" />
+    <ClInclude Include="src\ViewMethod\ViewMethod.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="shader\StructuredDataset\AdaptiveEvaluation\coupled.frag" />
+    <None Include="shader\StructuredDataset\AdaptiveEvaluation\decoupled.frag" />
+    <None Include="shader\StructuredDataset\backface.frag" />
+    <None Include="shader\StructuredDataset\backface.vert" />
+    <None Include="shader\StructuredDataset\Composition\backtofront.frag" />
+    <None Include="shader\StructuredDataset\Composition\fronttoback.frag" />
+    <None Include="shader\StructuredDataset\doubleversions\RiemannGLSL.frag" />
+    <None Include="shader\StructuredDataset\EquidistantEvaluation\riemann.frag" />
+    <None Include="shader\StructuredDataset\ERN2D\Quad.frag" />
+    <None Include="shader\StructuredDataset\ERN2D\Quad.vert" />
+    <None Include="shader\StructuredDataset\ERN\backface.frag" />
+    <None Include="shader\StructuredDataset\ERN\backface.vert" />
+    <None Include="shader\StructuredDataset\ERN\raycasting.frag" />
+    <None Include="shader\StructuredDataset\ERN\raycasting.vert" />
+    <None Include="shader\StructuredDataset\IAS\d_Simpson_Half_Queue.frag" />
+    <None Include="shader\StructuredDataset\IAS\d_Simpson_Half_Queue_acc.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_opt_Simpson_Half_Iterate_simple_extstep.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iterate_aprox.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iterate_Separated.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iterate_simple.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iterate_simple_extstep.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iterate_complex_extstep.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iteration.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iteration_opt.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Iteration_opt2.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Queue.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Queue_acc.frag" />
+    <None Include="shader\StructuredDataset\IAS\d_Simpson_Half_Half.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_raycasting_SBOEH.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_raycasting_SBOE.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_raycasting_SBOEHP.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_Simpson_Half_Half.frag" />
+    <None Include="shader\StructuredDataset\IAS\f_raycasting_SBOEP.frag" />
+    <None Include="shader\StructuredDataset\IterativeAdaptiveSimpson\f_coupled.frag" />
+    <None Include="shader\StructuredDataset\IterativeAdaptiveSimpson\f_decoupled.frag" />
+    <None Include="shader\StructuredDataset\raycasting.vert" />
+    <None Include="shader\StructuredDataset\RiemannSummation\raycasting.frag" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

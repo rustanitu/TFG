@@ -2,8 +2,8 @@
 
 #include <volrend\Volume.h>
 #include <volrend\Reader.h>
-#include <../ATFGeneratorApp/src/AutomaticTransferFunction/ATFGenerator.h>
-#include <../ATFGeneratorApp/src/AutomaticTransferFunction/PGMFile.h>
+#include <../ATFGenerator/src/AutomaticTransferFunction/ATFGenerator.h>
+#include <../ATFGenerator/src/AutomaticTransferFunction/PGMFile.h>
 
 const char* VOLUME_TEST_FILE = "..\\..\\Modelos\\VolumeModels\\Engine.1.256x256x128.raw";
 

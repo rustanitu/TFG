@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include <../ATFGeneratorApp/src/AutomaticTransferFunction/TransferFunction.h>
+#include <../ATFGenerator/src/AutomaticTransferFunction/TransferFunction.h>
 
 TEST(TransferFunctionTest, Creation)
 {

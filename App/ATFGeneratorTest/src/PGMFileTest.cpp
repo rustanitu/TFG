@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include <../ATFGeneratorApp/src/AutomaticTransferFunction/PGMFile.h>
+#include <../ATFGenerator/src/AutomaticTransferFunction/PGMFile.h>
 
 TEST(PGMFileTest, Creation)
 {
