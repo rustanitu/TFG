@@ -228,19 +228,19 @@
     <ClCompile Include="src\CPU\ViewMethodCPU.cpp">
       <Filter>Source Files\5. CPU</Filter>
     </ClCompile>
-    <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClCompile>
     <ClCompile Include="src\AutomaticTransferFunction\ATFInterface.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
     <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
-    <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp">
+    <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
     <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
   </ItemGroup>
@@ -383,25 +383,25 @@
     <ClInclude Include="src\CPU\ViewMethodCPU.h">
       <Filter>Source Files\5. CPU</Filter>
     </ClInclude>
-    <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\ATFInterface.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
-    <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h">
+    <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
-    <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h">
+    <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>

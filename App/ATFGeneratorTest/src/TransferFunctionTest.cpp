@@ -54,7 +54,63 @@ TEST(TransferFunctionTest, Correct)
   float s[2] = { 0.3, 0.3 };
 
   ASSERT_NO_THROW(tf->SetClosestBoundaryDistances(v, d, s, 2));
-  ASSERT_NO_THROW(tf->SetValueColor(0,0,0,0));
+
+  unsigned char r = 50;
+  unsigned char g = 100;
+  unsigned char b = 150;
+  unsigned char value = 200;
+  ASSERT_NO_THROW(tf->SetValueColor(value, r, g, b));
   ASSERT_NO_THROW(tf->Generate());
+  
+  char * path = tf->GetPath();
+  ASSERT_TRUE(path != NULL);
+
+  FILE* fp = NULL;
+  int error = fopen_s(&fp, path, "r");
+  ASSERT_EQ(error, 0);
+  ASSERT_TRUE(fp != NULL);
+
+  int match = 0;
+  char buffer[80];
+
+  match = fscanf_s(fp, "%s", buffer);
+  ASSERT_EQ(match, 1);
+  ASSERT_STREQ(buffer, "linear");
+
+  match = fscanf_s(fp, "%s", buffer);
+  ASSERT_EQ(match, 1);
+  ASSERT_STREQ(buffer, "0");
+
+  match = fscanf_s(fp, "%s", buffer);
+  ASSERT_EQ(match, 1);
+  ASSERT_STREQ(buffer, "1");
+
+  float rr, rg, rb;
+  unsigned char rvalue;
+  match = fscanf_s(fp, "%f %f %f %d", &rr, &rg, &rb, &rvalue);
+  ASSERT_EQ(match, 4);
+  ASSERT_NEAR(r / 255.0f, rr, 0.000001);
+  ASSERT_NEAR(g / 255.0f, rg, 0.000001);
+  ASSERT_NEAR(b / 255.0f, rb, 0.000001);
+  ASSERT_EQ(value, rvalue);
+
+  match = fscanf_s(fp, "%s", buffer);
+  ASSERT_EQ(match, 1);
+  ASSERT_STREQ(buffer, "2");
+
+  int op, val;
+
+  match = fscanf_s(fp, "%d %d", &op, &val);
+  ASSERT_EQ(match, 2);
+  ASSERT_GE(op, 0);
+  ASSERT_LE(op, 1);
+  ASSERT_EQ(val, 100);
+
+  match = fscanf_s(fp, "%d %d", &op, &val);
+  ASSERT_EQ(match, 2);
+  ASSERT_GE(op, 0);
+  ASSERT_LE(op, 1);
+  ASSERT_EQ(val, 200);
+
   delete tf;
 }
