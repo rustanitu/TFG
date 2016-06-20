@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpTOC>
+
+  <HelpTOCNode Id="85129846-bfdb-4087-b426-3049fea73761" Title="global Namespace" Url="html/1494451555.htm">
+    <HelpTOCNode Id="ab693eea-a743-42a1-a710-96d6718e0289" Title="ATFGenerator Class" Url="html/1286758301.htm">
+      <HelpTOCNode Title="ATFGenerator Members" Url="html/2055870520.htm" />
+      <HelpTOCNode Title="ATFGenerator Constructor " Url="html/1488700714.htm" />
+      <HelpTOCNode Id="d3ec24d4-89e2-4f14-89a4-313e3f5a2a5a" Title="ATFGenerator Fields" Url="html/1389823079.htm">
+        <HelpTOCNode Title="m_average_gradient Field" Url="html/214844631.htm" />
+        <HelpTOCNode Title="m_average_laplacian Field" Url="html/1836442855.htm" />
+        <HelpTOCNode Title="m_initialized Field" Url="html/1220681112.htm" />
+        <HelpTOCNode Title="m_max_global_gradient Field" Url="html/1457629294.htm" />
+        <HelpTOCNode Title="m_max_global_laplacian Field" Url="html/821573151.htm" />
+        <HelpTOCNode Title="m_max_gradient Field" Url="html/1870183503.htm" />
+        <HelpTOCNode Title="m_max_laplacian Field" Url="html/1887025908.htm" />
+        <HelpTOCNode Title="m_min_global_laplacian Field" Url="html/694132547.htm" />
+        <HelpTOCNode Title="m_min_laplacian Field" Url="html/1993113905.htm" />
+        <HelpTOCNode Title="m_scalar_gradient Field" Url="html/333029903.htm" />
+        <HelpTOCNode Title="m_scalar_histogram Field" Url="html/230034202.htm" />
+        <HelpTOCNode Title="m_scalar_laplacian Field" Url="html/1071085228.htm" />
+        <HelpTOCNode Title="m_transfer_function Field" Url="html/457522811.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="2bc96030-ee23-4d6d-b98b-524414ffbec6" Title="ATFGenerator Methods" Url="html/1567641034.htm">
+        <HelpTOCNode Title="ATFGenerator Constructor " Url="html/1488700714.htm" />
+        <HelpTOCNode Title="~ATFGenerator Method " Url="html/1447607281.htm" />
+        <HelpTOCNode Title="CalculateGradient Method " Url="html/668583495.htm" />
+        <HelpTOCNode Title="CalculateLaplacian Method " Url="html/918261879.htm" />
+        <HelpTOCNode Title="CalculateVolumeDerivatives Method " Url="html/1478790980.htm" />
+        <HelpTOCNode Title="ExtractTransferFunction Method " Url="html/1828347264.htm" />
+        <HelpTOCNode Title="GenerateGradientSummedHistogram Method " Url="html/1300703516.htm" />
+        <HelpTOCNode Title="GenerateHistogram Method " Url="html/1584315790.htm" />
+        <HelpTOCNode Title="GenerateHistogramSlice Method " Url="html/50187704.htm" />
+        <HelpTOCNode Title="GenerateHistogramSlices Method " Url="html/718003228.htm" />
+        <HelpTOCNode Title="GenerateLaplacianSummedHistogram Method " Url="html/459720275.htm" />
+        <HelpTOCNode Title="GetBoundaryDistancies Method " Url="html/430621597.htm" />
+        <HelpTOCNode Title="GetGradient Method " Url="html/601348018.htm" />
+        <HelpTOCNode Title="GetLaplacian Method " Url="html/120163686.htm" />
+        <HelpTOCNode Title="GetSigma Method " Url="html/909119529.htm" />
+        <HelpTOCNode Title="GetTransferFunction Method " Url="html/633002002.htm" />
+        <HelpTOCNode Title="Init Method " Url="html/1662099407.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b4da4b06-e649-40a3-8330-2f1f1ba12efd" Title="IATFGenerator Class" Url="html/1931948057.htm">
+      <HelpTOCNode Title="IATFGenerator Members" Url="html/317200065.htm" />
+      <HelpTOCNode Title="IATFGenerator Constructor " Url="html/1077665493.htm" />
+      <HelpTOCNode Id="c69edf03-78bd-4e28-b4ad-cd37f2fd7c87" Title="IATFGenerator Fields" Url="html/69763084.htm">
+        <HelpTOCNode Title="m_depth Field" Url="html/2118743864.htm" />
+        <HelpTOCNode Title="m_height Field" Url="html/1766968219.htm" />
+        <HelpTOCNode Title="m_volume Field" Url="html/1554592955.htm" />
+        <HelpTOCNode Title="m_width Field" Url="html/1665466481.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="d7a0f331-d11e-456b-9f95-7a9f9f58b290" Title="IATFGenerator Methods" Url="html/1093721324.htm">
+        <HelpTOCNode Title="IATFGenerator Constructor " Url="html/1077665493.htm" />
+        <HelpTOCNode Title="GetTransferFunction Method " Url="html/2083542631.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e82b139d-0c1f-4d5b-b226-08e0a315e86f" Title="ITransferFunction Class" Url="html/1950036202.htm">
+      <HelpTOCNode Title="ITransferFunction Members" Url="html/1702688865.htm" />
+      <HelpTOCNode Title="ITransferFunction Constructor " Url="html/103754457.htm" />
+      <HelpTOCNode Id="3b5b6ea8-9380-4a74-9b98-5b69b0523524" Title="ITransferFunction Fields" Url="html/1072114888.htm">
+        <HelpTOCNode Title="m_color Field" Url="html/989471291.htm" />
+        <HelpTOCNode Title="m_color_size Field" Url="html/1872111607.htm" />
+        <HelpTOCNode Title="m_has_color Field" Url="html/391323257.htm" />
+        <HelpTOCNode Title="m_path Field" Url="html/1446479754.htm" />
+        <HelpTOCNode Title="m_values_size Field" Url="html/587097987.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="179a5f00-af72-4eed-907d-c07e6b0de112" Title="ITransferFunction Methods" Url="html/1511328655.htm">
+        <HelpTOCNode Title="ITransferFunction Constructor " Url="html/103754457.htm" />
+        <HelpTOCNode Title="Generate Method " Url="html/1365430439.htm" />
+        <HelpTOCNode Title="GetPath Method " Url="html/1816173466.htm" />
+        <HelpTOCNode Title="SetValueColor Method " Url="html/458080772.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="7d4cb068-0741-41e7-b1cb-08a7812e809a" Title="PGMFile Class" Url="html/1919616424.htm">
+      <HelpTOCNode Title="PGMFile Members" Url="html/1429042810.htm" />
+      <HelpTOCNode Title="PGMFile Constructor " Url="html/359372887.htm" />
+      <HelpTOCNode Id="67edfc28-e605-434c-92eb-4eb8a23cf731" Title="PGMFile Fields" Url="html/1553628043.htm">
+        <HelpTOCNode Title="m_file Field" Url="html/604076400.htm" />
+        <HelpTOCNode Title="m_height Field" Url="html/477659213.htm" />
+        <HelpTOCNode Title="m_path Field" Url="html/1627613158.htm" />
+        <HelpTOCNode Title="m_width Field" Url="html/1595745699.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="5d8cfa67-d331-4fb5-9715-bdbe3d58cfea" Title="PGMFile Methods" Url="html/392284504.htm">
+        <HelpTOCNode Title="PGMFile Constructor " Url="html/359372887.htm" />
+        <HelpTOCNode Title="~PGMFile Method " Url="html/525984887.htm" />
+        <HelpTOCNode Title="Close Method " Url="html/1059568799.htm" />
+        <HelpTOCNode Title="Open Method " Url="html/763997830.htm" />
+        <HelpTOCNode Title="WriteEndLine Method " Url="html/2035751947.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1ae6ff1d-9610-4034-90cb-53f105b06a05" Title="TransferFunction Class" Url="html/1563078436.htm">
+      <HelpTOCNode Title="TransferFunction Members" Url="html/806915327.htm" />
+      <HelpTOCNode Title="TransferFunction Constructor " Url="html/1670465240.htm" />
+      <HelpTOCNode Id="fe4ed719-1055-4947-8045-9fdc6a500f9b" Title="TransferFunction Fields" Url="html/153060357.htm">
+        <HelpTOCNode Title="m_distance Field" Url="html/1765548582.htm" />
+        <HelpTOCNode Title="m_sigma Field" Url="html/505273734.htm" />
+        <HelpTOCNode Title="m_value Field" Url="html/1346910406.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c7c8ae87-440c-4146-8237-fe1d4d51ddba" Title="TransferFunction Methods" Url="html/362696135.htm">
+        <HelpTOCNode Title="TransferFunction Constructor " Url="html/1670465240.htm" />
+        <HelpTOCNode Title="Generate Method " Url="html/1319835300.htm" />
+        <HelpTOCNode Title="SetClosestBoundaryDistances Method " Url="html/1140439323.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+</HelpTOC>

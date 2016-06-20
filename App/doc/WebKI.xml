@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpKI>
+  <HelpKINode Title="ATFGenerator">
+    <HelpKINode Title="all members" Url="html/2055870520.htm" />
+    <HelpKINode Title="all members, all members" Url="html/2055870520.htm" />
+    <HelpKINode Title="fields, fields" Url="html/1389823079.htm" />
+    <HelpKINode Title="methods, methods" Url="html/1567641034.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ATFGenerator class">
+    <HelpKINode Title="ATFGenerator Class" Url="html/1286758301.htm" />
+    <HelpKINode Title="about ATFGenerator class" Url="html/1286758301.htm" />
+    <HelpKINode Title="constructor" Url="html/1488700714.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ATFGenerator.ATFGenerator constructor" Url="html/1488700714.htm" />
+  <HelpKINode Title="ATFGenerator.CalculateGradient method" Url="html/668583495.htm" />
+  <HelpKINode Title="ATFGenerator.CalculateLaplacian method" Url="html/918261879.htm" />
+  <HelpKINode Title="ATFGenerator.CalculateVolumeDerivatives method" Url="html/1478790980.htm" />
+  <HelpKINode Title="ATFGenerator.ExtractTransferFunction method" Url="html/1828347264.htm" />
+  <HelpKINode Title="ATFGenerator.GenerateGradientSummedHistogram method" Url="html/1300703516.htm" />
+  <HelpKINode Title="ATFGenerator.GenerateHistogram method" Url="html/1584315790.htm" />
+  <HelpKINode Title="ATFGenerator.GenerateHistogramSlice method" Url="html/50187704.htm" />
+  <HelpKINode Title="ATFGenerator.GenerateHistogramSlices method" Url="html/718003228.htm" />
+  <HelpKINode Title="ATFGenerator.GenerateLaplacianSummedHistogram method" Url="html/459720275.htm" />
+  <HelpKINode Title="ATFGenerator.GetBoundaryDistancies method" Url="html/430621597.htm" />
+  <HelpKINode Title="ATFGenerator.GetGradient method" Url="html/601348018.htm" />
+  <HelpKINode Title="ATFGenerator.GetLaplacian method" Url="html/120163686.htm" />
+  <HelpKINode Title="ATFGenerator.GetSigma method" Url="html/909119529.htm" />
+  <HelpKINode Title="ATFGenerator.GetTransferFunction method" Url="html/633002002.htm" />
+  <HelpKINode Title="ATFGenerator.Init method" Url="html/1662099407.htm" />
+  <HelpKINode Title="ATFGenerator.m_average_gradient field" Url="html/214844631.htm" />
+  <HelpKINode Title="ATFGenerator.m_average_laplacian field" Url="html/1836442855.htm" />
+  <HelpKINode Title="ATFGenerator.m_initialized field" Url="html/1220681112.htm" />
+  <HelpKINode Title="ATFGenerator.m_max_global_gradient field" Url="html/1457629294.htm" />
+  <HelpKINode Title="ATFGenerator.m_max_global_laplacian field" Url="html/821573151.htm" />
+  <HelpKINode Title="ATFGenerator.m_max_gradient field" Url="html/1870183503.htm" />
+  <HelpKINode Title="ATFGenerator.m_max_laplacian field" Url="html/1887025908.htm" />
+  <HelpKINode Title="ATFGenerator.m_min_global_laplacian field" Url="html/694132547.htm" />
+  <HelpKINode Title="ATFGenerator.m_min_laplacian field" Url="html/1993113905.htm" />
+  <HelpKINode Title="ATFGenerator.m_scalar_gradient field" Url="html/333029903.htm" />
+  <HelpKINode Title="ATFGenerator.m_scalar_histogram field" Url="html/230034202.htm" />
+  <HelpKINode Title="ATFGenerator.m_scalar_laplacian field" Url="html/1071085228.htm" />
+  <HelpKINode Title="ATFGenerator.m_transfer_function field" Url="html/457522811.htm" />
+  <HelpKINode Title="ATFGenerator.~ATFGenerator method" Url="html/1447607281.htm" />
+  <HelpKINode Title="CalculateGradient method" Url="html/668583495.htm" />
+  <HelpKINode Title="CalculateLaplacian method" Url="html/918261879.htm" />
+  <HelpKINode Title="CalculateVolumeDerivatives method" Url="html/1478790980.htm" />
+  <HelpKINode Title="Close method" Url="html/1059568799.htm" />
+  <HelpKINode Title="ExtractTransferFunction method" Url="html/1828347264.htm" />
+  <HelpKINode Title="Generate method">
+    <HelpKINode Title="Generate Method " Url="html/1319835300.htm" />
+    <HelpKINode Title="Generate Method " Url="html/1365430439.htm" />
+  </HelpKINode>
+  <HelpKINode Title="GenerateGradientSummedHistogram method" Url="html/1300703516.htm" />
+  <HelpKINode Title="GenerateHistogram method" Url="html/1584315790.htm" />
+  <HelpKINode Title="GenerateHistogramSlice method" Url="html/50187704.htm" />
+  <HelpKINode Title="GenerateHistogramSlices method" Url="html/718003228.htm" />
+  <HelpKINode Title="GenerateLaplacianSummedHistogram method" Url="html/459720275.htm" />
+  <HelpKINode Title="GetBoundaryDistancies method" Url="html/430621597.htm" />
+  <HelpKINode Title="GetGradient method" Url="html/601348018.htm" />
+  <HelpKINode Title="GetLaplacian method" Url="html/120163686.htm" />
+  <HelpKINode Title="GetPath method" Url="html/1816173466.htm" />
+  <HelpKINode Title="GetSigma method" Url="html/909119529.htm" />
+  <HelpKINode Title="GetTransferFunction method">
+    <HelpKINode Title="GetTransferFunction Method " Url="html/633002002.htm" />
+    <HelpKINode Title="GetTransferFunction Method " Url="html/2083542631.htm" />
+  </HelpKINode>
+  <HelpKINode Title="global namespace" Url="html/1494451555.htm" />
+  <HelpKINode Title="global.ATFGenerator">
+    <HelpKINode Title="all members" Url="html/2055870520.htm" />
+  </HelpKINode>
+  <HelpKINode Title="global.ATFGenerator class" Url="html/1286758301.htm" />
+  <HelpKINode Title="global.IATFGenerator">
+    <HelpKINode Title="all members" Url="html/317200065.htm" />
+  </HelpKINode>
+  <HelpKINode Title="global.IATFGenerator class" Url="html/1931948057.htm" />
+  <HelpKINode Title="global.ITransferFunction">
+    <HelpKINode Title="all members" Url="html/1702688865.htm" />
+  </HelpKINode>
+  <HelpKINode Title="global.ITransferFunction class" Url="html/1950036202.htm" />
+  <HelpKINode Title="global.PGMFile">
+    <HelpKINode Title="all members" Url="html/1429042810.htm" />
+  </HelpKINode>
+  <HelpKINode Title="global.PGMFile class" Url="html/1919616424.htm" />
+  <HelpKINode Title="global.TransferFunction">
+    <HelpKINode Title="all members" Url="html/806915327.htm" />
+  </HelpKINode>
+  <HelpKINode Title="global.TransferFunction class" Url="html/1563078436.htm" />
+  <HelpKINode Title="IATFGenerator">
+    <HelpKINode Title="all members" Url="html/317200065.htm" />
+    <HelpKINode Title="all members, all members" Url="html/317200065.htm" />
+    <HelpKINode Title="fields, fields" Url="html/69763084.htm" />
+    <HelpKINode Title="methods, methods" Url="html/1093721324.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IATFGenerator class">
+    <HelpKINode Title="IATFGenerator Class" Url="html/1931948057.htm" />
+    <HelpKINode Title="about IATFGenerator class" Url="html/1931948057.htm" />
+    <HelpKINode Title="constructor" Url="html/1077665493.htm" />
+  </HelpKINode>
+  <HelpKINode Title="IATFGenerator.GetTransferFunction method" Url="html/2083542631.htm" />
+  <HelpKINode Title="IATFGenerator.IATFGenerator constructor" Url="html/1077665493.htm" />
+  <HelpKINode Title="IATFGenerator.m_depth field" Url="html/2118743864.htm" />
+  <HelpKINode Title="IATFGenerator.m_height field" Url="html/1766968219.htm" />
+  <HelpKINode Title="IATFGenerator.m_volume field" Url="html/1554592955.htm" />
+  <HelpKINode Title="IATFGenerator.m_width field" Url="html/1665466481.htm" />
+  <HelpKINode Title="Init method" Url="html/1662099407.htm" />
+  <HelpKINode Title="ITransferFunction">
+    <HelpKINode Title="all members" Url="html/1702688865.htm" />
+    <HelpKINode Title="all members, all members" Url="html/1702688865.htm" />
+    <HelpKINode Title="fields, fields" Url="html/1072114888.htm" />
+    <HelpKINode Title="methods, methods" Url="html/1511328655.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ITransferFunction class">
+    <HelpKINode Title="ITransferFunction Class" Url="html/1950036202.htm" />
+    <HelpKINode Title="about ITransferFunction class" Url="html/1950036202.htm" />
+    <HelpKINode Title="constructor" Url="html/103754457.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ITransferFunction.Generate method" Url="html/1365430439.htm" />
+  <HelpKINode Title="ITransferFunction.GetPath method" Url="html/1816173466.htm" />
+  <HelpKINode Title="ITransferFunction.ITransferFunction constructor" Url="html/103754457.htm" />
+  <HelpKINode Title="ITransferFunction.m_color field" Url="html/989471291.htm" />
+  <HelpKINode Title="ITransferFunction.m_color_size field" Url="html/1872111607.htm" />
+  <HelpKINode Title="ITransferFunction.m_has_color field" Url="html/391323257.htm" />
+  <HelpKINode Title="ITransferFunction.m_path field" Url="html/1446479754.htm" />
+  <HelpKINode Title="ITransferFunction.m_values_size field" Url="html/587097987.htm" />
+  <HelpKINode Title="ITransferFunction.SetValueColor method" Url="html/458080772.htm" />
+  <HelpKINode Title="m_average_gradient field" Url="html/214844631.htm" />
+  <HelpKINode Title="m_average_laplacian field" Url="html/1836442855.htm" />
+  <HelpKINode Title="m_color field" Url="html/989471291.htm" />
+  <HelpKINode Title="m_color_size field" Url="html/1872111607.htm" />
+  <HelpKINode Title="m_depth field" Url="html/2118743864.htm" />
+  <HelpKINode Title="m_distance field" Url="html/1765548582.htm" />
+  <HelpKINode Title="m_file field" Url="html/604076400.htm" />
+  <HelpKINode Title="m_has_color field" Url="html/391323257.htm" />
+  <HelpKINode Title="m_height field">
+    <HelpKINode Title="m_height Field" Url="html/1766968219.htm" />
+    <HelpKINode Title="m_height Field" Url="html/477659213.htm" />
+  </HelpKINode>
+  <HelpKINode Title="m_initialized field" Url="html/1220681112.htm" />
+  <HelpKINode Title="m_max_global_gradient field" Url="html/1457629294.htm" />
+  <HelpKINode Title="m_max_global_laplacian field" Url="html/821573151.htm" />
+  <HelpKINode Title="m_max_gradient field" Url="html/1870183503.htm" />
+  <HelpKINode Title="m_max_laplacian field" Url="html/1887025908.htm" />
+  <HelpKINode Title="m_min_global_laplacian field" Url="html/694132547.htm" />
+  <HelpKINode Title="m_min_laplacian field" Url="html/1993113905.htm" />
+  <HelpKINode Title="m_path field">
+    <HelpKINode Title="m_path Field" Url="html/1446479754.htm" />
+    <HelpKINode Title="m_path Field" Url="html/1627613158.htm" />
+  </HelpKINode>
+  <HelpKINode Title="m_scalar_gradient field" Url="html/333029903.htm" />
+  <HelpKINode Title="m_scalar_histogram field" Url="html/230034202.htm" />
+  <HelpKINode Title="m_scalar_laplacian field" Url="html/1071085228.htm" />
+  <HelpKINode Title="m_sigma field" Url="html/505273734.htm" />
+  <HelpKINode Title="m_transfer_function field" Url="html/457522811.htm" />
+  <HelpKINode Title="m_value field" Url="html/1346910406.htm" />
+  <HelpKINode Title="m_values_size field" Url="html/587097987.htm" />
+  <HelpKINode Title="m_volume field" Url="html/1554592955.htm" />
+  <HelpKINode Title="m_width field">
+    <HelpKINode Title="m_width Field" Url="html/1595745699.htm" />
+    <HelpKINode Title="m_width Field" Url="html/1665466481.htm" />
+  </HelpKINode>
+  <HelpKINode Title="Open method" Url="html/763997830.htm" />
+  <HelpKINode Title="PGMFile">
+    <HelpKINode Title="all members" Url="html/1429042810.htm" />
+    <HelpKINode Title="all members, all members" Url="html/1429042810.htm" />
+    <HelpKINode Title="fields, fields" Url="html/1553628043.htm" />
+    <HelpKINode Title="methods, methods" Url="html/392284504.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PGMFile class">
+    <HelpKINode Title="PGMFile Class" Url="html/1919616424.htm" />
+    <HelpKINode Title="about PGMFile class" Url="html/1919616424.htm" />
+    <HelpKINode Title="constructor" Url="html/359372887.htm" />
+  </HelpKINode>
+  <HelpKINode Title="PGMFile.Close method" Url="html/1059568799.htm" />
+  <HelpKINode Title="PGMFile.m_file field" Url="html/604076400.htm" />
+  <HelpKINode Title="PGMFile.m_height field" Url="html/477659213.htm" />
+  <HelpKINode Title="PGMFile.m_path field" Url="html/1627613158.htm" />
+  <HelpKINode Title="PGMFile.m_width field" Url="html/1595745699.htm" />
+  <HelpKINode Title="PGMFile.Open method" Url="html/763997830.htm" />
+  <HelpKINode Title="PGMFile.PGMFile constructor" Url="html/359372887.htm" />
+  <HelpKINode Title="PGMFile.WriteEndLine method" Url="html/2035751947.htm" />
+  <HelpKINode Title="PGMFile.~PGMFile method" Url="html/525984887.htm" />
+  <HelpKINode Title="SetClosestBoundaryDistances method" Url="html/1140439323.htm" />
+  <HelpKINode Title="SetValueColor method" Url="html/458080772.htm" />
+  <HelpKINode Title="TransferFunction">
+    <HelpKINode Title="all members" Url="html/806915327.htm" />
+    <HelpKINode Title="all members, all members" Url="html/806915327.htm" />
+    <HelpKINode Title="fields, fields" Url="html/153060357.htm" />
+    <HelpKINode Title="methods, methods" Url="html/362696135.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TransferFunction class">
+    <HelpKINode Title="TransferFunction Class" Url="html/1563078436.htm" />
+    <HelpKINode Title="about TransferFunction class" Url="html/1563078436.htm" />
+    <HelpKINode Title="constructor" Url="html/1670465240.htm" />
+  </HelpKINode>
+  <HelpKINode Title="TransferFunction.Generate method" Url="html/1319835300.htm" />
+  <HelpKINode Title="TransferFunction.m_distance field" Url="html/1765548582.htm" />
+  <HelpKINode Title="TransferFunction.m_sigma field" Url="html/505273734.htm" />
+  <HelpKINode Title="TransferFunction.m_value field" Url="html/1346910406.htm" />
+  <HelpKINode Title="TransferFunction.SetClosestBoundaryDistances method" Url="html/1140439323.htm" />
+  <HelpKINode Title="TransferFunction.TransferFunction constructor" Url="html/1670465240.htm" />
+  <HelpKINode Title="WriteEndLine method" Url="html/2035751947.htm" />
+  <HelpKINode Title="~ATFGenerator method" Url="html/1447607281.htm" />
+  <HelpKINode Title="~PGMFile method" Url="html/525984887.htm" />
+</HelpKI>

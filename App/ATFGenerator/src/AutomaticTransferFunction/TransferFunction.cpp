@@ -47,8 +47,8 @@ bool TransferFunction::Generate()
   file << "linear" << "\n";
   file << "0" << "\n";
 
-  if (!m_color_size)
-    throw std::domain_error("At least one color must be set!");
+  if (m_color_size < 2)
+    throw std::domain_error("At least two color must be set!");
 
   file << m_color_size << "\n";
 
@@ -89,7 +89,7 @@ bool TransferFunction::Generate()
   // Assign opacity to transfer function
   for (int i = 0; i < m_values_size; ++i)
   {
-    base = 15.0f * m_sigma[i];
+    base = 25.0f * m_sigma[i];
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
     if (x >= -base && x <= base)

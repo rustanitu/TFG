@@ -48,7 +48,7 @@ public:
   /// <summary>It does all the math necessary so information
   /// can be extracted from it. The user will not be able to
   /// get any kind of information without a successfull call
-  /// to this function. < / summary>
+  /// to this function. </summary>
   /// <returns>Returns true if the instance was correctly
   /// initialized and false otherwise.</returns>
   bool Init();

@@ -69,7 +69,7 @@ ATFGenerator::~ATFGenerator()
 /// <summary>It does all the math necessary so information
 /// can be extracted from it. The user will not be able to
 /// get any kind of information without a successfull call
-/// to this function. < / summary>
+/// to this function. </summary>
 /// <returns>Returns true if the instance was correctly
 /// initialized and false otherwise.</returns>
 bool ATFGenerator::Init()
@@ -106,15 +106,6 @@ bool ATFGenerator::ExtractTransferFunction()
 
   delete m_transfer_function;
   m_transfer_function = new TransferFunction(filename.c_str());
-  m_transfer_function->SetValueColor(0, 255, 255, 255);
-  m_transfer_function->SetValueColor(32, 255, 0, 0);
-  m_transfer_function->SetValueColor(64, 0, 255, 0);
-  m_transfer_function->SetValueColor(96, 0, 0, 255);
-  m_transfer_function->SetValueColor(128, 127, 127, 0);
-  m_transfer_function->SetValueColor(160, 127, 0, 127);
-  m_transfer_function->SetValueColor(192, 0, 127, 127);
-  m_transfer_function->SetValueColor(224, 84, 84, 85);
-  m_transfer_function->SetValueColor(255, 0, 0, 0);
 
   float* x = GetBoundaryDistancies();
   unsigned char* values = new unsigned char[MAX_V];
@@ -133,7 +124,7 @@ bool ATFGenerator::ExtractTransferFunction()
   }
 
   m_transfer_function->SetClosestBoundaryDistances(values, x, sigmas, MAX_V);
-  return m_transfer_function->Generate();
+  return true;
 }
 
 /// <summary>
@@ -527,6 +518,7 @@ bool ATFGenerator::GenerateHistogram()
     }
   }
 
+  // Calculate average laplacian and gradient
   for (int i = 0; i < MAX_V; ++i)
   {
     float wg = 0.0f;

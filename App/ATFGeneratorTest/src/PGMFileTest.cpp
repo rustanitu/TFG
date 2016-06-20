@@ -1,3 +1,7 @@
+/// PGMFileTest.cpp
+/// Rustam Mesquita
+/// rustam@tecgraf.puc-rio.br
+
 #include "gtest/gtest.h"
 
 #include <../ATFGenerator/src/AutomaticTransferFunction/PGMFile.h>

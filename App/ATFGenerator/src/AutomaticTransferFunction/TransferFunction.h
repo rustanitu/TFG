@@ -7,6 +7,12 @@
 
 #include "ITransferFunction.h"
 
+/// <summary>
+/// This class gives an implementation to the ITransferFunction
+/// interface. It allows to generate transfer function
+/// files with a "tf1d" extension.
+/// </summary>
+/// <seealso cref="ITransferFunction" />
 class TransferFunction : public ITransferFunction
 {
 public:
