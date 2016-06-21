@@ -26,6 +26,11 @@ public:
   TransferFunction(const char* path);
 
   /// <summary>
+  /// Finalizes an instance of the <see cref="TransferFunction"/> class.
+  /// </summary>
+  ~TransferFunction();
+
+  /// <summary>
   /// Generates a transfer function file at a given path.
   /// If a file with the same path already exists, it'll
   /// be replaced.

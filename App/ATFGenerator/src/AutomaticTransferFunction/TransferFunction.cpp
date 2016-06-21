@@ -27,6 +27,16 @@ TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, T
 }
 
 /// <summary>
+/// Finalizes an instance of the <see cref="TransferFunction"/> class.
+/// </summary>
+TransferFunction::~TransferFunction()
+{
+  free(m_value);
+  free(m_distance);
+  free(m_sigma);
+}
+
+/// <summary>
 /// Generates a transfer function file at a given path.
 /// If a file with the same path already exists, it'll
 /// be replaced.

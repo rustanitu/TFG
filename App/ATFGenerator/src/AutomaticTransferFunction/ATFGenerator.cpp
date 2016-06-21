@@ -46,6 +46,7 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 /// </summary>
 ATFGenerator::~ATFGenerator()
 {
+  delete m_transfer_function;
   delete [] m_scalar_gradient;
   delete [] m_scalar_laplacian;
 

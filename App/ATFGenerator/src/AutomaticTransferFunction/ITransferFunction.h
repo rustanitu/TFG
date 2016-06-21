@@ -39,6 +39,11 @@ public:
     memcpy(m_path + path_len, ext, ext_len);
     m_path[length] = '\0';
   }
+
+  ~ITransferFunction()
+  {
+    free(m_path);
+  }
   
   /// <summary>
   /// The implementation of this function must generate a
