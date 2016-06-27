@@ -93,13 +93,13 @@ bool TransferFunction::Generate()
   // |---------------|
   //       base
   
-  float amax = 1.0f;
+  float amax = 0.6f;
   float base = 0.0f;
 
   // Assign opacity to transfer function
   for (int i = 0; i < m_values_size; ++i)
   {
-    base = 25.0f * m_sigma[i];
+    base = 15.0f * m_sigma[i];
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
     if (x >= -base && x <= base)
