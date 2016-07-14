@@ -47,9 +47,8 @@ public:
   /// </summary>
   /// <param name="values">The values array.</param>
   /// <param name="distances">The distances to the closest boundaries.</param>
-  /// <param name="sigmas">The sigmas of the boundaries.</param>
   /// <param name="n">The input arrays' size.</param>
-  void SetClosestBoundaryDistances(unsigned char* values, float* distances, float* sigmas, int n);
+  void SetClosestBoundaryDistances(unsigned char* values, float* distances, float sigma, int n);
 
 private:
   /// <summary>
@@ -63,10 +62,9 @@ private:
   /// </summary>
   float* m_distance;
   /// <summary>
-  /// It storages the sigmas values setted by
-  /// SetClosestBoundaryDistances.
+  /// The boundary's sigma
   /// </summary>
-  float* m_sigma;
+  float m_sigma;
 };
 
 #endif

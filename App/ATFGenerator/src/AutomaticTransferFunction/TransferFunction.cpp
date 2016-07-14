@@ -14,7 +14,6 @@
 TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, TF_EXT)
 , m_value(NULL)
 , m_distance(NULL)
-, m_sigma(NULL)
 {
   m_color_size = 0;
   for (int i = 0; i < MAX_V; ++i)
@@ -33,7 +32,6 @@ TransferFunction::~TransferFunction()
 {
   free(m_value);
   free(m_distance);
-  free(m_sigma);
 }
 
 /// <summary>
@@ -45,7 +43,7 @@ TransferFunction::~TransferFunction()
 /// be generated, false otherwise.</returns>
 bool TransferFunction::Generate()
 {
-  if (!m_value || !m_distance || !m_sigma && !m_path)
+  if (!m_value || !m_distance || !m_path)
     throw std::exception_ptr();
 
   std::ofstream file;
@@ -94,14 +92,16 @@ bool TransferFunction::Generate()
   //       base
   
   float amax = 0.6f;
-  float base = 0.0f;
+  float base = m_sigma;
+
+  printf("sigma: %.2f\n\n", m_sigma);
 
   // Assign opacity to transfer function
   for (int i = 0; i < m_values_size; ++i)
   {
-    base = 15.0f * m_sigma[i];
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
+    printf("%.2f\n", x);
     if (x >= -base && x <= base)
     {
       float a = 0.0f;
@@ -117,6 +117,8 @@ bool TransferFunction::Generate()
       file << 0 << "\t" << value << std::endl;
   }
 
+  printf("\n\n");
+
   file.close();
   return true;
 }
@@ -131,19 +133,17 @@ bool TransferFunction::Generate()
 /// <param name="distances">The distances to the closest boundaries.</param>
 /// <param name="sigmas">The sigmas of the boundaries.</param>
 /// <param name="n">The input arrays' size.</param>
-void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, float* sigmas, int n)
+void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, float sigma, int n)
 {
   if (n < 2 || n > MAX_V)
     throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");
 
   m_values_size = n;
+  m_sigma = sigma;
 
   if (values)
     m_value = values;
 
   if (distances)
     m_distance = distances;
-
-  if (sigmas)
-    m_sigma = sigmas;
 }

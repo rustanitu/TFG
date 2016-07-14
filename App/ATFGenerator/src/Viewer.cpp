@@ -135,6 +135,9 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
       m_atfg = new ATFGenerator(m_volume);
       if (m_atfg->Init() && m_atfg->ExtractTransferFunction())
       {
+        m_atfg->GenerateGradientSummedHistogram();
+        m_atfg->GenerateLaplacianSummedHistogram();
+
         ITransferFunction* tf = m_atfg->GetTransferFunction();
         tf->SetValueColor(0, 255, 255, 255);
         tf->SetValueColor(32, 255, 0, 0);

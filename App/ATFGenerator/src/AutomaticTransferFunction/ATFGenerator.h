@@ -13,7 +13,7 @@
 /*************************/
 
 #define SQRT_E 1.6487212707
-#define MAX_V 256
+#define ATFG_V_RANGE UCHAR_MAX + 1
 
 class TransferFunction;
 
@@ -168,45 +168,35 @@ private:
   /// </summary>
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
-  float* GetBoundaryDistancies();
+  float GetBoundaryDistancies(float* x);
 
-  /// <summary>
-  /// Gets the sigma value of the closest boundary associated the specified value.
-  /// </summary>
-  /// <param name="v">The intendity value.</param>
-  /// <returns>Returns the float sigma value.</returns>
-  float GetSigma(unsigned char v);
+  unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
 
 private:
   /// <summary>
   /// An array that storages the maximum gradient value for every intensity value.
   /// </summary>
-  long m_max_gradient[256];
+  float m_max_gradient;
 
   /// <summary>
   /// An array that storages the maximum laplacian value for every intensity value.
   /// </summary>
-  long m_max_laplacian[256];
-
-  /// <summary>
-  /// An array that storages the minimum laplacian value for every intensity value.
-  /// </summary>
-  long m_min_laplacian[256];
+  float m_max_laplacian;
 
   /// <summary>
   /// The global maximum gradient value.
   /// </summary>
-  long m_max_global_gradient;
+  float m_max_global_gradient;
 
   /// <summary>
   /// The global maximum laplacian value.
   /// </summary>
-  long m_max_global_laplacian;
+  float m_max_global_laplacian;
 
   /// <summary>
   /// The global minimum laplacian value.
   /// </summary>
-  long m_min_global_laplacian;
+  float m_min_global_laplacian;
 
   /// <summary>
   /// The gradient of each volume voxel.
@@ -221,17 +211,17 @@ private:
   /// <summary>
   /// The average gradient of each intensity value.
   /// </summary>
-  float m_average_gradient[256];
+  float m_average_gradient[ATFG_V_RANGE];
 
   /// <summary>
   /// The average laplacian of each intensity value.
   /// </summary>
-  float** m_average_laplacian;
+  float m_average_laplacian[ATFG_V_RANGE];
 
   /// <summary>
   /// Histogram of occurences for each triple value x gradient x laplacian.
   /// </summary>
-  unsigned char*** m_scalar_histogram;
+  unsigned char m_scalar_histogram[ATFG_V_RANGE][ATFG_V_RANGE][ATFG_V_RANGE];
 
   /// <summary>
   /// The transfer function generated automatically.
