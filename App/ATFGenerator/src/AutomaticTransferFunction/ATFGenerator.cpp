@@ -107,6 +107,33 @@ bool ATFGenerator::ExtractTransferFunction()
 }
 
 /// <summary>
+/// Gets the voxel's value.
+/// </summary>
+/// <param name="x">The voxel's x component.</param>
+/// <param name="y">The voxel's y component.</param>
+/// <param name="z">The voxel's z component.</param>
+/// <returns>Returns the float aproximated gradient.</returns>
+float ATFGenerator::GetValue(int x, int y, int z)
+{
+  if (x < 0)
+    x = -x;
+  else if (x >= m_width)
+    x = 2 * m_width - 1 - x;
+
+  if (y < 0)
+    y = -y;
+  else if (y >= m_height)
+    y = 2 * m_height - 1 - y;
+
+  if (z < 0)
+    z = -z;
+  else if (z >= m_depth)
+    z = 2 * m_depth - 1 - z;
+
+  return m_volume->GetValue(x, y, z);
+}
+
+/// <summary>
 /// Gets an aproximation of the voxel's gradient, using 
 /// its first derivatives.
 /// </summary>
@@ -178,17 +205,17 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
   }
   delete [] filename;
 
-  for (int j = m_max_global_gradient; j >= 0; j--)
+  for (int j = UCHAR_MAX; j >= 0; j--)
   {
     for (int k = 0; k < ATFG_V_RANGE; k++)
     {
-      int h;
+      int h = UCHAR_MAX;
       if (m_scalar_histogram[v][j][k] >= 255)
-        h = 255;
+        h = 0;
       else
-        h = m_scalar_histogram[v][j][k];
+        h -= m_scalar_histogram[v][j][k];
 
-      pgmfile.WriteByte(255 - h);
+      pgmfile.WriteByte(h);
     }
     pgmfile.WriteEndLine();
   }
@@ -310,9 +337,9 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   float gy = 0.0f;
   float gz = 0.0f;
 
-  gx = 0.5f * (m_volume->GetValue(x + 1, y, z) - m_volume->GetValue(x - 1, y, z));
-  gy = 0.5f * (m_volume->GetValue(x, y + 1, z) - m_volume->GetValue(x, y - 1, z));
-  gz = 0.5f * (m_volume->GetValue(x, y, z + 1) - m_volume->GetValue(x, y, z - 1));
+  gx = 0.5f * (GetValue(x + 1, y, z) - GetValue(x - 1, y, z));
+  gy = 0.5f * (GetValue(x, y + 1, z) - GetValue(x, y - 1, z));
+  gz = 0.5f * (GetValue(x, y, z + 1) - GetValue(x, y, z - 1));
   g = sqrt(gx*gx + gy*gy + gz*gz);
 
   g = fmax(0.0f, g);
@@ -340,10 +367,10 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   float ly = 0.0f;
   float lz = 0.0f;
 
-  float g = 2 * m_volume->GetValue(x, y, z);
-  lx = m_volume->GetValue(x + 1, y, z) - g + m_volume->GetValue(x - 1, y, z);
-  ly = m_volume->GetValue(x, y + 1, z) - g + m_volume->GetValue(x, y - 1, z);
-  lz = m_volume->GetValue(x, y, z + 1) - g + m_volume->GetValue(x, y, z - 1);
+  float g = 2 * GetValue(x, y, z);
+  lx = GetValue(x + 1, y, z) - g + GetValue(x - 1, y, z);
+  ly = GetValue(x, y + 1, z) - g + GetValue(x, y - 1, z);
+  lz = GetValue(x, y, z + 1) - g + GetValue(x, y, z - 1);
   l = lx + ly + lz;
 
   if (l > m_max_global_laplacian)
@@ -484,9 +511,13 @@ bool ATFGenerator::GenerateHistogram()
       g /= aw;
       h /= aw;
 
+      printf("\nSlice %d: g = %.2f\th = %.2f\n", g, h);
+
       g = m_max_global_gradient * g / UCHAR_MAX;
       h = (m_max_global_laplacian - m_min_global_laplacian) * h / UCHAR_MAX;
       h += m_min_global_laplacian;
+
+      printf("Slice %d: g = %.2f\th = %.2f\n", g, h);
 
       m_average_gradient[i] = g;
       m_average_laplacian[i] = h;

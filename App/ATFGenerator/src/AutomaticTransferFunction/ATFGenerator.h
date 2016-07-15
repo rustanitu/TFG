@@ -63,6 +63,15 @@ public:
   bool ExtractTransferFunction();
 
   /// <summary>
+  /// Gets the voxel's value.
+  /// </summary>
+  /// <param name="x">The voxel's x component.</param>
+  /// <param name="y">The voxel's y component.</param>
+  /// <param name="z">The voxel's z component.</param>
+  /// <returns>Returns the float aproximated gradient.</returns>
+  float GetValue(int x, int y, int z);
+
+  /// <summary>
   /// Gets an aproximation of the voxel's gradient, using 
   /// its first derivatives.
   /// </summary>

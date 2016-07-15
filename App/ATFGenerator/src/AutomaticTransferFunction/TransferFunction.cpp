@@ -101,7 +101,7 @@ bool TransferFunction::Generate()
   {
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
-    printf("%.2f\n", x);
+    //printf("%.2f\n", x);
     if (x >= -base && x <= base)
     {
       float a = 0.0f;
