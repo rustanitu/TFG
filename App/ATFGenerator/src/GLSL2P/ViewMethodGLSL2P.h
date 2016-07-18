@@ -42,6 +42,8 @@ public:
   void SetIterate (bool iter);
   /*! Get if the renderer is rotating the volume.*/
   bool GetIterate (); 
+
+  void ReloadTransferFunction();
   
   /*! Set the automatic redisplay of the renderer.
   */

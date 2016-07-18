@@ -81,6 +81,8 @@ public:
 
   void ShowTransferFunctionViewer ();
 
+  void SetViewer(Viewer* atg);
+
   Ihandle* m_iup_main_dialog;
 
   Ihandle* m_iup_hbox_dialog;

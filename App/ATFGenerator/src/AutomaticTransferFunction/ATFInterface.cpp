@@ -3,7 +3,9 @@
 /// rustam@tecgraf.puc-rio.br
 
 #include "ATFInterface.h"
+#include "../Viewer.h"
 
+#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -51,6 +53,10 @@ int ATFInterface::OpenDesignerDialog(Ihandle* ih)
 int ATFInterface::Value(Ihandle* ih)
 {
   char *val = IupGetAttribute(ih, "VALUE");
-  printf("Changed: %s\n", val);
+  std::string::size_type size;
+  float scale = std::stof(val, &size);
+  scale *= 11;
+  ATFInterface* current = ATFInterface::Instance();
+  current->m_viewer->SetSigmaScale(scale);
   return IUP_DEFAULT;
 }

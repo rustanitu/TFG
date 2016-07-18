@@ -12,7 +12,7 @@
 #include "ERN\ERNViewMethod.h"
 
 #include "volrend\Reader.h"
-#include "AutomaticTransferFunction\ITransferFunction.h"
+#include "AutomaticTransferFunction\TransferFunction.h"
 
 #include <cstdlib>
 
@@ -133,9 +133,11 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     try
     {
       m_atfg = new ATFGenerator(m_volume);
+      m_gui.SetViewer(this);
+      m_atfg->GenerateVolumeSlices();
       if (m_atfg->Init() && m_atfg->ExtractTransferFunction())
       {
-        m_atfg->GenerateHistogramSlices();
+        //m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();
 
@@ -149,8 +151,6 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         tf->SetValueColor(192, 0, 127, 127);
         tf->SetValueColor(224, 84, 84, 85);
         tf->SetValueColor(255, 0, 0, 0);
-        //tf->SetValueColor(0, 0, 0, 200);
-        //tf->SetValueColor(255, 0, 0, 200);
         
         if (tf->Generate())
         {
@@ -169,6 +169,19 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
       printf("\nOcorreu um erro inesperado!\n\n");
     }
 #endif
+  }
+}
+
+void Viewer::SetSigmaScale(float scale)
+{
+  TransferFunction* tf = (TransferFunction*)m_atfg->GetTransferFunction();
+  tf->SetSigmaScale(scale);
+  if (tf->Generate())
+  {
+    char* tf_file = tf->GetPath();
+    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+    ((ViewMethodGLSL2P*)m_viewmethods[GLSL2P])->ReloadTransferFunction();
   }
 }
 

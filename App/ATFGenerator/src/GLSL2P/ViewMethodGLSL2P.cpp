@@ -44,6 +44,12 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
   return IUP_DEFAULT;
 }
 
+void ViewMethodGLSL2P::ReloadTransferFunction()
+{
+  m_renderer.ReloadTransferFunction(Viewer::Instance()->m_transfer_function);
+  UpdateIupUserInterface();
+}
+
 int ViewMethodGLSL2P::Keyboard_CB (Ihandle *ih, int c, int press)
 {
   if (press == 0)

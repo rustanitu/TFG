@@ -286,8 +286,6 @@
     <ClInclude Include="src\ViewMethod\ViewMethod.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="IncludeFileDependencies.dgml" />
     <None Include="shader\StructuredDataset\AdaptiveEvaluation\coupled.frag" />
     <None Include="shader\StructuredDataset\AdaptiveEvaluation\decoupled.frag" />
     <None Include="shader\StructuredDataset\backface.frag" />

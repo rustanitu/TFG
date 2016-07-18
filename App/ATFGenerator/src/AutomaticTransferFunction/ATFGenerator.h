@@ -92,6 +92,21 @@ public:
   float GetLaplacian(int x, int y, int z);
 
   /// <summary>
+  /// Generates a PGM image file with a volume slice.
+  /// The image is generated in the working directory and 
+  /// it's named "Volume Slice v", where 'v' is the 
+  /// value input.
+  /// </summary>
+  /// <param name="v">The value whose slice it's desired.</param>
+  void GenerateVolumeSlice(unsigned int v);
+
+  /// <summary>
+  /// Generates the all the volume slices, trhought
+  /// calls to void GenerateVolumeSlice(int v).
+  /// </summary>
+  void GenerateVolumeSlices();
+
+  /// <summary>
   /// Generates a PGM image file with a histogram slice.
   /// The image is generated in the working directory and 
   /// it's named "Histogram Slice v", where 'v' is the 

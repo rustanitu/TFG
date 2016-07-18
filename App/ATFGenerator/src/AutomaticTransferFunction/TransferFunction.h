@@ -39,6 +39,11 @@ public:
   /// be generated, false otherwise.</returns>
   bool Generate();
 
+  void SetSigmaScale(float scale)
+  {
+    m_scale = scale;
+  }
+
   /// <summary>
   /// Specifies the distance between a intensity value
   /// and its closest boundary. Thus, the input arrays'
@@ -65,6 +70,7 @@ private:
   /// The boundary's sigma
   /// </summary>
   float m_sigma;
+  float m_scale;
 };
 
 #endif

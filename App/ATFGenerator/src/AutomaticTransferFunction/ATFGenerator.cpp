@@ -30,6 +30,12 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_max_global_laplacian(-LONG_MAX)
 , m_initialized(false)
 {
+  GetValue(-1, 0, 0);
+  GetValue(0, -1, 0);
+  GetValue(0, 0, -1);
+  GetValue(m_width, 0, 0);
+  GetValue(0, m_height, 0);
+  GetValue(0, 0, m_depth);
 }
 
 /// <summary>
@@ -178,6 +184,51 @@ float ATFGenerator::GetLaplacian(int x, int y, int z)
 }
 
 /// <summary>
+/// Generates a PGM image file with a volume slice.
+/// The image is generated in the working directory and 
+/// it's named "Volume Slice v", where 'v' is the 
+/// value input.
+/// </summary>
+/// <param name="v">The value whose slice it's desired.</param>
+void ATFGenerator::GenerateVolumeSlice(unsigned int k)
+{
+  if (k >= m_depth)
+    throw std::domain_error("The value must range from 0 to depth volume!\n");
+
+  char* filename = new char[50];
+  sprintf(filename, "Volume\\Volume Slice %d", k);
+
+  PGMFile pgmfile(filename, m_width, m_height);
+
+  if (!pgmfile.Open())
+  {
+    printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
+    return;
+  }
+  //delete[] filename;
+
+  for (int j = m_height - 1; j >= 0; --j)
+  {
+    for (int i = 0; i < m_width; ++i)
+    {
+      pgmfile.WriteByte(m_volume->GetValue(i,j,k));
+    }
+    pgmfile.WriteEndLine();
+  }
+  pgmfile.Close();
+}
+
+/// <summary>
+/// Generates the all the volume slices, trhought
+/// calls to void GenerateVolumeSlice(int v).
+/// </summary>
+void ATFGenerator::GenerateVolumeSlices()
+{
+  for (int k = 0; k < m_depth; ++k)
+    GenerateVolumeSlice(k);
+}
+
+/// <summary>
 /// Generates a PGM image file with a histogram slice.
 /// The image is generated in the working directory and 
 /// it's named "Histogram Slice v", where 'v' is the 
@@ -193,8 +244,8 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
   if (v >= ATFG_V_RANGE)
     throw std::domain_error("The value must range from 0 to 255!\n");
 
-  char* filename = new char[19];
-  sprintf(filename, "Histogram Slice %d", v);
+  char* filename = new char[50];
+  sprintf(filename, "Histogram\\Histogram Slice %d", v);
 
   PGMFile pgmfile(filename, ATFG_V_RANGE, ATFG_V_RANGE);
 
@@ -203,7 +254,7 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
     printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
     return;
   }
-  delete [] filename;
+  //delete [] filename;
 
   for (int j = UCHAR_MAX; j >= 0; j--)
   {
@@ -408,26 +459,15 @@ bool ATFGenerator::CalculateVolumeDerivatives()
     return false;
   }
 
-  for (int x = 0; x < m_width; x++)
+  for (int x = 0; x < m_width; ++x)
   {
-    bool x_border = (x == 0) | (x == (m_width - 1));
-    for (int y = 0; y < m_height; y++)
+    for (int y = 0; y < m_height; ++y)
     {
-      bool y_border = (y == 0) | (y == (m_height - 1));
-      for (int z = 0; z < m_depth; z++)
+      for (int z = 0; z < m_depth; ++z)
       {
         unsigned int id = GetId(x, y, z);
-        bool z_border = (z == 0) | (z == (m_depth - 1));
-        if (x_border || y_border || z_border)
-        {
-          m_scalar_gradient[id] = 0;
-          m_scalar_laplacian[id] = 0;
-        }
-        else
-        {
-          m_scalar_gradient[id] = CalculateGradient(x, y, z);
-          m_scalar_laplacian[id] = CalculateLaplacian(x, y, z);
-        }
+        m_scalar_gradient[id] = CalculateGradient(x, y, z);
+        m_scalar_laplacian[id] = CalculateLaplacian(x, y, z);
       }
     }
   }
@@ -456,9 +496,9 @@ bool ATFGenerator::GenerateHistogram()
     }
   }
 
-  //m_max_global_gradient *= 0.9;
-  //m_max_global_laplacian *= 0.6;
-  //m_min_global_laplacian *= 0.6;
+  m_max_global_gradient -= m_max_global_gradient * (fmax(m_max_global_gradient - UCHAR_MAX, 0) / UCHAR_MAX) * 0.1f;
+  m_max_global_laplacian -= m_max_global_laplacian * (fmax(m_max_global_laplacian - UCHAR_MAX, 0) / UCHAR_MAX) * 0.1f;
+  m_min_global_laplacian -= m_min_global_laplacian * (fmax(-m_min_global_laplacian - UCHAR_MAX, 0) / UCHAR_MAX) * 0.2f;
 
   // Fill Histogram 
   for (int x = 0; x < m_width; x++)
@@ -476,11 +516,11 @@ bool ATFGenerator::GenerateHistogram()
           continue;
 
         unsigned char v = m_volume->GetValue(vol_id);
-        unsigned char g = m_scalar_gradient[vol_id] * UCHAR_MAX / m_max_global_gradient;
-        unsigned char l = (m_scalar_laplacian[vol_id] - m_min_global_laplacian) * UCHAR_MAX / (m_max_global_laplacian - m_min_global_laplacian);
+        unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * UCHAR_MAX;
+        unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * UCHAR_MAX;
 
         if (m_scalar_histogram[v][g][l] < UCHAR_MAX)
-          ++m_scalar_histogram[v][g][l];
+          m_scalar_histogram[v][g][l]++;
       }
     }
   }
@@ -488,21 +528,21 @@ bool ATFGenerator::GenerateHistogram()
   // Calculate average laplacian and gradient
   for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    float aw = 0.0f;
+    int aw = 0.0f;
     float g = 0.0f;
     float h = 0.0f;
-    for (unsigned long j = 0; j < ATFG_V_RANGE; ++j)
+    for (unsigned int j = 0; j < ATFG_V_RANGE; ++j)
     {
-      for (unsigned long k = 0; k < ATFG_V_RANGE; ++k)
+      for (unsigned int k = 0; k < ATFG_V_RANGE; ++k)
       {
-        float w = m_scalar_histogram[i][j][k] / 255.0f;
+        unsigned int w = (m_scalar_histogram[i][j][k] ? 1 : 0);
         g += w * j;
         h += w * k;
         aw += w;
       }
     }
 
-    if (aw < 0.1) {
+    if (aw < 1) {
       m_average_gradient[i] = 0;
       m_average_laplacian[i] = 0;
     }
@@ -511,13 +551,9 @@ bool ATFGenerator::GenerateHistogram()
       g /= aw;
       h /= aw;
 
-      printf("\nSlice %d: g = %.2f\th = %.2f\n", g, h);
-
       g = m_max_global_gradient * g / UCHAR_MAX;
       h = (m_max_global_laplacian - m_min_global_laplacian) * h / UCHAR_MAX;
       h += m_min_global_laplacian;
-
-      printf("Slice %d: g = %.2f\th = %.2f\n", g, h);
 
       m_average_gradient[i] = g;
       m_average_laplacian[i] = h;
@@ -538,37 +574,33 @@ float ATFGenerator::GetBoundaryDistancies(float * x)
 {
   assert(m_scalar_histogram && x);
 
-  m_max_gradient = 0.0f;
-  m_max_laplacian = 0.0f;
-  float m_min_laplacian = 0.0f;
+  float max_gradient = 0.0f;
+  float max_laplacian = 0.0f;
   for (int v = 0; v < ATFG_V_RANGE; ++v)
   {
-    if (m_average_gradient[v] > m_max_gradient)
-      m_max_gradient = m_average_gradient[v];
-    if (m_average_laplacian[v] > m_max_laplacian)
-      m_max_laplacian = m_average_laplacian[v];
-    if (m_average_laplacian[v] < m_min_laplacian)
-      m_min_laplacian = m_average_laplacian[v];
+    if (m_average_gradient[v] > max_gradient)
+      max_gradient = m_average_gradient[v];
+    if (m_average_laplacian[v] > max_laplacian)
+      max_laplacian = m_average_laplacian[v];
   }
 
-  float sigma = 0.0f;
-  //if (m_max_laplacian > 0.0f)
-  //  sigma = m_max_gradient / ( m_max_laplacian * SQRT_E);
-  //else
-    sigma = m_max_gradient / ( m_min_laplacian * SQRT_E);
+  if (max_laplacian == 0.0f)
+    throw std::domain_error("Houve erro na analise dos dados. Laplaciano = 0.");
+  
+  float sigma = max_gradient / ( max_laplacian * SQRT_E);
+  float g_tresh = max_gradient * 0.9f;
 
   for (int v = 0; v < ATFG_V_RANGE; ++v)
   {
-    float g_tresh = 0.0f;// m_average_gradient[v] * 0.1f;
     float g = m_average_gradient[v];
     float l = m_average_laplacian[v];
-    if (g == 0)
+    if (g == 0.0f)
     {
       x[v] = FLT_MAX;
       continue;
     }
 
-    x[v] = -sigma * sigma * (l / fmax(g - g_tresh, 0));
+    x[v] = - sigma * sigma * (l / fmax(g - g_tresh, 0.00001));
   }
 
   return sigma;

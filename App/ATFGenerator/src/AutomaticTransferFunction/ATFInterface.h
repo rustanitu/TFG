@@ -8,6 +8,8 @@
 #include <iup.h>
 #include <iupgl.h>
 
+class Viewer;
+
 class ATFInterface
 {
 public:
@@ -29,11 +31,16 @@ public:
     return m_option_designer;
   }
 
+  void SetViewer(Viewer* viewer)
+  {
+    m_viewer = viewer;
+  }
 
 private:
   static ATFInterface* S_CURRENT;
   Ihandle* m_menu;
   Ihandle* m_option_designer;
+  Viewer* m_viewer;
 };
 
 #endif

@@ -631,6 +631,11 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupRefresh (m_iup_main_dialog);
 }
 
+void ViewerInterface::SetViewer(Viewer* viewer)
+{
+  m_atfg_interface->SetViewer(viewer);
+}
+
 Ihandle* ViewerInterface::GetCanvasRenderer ()
 {
   return m_iup_canvas_renderer;

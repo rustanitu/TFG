@@ -136,6 +136,8 @@ public:
   bool FileDlg_TransferFunction ();
 
   bool SaveSnapshot (char* filename);
+
+  void SetSigmaScale(float scale);
   
   ViewerInterface m_gui;
 protected:

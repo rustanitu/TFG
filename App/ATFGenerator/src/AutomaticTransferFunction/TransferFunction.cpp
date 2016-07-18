@@ -14,6 +14,7 @@
 TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, TF_EXT)
 , m_value(NULL)
 , m_distance(NULL)
+, m_scale(1.0f)
 {
   m_color_size = 0;
   for (int i = 0; i < MAX_V; ++i)
@@ -88,11 +89,11 @@ bool TransferFunction::Generate()
   //   /     |     \  |
   //  /      |      \ |
   //  ------ 0 ++++++ 
-  // |---------------|
+  // |-------|-------|
   //       base
   
-  float amax = 0.6f;
-  float base = m_sigma;
+  float amax = 1.0f;
+  float base = m_sigma * m_scale;
 
   printf("sigma: %.2f\n\n", m_sigma);
 
@@ -101,7 +102,7 @@ bool TransferFunction::Generate()
   {
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
-    //printf("%.2f\n", x);
+    printf("%.2f\n", x);
     if (x >= -base && x <= base)
     {
       float a = 0.0f;

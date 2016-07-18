@@ -58,7 +58,7 @@ bool PGMFile::Open()
   int error = fopen_s(&m_file, m_path, "wb");
   if (error)
   {
-    printf("Erro ao tentar abrir o arquivo %s%s!\n", m_path, PGM_EXT);
+    printf("Erro ao tentar abrir o arquivo %s!\n", m_path);
     return false;
   }
 
