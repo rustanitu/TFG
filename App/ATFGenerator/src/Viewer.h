@@ -137,7 +137,8 @@ public:
 
   bool SaveSnapshot (char* filename);
 
-  void SetSigmaScale(float scale);
+  static int SetSigmaScale(Ihandle* ih);
+  static int SetGTresh(Ihandle* ih);
   
   ViewerInterface m_gui;
 protected:
@@ -149,6 +150,8 @@ protected:
 private:
   /*! the pointer to the singleton instance.*/
   static Viewer* m_instance;
+
+  float m_sigma_scale;
 };
 
 #endif

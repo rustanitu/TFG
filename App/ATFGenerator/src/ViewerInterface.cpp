@@ -417,12 +417,33 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* vbox_sep = IupVbox (NULL);
   IupSetAttribute (vbox_sep, "RASTERSIZE", "0x10");
 
+  Ihandle* sgima_bar = IupVal("VERTICAL");
+  IupSetAttribute(sgima_bar, "ACTIVE", "YES");
+  IupSetAttribute(sgima_bar, "SHOWTICKS", "10");
+  IupSetAttribute(sgima_bar, "STEP", "0.0001");
+  IupSetAttribute(sgima_bar, "VALUE", "0.1");
+  IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(sgima_bar, "ALIGNMENT", "ACENTER");
+  IupSetCallback(sgima_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetSigmaScale);
+
+  Ihandle* gtresh_bar = IupVal("VERTICAL");
+  IupSetAttribute(gtresh_bar, "ACTIVE", "YES");
+  IupSetAttribute(gtresh_bar, "SHOWTICKS", "10");
+  IupSetAttribute(gtresh_bar, "STEP", "0.0001");
+  IupSetAttribute(gtresh_bar, "VALUE", "0.1");
+  IupSetAttribute(gtresh_bar, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
+  IupSetCallback(gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
+
+  Ihandle* atfg_label = IupLabel(" Sigma         -        GTresh");
+  Ihandle* hbox_atfg = IupHbox(sgima_bar, gtresh_bar, NULL);
+
   Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
   IupSetAttribute (selected_int_label, "EXPAND", "HORIZONTAL");
   IupSetAttribute (selected_int_label, "ALIGNMENT", "ACENTER");
   
   m_iup_frame_adinterface = Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->GetIupUserInterface ();
-  m_iup_vbox_GUI = IupVbox(common_int_label, m_iup_vbox_commoninterface, vbox_sep, selected_int_label, m_iup_frame_adinterface, m_iup_vbox_atf, NULL);
+  m_iup_vbox_GUI = IupVbox(common_int_label, m_iup_vbox_commoninterface, vbox_sep, atfg_label, hbox_atfg, selected_int_label, m_iup_frame_adinterface, m_iup_vbox_atf, NULL);
   //IupSetAttribute (m_iup_vbox_GUI, "NGAP", "20");
   IupSetAttribute (m_iup_vbox_GUI, "NMARGIN", "1x1");
   m_iup_hbox_dialog = 

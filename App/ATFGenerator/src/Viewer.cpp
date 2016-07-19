@@ -133,11 +133,10 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     try
     {
       m_atfg = new ATFGenerator(m_volume);
-      m_gui.SetViewer(this);
+      //m_gui.SetViewer(this);
       m_atfg->GenerateVolumeSlices();
       if (m_atfg->Init() && m_atfg->ExtractTransferFunction())
       {
-        //m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();
 
@@ -172,17 +171,57 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
   }
 }
 
-void Viewer::SetSigmaScale(float scale)
+int Viewer::SetSigmaScale(Ihandle* ih)
 {
-  TransferFunction* tf = (TransferFunction*)m_atfg->GetTransferFunction();
+  char *val = IupGetAttribute(ih, "VALUE");
+  std::string::size_type size;
+  float scale = std::stof(val, &size);
+  scale *= 11;
+  Viewer::Instance()->m_sigma_scale = scale;
+
+  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
   tf->SetSigmaScale(scale);
   if (tf->Generate())
   {
     char* tf_file = tf->GetPath();
     vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
     Viewer::Instance()->SetTransferFunction(tfr, tf_file);
-    ((ViewMethodGLSL2P*)m_viewmethods[GLSL2P])->ReloadTransferFunction();
+    ((ViewMethodGLSL2P*)Viewer::Instance()->m_viewmethods[GLSL2P])->ReloadTransferFunction();
   }
+
+  return IUP_DEFAULT;
+}
+
+int Viewer::SetGTresh(Ihandle* ih)
+{
+  char *val = IupGetAttribute(ih, "VALUE");
+  std::string::size_type size;
+  float scale = std::stof(val, &size);
+
+  Viewer::Instance()->m_atfg->SetGTresh(scale);
+  if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
+    return IUP_DEFAULT;
+
+  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
+  tf->SetValueColor(0, 255, 255, 255);
+  tf->SetValueColor(32, 255, 0, 0);
+  tf->SetValueColor(64, 0, 255, 0);
+  tf->SetValueColor(96, 0, 0, 255);
+  tf->SetValueColor(128, 127, 127, 0);
+  tf->SetValueColor(160, 127, 0, 127);
+  tf->SetValueColor(192, 0, 127, 127);
+  tf->SetValueColor(224, 84, 84, 85);
+  tf->SetValueColor(255, 0, 0, 0);
+  tf->SetSigmaScale(Viewer::Instance()->m_sigma_scale);
+  if (tf->Generate())
+  {
+    char* tf_file = tf->GetPath();
+    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+    ((ViewMethodGLSL2P*)Viewer::Instance()->m_viewmethods[GLSL2P])->ReloadTransferFunction();
+  }
+
+  return IUP_DEFAULT;
 }
 
 void Viewer::BuildViewers ()
@@ -461,6 +500,7 @@ bool Viewer::SaveSnapshot (char* filename)
 
 Viewer::Viewer ()
 {
+  m_sigma_scale = 1.0f;
   m_CurrentWidth = 800;
   m_CurrentHeight = 600;
 

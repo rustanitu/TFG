@@ -146,6 +146,11 @@ public:
   /// <returns>Returns a pointer to the transfer function generated automatically.</returns>
   ITransferFunction* GetTransferFunction();
 
+  void SetGTresh(float gt)
+  {
+    m_gt = gt;
+  }
+
 private:
   /// <summary>
   /// Calculates an aproximation of the voxel's gradient, 
@@ -192,7 +197,7 @@ private:
   /// </summary>
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
-  float GetBoundaryDistancies(float* x);
+  float GetBoundaryDistancies(float* x, float gt);
 
   unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
 
@@ -257,6 +262,8 @@ private:
   /// initialized.
   /// </summary>
   bool m_initialized;
+
+  float m_gt;
 };
 
 #endif

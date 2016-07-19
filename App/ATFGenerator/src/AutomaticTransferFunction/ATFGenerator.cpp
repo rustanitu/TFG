@@ -29,6 +29,7 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_min_global_laplacian(LONG_MAX)
 , m_max_global_laplacian(-LONG_MAX)
 , m_initialized(false)
+, m_gt(0.0f)
 {
   GetValue(-1, 0, 0);
   GetValue(0, -1, 0);
@@ -94,7 +95,7 @@ bool ATFGenerator::ExtractTransferFunction()
   if (!x)
     return false;
 
-  float sigma = GetBoundaryDistancies(x);
+  float sigma = GetBoundaryDistancies(x, m_gt);
   unsigned char* values = new unsigned char[ATFG_V_RANGE];
   
   if (!x || !values)
@@ -299,23 +300,34 @@ void ATFGenerator::GenerateGradientSummedHistogram()
   if (!pgmfile.Open())
     throw std::runtime_error("PGM file could not be created!");
 
+  unsigned char min = 100;
+  float a = float(UCHAR_MAX - min) / UCHAR_MAX;
+
   for (int j = UCHAR_MAX; j >= 0; --j)
   {
     for (int i = 0; i < ATFG_V_RANGE; ++i)
     {
-      unsigned char sum = UCHAR_MAX;
+      unsigned char sum = 0;
       for (long k = 0; k < ATFG_V_RANGE; ++k)
       {
-        if ((int)sum - m_scalar_histogram[i][j][k] <= 0)
+        if ((int)sum + m_scalar_histogram[i][j][k] >= UCHAR_MAX)
         {
-          sum = 0;
+          sum = UCHAR_MAX;
           break;
         }
         else
-          sum -= m_scalar_histogram[i][j][k];
+          sum += m_scalar_histogram[i][j][k];
       }
 
-      pgmfile.WriteByte(sum);
+      sum = pow(float(sum) / UCHAR_MAX, 0.125f) * UCHAR_MAX;
+
+      //if (sum > 0)
+      //{
+      //  sum *= a;
+      //  sum += min;
+      //}
+
+      pgmfile.WriteByte(UCHAR_MAX - sum);
     }
     pgmfile.WriteEndLine();
   }
@@ -496,9 +508,9 @@ bool ATFGenerator::GenerateHistogram()
     }
   }
 
-  m_max_global_gradient -= m_max_global_gradient * (fmax(m_max_global_gradient - UCHAR_MAX, 0) / UCHAR_MAX) * 0.1f;
-  m_max_global_laplacian -= m_max_global_laplacian * (fmax(m_max_global_laplacian - UCHAR_MAX, 0) / UCHAR_MAX) * 0.1f;
-  m_min_global_laplacian -= m_min_global_laplacian * (fmax(-m_min_global_laplacian - UCHAR_MAX, 0) / UCHAR_MAX) * 0.2f;
+  m_max_global_gradient  *= 0.9;
+  m_max_global_laplacian *= 0.9;
+  m_min_global_laplacian *= 0.8;
 
   // Fill Histogram 
   for (int x = 0; x < m_width; x++)
@@ -570,7 +582,7 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(float * x)
+float ATFGenerator::GetBoundaryDistancies(float * x, float gt)
 {
   assert(m_scalar_histogram && x);
 
@@ -587,8 +599,8 @@ float ATFGenerator::GetBoundaryDistancies(float * x)
   if (max_laplacian == 0.0f)
     throw std::domain_error("Houve erro na analise dos dados. Laplaciano = 0.");
   
-  float sigma = max_gradient / ( max_laplacian * SQRT_E);
-  float g_tresh = max_gradient * 0.9f;
+  float sigma = max_gradient / (max_laplacian * SQRT_E);
+  float g_tresh = max_gradient * gt;
 
   for (int v = 0; v < ATFG_V_RANGE; ++v)
   {
@@ -600,7 +612,7 @@ float ATFGenerator::GetBoundaryDistancies(float * x)
       continue;
     }
 
-    x[v] = - sigma * sigma * (l / fmax(g - g_tresh, 0.00001));
+    x[v] = - sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
   }
 
   return sigma;

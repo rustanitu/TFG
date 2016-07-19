@@ -37,26 +37,16 @@ void ATFInterface::Build()
 
 int ATFInterface::OpenDesignerDialog(Ihandle* ih)
 {
-  ATFInterface* current = ATFInterface::Instance();
+  //ATFInterface* current = ATFInterface::Instance();
 
-  Ihandle* bar = IupVal("VERTICAL");
-  IupSetAttribute(bar, "ACTIVE", "YES");
-  IupSetCallback(bar, "VALUECHANGED_CB", (Icallback)ATFInterface::Value);
-  
-  Ihandle *dlg = IupDialog(IupHbox(bar, NULL));
-  IupSetAttribute(dlg, "TITLE", "Function Designer");
+  //Ihandle *dlg = IupDialog(IupHbox(bar, NULL));
+  //IupSetAttribute(dlg, "TITLE", "Function Designer");
 
-  IupPopup(dlg, IUP_CURRENT, IUP_CURRENT);
+  //IupPopup(dlg, IUP_CURRENT, IUP_CURRENT);
   return IUP_DEFAULT;
 }
 
 int ATFInterface::Value(Ihandle* ih)
 {
-  char *val = IupGetAttribute(ih, "VALUE");
-  std::string::size_type size;
-  float scale = std::stof(val, &size);
-  scale *= 11;
-  ATFInterface* current = ATFInterface::Instance();
-  current->m_viewer->SetSigmaScale(scale);
   return IUP_DEFAULT;
 }
