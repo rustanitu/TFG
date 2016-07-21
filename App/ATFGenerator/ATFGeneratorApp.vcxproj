@@ -185,6 +185,7 @@
     <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFInterface.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\RAWFile.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ATFInterface.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\RAWFile.h" />
     <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h" />
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
     <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />

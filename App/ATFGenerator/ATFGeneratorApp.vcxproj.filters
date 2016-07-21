@@ -243,6 +243,9 @@
     <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\RAWFile.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ViewMethod\ViewMethod.h">
@@ -402,6 +405,9 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\RAWFile.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>

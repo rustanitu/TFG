@@ -13,7 +13,8 @@
 /*************************/
 
 #define SQRT_E 1.6487212707
-#define ATFG_V_RANGE UCHAR_MAX + 1
+#define ATFG_V_MAX 255
+#define ATFG_V_RANGE ATFG_V_MAX + 1
 
 class TransferFunction;
 
@@ -99,12 +100,16 @@ public:
   /// </summary>
   /// <param name="v">The value whose slice it's desired.</param>
   void GenerateVolumeSlice(unsigned int v);
+  void GenerateGradientSlice(unsigned int v);
+  void GenerateLaplacianSlice(unsigned int v);
 
   /// <summary>
   /// Generates the all the volume slices, trhought
   /// calls to void GenerateVolumeSlice(int v).
   /// </summary>
   void GenerateVolumeSlices();
+  void GenerateGradientSlices();
+  void GenerateLaplacianSlices();
 
   /// <summary>
   /// Generates a PGM image file with a histogram slice.

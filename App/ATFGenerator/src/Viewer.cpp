@@ -13,6 +13,7 @@
 
 #include "volrend\Reader.h"
 #include "AutomaticTransferFunction\TransferFunction.h"
+#include "AutomaticTransferFunction\RAWFile.h"
 
 #include <cstdlib>
 
@@ -132,30 +133,46 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
 #ifdef ATFG
     try
     {
+#if 0
+      RAWFile raw("..\\..\\Modelos\\VolumeModels\\BinaryBox", 256, 256, 256);
+      raw.Open();
+      m_atfg = new ATFGenerator(m_volume);
+      m_atfg->GenerateVolumeSlices();
+      if (m_atfg->Init() && m_atfg->ExtractTransferFunction()) {
+        m_atfg->GenerateHistogramSlices();
+        m_atfg->GenerateGradientSlices();
+        m_atfg->GenerateLaplacianSlices();
+        m_atfg->GenerateGradientSummedHistogram();
+        m_atfg->GenerateLaplacianSummedHistogram();
+      }
+      exit(1);
+#endif
       m_atfg = new ATFGenerator(m_volume);
       //m_gui.SetViewer(this);
-      m_atfg->GenerateVolumeSlices();
-      if (m_atfg->Init() && m_atfg->ExtractTransferFunction())
+      if (m_atfg->Init())
       {
+        m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();
 
-        ITransferFunction* tf = m_atfg->GetTransferFunction();
-        tf->SetValueColor(0, 255, 255, 255);
-        tf->SetValueColor(32, 255, 0, 0);
-        tf->SetValueColor(64, 0, 255, 0);
-        tf->SetValueColor(96, 0, 0, 255);
-        tf->SetValueColor(128, 127, 127, 0);
-        tf->SetValueColor(160, 127, 0, 127);
-        tf->SetValueColor(192, 0, 127, 127);
-        tf->SetValueColor(224, 84, 84, 85);
-        tf->SetValueColor(255, 0, 0, 0);
-        
-        if (tf->Generate())
+        if (m_atfg->ExtractTransferFunction())
         {
-          char* tf_file = tf->GetPath();
-          vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-          SetTransferFunction(tfr, tf_file);
+          ITransferFunction* tf = m_atfg->GetTransferFunction();
+          tf->SetValueColor(0, 255, 255, 255);
+          tf->SetValueColor(32, 255, 0, 0);
+          tf->SetValueColor(64, 0, 255, 0);
+          tf->SetValueColor(96, 0, 0, 255);
+          tf->SetValueColor(128, 127, 127, 0);
+          tf->SetValueColor(160, 127, 0, 127);
+          tf->SetValueColor(192, 0, 127, 127);
+          tf->SetValueColor(224, 84, 84, 85);
+          tf->SetValueColor(255, 0, 0, 0);
+
+          if (tf->Generate()) {
+            char* tf_file = tf->GetPath();
+            vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+            SetTransferFunction(tfr, tf_file);
+          }
         }
       }
     }
