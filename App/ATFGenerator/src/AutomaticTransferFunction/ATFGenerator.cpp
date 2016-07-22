@@ -667,19 +667,9 @@ bool ATFGenerator::GenerateHistogram()
         //if (m_scalar_laplacian[vol_id] > m_max_global_laplacian || m_scalar_laplacian[vol_id] < m_min_global_laplacian)
         //  continue;
 
-        if (m_scalar_gradient[vol_id] > ATFG_V_MAX)
-          continue;
-
-        if (m_scalar_laplacian[vol_id] > 0.5f * ATFG_V_MAX || m_scalar_laplacian[vol_id] < -0.5f * ATFG_V_MAX)
-          continue;
-
         unsigned char v = m_volume->GetValue(vol_id);
-        unsigned char g = m_scalar_gradient[vol_id];
-        unsigned char l = m_scalar_laplacian[vol_id] + 0.5f * ATFG_V_MAX;
-
-        //unsigned char v = m_volume->GetValue(vol_id);
-        //unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
-        //unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
+        unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
+        unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
 
         if (m_scalar_histogram[v][g][l] < ATFG_V_MAX)
           m_scalar_histogram[v][g][l]++;
@@ -712,11 +702,9 @@ bool ATFGenerator::GenerateHistogram()
       assert(g == 0.0f && h == 0.0f);
     }
 
-    //g = m_max_global_gradient * g / ATFG_V_MAX;
-    //h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
-    //h += m_min_global_laplacian;
-
-    h -= 0.5f * ATFG_V_MAX;
+    g = m_max_global_gradient * g / ATFG_V_MAX;
+    h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
+    h += m_min_global_laplacian;
 
     m_average_gradient[i] = g;
     m_average_laplacian[i] = h;
