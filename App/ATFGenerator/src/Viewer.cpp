@@ -134,16 +134,11 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     try
     {
 #if 0
-      RAWFile raw("..\\..\\Modelos\\VolumeModels\\BinaryBox", 256, 256, 256);
-      raw.Open();
-      m_atfg = new ATFGenerator(m_volume);
-      m_atfg->GenerateVolumeSlices();
-      if (m_atfg->Init() && m_atfg->ExtractTransferFunction()) {
-        m_atfg->GenerateHistogramSlices();
-        m_atfg->GenerateGradientSlices();
-        m_atfg->GenerateLaplacianSlices();
-        m_atfg->GenerateGradientSummedHistogram();
-        m_atfg->GenerateLaplacianSummedHistogram();
+      RAWFile raw("..\\..\\Modelos\\VolumeModels\\BinaryCylinderModel", 128, 128, 128);
+      if (raw.Open()) {
+        m_atfg = new ATFGenerator(m_volume);
+        m_atfg->GenerateVolumeSlices();
+        raw.Close();
       }
       exit(1);
 #endif
@@ -151,6 +146,9 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
       //m_gui.SetViewer(this);
       if (m_atfg->Init())
       {
+        m_atfg->GenerateVolumeSlices();
+        m_atfg->GenerateGradientSlices();
+        m_atfg->GenerateLaplacianSlices();
         m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();

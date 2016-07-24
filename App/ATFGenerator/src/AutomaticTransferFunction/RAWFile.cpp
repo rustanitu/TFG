@@ -67,25 +67,50 @@ bool RAWFile::Open()
     return false;
   }
 
-#if 1
+#if 0
   int c = m_width / 2;
   int d = m_width / 4;
   for (int z = 0; z < m_depth; z++) {
     for (int y = 0; y < m_height; y++) {
       for (int x = 0; x < m_width; x++) {
         unsigned char v = 50;
-        if (abs(x - c) <= d &&
-          abs(y - c) <= d &&
-          abs(z - c) <= d)
+        int difx = abs(x - c);
+        int dify = abs(y - c);
+        int difz = abs(z - c);
+        if (difx <= d && dify <= d && difz <= d)
         {
-          v = 200;
+          v = 150;
         }
         WriteByte(v);
       }
     }
   }
+#endif
 
-  Close();
+#if 1
+  int c = m_width / 2;
+  float d = m_width / 4;
+  d *= d;
+  float t = d / 6;
+  float h = m_width / 4;
+  for (int z = 0; z < m_depth; z++) {
+    for (int y = 0; y < m_height; y++) {
+      for (int x = 0; x < m_width; x++) {
+        unsigned char v = 50;
+        float dist = (x - c) * (x - c) + (z - c) * (z - c);
+        float disty = (y - c) * (y - c);
+        if (dist <= d && abs(y - c) <= h) {
+          if (d - dist <= t)
+            v += 100 * (d - dist) / t;
+          else if (d - disty <= t)
+            v += 100 * (d - disty) / t;
+          else
+            v = 150;
+        }
+        WriteByte(v);
+      }
+    }
+  }
 #endif
   return true;
 }
