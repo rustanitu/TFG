@@ -95,14 +95,15 @@ bool TransferFunction::Generate()
   float amax = 1.0f;
   float base = m_sigma * m_scale;
 
-  printf("sigma: %.2f\n\n", m_sigma);
-
   // Assign opacity to transfer function
   for (int i = 0; i < m_values_size; ++i)
   {
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
-    printf("%.2f\n", x);
+    
+    if (x == -FLT_MAX)
+      continue;
+    
     if (x >= -base && x <= base)
     {
       float a = 0.0f;

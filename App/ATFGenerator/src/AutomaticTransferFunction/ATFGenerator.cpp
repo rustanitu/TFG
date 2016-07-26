@@ -16,6 +16,10 @@
 #include "Histogram.h"
 
 
+#define ATFG_FULL_RANGE
+#define ATFG_GAMA_CORRECTION 0.33f
+
+
 const int SOBEL_X_MASK[27] =
 {
   -1, -2, -1, -2, -4, -2, -1, -2, -1,
@@ -434,7 +438,7 @@ void ATFGenerator::GenerateGradientSummedHistogram()
 
   for (int j = ATFG_V_MAX; j >= 0; --j) {
     for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, 0.33f));
+      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
       pgmfile.WriteByte(val);
     }
     pgmfile.WriteEndLine();
@@ -483,7 +487,7 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
 
   for (int j = ATFG_V_MAX; j >= 0; --j) {
     for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, 0.33f));
+      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
       pgmfile.WriteByte(val);
     }
     pgmfile.WriteEndLine();
@@ -666,9 +670,11 @@ bool ATFGenerator::GenerateHistogram()
     }
   }
 
+#ifndef ATFG_FULL_RANGE
   m_max_global_gradient  *= 0.9;
   m_max_global_laplacian *= 0.9;
   m_min_global_laplacian *= 0.8;
+#endif
 
   // Fill Histogram 
   for (int x = 0; x < m_width; x++)
@@ -679,18 +685,20 @@ bool ATFGenerator::GenerateHistogram()
       {
         unsigned int vol_id = GetId(x,y,z);
 
+#ifndef ATFG_FULL_RANGE
         if (m_scalar_gradient[vol_id] > m_max_global_gradient)
           continue;
 
         if (m_scalar_laplacian[vol_id] > m_max_global_laplacian || m_scalar_laplacian[vol_id] < m_min_global_laplacian)
           continue;
+#endif
 
         unsigned char v = m_volume->GetValue(vol_id);
         unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
         unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
 
         if (m_scalar_histogram[v][g][l] < ATFG_V_MAX)
-          m_scalar_histogram[v][g][l] = ATFG_V_MAX;
+          m_scalar_histogram[v][g][l]++;
       }
     }
   }
@@ -698,34 +706,37 @@ bool ATFGenerator::GenerateHistogram()
   // Calculate average laplacian and gradient
   for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    float aw = 0.0f;
+    unsigned int w = 0;
     float g = 0.0f;
     float h = 0.0f;
     for (unsigned int j = 0; j < ATFG_V_RANGE; ++j)
     {
       for (unsigned int k = 0; k < ATFG_V_RANGE; ++k)
       {
-        float w = m_scalar_histogram[i][j][k];
-        g += w * j;
-        h += w * k;
-        aw += w;
+        if (m_scalar_histogram[i][j][k] > 1)
+        {
+          g += j;
+          h += k;
+          w++;
+        }
       }
     }
 
-    if (aw > 0.0f) {
-      g /= aw;
-      h /= aw;
+    if (w > 0) {
+      g /= w;
+      h /= w;
+
+      g = m_max_global_gradient * g / ATFG_V_MAX;
+      h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
+      h += m_min_global_laplacian;
+
+      m_average_gradient[i] = g;
+      m_average_laplacian[i] = h;
     }
     else {
-      assert(g == 0.0f && h == 0.0f);
+      m_average_gradient[i] = -FLT_MAX;
+      m_average_laplacian[i] = -FLT_MAX;
     }
-
-    g = m_max_global_gradient * g / ATFG_V_MAX;
-    h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
-    h += m_min_global_laplacian;
-
-    m_average_gradient[i] = g;
-    m_average_laplacian[i] = h;
   }
 
   return true;
@@ -765,6 +776,11 @@ float ATFGenerator::GetBoundaryDistancies(float * x, float gt)
     if (g == 0.0f)
     {
       x[v] = FLT_MAX;
+      continue;
+    }
+    else if (m_average_gradient[v] == -FLT_MAX || m_average_laplacian[v] == -FLT_MAX)
+    {
+      x[v] = -FLT_MAX;
       continue;
     }
 
