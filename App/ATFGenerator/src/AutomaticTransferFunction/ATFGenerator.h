@@ -6,6 +6,7 @@
 #define ATFGenerator_H
 
 #include "IATFGenerator.h"
+#include "DerivativeMask.h"
 #include <volrend/Volume.h>
 
 /*************************/
@@ -269,6 +270,8 @@ private:
   bool m_initialized;
 
   float m_gt;
+
+  DerivativeMask m_derivativeMask;
 };
 
 #endif

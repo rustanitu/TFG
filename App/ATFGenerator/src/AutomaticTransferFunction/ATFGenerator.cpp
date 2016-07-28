@@ -18,6 +18,7 @@
 
 #define ATFG_FULL_RANGE
 #define ATFG_GAMA_CORRECTION 0.33f
+#define MASK_SIZE 3
 
 
 const int SOBEL_X_MASK[27] =
@@ -77,13 +78,8 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_max_global_laplacian(-LONG_MAX)
 , m_initialized(false)
 , m_gt(0.0f)
+, m_derivativeMask(MASK_SIZE)
 {
-  GetValue(-1, 0, 0);
-  GetValue(0, -1, 0);
-  GetValue(0, 0, -1);
-  GetValue(m_width, 0, 0);
-  GetValue(0, m_height, 0);
-  GetValue(0, 0, m_depth);
 }
 
 /// <summary>
@@ -539,6 +535,30 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   gx /= div;
   gy /= div;
   gz /= div;
+
+
+  float glx = 0.0f;
+  float gly = 0.0f;
+  float glz = 0.0f;
+  int h = MASK_SIZE / 2;
+  int xinit = x - h;
+  int yinit = y - h;
+  int zinit = z - h;
+  for (int i = xinit; i <= x + h; ++i) {
+    for (int j = yinit; j <= y + h; ++j) {
+      for (int k = zinit; k <= z + h; ++k) {
+        float v = GetValue(i, j, k);
+        float pglx;
+        float pgly;
+        float pglz;
+        m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
+        glx += pglx * v;
+        gly += pgly * v;
+        glz += pglz * v;
+      }
+    }
+  }
+
 #else
   gx = 0.5f * (GetValue(x + 1, y, z) - GetValue(x - 1, y, z));
   gy = 0.5f * (GetValue(x, y + 1, z) - GetValue(x, y - 1, z));

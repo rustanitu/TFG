@@ -249,6 +249,9 @@
     <ClCompile Include="src\AutomaticTransferFunction\Histogram.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\DerivativeMask.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ViewMethod\ViewMethod.h">
@@ -414,6 +417,9 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\Histogram.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\DerivativeMask.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>
