@@ -101,9 +101,6 @@ bool TransferFunction::Generate()
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
     
-    if (x == -FLT_MAX)
-      continue;
-    
     if (x >= -base && x <= base)
     {
       float a = 0.0f;

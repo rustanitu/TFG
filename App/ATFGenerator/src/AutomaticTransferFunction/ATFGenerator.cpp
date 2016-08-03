@@ -16,9 +16,9 @@
 #include "Histogram.h"
 
 
-#define ATFG_FULL_RANGE
+//#define ATFG_FULL_RANGE
 #define ATFG_GAMA_CORRECTION 0.33f
-#define MASK_SIZE 3
+#define MASK_SIZE 5
 
 
 const int SOBEL_X_MASK[27] =
@@ -77,7 +77,7 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_min_global_laplacian(LONG_MAX)
 , m_max_global_laplacian(-LONG_MAX)
 , m_initialized(false)
-, m_gt(0.0f)
+, m_gt(0.1f)
 , m_derivativeMask(MASK_SIZE)
 {
 }
@@ -135,24 +135,17 @@ bool ATFGenerator::ExtractTransferFunction()
   m_transfer_function = new TransferFunction(filename.c_str());
 
   float* x = new float[ATFG_V_RANGE];
-  if (!x)
-    return false;
-
-  float sigma = GetBoundaryDistancies(x, m_gt);
-  unsigned char* values = new unsigned char[ATFG_V_RANGE];
-  
-  if (!x || !values)
+  unsigned char* v = new unsigned char[ATFG_V_RANGE];
+  if (!x || !v)
   {
     printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
     return false;
   }
 
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
-  {
-    values[i] = i;
-  }
-
-  m_transfer_function->SetClosestBoundaryDistances(values, x, sigma, ATFG_V_RANGE);
+  int n_v;
+  float sigma = GetBoundaryDistancies(x, v, &n_v, m_gt);
+  
+  m_transfer_function->SetClosestBoundaryDistances(v, x, sigma, n_v);
   return true;
 }
 
@@ -518,28 +511,6 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   float gy = 0.0f;
   float gz = 0.0f;
 
-#if 1
-  int s = 0;
-  for (int i = x - 1; i <= x + 1; ++i) {
-    for (int j = y - 1; j <= y + 1; ++j) {
-      for (int k = z - 1; k <= z + 1; ++k) {
-        float v = GetValue(i, j, k);
-        gx += SOBEL_X_MASK[s] * v;
-        gy += SOBEL_Y_MASK[s] * v;
-        gz += SOBEL_Z_MASK[s] * v;
-        ++s;
-      }
-    }
-  }
-  float div = 32.0f;
-  gx /= div;
-  gy /= div;
-  gz /= div;
-
-
-  float glx = 0.0f;
-  float gly = 0.0f;
-  float glz = 0.0f;
   int h = MASK_SIZE / 2;
   int xinit = x - h;
   int yinit = y - h;
@@ -552,18 +523,12 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
         float pgly;
         float pglz;
         m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
-        glx += pglx * v;
-        gly += pgly * v;
-        glz += pglz * v;
+        gx += pglx * v;
+        gy += pgly * v;
+        gz += pglz * v;
       }
     }
   }
-
-#else
-  gx = 0.5f * (GetValue(x + 1, y, z) - GetValue(x - 1, y, z));
-  gy = 0.5f * (GetValue(x, y + 1, z) - GetValue(x, y - 1, z));
-  gz = 0.5f * (GetValue(x, y, z + 1) - GetValue(x, y, z - 1));
-#endif
 
   g = sqrt(gx*gx + gy*gy + gz*gz);
 
@@ -592,30 +557,25 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   float ly = 0.0f;
   float lz = 0.0f;
 
-#if 1
-  int s = 0;
-  for (int i = x - 1; i <= x + 1; ++i) {
-    for (int j = y - 1; j <= y + 1; ++j) {
-      for (int k = z - 1; k <= z + 1; ++k) {
+  int h = MASK_SIZE / 2;
+  int xinit = x - h;
+  int yinit = y - h;
+  int zinit = z - h;
+  for (int i = xinit; i <= x + h; ++i) {
+    for (int j = yinit; j <= y + h; ++j) {
+      for (int k = zinit; k <= z + h; ++k) {
         float v = GetValue(i, j, k);
-        lx += LAPLACE_X_MASK[s] * v;
-        ly += LAPLACE_Y_MASK[s] * v;
-        lz += LAPLACE_Z_MASK[s] * v;
-        ++s;
+        float pglx;
+        float pgly;
+        float pglz;
+        m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
+        lx += pglx * v;
+        ly += pgly * v;
+        lz += pglz * v;
       }
     }
   }
 
-  float div = 16.0f;
-  lx /= div;
-  ly /= div;
-  lz /= div;
-#else
-  float g = 2 * GetValue(x, y, z);
-  lx = GetValue(x + 1, y, z) - g + GetValue(x - 1, y, z);
-  ly = GetValue(x, y + 1, z) - g + GetValue(x, y - 1, z);
-  lz = GetValue(x, y, z + 1) - g + GetValue(x, y, z - 1);
-#endif
   l = lx + ly + lz;
 
   if (l > m_max_global_laplacian)
@@ -733,7 +693,7 @@ bool ATFGenerator::GenerateHistogram()
     {
       for (unsigned int k = 0; k < ATFG_V_RANGE; ++k)
       {
-        if (m_scalar_histogram[i][j][k] > 1)
+        if (m_scalar_histogram[i][j][k] > 0)
         {
           g += j;
           h += k;
@@ -769,44 +729,47 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(float * x, float gt)
+float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n, float gt)
 {
   assert(m_scalar_histogram && x);
 
   float max_gradient = 0.0f;
   float max_laplacian = 0.0f;
   float min_laplacian = 0.0f;
-  for (int v = 0; v < ATFG_V_RANGE; ++v)
+  for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    if (m_average_gradient[v] > max_gradient)
-      max_gradient = m_average_gradient[v];
-    if (m_average_laplacian[v] > max_laplacian)
-      max_laplacian = m_average_laplacian[v];
-    if (m_average_laplacian[v] < min_laplacian)
-      min_laplacian = m_average_laplacian[v];
+    if (m_average_gradient[i] > max_gradient)
+      max_gradient = m_average_gradient[i];
+    if (m_average_laplacian[i] > max_laplacian)
+      max_laplacian = m_average_laplacian[i];
+    if (m_average_laplacian[i] < min_laplacian && m_average_laplacian[i] > -FLT_MAX)
+      min_laplacian = m_average_laplacian[i];
   }
 
-  float sigma = max_gradient / ((max_laplacian) * SQRT_E);
+  float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
   float g_tresh = max_gradient * gt;
 
-  for (int v = 0; v < ATFG_V_RANGE; ++v)
+  int c = 0;
+  for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    float g = m_average_gradient[v];
-    float l = m_average_laplacian[v];
+    float g = m_average_gradient[i];
+    float l = m_average_laplacian[i];
     if (g == 0.0f)
     {
-      x[v] = FLT_MAX;
+      x[i] = FLT_MAX;
       continue;
     }
-    else if (m_average_gradient[v] == -FLT_MAX || m_average_laplacian[v] == -FLT_MAX)
+    else if (m_average_gradient[i] == -FLT_MAX || m_average_laplacian[i] == -FLT_MAX)
     {
-      x[v] = -FLT_MAX;
       continue;
     }
 
-    x[v] = - sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
+    x[i] = - sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
+    v[c] = i;
+    ++c;
   }
 
+  *n = c;
   return sigma;
 }
 

@@ -203,7 +203,7 @@ private:
   /// </summary>
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
-  float GetBoundaryDistancies(float* x, float gt);
+  float GetBoundaryDistancies(float* x, unsigned char *v, int *n, float gt);
 
   unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
 
