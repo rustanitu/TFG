@@ -435,8 +435,14 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
   IupSetCallback(gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
 
-  Ihandle* atfg_label = IupLabel(" Sigma         -        GTresh");
-  Ihandle* hbox_atfg = IupHbox(sgima_bar, gtresh_bar, NULL);
+  Ihandle* spinbox = IupText("0");
+  IupSetAttribute(spinbox, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(spinbox, "ALIGNMENT", "ACENTER");
+  IupSetAttribute(spinbox, "SPIN", "YES");
+  IupSetCallback(spinbox, "SPIN_CB", (Icallback)Viewer::SetMinHistogramValue);
+
+  Ihandle* atfg_label = IupLabel(" Sigma      -     GTresh      -  Histogram Treshold");
+  Ihandle* hbox_atfg = IupHbox(sgima_bar, gtresh_bar, spinbox, NULL);
 
   Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
   IupSetAttribute (selected_int_label, "EXPAND", "HORIZONTAL");

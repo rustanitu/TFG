@@ -49,17 +49,28 @@ bool TransferFunction::Generate()
 
   std::ofstream file;
   file.open(m_path);
+
+  int len = strlen(m_path);
+  char* csv_name = new char[len];
+  csv_name = (char*)memcpy(csv_name, m_path, len);
+  csv_name[--len] = '\0';
+  csv_name[--len] = 'v';
+  csv_name[--len] = 's';
+  csv_name[--len] = 'c';
+  std::ofstream csv;
+  csv.open(csv_name);
   
-  if (!file.is_open())
+  if (!file.is_open() || !csv.is_open())
     return false;
 
-  file << "linear" << "\n";
-  file << "0" << "\n";
+  file << "linear" << std::endl;
+  file << "0" << std::endl;
+  csv << "; Alpha" << std::endl;
 
   if (m_color_size < 2)
     throw std::domain_error("At least two color must be set!");
 
-  file << m_color_size << "\n";
+  file << m_color_size << std::endl;
 
   // Assign color to transfer function
   for (int i = 0; i < MAX_V; ++i)
@@ -77,7 +88,7 @@ bool TransferFunction::Generate()
     }
   }
 
-  file << m_values_size << "\n";
+  file << m_values_size << std::endl;
   
   //  boundary center
   //         .
@@ -101,24 +112,26 @@ bool TransferFunction::Generate()
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
     
+    float a = 0.0f;
     if (x >= -base && x <= base)
     {
-      float a = 0.0f;
       if (x >= 0.0)
         a = -(amax * x) / base;
       else
         a = (amax * x) / base;
 
       a += amax;
-      file << a << "\t" << value << std::endl;
     }
-    else
-      file << 0 << "\t" << value << std::endl;
+    
+    file << a << "\t" << value << std::endl;
+
+    int ipart = a;
+    int fpart = (a - ipart) * 1000;
+    csv << value << "; " << ipart << "," << fpart << std::endl;
   }
 
-  printf("\n\n");
-
   file.close();
+  csv.close();
   return true;
 }
 

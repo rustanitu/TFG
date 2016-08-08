@@ -16,9 +16,9 @@
 #include "Histogram.h"
 
 
-//#define ATFG_FULL_RANGE
+#define ATFG_FULL_RANGE
 #define ATFG_GAMA_CORRECTION 0.33f
-#define MASK_SIZE 5
+#define MASK_SIZE 3
 
 
 const int SOBEL_X_MASK[27] =
@@ -79,6 +79,7 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_initialized(false)
 , m_gt(0.1f)
 , m_derivativeMask(MASK_SIZE)
+, m_min_hist(0)
 {
 }
 
@@ -484,6 +485,48 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
   pgmfile.Close();
 }
 
+void ATFGenerator::GenerateGradientValuesFile()
+{
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+
+  std::ofstream csv;
+  csv.open("GradientValues.csv");
+
+  if (!csv.is_open())
+    return;
+
+  csv << "; Gradient" << std::endl;
+
+  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  {
+    if (m_average_gradient[i] > -FLT_MAX)
+      csv << i << "; " << m_average_gradient[i] << std::endl;
+  }
+  csv.close();
+}
+
+void ATFGenerator::GenerateLaplacianValuesFile()
+{
+  if (!m_initialized)
+    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+
+  std::ofstream csv;
+  csv.open("LaplacianValues.csv");
+
+  if (!csv.is_open())
+    return;
+
+  csv << "; Laplacian" << std::endl;
+
+  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  {
+    if (m_average_laplacian[i] > -FLT_MAX)
+      csv << i << "; " << m_average_laplacian[i] << std::endl;
+  }
+  csv.close();
+}
+
 /// <summary>
 /// Gets the transfer function.
 /// </summary>
@@ -693,7 +736,7 @@ bool ATFGenerator::GenerateHistogram()
     {
       for (unsigned int k = 0; k < ATFG_V_RANGE; ++k)
       {
-        if (m_scalar_histogram[i][j][k] > 0)
+        if (m_scalar_histogram[i][j][k] > m_min_hist)
         {
           g += j;
           h += k;
@@ -754,17 +797,15 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n, f
   {
     float g = m_average_gradient[i];
     float l = m_average_laplacian[i];
-    if (g == 0.0f)
+    if (m_average_gradient[i] == -FLT_MAX || m_average_laplacian[i] == -FLT_MAX)
     {
-      x[i] = FLT_MAX;
       continue;
     }
-    else if (m_average_gradient[i] == -FLT_MAX || m_average_laplacian[i] == -FLT_MAX)
+    else
     {
-      continue;
+      x[i] = -sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
     }
 
-    x[i] = - sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
     v[c] = i;
     ++c;
   }

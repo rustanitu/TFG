@@ -146,6 +146,9 @@ public:
   /// </summary>
   void GenerateLaplacianSummedHistogram();
 
+  void GenerateGradientValuesFile();
+  void GenerateLaplacianValuesFile();
+
   /// <summary>
   /// Gets the transfer function.
   /// </summary>
@@ -155,6 +158,12 @@ public:
   void SetGTresh(float gt)
   {
     m_gt = gt;
+  }
+
+  void SetMinimumHistogramValue(int min)
+  {
+    m_min_hist = min;
+    GenerateHistogram();
   }
 
 private:
@@ -270,6 +279,7 @@ private:
   bool m_initialized;
 
   float m_gt;
+  int m_min_hist;
 
   DerivativeMask m_derivativeMask;
 };

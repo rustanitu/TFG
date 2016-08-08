@@ -139,6 +139,7 @@ public:
 
   static int SetSigmaScale(Ihandle* ih);
   static int SetGTresh(Ihandle* ih);
+  static int SetMinHistogramValue(Ihandle* ih, int pos);
   
   ViewerInterface m_gui;
 protected:
@@ -152,6 +153,8 @@ private:
   static Viewer* m_instance;
 
   float m_sigma_scale;
+  float m_gtresh;
+  float m_min_hist;
 };
 
 #endif
