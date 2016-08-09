@@ -20,49 +20,6 @@
 #define ATFG_GAMA_CORRECTION 0.33f
 #define MASK_SIZE 3
 
-
-const int SOBEL_X_MASK[27] =
-{
-  -1, -2, -1, -2, -4, -2, -1, -2, -1,
-  0, 0, 0, 0, 0, 0, 0, 0, 0,
-  1, 2, 1, 2, 4, 2, 1, 2, 1
-};
-
-const int SOBEL_Y_MASK[27] =
-{
-  -1, -2, -1, 0, 0, 0, 1, 2, 1,
-  -2, -4, -2, 0, 0, 0, 2, 4, 2,
-  -1, -2, -1, 0, 0, 0, 1, 2, 1
-};
-
-const int SOBEL_Z_MASK[27] =
-{
-  -1, 0, 1, -2, 0, 2, -1, 0, 1,
-  -2, 0, 2, -4, 0, 4, -2, 0, 2,
-  -1, 0, 1, -2, 0, 2, -1, 0, 1
-};
-
-const int LAPLACE_X_MASK[27] =
-{
-  1, 2, 1, 2, 4, 2, 1, 2, 1,
-  -2, -4, -2, -4, -8, -4, -2, -4, -2,
-  1, 2, 1, 2, 4, 2, 1, 2, 1
-};
-
-const int LAPLACE_Y_MASK[27] =
-{
-  1, 2, 1, -2, -4, -2, 1, 2, 1,
-  2, 4, 2, -4, -8, -4, 2, 4, 2,
-  1, 2, 1, -2, -4, -2, 1, 2, 1
-};
-
-const int LAPLACE_Z_MASK[27] =
-{
-  1, -2, 1, 2, -4, 2, 1, -2, 1,
-  2, -4, 2, 4, -8, 4, 2, -4, 2,
-  1, -2, 1, 2, -4, 2, 1, -2, 1
-};
-
 /// <summary>
 /// Initializes a new instance of the 
 /// <see cref="ATFGenerator" /> class.
@@ -77,7 +34,7 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_min_global_laplacian(LONG_MAX)
 , m_max_global_laplacian(-LONG_MAX)
 , m_initialized(false)
-, m_gt(0.1f)
+, m_gt(0.0f)
 , m_derivativeMask(MASK_SIZE)
 , m_min_hist(0)
 {

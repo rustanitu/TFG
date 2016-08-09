@@ -149,7 +149,7 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         //m_atfg->GenerateVolumeSlices();
         //m_atfg->GenerateGradientSlices();
         //m_atfg->GenerateLaplacianSlices();
-        m_atfg->GenerateHistogramSlices();
+        //m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();
         m_atfg->GenerateGradientValuesFile();
@@ -193,7 +193,13 @@ int Viewer::SetSigmaScale(Ihandle* ih)
   char *val = IupGetAttribute(ih, "VALUE");
   std::string::size_type size;
   float scale = std::stof(val, &size);
-  scale *= 11;
+  
+  scale *= 2;
+  if (scale >= 1.0f)
+    scale += (scale - 1) * 8;
+
+  printf("%.2f\n", scale);
+
   Viewer::Instance()->m_sigma_scale = scale;
 
   TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
@@ -245,7 +251,6 @@ int Viewer::SetGTresh(Ihandle* ih)
 int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
 {
   Viewer::Instance()->m_atfg->SetMinimumHistogramValue(min);
-  Viewer::Instance()->m_atfg->GenerateHistogramSlices();
   Viewer::Instance()->m_atfg->GenerateGradientSummedHistogram();
   Viewer::Instance()->m_atfg->GenerateLaplacianSummedHistogram();
   Viewer::Instance()->m_atfg->GenerateGradientValuesFile();

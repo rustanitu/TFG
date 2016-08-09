@@ -419,29 +419,31 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
   Ihandle* sgima_bar = IupVal("VERTICAL");
   IupSetAttribute(sgima_bar, "ACTIVE", "YES");
-  IupSetAttribute(sgima_bar, "SHOWTICKS", "10");
+  IupSetAttribute(sgima_bar, "SHOWTICKS", "20");
   IupSetAttribute(sgima_bar, "STEP", "0.0001");
-  IupSetAttribute(sgima_bar, "VALUE", "0.1");
+  IupSetAttribute(sgima_bar, "VALUE", "0.5");
   IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(sgima_bar, "ALIGNMENT", "ACENTER");
+  IupSetAttribute(sgima_bar, "RASTERSIZE", "0x200");
   IupSetCallback(sgima_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetSigmaScale);
 
   Ihandle* gtresh_bar = IupVal("VERTICAL");
   IupSetAttribute(gtresh_bar, "ACTIVE", "YES");
-  IupSetAttribute(gtresh_bar, "SHOWTICKS", "10");
+  IupSetAttribute(gtresh_bar, "SHOWTICKS", "20");
   IupSetAttribute(gtresh_bar, "STEP", "0.0001");
-  IupSetAttribute(gtresh_bar, "VALUE", "0.1");
+  IupSetAttribute(gtresh_bar, "VALUE", "0.0");
   IupSetAttribute(gtresh_bar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
+  IupSetAttribute(gtresh_bar, "RASTERSIZE", "0x200");
   IupSetCallback(gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
 
   Ihandle* spinbox = IupText("0");
-  IupSetAttribute(spinbox, "EXPAND", "HORIZONTAL");
+  //IupSetAttribute(spinbox, "EXPAND", "HORIZONTAL");
   IupSetAttribute(spinbox, "ALIGNMENT", "ACENTER");
   IupSetAttribute(spinbox, "SPIN", "YES");
   IupSetCallback(spinbox, "SPIN_CB", (Icallback)Viewer::SetMinHistogramValue);
 
-  Ihandle* atfg_label = IupLabel(" Sigma      -     GTresh      -  Histogram Treshold");
+  Ihandle* atfg_label = IupLabel(" Sigma      -     GTresh      -      HTresh");
   Ihandle* hbox_atfg = IupHbox(sgima_bar, gtresh_bar, spinbox, NULL);
 
   Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
