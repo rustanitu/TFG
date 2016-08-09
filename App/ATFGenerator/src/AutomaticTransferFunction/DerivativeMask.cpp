@@ -2,13 +2,30 @@
 
 #include <stdlib.h>
 
-static const float GAUSSIANS[5][9] = {
+static const int GAUSSIAN_KERNEL[4][7] = {
   { 1 },
   { 1, 2, 1 },
   { 1, 4, 6, 4, 1 },
   { 1, 6, 15, 20, 15, 6, 1 },
-  { 1, 8, 28, 56, 70, 56, 28, 8, 1 }
 };
+
+static const int FIRST_DERIVATIVE_KERNEL[4][7] = {
+  { 0 },
+  { -1, 0, 1 },
+  { 1, -8, 0, 8, -1 },
+  { -1, 9, -45, 0, 45, -9, 1 },
+};
+
+static const int FIRST_DERIVATIVE_KERNEL_D[4] = {1, 2, 12, 60};
+
+static const int SECOND_DERIVATIVE_KERNEL[4][7] = {
+  { 0 },
+  { 1, -2, 1 },
+  { -1, 16, -30, 16, -1 },
+  { 2, -27, 270, -490, 270, -27, 2 },
+};
+
+static const int SECOND_DERIVATIVE_KERNEL_D[4] = { 1, 1, 12, 180 };
 
 DerivativeMask::DerivativeMask(int n)
 : m_n(n)
@@ -19,7 +36,6 @@ DerivativeMask::DerivativeMask(int n)
     m_n = n + 1;
 
   int i;
-  int v;
   int vsum;
   int half = m_n / 2;
 
@@ -28,7 +44,7 @@ DerivativeMask::DerivativeMask(int n)
   vsum = 0;
   for (i = 0; i < m_n; i++)
   {
-    m_gaussian_kernel[i] = GAUSSIANS[m_n / 2][i];
+    m_gaussian_kernel[i] = GAUSSIAN_KERNEL[half][i];
     vsum += m_gaussian_kernel[i];
   }
 
@@ -38,35 +54,14 @@ DerivativeMask::DerivativeMask(int n)
 
   // Initializes gradient kernel acording to the specified size
   m_gradient_kernel = new float[m_n];
-  v = 1;
-  vsum = 0;
-  for (i = 0; i < half; i++) {
-    m_gradient_kernel[i] = -v;
-    m_gradient_kernel[m_n - i - 1] = v;
-    vsum += 2 * v;
-    v *= 2;
-  }
-  m_gradient_kernel[i] = 0.0f;
-
   for (i = 0; i < m_n; i++) {
-    m_gradient_kernel[i] /= vsum;
+    m_gradient_kernel[i] = float(FIRST_DERIVATIVE_KERNEL[half][i]) / FIRST_DERIVATIVE_KERNEL_D[half];
   }
 
   // Initializes laplacian kernel acording to the specified size
   m_laplacian_kernel = new float[m_n];
-  v = 1;
-  vsum = 0;
-  for (i = 0; i < half; i++) {
-    m_laplacian_kernel[i] = v;
-    m_laplacian_kernel[m_n - i - 1] = v;
-    vsum += 2 * v;
-    v *= 2;
-  }
-  m_laplacian_kernel[i] = -vsum;
-  vsum *= 2;
-
   for (i = 0; i < m_n; i++) {
-    m_laplacian_kernel[i] /= vsum;
+    m_laplacian_kernel[i] = float(SECOND_DERIVATIVE_KERNEL[half][i]) / SECOND_DERIVATIVE_KERNEL_D[half];
   }
 
   GenerateGradientMask();

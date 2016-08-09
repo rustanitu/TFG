@@ -431,7 +431,10 @@ void ATFGenerator::GenerateGradientSummedHistogram()
         else
           sum -= m_scalar_histogram[i][j][k];
       }
-      histogram[i][j] = sum;
+      if (ATFG_V_MAX - sum > m_min_hist)
+        histogram[i][j] = sum;
+      else
+        histogram[i][j] = ATFG_V_MAX;
     }
   }
 
@@ -480,7 +483,10 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
         else
           sum -= m_scalar_histogram[i][j][k];
       }
-      histogram[i][k] = sum;
+      if (ATFG_V_MAX - sum > m_min_hist)
+        histogram[i][k] = sum;
+      else
+        histogram[i][k] = ATFG_V_MAX;
     }
   }
 

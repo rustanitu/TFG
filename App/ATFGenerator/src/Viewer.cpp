@@ -246,6 +246,8 @@ int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
 {
   Viewer::Instance()->m_atfg->SetMinimumHistogramValue(min);
   Viewer::Instance()->m_atfg->GenerateHistogramSlices();
+  Viewer::Instance()->m_atfg->GenerateGradientSummedHistogram();
+  Viewer::Instance()->m_atfg->GenerateLaplacianSummedHistogram();
   Viewer::Instance()->m_atfg->GenerateGradientValuesFile();
   Viewer::Instance()->m_atfg->GenerateLaplacianValuesFile();
   if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
