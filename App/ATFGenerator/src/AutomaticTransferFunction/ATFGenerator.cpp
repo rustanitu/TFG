@@ -362,6 +362,8 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
   }
   //delete [] filename;
 
+  unsigned char histogram[ATFG_V_RANGE][ATFG_V_RANGE];
+
   for (int j = ATFG_V_MAX; j >= 0; j--)
   {
     for (int k = 0; k < ATFG_V_RANGE; k++)
@@ -369,10 +371,19 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
       int h = ATFG_V_MAX;
       if (m_scalar_histogram[v][j][k] >= 255)
         h = 0;
-      else
+      else if (m_scalar_histogram[v][j][k] >= m_min_hist)
         h -= m_scalar_histogram[v][j][k];
 
-      pgmfile.WriteByte(h);
+      histogram[j][k] = h;
+    }
+  }
+
+  dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
+
+  for (int j = ATFG_V_MAX; j >= 0; --j) {
+    for (int i = 0; i < ATFG_V_RANGE; ++i) {
+      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
+      pgmfile.WriteByte(val);
     }
     pgmfile.WriteEndLine();
   }
@@ -500,8 +511,11 @@ void ATFGenerator::GenerateGradientValuesFile()
 
   for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    if (m_average_gradient[i] > -FLT_MAX)
-      csv << i << "; " << m_average_gradient[i] << std::endl;
+    if (m_average_gradient[i] > -FLT_MAX) {
+      int ipart = m_average_gradient[i];
+      int fpart = (m_average_gradient[i] - ipart) * 1000;
+      csv << i << "; " << ipart << "," << fpart << std::endl;
+    }
   }
   csv.close();
 }
@@ -521,8 +535,15 @@ void ATFGenerator::GenerateLaplacianValuesFile()
 
   for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    if (m_average_laplacian[i] > -FLT_MAX)
-      csv << i << "; " << m_average_laplacian[i] << std::endl;
+    if (m_average_laplacian[i] > -FLT_MAX) {
+      int ipart = abs(m_average_laplacian[i]);
+      int fpart = abs((m_average_laplacian[i] - ipart) * 1000);
+
+      if (m_average_laplacian[i] < 0)
+        csv << i << "; -" << ipart << "," << fpart << std::endl;
+      else
+        csv << i << "; " << ipart << "," << fpart << std::endl;
+    }
   }
   csv.close();
 }

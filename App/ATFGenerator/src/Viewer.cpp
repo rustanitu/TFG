@@ -149,7 +149,7 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         //m_atfg->GenerateVolumeSlices();
         //m_atfg->GenerateGradientSlices();
         //m_atfg->GenerateLaplacianSlices();
-        //m_atfg->GenerateHistogramSlices();
+        m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();
         m_atfg->GenerateGradientValuesFile();
@@ -245,6 +245,7 @@ int Viewer::SetGTresh(Ihandle* ih)
 int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
 {
   Viewer::Instance()->m_atfg->SetMinimumHistogramValue(min);
+  Viewer::Instance()->m_atfg->GenerateHistogramSlices();
   Viewer::Instance()->m_atfg->GenerateGradientValuesFile();
   Viewer::Instance()->m_atfg->GenerateLaplacianValuesFile();
   if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
