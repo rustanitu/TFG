@@ -152,8 +152,6 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         //m_atfg->GenerateHistogramSlices();
         m_atfg->GenerateGradientSummedHistogram();
         m_atfg->GenerateLaplacianSummedHistogram();
-        m_atfg->GenerateGradientValuesFile();
-        m_atfg->GenerateLaplacianValuesFile();
 
         if (m_atfg->ExtractTransferFunction())
         {
@@ -188,22 +186,16 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
   }
 }
 
-int Viewer::SetSigmaScale(Ihandle* ih)
+int Viewer::SetBoundaryThickness(Ihandle* ih)
 {
   char *val = IupGetAttribute(ih, "VALUE");
   std::string::size_type size;
   float scale = std::stof(val, &size);
-  
-  scale *= 2;
-  if (scale >= 1.0f)
-    scale += (scale - 1) * 8;
-
-  printf("%.2f\n", scale);
-
-  Viewer::Instance()->m_sigma_scale = scale;
-
+  scale *= 20;
+  Viewer::Instance()->m_boundary_thickness = scale;
+  Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
   TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
-  tf->SetSigmaScale(scale);
+  tf->SetBoundaryThickness(scale);
   if (tf->Generate())
   {
     char* tf_file = tf->GetPath();
@@ -221,7 +213,7 @@ int Viewer::SetGTresh(Ihandle* ih)
   std::string::size_type size;
   float scale = std::stof(val, &size);
   Viewer::Instance()->m_gtresh = scale;
-
+  Viewer::Instance()->m_gui.UpdateGTreshLabel(scale);
   Viewer::Instance()->m_atfg->SetGTresh(scale);
   if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
     return IUP_DEFAULT;
@@ -236,7 +228,8 @@ int Viewer::SetGTresh(Ihandle* ih)
   tf->SetValueColor(192, 0, 127, 127);
   tf->SetValueColor(224, 84, 84, 85);
   tf->SetValueColor(255, 0, 0, 0);
-  tf->SetSigmaScale(Viewer::Instance()->m_sigma_scale);
+  tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
+  tf->SetBoundary(Viewer::Instance()->m_boundary);
   if (tf->Generate())
   {
     char* tf_file = tf->GetPath();
@@ -253,8 +246,6 @@ int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
   Viewer::Instance()->m_atfg->SetMinimumHistogramValue(min);
   Viewer::Instance()->m_atfg->GenerateGradientSummedHistogram();
   Viewer::Instance()->m_atfg->GenerateLaplacianSummedHistogram();
-  Viewer::Instance()->m_atfg->GenerateGradientValuesFile();
-  Viewer::Instance()->m_atfg->GenerateLaplacianValuesFile();
   if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
     return IUP_DEFAULT;
 
@@ -268,9 +259,24 @@ int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
   tf->SetValueColor(192, 0, 127, 127);
   tf->SetValueColor(224, 84, 84, 85);
   tf->SetValueColor(255, 0, 0, 0);
-  tf->SetSigmaScale(Viewer::Instance()->m_sigma_scale);
+  tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
+  tf->SetBoundary(Viewer::Instance()->m_boundary);
   if (tf->Generate())
   {
+    char* tf_file = tf->GetPath();
+    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+    ((ViewMethodGLSL2P*)Viewer::Instance()->m_viewmethods[GLSL2P])->ReloadTransferFunction();
+  }
+  return IUP_DEFAULT;
+}
+
+int Viewer::SetBoundary(Ihandle* ih, int boundary)
+{
+  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
+  Viewer::Instance()->m_boundary = boundary;
+  tf->SetBoundary(boundary);
+  if (tf->Generate()) {
     char* tf_file = tf->GetPath();
     vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
     Viewer::Instance()->SetTransferFunction(tfr, tf_file);
@@ -555,7 +561,8 @@ bool Viewer::SaveSnapshot (char* filename)
 
 Viewer::Viewer ()
 {
-  m_sigma_scale = 1.0f;
+  m_boundary = 0;
+  m_boundary_thickness = 1.0f;
   m_gtresh = 0.0f;
   m_min_hist = 0;
   m_CurrentWidth = 800;

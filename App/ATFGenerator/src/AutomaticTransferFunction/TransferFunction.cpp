@@ -14,7 +14,8 @@
 TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, TF_EXT)
 , m_value(NULL)
 , m_distance(NULL)
-, m_scale(1.0f)
+, m_thickness(1.0f)
+, m_boundary(0)
 {
   m_color_size = 0;
   for (int i = 0; i < MAX_V; ++i)
@@ -104,7 +105,10 @@ bool TransferFunction::Generate()
   //       base
   
   float amax = 1.0f;
-  float base = m_sigma * m_scale;
+  float base = m_thickness;
+
+  int b = 0;
+  float last_a = 0.0f;
 
   // Assign opacity to transfer function
   for (int i = 0; i < m_values_size; ++i)
@@ -122,6 +126,13 @@ bool TransferFunction::Generate()
 
       a += amax;
     }
+
+    if (a != last_a && last_a == 0.0f)
+      b++;
+
+    last_a = a;
+    if (m_boundary != 0 && b != m_boundary)
+      a = 0.0f;
     
     file << a << "\t" << value << std::endl;
 
@@ -145,13 +156,12 @@ bool TransferFunction::Generate()
 /// <param name="distances">The distances to the closest boundaries.</param>
 /// <param name="sigmas">The sigmas of the boundaries.</param>
 /// <param name="n">The input arrays' size.</param>
-void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, float sigma, int n)
+void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, int n)
 {
   if (n < 2 || n > MAX_V)
     throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");
 
   m_values_size = n;
-  m_sigma = sigma;
 
   if (values)
     m_value = values;

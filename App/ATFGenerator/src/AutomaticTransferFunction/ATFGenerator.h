@@ -146,8 +146,7 @@ public:
   /// </summary>
   void GenerateLaplacianSummedHistogram();
 
-  void GenerateGradientValuesFile();
-  void GenerateLaplacianValuesFile();
+  void GenerateDataValuesFile(float *x, unsigned char *v, int n);
 
   /// <summary>
   /// Gets the transfer function.
@@ -212,7 +211,7 @@ private:
   /// </summary>
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
-  float GetBoundaryDistancies(float* x, unsigned char *v, int *n, float gt);
+  float GetBoundaryDistancies(float* x, unsigned char *v, int *n);
 
   unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
 

@@ -39,9 +39,14 @@ public:
   /// be generated, false otherwise.</returns>
   bool Generate();
 
-  void SetSigmaScale(float scale)
+  void SetBoundaryThickness(float thickness)
   {
-    m_scale = scale;
+    m_thickness = thickness;
+  }
+
+  void SetBoundary(int boundary)
+  {
+    m_boundary = boundary;
   }
 
   /// <summary>
@@ -53,7 +58,7 @@ public:
   /// <param name="values">The values array.</param>
   /// <param name="distances">The distances to the closest boundaries.</param>
   /// <param name="n">The input arrays' size.</param>
-  void SetClosestBoundaryDistances(unsigned char* values, float* distances, float sigma, int n);
+  void SetClosestBoundaryDistances(unsigned char* values, float* distances, int n);
 
 private:
   /// <summary>
@@ -69,8 +74,8 @@ private:
   /// <summary>
   /// The boundary's sigma
   /// </summary>
-  float m_sigma;
-  float m_scale;
+  float m_thickness;
+  int m_boundary;
 };
 
 #endif

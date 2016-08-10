@@ -101,9 +101,9 @@ bool ATFGenerator::ExtractTransferFunction()
   }
 
   int n_v;
-  float sigma = GetBoundaryDistancies(x, v, &n_v, m_gt);
-  
-  m_transfer_function->SetClosestBoundaryDistances(v, x, sigma, n_v);
+  float sigma = GetBoundaryDistancies(x, v, &n_v);
+  GenerateDataValuesFile(x, v, n_v);
+  m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
   return true;
 }
 
@@ -459,54 +459,44 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
   pgmfile.Close();
 }
 
-void ATFGenerator::GenerateGradientValuesFile()
+void PrintFloat(std::ofstream& stream, float val)
 {
-  if (!m_initialized)
-    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+  int ipart = abs(val);
+  int fpart = abs((val - ipart) * 1000);
 
-  std::ofstream csv;
-  csv.open("GradientValues.csv");
-
-  if (!csv.is_open())
-    return;
-
-  csv << "; Gradient" << std::endl;
-
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
-  {
-    if (m_average_gradient[i] > -FLT_MAX) {
-      int ipart = m_average_gradient[i];
-      int fpart = (m_average_gradient[i] - ipart) * 1000;
-      csv << i << "; " << ipart << "," << fpart << std::endl;
-    }
-  }
-  csv.close();
+  if (val < 0)
+    stream << "-";
+  stream << ipart << "," << fpart << ";";
 }
 
-void ATFGenerator::GenerateLaplacianValuesFile()
+void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
 {
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
   std::ofstream csv;
-  csv.open("LaplacianValues.csv");
+  csv.open("DataValuesChart.csv");
 
   if (!csv.is_open())
     return;
 
-  csv << "; Laplacian" << std::endl;
+  csv << "v; p(v); g(v); h(v);" << std::endl;
 
+  int cv = 0;
   for (int i = 0; i < ATFG_V_RANGE; ++i)
   {
-    if (m_average_laplacian[i] > -FLT_MAX) {
-      int ipart = abs(m_average_laplacian[i]);
-      int fpart = abs((m_average_laplacian[i] - ipart) * 1000);
-
-      if (m_average_laplacian[i] < 0)
-        csv << i << "; -" << ipart << "," << fpart << std::endl;
-      else
-        csv << i << "; " << ipart << "," << fpart << std::endl;
+    csv << i << ";";
+    if (cv < n && i == v[cv])
+    {
+      PrintFloat(csv, x[i]);
+      cv++;
     }
+    else
+      csv << ";";
+
+    PrintFloat(csv, m_average_gradient[i]);
+    PrintFloat(csv, m_average_laplacian[i]);
+    csv << std::endl;
   }
   csv.close();
 }
@@ -756,7 +746,7 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n, float gt)
+float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
 {
   assert(m_scalar_histogram && x);
 
@@ -774,7 +764,7 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n, f
   }
 
   float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
-  float g_tresh = max_gradient * gt;
+  float g_tresh = max_gradient * m_gt;
 
   int c = 0;
   for (int i = 0; i < ATFG_V_RANGE; ++i)

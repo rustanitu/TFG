@@ -137,9 +137,10 @@ public:
 
   bool SaveSnapshot (char* filename);
 
-  static int SetSigmaScale(Ihandle* ih);
+  static int SetBoundaryThickness(Ihandle* ih);
   static int SetGTresh(Ihandle* ih);
-  static int SetMinHistogramValue(Ihandle* ih, int pos);
+  static int SetMinHistogramValue(Ihandle* ih, int min);
+  static int SetBoundary(Ihandle* ih, int boundary);
   
   ViewerInterface m_gui;
 protected:
@@ -152,7 +153,8 @@ private:
   /*! the pointer to the singleton instance.*/
   static Viewer* m_instance;
 
-  float m_sigma_scale;
+  int m_boundary;
+  float m_boundary_thickness;
   float m_gtresh;
   float m_min_hist;
 };

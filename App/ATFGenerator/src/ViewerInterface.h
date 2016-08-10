@@ -83,6 +83,9 @@ public:
 
   void SetViewer(Viewer* atg);
 
+  void UpdateBThickLabel(float bthick);
+  void UpdateGTreshLabel(float gtresh);
+
   Ihandle* m_iup_main_dialog;
 
   Ihandle* m_iup_hbox_dialog;
@@ -152,6 +155,8 @@ protected:
 private:
 
   ATFInterface* m_atfg_interface;
+  Ihandle* m_bthick_label;
+  Ihandle* m_gtresh_label;
 
 };
 
