@@ -419,9 +419,10 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
   Ihandle* sgima_bar = IupVal("VERTICAL");
   IupSetAttribute(sgima_bar, "ACTIVE", "YES");
-  IupSetAttribute(sgima_bar, "SHOWTICKS", "20");
-  IupSetAttribute(sgima_bar, "STEP", "0.0001");
-  IupSetAttribute(sgima_bar, "VALUE", "0.05");
+  IupSetAttribute(sgima_bar, "SHOWTICKS", "19");
+  IupSetAttribute(sgima_bar, "MAX", "20");
+  IupSetAttribute(sgima_bar, "MIN", "1");
+  IupSetAttribute(sgima_bar, "VALUE", "1");
   IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(sgima_bar, "ALIGNMENT", "ACENTER");
   IupSetAttribute(sgima_bar, "RASTERSIZE", "0x200");
@@ -430,7 +431,6 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* gtresh_bar = IupVal("VERTICAL");
   IupSetAttribute(gtresh_bar, "ACTIVE", "YES");
   IupSetAttribute(gtresh_bar, "SHOWTICKS", "20");
-  IupSetAttribute(gtresh_bar, "STEP", "0.0001");
   IupSetAttribute(gtresh_bar, "VALUE", "0.0");
   IupSetAttribute(gtresh_bar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
@@ -438,25 +438,26 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupSetCallback(gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
 
   Ihandle* atfg_label = IupLabel("BThick    GTresh");
-  Ihandle* atfg_htresh_label = IupLabel("HTresh");
-  IupSetAttribute(atfg_htresh_label, "ALIGNMENT", "ACENTER");
+  //Ihandle* atfg_htresh_label = IupLabel("HTresh");
+  //IupSetAttribute(atfg_htresh_label, "ALIGNMENT", "ACENTER");
   Ihandle* atfg_boundary_label = IupLabel("Boundary");
   IupSetAttribute(atfg_boundary_label, "ALIGNMENT", "ACENTER");
 
-  m_bthick_label = IupLabel("BThick: 1.0f");
+  m_bthick_label = IupLabel("BThick: 1");
   m_gtresh_label = IupLabel("GTresh: 0.0f");
 
-  Ihandle* spinbox_htresh = IupText("0");
-  IupSetAttribute(spinbox_htresh, "ALIGNMENT", "ACENTER");
-  IupSetAttribute(spinbox_htresh, "SPIN", "YES");
-  IupSetCallback(spinbox_htresh, "SPIN_CB", (Icallback)Viewer::SetMinHistogramValue);
+  //Ihandle* spinbox_htresh = IupText("0");
+  //IupSetAttribute(spinbox_htresh, "ALIGNMENT", "ACENTER");
+  //IupSetAttribute(spinbox_htresh, "SPIN", "YES");
+  //IupSetCallback(spinbox_htresh, "SPIN_CB", (Icallback)Viewer::SetMinHistogramValue);
 
   Ihandle* spinbox_boundary = IupText("0");
   IupSetAttribute(spinbox_boundary, "ALIGNMENT", "ACENTER");
   IupSetAttribute(spinbox_boundary, "SPIN", "YES");
   IupSetCallback(spinbox_boundary, "SPIN_CB", (Icallback)Viewer::SetBoundary);
 
-  Ihandle* vbox_atfg = IupVbox(atfg_htresh_label, spinbox_htresh, atfg_boundary_label, spinbox_boundary, IupLabel(""), m_bthick_label, m_gtresh_label, NULL);
+  //Ihandle* vbox_atfg = IupVbox(atfg_htresh_label, spinbox_htresh, atfg_boundary_label, spinbox_boundary, IupLabel(""), m_bthick_label, m_gtresh_label, NULL);
+  Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, IupLabel(""), m_bthick_label, m_gtresh_label, NULL);
   Ihandle* hbox_atfg = IupHbox(sgima_bar, gtresh_bar, vbox_atfg, NULL);
 
   Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
@@ -673,10 +674,10 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupRefresh (m_iup_main_dialog);
 }
 
-void ViewerInterface::UpdateBThickLabel(float bthick)
+void ViewerInterface::UpdateBThickLabel(int bthick)
 {
   char *val = new char[15];
-  sprintf(val, "BThick: %.2f", bthick);
+  sprintf(val, "BThick: %d", bthick);
   IupSetAttribute(m_bthick_label, "TITLE", val);
 }
 

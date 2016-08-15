@@ -190,8 +190,7 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
 {
   char *val = IupGetAttribute(ih, "VALUE");
   std::string::size_type size;
-  float scale = std::stof(val, &size);
-  scale *= 20;
+  int scale = std::stoi(val, &size);
   Viewer::Instance()->m_boundary_thickness = scale;
   Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
   TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();

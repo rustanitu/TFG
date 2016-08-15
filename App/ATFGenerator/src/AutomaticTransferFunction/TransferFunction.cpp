@@ -156,12 +156,15 @@ bool TransferFunction::Generate()
 /// <param name="distances">The distances to the closest boundaries.</param>
 /// <param name="sigmas">The sigmas of the boundaries.</param>
 /// <param name="n">The input arrays' size.</param>
-void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, int n)
+void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, int* distances, int n)
 {
   if (n < 2 || n > MAX_V)
     throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");
 
   m_values_size = n;
+
+  delete [] m_value;
+  delete [] m_distance;
 
   if (values)
     m_value = values;

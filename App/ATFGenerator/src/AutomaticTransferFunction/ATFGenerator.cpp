@@ -92,7 +92,7 @@ bool ATFGenerator::ExtractTransferFunction()
   delete m_transfer_function;
   m_transfer_function = new TransferFunction(filename.c_str());
 
-  float* x = new float[ATFG_V_RANGE];
+  int* x = new int[ATFG_V_RANGE];
   unsigned char* v = new unsigned char[ATFG_V_RANGE];
   if (!x || !v)
   {
@@ -469,7 +469,7 @@ void PrintFloat(std::ofstream& stream, float val)
   stream << ipart << "," << fpart << ";";
 }
 
-void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
+void ATFGenerator::GenerateDataValuesFile(int *x, unsigned char *v, int n)
 {
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
@@ -746,7 +746,7 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
+float ATFGenerator::GetBoundaryDistancies(int * x, unsigned char *v, int *n)
 {
   assert(m_scalar_histogram && x);
 

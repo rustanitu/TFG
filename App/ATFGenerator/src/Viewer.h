@@ -154,7 +154,7 @@ private:
   static Viewer* m_instance;
 
   int m_boundary;
-  float m_boundary_thickness;
+  int m_boundary_thickness;
   float m_gtresh;
   float m_min_hist;
 };

@@ -83,7 +83,7 @@ public:
 
   void SetViewer(Viewer* atg);
 
-  void UpdateBThickLabel(float bthick);
+  void UpdateBThickLabel(int bthick);
   void UpdateGTreshLabel(float gtresh);
 
   Ihandle* m_iup_main_dialog;
