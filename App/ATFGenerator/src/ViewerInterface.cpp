@@ -666,7 +666,20 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupSetAttribute (m_iup_main_dialog, "MENU", "ViewerInterfaceIupMenu");
   IupSetAttribute (m_iup_main_dialog, "TITLE", "Volume Visualization");
   
-  Ihandle* d2 = IupDialog (NULL);
+  m_iup_tf_plot_dialog = IupPlot();
+  IupSetAttribute(m_iup_tf_plot_dialog, "SYNCVIEW", "YES");
+  IupSetAttribute(m_iup_tf_plot_dialog, "LEGEND", "YES");
+  IupSetAttribute(m_iup_tf_plot_dialog, "LEGENDBOX", "NO");
+  
+  m_iup_main_plot_dialog = IupPlot();
+  IupSetAttribute(m_iup_main_plot_dialog, "SYNCVIEW", "YES");
+  IupSetAttribute(m_iup_main_plot_dialog, "LEGEND", "YES");
+  IupSetAttribute(m_iup_main_plot_dialog, "LEGENDBOX", "NO");
+
+  Ihandle* plotDialog = IupDialog(IupVbox(m_iup_tf_plot_dialog, m_iup_main_plot_dialog, NULL));
+  IupSetAttribute(plotDialog, "TITLE", "Plot Area");
+  IupSetAttribute(plotDialog, "SIZE", "QUARTER");
+  IupShow(plotDialog);
   
   TransferFunctionsViewer::Instance()->BuildInterface ();
 
@@ -677,14 +690,14 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 void ViewerInterface::UpdateBThickLabel(int bthick)
 {
   char *val = new char[15];
-  sprintf(val, "BThick: %d", bthick);
+  sprintf(val, "BThick: %d ", bthick);
   IupSetAttribute(m_bthick_label, "TITLE", val);
 }
 
 void ViewerInterface::UpdateGTreshLabel(float gtresh)
 {
   char *val = new char[15];
-  sprintf(val, "GTresh: %.2f", gtresh);
+  sprintf(val, "GTresh: %.2f ", gtresh);
   IupSetAttribute(m_gtresh_label, "TITLE", val);
 }
 

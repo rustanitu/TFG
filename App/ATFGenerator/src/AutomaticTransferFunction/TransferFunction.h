@@ -6,6 +6,7 @@
 #define TRANSFER_FUNCTION_H
 
 #include "ITransferFunction.h"
+#include <iup.h>
 
 /// <summary>
 /// This class gives an implementation to the ITransferFunction
@@ -49,6 +50,11 @@ public:
     m_boundary = boundary;
   }
 
+  void SetTransferFunctionPlot(Ihandle * ih)
+  {
+    m_tf_plot = ih;
+  }
+
   /// <summary>
   /// Specifies the distance between a intensity value
   /// and its closest boundary. Thus, the input arrays'
@@ -58,7 +64,7 @@ public:
   /// <param name="values">The values array.</param>
   /// <param name="distances">The distances to the closest boundaries.</param>
   /// <param name="n">The input arrays' size.</param>
-  void SetClosestBoundaryDistances(unsigned char* values, int* distances, int n);
+  void SetClosestBoundaryDistances(unsigned char* values, float* distances, int n);
 
 private:
   /// <summary>
@@ -70,12 +76,13 @@ private:
   /// It storages the distances setted by 
   /// SetClosestBoundaryDistances.
   /// </summary>
-  int* m_distance;
+  float* m_distance;
   /// <summary>
   /// The boundary's sigma
   /// </summary>
   int m_thickness;
   int m_boundary;
+  Ihandle * m_tf_plot;
 };
 
 #endif

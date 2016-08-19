@@ -143,7 +143,8 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
       exit(1);
 #endif
       m_atfg = new ATFGenerator(m_volume);
-      //m_gui.SetViewer(this);
+      m_atfg->SetMainPlot(Viewer::Instance()->m_gui.m_iup_main_plot_dialog);
+      m_atfg->SetTransferFunctionPlot(Viewer::Instance()->m_gui.m_iup_tf_plot_dialog);
       if (m_atfg->Init())
       {
         //m_atfg->GenerateVolumeSlices();
@@ -191,18 +192,20 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
   char *val = IupGetAttribute(ih, "VALUE");
   std::string::size_type size;
   int scale = std::stoi(val, &size);
-  Viewer::Instance()->m_boundary_thickness = scale;
-  Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
-  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
-  tf->SetBoundaryThickness(scale);
-  if (tf->Generate())
+  if (scale != Viewer::Instance()->m_boundary_thickness)
   {
-    char* tf_file = tf->GetPath();
-    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
-    ((ViewMethodGLSL2P*)Viewer::Instance()->m_viewmethods[GLSL2P])->ReloadTransferFunction();
+    Viewer::Instance()->m_boundary_thickness = scale;
+    Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
+    TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
+    tf->SetBoundaryThickness(scale);
+    if (tf->Generate())
+    {
+      char* tf_file = tf->GetPath();
+      vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
+      Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+      ((ViewMethodGLSL2P*)Viewer::Instance()->m_viewmethods[GLSL2P])->ReloadTransferFunction();
+    }
   }
-
   return IUP_DEFAULT;
 }
 
@@ -561,7 +564,7 @@ bool Viewer::SaveSnapshot (char* filename)
 Viewer::Viewer ()
 {
   m_boundary = 0;
-  m_boundary_thickness = 1.0f;
+  m_boundary_thickness = 1;
   m_gtresh = 0.0f;
   m_min_hist = 0;
   m_CurrentWidth = 800;
@@ -627,6 +630,7 @@ Viewer::~Viewer ()
 void Viewer::InitIup (int argc, char *argv[])
 {
   IupOpen (&argc, &argv);
+  IupPlotOpen();
   IupGLCanvasOpen ();
 
   m_gui.BuildInterface (argc, argv);

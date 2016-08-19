@@ -18,6 +18,7 @@
 #include "AutomaticTransferFunction\ATFGenerator.h"
 
 #include <iup.h>
+#include <iup_plot.h>
 #include <iupgl.h>
 
 #include <volrend/Volume.h>

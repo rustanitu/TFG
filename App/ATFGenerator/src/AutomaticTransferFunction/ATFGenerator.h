@@ -8,6 +8,7 @@
 #include "IATFGenerator.h"
 #include "DerivativeMask.h"
 #include <volrend/Volume.h>
+#include <iup.h>
 
 /*************************/
 /* Constants Definitions */
@@ -146,7 +147,7 @@ public:
   /// </summary>
   void GenerateLaplacianSummedHistogram();
 
-  void GenerateDataValuesFile(int *x, unsigned char *v, int n);
+  void GenerateDataValuesFile(float *x, unsigned char *v, int n);
 
   /// <summary>
   /// Gets the transfer function.
@@ -163,6 +164,16 @@ public:
   {
     m_min_hist = min;
     GenerateHistogram();
+  }
+
+  void SetMainPlot(Ihandle * ih)
+  {
+    m_main_plot = ih;
+  }
+
+  void SetTransferFunctionPlot(Ihandle * ih)
+  {
+    m_tf_plot = ih;
   }
 
 private:
@@ -211,7 +222,7 @@ private:
   /// </summary>
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
-  float GetBoundaryDistancies(int* x, unsigned char *v, int *n);
+  float GetBoundaryDistancies(float* x, unsigned char *v, int *n);
 
   unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
 
@@ -281,6 +292,9 @@ private:
   int m_min_hist;
 
   DerivativeMask m_derivativeMask;
+
+  Ihandle* m_main_plot;
+  Ihandle* m_tf_plot;
 };
 
 #endif

@@ -88,6 +88,9 @@ public:
 
   Ihandle* m_iup_main_dialog;
 
+  Ihandle* m_iup_main_plot_dialog;
+  Ihandle* m_iup_tf_plot_dialog;
+
   Ihandle* m_iup_hbox_dialog;
 
   Ihandle* m_iup_canvas_renderer;

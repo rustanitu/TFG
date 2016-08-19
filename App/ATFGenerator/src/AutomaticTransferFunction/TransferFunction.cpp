@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <iostream>
 #include <fstream>
+#include <iup_plot.h>
 
 /// <summary>
 /// Initializes a new instance of the <see cref="TransferFunction"/> class.
@@ -90,6 +91,9 @@ bool TransferFunction::Generate()
   }
 
   file << m_values_size << std::endl;
+
+  IupSetAttribute(m_tf_plot, "CLEAR", "YES");
+  IupPlotBegin(m_tf_plot, 0);
   
   //  boundary center
   //         .
@@ -135,11 +139,16 @@ bool TransferFunction::Generate()
       a = 0.0f;
     
     file << a << "\t" << value << std::endl;
+    IupPlotAdd(m_tf_plot, value, a);
 
     int ipart = a;
     int fpart = (a - ipart) * 1000;
     csv << value << "; " << ipart << "," << fpart << std::endl;
   }
+
+  IupPlotEnd(m_tf_plot);
+  IupSetAttribute(m_tf_plot, "DS_NAME", "Transfer Function");
+  IupSetAttribute(m_tf_plot, "REDRAW", "YES");
 
   file.close();
   csv.close();
@@ -156,7 +165,7 @@ bool TransferFunction::Generate()
 /// <param name="distances">The distances to the closest boundaries.</param>
 /// <param name="sigmas">The sigmas of the boundaries.</param>
 /// <param name="n">The input arrays' size.</param>
-void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, int* distances, int n)
+void TransferFunction::SetClosestBoundaryDistances(unsigned char* values, float* distances, int n)
 {
   if (n < 2 || n > MAX_V)
     throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");

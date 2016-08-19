@@ -10,6 +10,7 @@
 
 #include <lqc/File/RAWLoader.h>
 #include <math/MUtils.h>
+#include <iup_plot.h>
 
 #include "PGMFile.h"
 #include "TransferFunction.h"
@@ -37,6 +38,8 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_gt(0.0f)
 , m_derivativeMask(MASK_SIZE)
 , m_min_hist(0)
+, m_main_plot(NULL)
+, m_tf_plot(NULL)
 {
 }
 
@@ -91,8 +94,9 @@ bool ATFGenerator::ExtractTransferFunction()
 
   delete m_transfer_function;
   m_transfer_function = new TransferFunction(filename.c_str());
+  m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
 
-  int* x = new int[ATFG_V_RANGE];
+  float* x = new float[ATFG_V_RANGE];
   unsigned char* v = new unsigned char[ATFG_V_RANGE];
   if (!x || !v)
   {
@@ -469,7 +473,7 @@ void PrintFloat(std::ofstream& stream, float val)
   stream << ipart << "," << fpart << ";";
 }
 
-void ATFGenerator::GenerateDataValuesFile(int *x, unsigned char *v, int n)
+void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
 {
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
@@ -499,6 +503,29 @@ void ATFGenerator::GenerateDataValuesFile(int *x, unsigned char *v, int n)
     csv << std::endl;
   }
   csv.close();
+
+
+  IupSetAttribute(m_main_plot, "CLEAR", "YES");
+
+  IupPlotBegin(m_main_plot, 0);
+  for (int i = 0; i < n; i++)
+    IupPlotAdd(m_main_plot, v[i], x[i]);
+  IupPlotEnd(m_main_plot);
+  IupSetAttribute(m_main_plot, "DS_NAME", "p(v)");
+
+  IupPlotBegin(m_main_plot, 0);
+  for (int i = 0; i < ATFG_V_RANGE; i++)
+    IupPlotAdd(m_main_plot, i, m_average_gradient[i]);
+  IupPlotEnd(m_main_plot);
+  IupSetAttribute(m_main_plot, "DS_NAME", "g(v)"); 
+
+  IupPlotBegin(m_main_plot, 0);
+  for (int i = 0; i < ATFG_V_RANGE; i++)
+    IupPlotAdd(m_main_plot, i, m_average_laplacian[i]);
+  IupPlotEnd(m_main_plot);
+  IupSetAttribute(m_main_plot, "DS_NAME", "h(v)");
+
+  IupSetAttribute(m_main_plot, "REDRAW", "YES");
 }
 
 /// <summary>
@@ -746,7 +773,7 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(int * x, unsigned char *v, int *n)
+float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
 {
   assert(m_scalar_histogram && x);
 
@@ -778,6 +805,10 @@ float ATFGenerator::GetBoundaryDistancies(int * x, unsigned char *v, int *n)
     else
     {
       x[i] = -sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
+      if (x[i] > 1000)
+        x[i] = 1000;
+      else if (x[i] < -1000)
+        x[i] = -1000;
     }
 
     v[c] = i;
