@@ -59,15 +59,12 @@ bool TransferFunction::Generate()
   csv_name[--len] = 'v';
   csv_name[--len] = 's';
   csv_name[--len] = 'c';
-  std::ofstream csv;
-  csv.open(csv_name);
   
-  if (!file.is_open() || !csv.is_open())
+  if (!file.is_open())
     return false;
 
   file << "linear" << std::endl;
   file << "0" << std::endl;
-  csv << "; Alpha" << std::endl;
 
   if (m_color_size < 2)
     throw std::domain_error("At least two color must be set!");
@@ -94,6 +91,8 @@ bool TransferFunction::Generate()
 
   IupSetAttribute(m_tf_plot, "CLEAR", "YES");
   IupPlotBegin(m_tf_plot, 0);
+  IupSetAttribute(m_bx_plot, "CLEAR", "YES");
+  IupPlotBegin(m_bx_plot, 0);
   
   //  boundary center
   //         .
@@ -119,6 +118,8 @@ bool TransferFunction::Generate()
   {
     unsigned int value = (unsigned int)m_value[i];
     float x = m_distance[value];
+
+    IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
     
     float a = 0.0f;
     if (x >= -base && x <= base)
@@ -140,18 +141,40 @@ bool TransferFunction::Generate()
     
     file << a << "\t" << value << std::endl;
     IupPlotAdd(m_tf_plot, value, a);
-
-    int ipart = a;
-    int fpart = (a - ipart) * 1000;
-    csv << value << "; " << ipart << "," << fpart << std::endl;
   }
 
   IupPlotEnd(m_tf_plot);
   IupSetAttribute(m_tf_plot, "DS_NAME", "Transfer Function");
+  IupSetAttribute(m_tf_plot, "DS_COLOR", "128 128 128");
   IupSetAttribute(m_tf_plot, "REDRAW", "YES");
 
+  IupPlotEnd(m_bx_plot);
+  IupSetAttribute(m_bx_plot, "DS_NAME", "p(v)");
+
+  IupPlotBegin(m_bx_plot, 0);
+  IupPlotAdd(m_bx_plot, 0, 0);
+  IupPlotAdd(m_bx_plot, 255, 0);
+  IupPlotEnd(m_bx_plot);
+  IupSetAttribute(m_bx_plot, "DS_NAME", "0");
+  IupSetAttribute(m_bx_plot, "DS_COLOR", "0 0 0");
+
+  IupPlotBegin(m_bx_plot, 0);
+  IupPlotAdd(m_bx_plot, 0, m_thickness);
+  IupPlotAdd(m_bx_plot, 255, m_thickness);
+  IupPlotEnd(m_bx_plot);
+  IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
+  IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
+
+  IupPlotBegin(m_bx_plot, 0);
+  IupPlotAdd(m_bx_plot, 0, -m_thickness);
+  IupPlotAdd(m_bx_plot, 255, -m_thickness);
+  IupPlotEnd(m_bx_plot);
+  IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
+  IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
+
+  IupSetAttribute(m_bx_plot, "REDRAW", "YES");
+
   file.close();
-  csv.close();
   return true;
 }
 

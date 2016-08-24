@@ -55,6 +55,11 @@ public:
     m_tf_plot = ih;
   }
 
+  void SetBoundaryFunctionPlot(Ihandle * ih)
+  {
+    m_bx_plot = ih;
+  }
+
   /// <summary>
   /// Specifies the distance between a intensity value
   /// and its closest boundary. Thus, the input arrays'
@@ -83,6 +88,7 @@ private:
   int m_thickness;
   int m_boundary;
   Ihandle * m_tf_plot;
+  Ihandle * m_bx_plot;
 };
 
 #endif

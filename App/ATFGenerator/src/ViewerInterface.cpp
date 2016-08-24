@@ -431,6 +431,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* gtresh_bar = IupVal("VERTICAL");
   IupSetAttribute(gtresh_bar, "ACTIVE", "YES");
   IupSetAttribute(gtresh_bar, "SHOWTICKS", "20");
+  IupSetAttribute(gtresh_bar, "MAX", "100");
   IupSetAttribute(gtresh_bar, "VALUE", "0.0");
   IupSetAttribute(gtresh_bar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
@@ -676,10 +677,20 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupSetAttribute(m_iup_main_plot_dialog, "LEGEND", "YES");
   IupSetAttribute(m_iup_main_plot_dialog, "LEGENDBOX", "NO");
 
-  Ihandle* plotDialog = IupDialog(IupVbox(m_iup_tf_plot_dialog, m_iup_main_plot_dialog, NULL));
+  m_iup_bx_plot_dialog = IupPlot();
+  IupSetAttribute(m_iup_bx_plot_dialog, "SYNCVIEW", "YES");
+  IupSetAttribute(m_iup_bx_plot_dialog, "LEGEND", "YES");
+  IupSetAttribute(m_iup_bx_plot_dialog, "LEGENDBOX", "NO");
+
+  Ihandle* plotDialog = IupDialog(IupVbox(m_iup_tf_plot_dialog, m_iup_bx_plot_dialog, NULL));
   IupSetAttribute(plotDialog, "TITLE", "Plot Area");
   IupSetAttribute(plotDialog, "SIZE", "QUARTER");
   IupShow(plotDialog);
+
+  Ihandle* mainPlotDialog = IupDialog(IupVbox(m_iup_main_plot_dialog, NULL));
+  IupSetAttribute(mainPlotDialog, "TITLE", "Plot Area");
+  IupSetAttribute(mainPlotDialog, "SIZE", "QUARTER");
+  IupShow(mainPlotDialog);
   
   TransferFunctionsViewer::Instance()->BuildInterface ();
 

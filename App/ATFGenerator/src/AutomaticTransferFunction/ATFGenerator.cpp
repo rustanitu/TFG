@@ -35,11 +35,12 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_min_global_laplacian(LONG_MAX)
 , m_max_global_laplacian(-LONG_MAX)
 , m_initialized(false)
-, m_gt(0.0f)
+, m_gtresh(0.0f)
 , m_derivativeMask(MASK_SIZE)
 , m_min_hist(0)
 , m_main_plot(NULL)
 , m_tf_plot(NULL)
+, m_bx_plot(NULL)
 {
 }
 
@@ -95,6 +96,7 @@ bool ATFGenerator::ExtractTransferFunction()
   delete m_transfer_function;
   m_transfer_function = new TransferFunction(filename.c_str());
   m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
+  m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
 
   float* x = new float[ATFG_V_RANGE];
   unsigned char* v = new unsigned char[ATFG_V_RANGE];
@@ -478,52 +480,28 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
-  std::ofstream csv;
-  csv.open("DataValuesChart.csv");
-
-  if (!csv.is_open())
-    return;
-
-  csv << "v; p(v); g(v); h(v);" << std::endl;
-
-  int cv = 0;
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
-  {
-    csv << i << ";";
-    if (cv < n && i == v[cv])
-    {
-      PrintFloat(csv, x[i]);
-      cv++;
-    }
-    else
-      csv << ";";
-
-    PrintFloat(csv, m_average_gradient[i]);
-    PrintFloat(csv, m_average_laplacian[i]);
-    csv << std::endl;
-  }
-  csv.close();
-
-
   IupSetAttribute(m_main_plot, "CLEAR", "YES");
-
-  IupPlotBegin(m_main_plot, 0);
-  for (int i = 0; i < n; i++)
-    IupPlotAdd(m_main_plot, v[i], x[i]);
-  IupPlotEnd(m_main_plot);
-  IupSetAttribute(m_main_plot, "DS_NAME", "p(v)");
 
   IupPlotBegin(m_main_plot, 0);
   for (int i = 0; i < ATFG_V_RANGE; i++)
     IupPlotAdd(m_main_plot, i, m_average_gradient[i]);
   IupPlotEnd(m_main_plot);
-  IupSetAttribute(m_main_plot, "DS_NAME", "g(v)"); 
+  IupSetAttribute(m_main_plot, "DS_NAME", "g(v)");
+  IupSetAttribute(m_main_plot, "DS_COLOR", "0 0 128");
 
   IupPlotBegin(m_main_plot, 0);
   for (int i = 0; i < ATFG_V_RANGE; i++)
     IupPlotAdd(m_main_plot, i, m_average_laplacian[i]);
   IupPlotEnd(m_main_plot);
   IupSetAttribute(m_main_plot, "DS_NAME", "h(v)");
+  IupSetAttribute(m_main_plot, "DS_COLOR", "0 128 0");
+
+  IupPlotBegin(m_main_plot, 0);
+  IupPlotAdd(m_main_plot, 0, 0);
+  IupPlotAdd(m_main_plot, 255, 0);
+  IupPlotEnd(m_main_plot);
+  IupSetAttribute(m_main_plot, "DS_NAME", "0");
+  IupSetAttribute(m_main_plot, "DS_COLOR", "0 0 0");
 
   IupSetAttribute(m_main_plot, "REDRAW", "YES");
 }
@@ -791,7 +769,6 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
   }
 
   float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
-  float g_tresh = max_gradient * m_gt;
 
   int c = 0;
   for (int i = 0; i < ATFG_V_RANGE; ++i)
@@ -804,11 +781,7 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
     }
     else
     {
-      x[i] = -sigma * sigma * (l / fmax(g - g_tresh, 0.000001));
-      if (x[i] > 1000)
-        x[i] = 1000;
-      else if (x[i] < -1000)
-        x[i] = -1000;
+      x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
     }
 
     v[c] = i;

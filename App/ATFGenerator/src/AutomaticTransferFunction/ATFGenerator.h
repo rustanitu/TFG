@@ -157,7 +157,7 @@ public:
 
   void SetGTresh(float gt)
   {
-    m_gt = gt;
+    m_gtresh = gt;
   }
 
   void SetMinimumHistogramValue(int min)
@@ -174,6 +174,11 @@ public:
   void SetTransferFunctionPlot(Ihandle * ih)
   {
     m_tf_plot = ih;
+  }
+
+  void SetBoundaryFunctionPlot(Ihandle * ih)
+  {
+    m_bx_plot = ih;
   }
 
 private:
@@ -288,13 +293,14 @@ private:
   /// </summary>
   bool m_initialized;
 
-  float m_gt;
+  float m_gtresh;
   int m_min_hist;
 
   DerivativeMask m_derivativeMask;
 
   Ihandle* m_main_plot;
   Ihandle* m_tf_plot;
+  Ihandle* m_bx_plot;
 };
 
 #endif

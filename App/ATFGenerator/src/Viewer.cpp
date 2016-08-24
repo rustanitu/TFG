@@ -145,6 +145,7 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
       m_atfg = new ATFGenerator(m_volume);
       m_atfg->SetMainPlot(Viewer::Instance()->m_gui.m_iup_main_plot_dialog);
       m_atfg->SetTransferFunctionPlot(Viewer::Instance()->m_gui.m_iup_tf_plot_dialog);
+      m_atfg->SetBoundaryFunctionPlot(Viewer::Instance()->m_gui.m_iup_bx_plot_dialog);
       if (m_atfg->Init())
       {
         //m_atfg->GenerateVolumeSlices();
