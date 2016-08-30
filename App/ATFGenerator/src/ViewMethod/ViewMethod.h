@@ -135,6 +135,8 @@ public:
   /*! Just Build the renderer of the ViewMethod.*/
   virtual void CleanViewer () { m_built = false; }
 
+  virtual void ReloadTransferFunction(){}
+
 protected:
   /*! If the ViewMethod needs a update check for volume and transfer function being rendered.*/
   bool m_outdated;

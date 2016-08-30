@@ -129,6 +129,13 @@ void ViewMethodAdaptive::CreateIupUserInterface ()
 
 void ViewMethodAdaptive::UpdateIupUserInterface ()
 {
+  m_redisplay = true;
+}
+
+void ViewMethodAdaptive::ReloadTransferFunction()
+{
+  m_renderer.ReloadTransferFunction(Viewer::Instance()->m_transfer_function);
+  UpdateIupUserInterface();
 }
 
 void ViewMethodAdaptive::ResetCamera ()

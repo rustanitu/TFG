@@ -166,6 +166,12 @@ void ViewMethodIAS::UpdateIupUserInterface ()
 
 }
 
+void ViewMethodIAS::ReloadTransferFunction()
+{
+  m_renderer.ReloadTransferFunction(Viewer::Instance()->m_transfer_function);
+  UpdateIupUserInterface();
+}
+
 void ViewMethodIAS::ResetCamera ()
 {
   m_renderer.SetYRotation (0.0f);

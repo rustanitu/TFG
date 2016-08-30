@@ -768,7 +768,8 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
       min_laplacian = m_average_laplacian[i];
   }
 
-  float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
+  //float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
+  float sigma = max_gradient / (max_laplacian * SQRT_E);
 
   int c = 0;
   for (int i = 0; i < ATFG_V_RANGE; ++i)

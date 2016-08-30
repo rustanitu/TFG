@@ -343,6 +343,12 @@ void ViewMethodCPU::UpdateIupUserInterface ()
 	m_gui.SetAdaptiveSamples (m_viewer.m_voleval.m_adaptive_samples);
 }
 
+void ViewMethodCPU::ReloadTransferFunction()
+{
+  //m_renderer.ReloadTransferFunction(Viewer::Instance()->m_transfer_function);
+  //UpdateIupUserInterface();
+}
+
 void ViewMethodCPU::ResetCamera ()
 {
 	m_viewer.ResetCamera (Viewer::Instance ()->m_CurrentWidth, Viewer::Instance ()->m_CurrentHeight);

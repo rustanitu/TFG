@@ -136,6 +136,12 @@ void ViewMethodEquidistant::UpdateIupUserInterface ()
 {
 }
 
+void ViewMethodEquidistant::ReloadTransferFunction()
+{
+  m_renderer.ReloadTransferFunction(Viewer::Instance()->m_transfer_function);
+  UpdateIupUserInterface();
+}
+
 void ViewMethodEquidistant::ResetCamera ()
 {
   m_redisplay = true;

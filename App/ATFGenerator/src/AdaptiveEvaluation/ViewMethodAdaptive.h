@@ -82,6 +82,8 @@ public:
   void ChangeCurrentShaderProgram (int shader_id);
   void UseDoublePrecision (bool usedoubleprec);
 
+  void ReloadTransferFunction();
+
 private:
   std::string m_volumename;
   std::string m_trasnferfunctionname;

@@ -101,6 +101,8 @@ public:
   float GetGUICubeHeight ();
   float GetGUICubeDepth ();
 
+  void ReloadTransferFunction();
+
 private:
   std::string m_volumename;
   std::string m_trasnferfunctionname;

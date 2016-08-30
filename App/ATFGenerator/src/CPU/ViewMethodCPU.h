@@ -98,6 +98,8 @@ public:
 
   VolumeEvaluator* GetVolumeEvaluator ();
 
+  void ReloadTransferFunction();
+
 private:
   void RecalculateAABBSizes ();
   void ErrorTests ();

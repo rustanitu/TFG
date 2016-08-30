@@ -107,7 +107,7 @@ bool TransferFunction::Generate()
   // |-------|-------|
   //       base
   
-  float amax = 1.0f;
+  float amax = 0.5f;
   float base = m_thickness;
 
   int b = 0;

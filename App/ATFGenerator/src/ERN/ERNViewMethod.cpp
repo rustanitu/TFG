@@ -414,3 +414,9 @@ float ERNViewMethod::GetGUICubeDepth ()
 {
   return m_gui.m_gui_cubedepth;
 }
+
+void ERNViewMethod::ReloadTransferFunction()
+{
+  m_renderer.ReloadTransferFunction(Viewer::Instance()->m_transfer_function);
+  UpdateIupUserInterface();
+}
