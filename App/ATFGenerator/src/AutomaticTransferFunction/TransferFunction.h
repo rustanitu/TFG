@@ -72,6 +72,9 @@ public:
   void SetClosestBoundaryDistances(unsigned char* values, float* distances, int n);
 
 private:
+  float CenteredTriangleFunction(float max, float base, float x);
+
+private:
   /// <summary>
   /// It storages the values setted by
   /// SetClosestBoundaryDistances.

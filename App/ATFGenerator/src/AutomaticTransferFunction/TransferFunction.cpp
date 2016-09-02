@@ -33,8 +33,35 @@ TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, T
 /// </summary>
 TransferFunction::~TransferFunction()
 {
-  free(m_value);
-  free(m_distance);
+  //free(m_value);
+  //delete [] m_distance;
+}
+
+float TransferFunction::CenteredTriangleFunction(float max, float base, float x)
+{
+  //  boundary center
+  //         .
+  //        / \       |
+  //       / | \      |
+  //      /  |  \     |
+  //     /   |   \    | max
+  //    /    |    \   |
+  //   /     |     \  |
+  //  /      |      \ |
+  //  ------ 0 ++++++ 
+  // |-------|-------|
+  //       base
+
+  float a = 0.0f;
+  if (x >= -base && x <= base) {
+    if (x >= 0.0)
+      a = -(max * x) / base;
+    else
+      a = (max * x) / base;
+
+    a += max;
+  }
+  return a;
 }
 
 /// <summary>
@@ -94,26 +121,33 @@ bool TransferFunction::Generate()
   IupSetAttribute(m_bx_plot, "CLEAR", "YES");
   IupPlotBegin(m_bx_plot, 0);
   
-  //  boundary center
-  //         .
-  //        / \       |
-  //       / | \      |
-  //      /  |  \     |
-  //     /   |   \    | amax
-  //    /    |    \   |
-  //   /     |     \  |
-  //  /      |      \ |
-  //  ------ 0 ++++++ 
-  // |-------|-------|
-  //       base
-  
   float amax = 0.5f;
   float base = m_thickness;
 
-  int b = 0;
-  float last_a = 0.0f;
+  float *tf_raw = new float[m_values_size];
+  float *tf = new float[m_values_size];
+  for (int i = 0; i < m_values_size; ++i)
+  {
+    unsigned int value = (unsigned int)m_value[i];
+    float x = m_distance[value];
+
+    tf_raw[i] = CenteredTriangleFunction(amax, base, x);
+    tf[i] = tf_raw[i];
+  }
+
+#if 0
+  int gauss[5] = { 1, 4, 6, 4, 1 };
+  for (int i = 2; i < m_values_size - 2; ++i) {
+    tf[i] = 0;
+    for (int k = 0; k < 5; ++k)
+      tf[i] += tf_raw[i+k-2] * gauss[k];
+    tf[i] /= 16;
+  }
+#endif
 
   // Assign opacity to transfer function
+  int b = 0;
+  float last_a = 0.0f;
   for (int i = 0; i < m_values_size; ++i)
   {
     unsigned int value = (unsigned int)m_value[i];
@@ -121,16 +155,7 @@ bool TransferFunction::Generate()
 
     IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
     
-    float a = 0.0f;
-    if (x >= -base && x <= base)
-    {
-      if (x >= 0.0)
-        a = -(amax * x) / base;
-      else
-        a = (amax * x) / base;
-
-      a += amax;
-    }
+    float a = tf[i];
 
     if (a != last_a && last_a == 0.0f)
       b++;

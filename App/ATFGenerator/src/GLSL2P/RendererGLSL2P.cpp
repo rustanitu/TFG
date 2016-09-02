@@ -406,11 +406,11 @@ void RendererGLSL2P::CreateSecondPass ()
 
   if (USE_DOUBLE_PRECISION)
   {
-    m_shader_secondpass->SetUniformDouble ("step_size", .5);
+    m_shader_secondpass->SetUniformDouble ("step_size", .1);
   }
   else
   {
-    m_shader_secondpass->SetUniformFloat ("step_size", .5f);
+    m_shader_secondpass->SetUniformFloat ("step_size", .1f);
   }
   
   gl::ExitOnGLError ("ERROR: Could not get shader uniform locations");

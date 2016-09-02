@@ -17,7 +17,8 @@
 
 #include <cstdlib>
 
-#define ATFG
+//#define ATFG
+#define FAST_TFG
 
 Viewer *Viewer::m_instance = 0;
 
@@ -129,19 +130,11 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     m_volume_file = file;
 
     delete m_atfg;
+    delete m_fast_tfg;
     
 #ifdef ATFG
     try
     {
-#if 0
-      RAWFile raw("..\\..\\Modelos\\VolumeModels\\BinaryCylinderModel", 128, 128, 128);
-      if (raw.Open()) {
-        m_atfg = new ATFGenerator(m_volume);
-        m_atfg->GenerateVolumeSlices();
-        raw.Close();
-      }
-      exit(1);
-#endif
       m_atfg = new ATFGenerator(m_volume);
       m_atfg->SetMainPlot(Viewer::Instance()->m_gui.m_iup_main_plot_dialog);
       m_atfg->SetTransferFunctionPlot(Viewer::Instance()->m_gui.m_iup_tf_plot_dialog);
@@ -184,12 +177,21 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     {
       printf("\nOcorreu um erro inesperado!\n\n");
     }
+#elif defined(FAST_TFG)
+    m_fast_tfg = new FastTFGenerator(m_volume);
+    m_fast_tfg->SetMainPlot(Viewer::Instance()->m_gui.m_iup_main_plot_dialog);
+    m_fast_tfg->SetBoundaryFunctionPlot(Viewer::Instance()->m_gui.m_iup_bx_plot_dialog);
+    if (m_fast_tfg->Init())
+    {
+      m_fast_tfg->ExtractTransferFunction();
+    }
 #endif
   }
 }
 
 int Viewer::SetBoundaryThickness(Ihandle* ih)
 {
+#ifdef ATFG
   char *val = IupGetAttribute(ih, "VALUE");
   std::string::size_type size;
   int scale = std::stoi(val, &size);
@@ -210,11 +212,13 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
       Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
     }
   }
+#endif
   return IUP_DEFAULT;
 }
 
 int Viewer::SetGTresh(Ihandle* ih)
 {
+#ifdef ATFG
   char *val = IupGetAttribute(ih, "VALUE");
   std::string::size_type size;
   float scale = std::stof(val, &size);
@@ -246,12 +250,13 @@ int Viewer::SetGTresh(Ihandle* ih)
     Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
     Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
   }
-
+#endif
   return IUP_DEFAULT;
 }
 
 int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
 {
+#ifdef ATFG
   Viewer::Instance()->m_atfg->SetMinimumHistogramValue(min);
   Viewer::Instance()->m_atfg->GenerateGradientSummedHistogram();
   Viewer::Instance()->m_atfg->GenerateLaplacianSummedHistogram();
@@ -280,11 +285,13 @@ int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
     Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
     Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
   }
+#endif
   return IUP_DEFAULT;
 }
 
 int Viewer::SetBoundary(Ihandle* ih, int boundary)
 {
+#ifdef ATFG
   TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
   Viewer::Instance()->m_boundary = boundary;
   tf->SetBoundary(boundary);
@@ -297,6 +304,7 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
     Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
     Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
   }
+#endif
   return IUP_DEFAULT;
 }
 
@@ -626,6 +634,7 @@ Viewer::Viewer ()
   m_volumename = "NULL";
 
   m_atfg = NULL;
+  m_fast_tfg = NULL;
 }
 
 Viewer::~Viewer ()

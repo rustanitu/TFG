@@ -419,8 +419,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
   Ihandle* sgima_bar = IupVal("VERTICAL");
   IupSetAttribute(sgima_bar, "ACTIVE", "YES");
-  IupSetAttribute(sgima_bar, "SHOWTICKS", "19");
-  IupSetAttribute(sgima_bar, "MAX", "20");
+  IupSetAttribute(sgima_bar, "SHOWTICKS", "48");
+  IupSetAttribute(sgima_bar, "MAX", "50");
   IupSetAttribute(sgima_bar, "MIN", "1");
   IupSetAttribute(sgima_bar, "VALUE", "1");
   IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
@@ -430,8 +430,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
   Ihandle* gtresh_bar = IupVal("VERTICAL");
   IupSetAttribute(gtresh_bar, "ACTIVE", "YES");
-  IupSetAttribute(gtresh_bar, "SHOWTICKS", "20");
-  IupSetAttribute(gtresh_bar, "MAX", "100");
+  IupSetAttribute(gtresh_bar, "SHOWTICKS", "51");
+  IupSetAttribute(gtresh_bar, "MAX", "50");
   IupSetAttribute(gtresh_bar, "VALUE", "0.0");
   IupSetAttribute(gtresh_bar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
@@ -444,7 +444,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* atfg_boundary_label = IupLabel("Boundary");
   IupSetAttribute(atfg_boundary_label, "ALIGNMENT", "ACENTER");
 
-  m_bthick_label = IupLabel("BThick: 1");
+  m_bthick_label = IupLabel("BThick: 1   ");
   m_gtresh_label = IupLabel("GTresh: 0.0f");
 
   //Ihandle* spinbox_htresh = IupText("0");
@@ -700,8 +700,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 void ViewerInterface::UpdateBThickLabel(int bthick)
 {
-  char *val = new char[15];
-  sprintf(val, "BThick: %d ", bthick);
+  char *val = new char[12];
+  sprintf(val, "BThick: %d.", bthick);
   IupSetAttribute(m_bthick_label, "TITLE", val);
 }
 
