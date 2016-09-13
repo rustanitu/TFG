@@ -121,29 +121,8 @@ bool TransferFunction::Generate()
   IupSetAttribute(m_bx_plot, "CLEAR", "YES");
   IupPlotBegin(m_bx_plot, 0);
   
-  float amax = 0.5f;
+  float amax = 0.4f;
   float base = m_thickness;
-
-  float *tf_raw = new float[m_values_size];
-  float *tf = new float[m_values_size];
-  for (int i = 0; i < m_values_size; ++i)
-  {
-    unsigned int value = (unsigned int)m_value[i];
-    float x = m_distance[value];
-
-    tf_raw[i] = CenteredTriangleFunction(amax, base, x);
-    tf[i] = tf_raw[i];
-  }
-
-#if 0
-  int gauss[5] = { 1, 4, 6, 4, 1 };
-  for (int i = 2; i < m_values_size - 2; ++i) {
-    tf[i] = 0;
-    for (int k = 0; k < 5; ++k)
-      tf[i] += tf_raw[i+k-2] * gauss[k];
-    tf[i] /= 16;
-  }
-#endif
 
   // Assign opacity to transfer function
   int b = 0;
@@ -155,7 +134,7 @@ bool TransferFunction::Generate()
 
     IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
     
-    float a = tf[i];
+    float a = CenteredTriangleFunction(amax, base, x);
 
     if (a != last_a && last_a == 0.0f)
       b++;
@@ -183,19 +162,19 @@ bool TransferFunction::Generate()
   IupSetAttribute(m_bx_plot, "DS_NAME", "0");
   IupSetAttribute(m_bx_plot, "DS_COLOR", "0 0 0");
 
-  IupPlotBegin(m_bx_plot, 0);
-  IupPlotAdd(m_bx_plot, 0, m_thickness);
-  IupPlotAdd(m_bx_plot, 255, m_thickness);
-  IupPlotEnd(m_bx_plot);
-  IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
-  IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
+  //IupPlotBegin(m_bx_plot, 0);
+  //IupPlotAdd(m_bx_plot, 0, m_thickness);
+  //IupPlotAdd(m_bx_plot, 255, m_thickness);
+  //IupPlotEnd(m_bx_plot);
+  //IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
+  //IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
 
-  IupPlotBegin(m_bx_plot, 0);
-  IupPlotAdd(m_bx_plot, 0, -m_thickness);
-  IupPlotAdd(m_bx_plot, 255, -m_thickness);
-  IupPlotEnd(m_bx_plot);
-  IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
-  IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
+  //IupPlotBegin(m_bx_plot, 0);
+  //IupPlotAdd(m_bx_plot, 0, -m_thickness);
+  //IupPlotAdd(m_bx_plot, 255, -m_thickness);
+  //IupPlotEnd(m_bx_plot);
+  //IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
+  //IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
 
   IupSetAttribute(m_bx_plot, "REDRAW", "YES");
 

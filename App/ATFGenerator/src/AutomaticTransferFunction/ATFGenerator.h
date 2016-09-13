@@ -72,7 +72,7 @@ public:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-  float GetValue(int x, int y, int z);
+  int GetValue(int x, int y, int z);
 
   /// <summary>
   /// Gets an aproximation of the voxel's gradient, using 
@@ -191,6 +191,7 @@ private:
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
   float CalculateGradient(int x, int y, int z);
+  float CalculateGradientByKernel(int x, int y, int z);
 
   /// <summary>
   /// Calculates an aproximation of the voxel's laplacian, 
@@ -201,6 +202,7 @@ private:
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated laplacian.</returns>
   float CalculateLaplacian(int x, int y, int z);
+  float CalculateLaplacianByKernel(int x, int y, int z);
 
   /// <summary>
   /// Iterates over the volume, calculating the gradient 

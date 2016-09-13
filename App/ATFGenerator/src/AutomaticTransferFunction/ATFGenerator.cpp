@@ -120,7 +120,7 @@ bool ATFGenerator::ExtractTransferFunction()
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated gradient.</returns>
-float ATFGenerator::GetValue(int x, int y, int z)
+int ATFGenerator::GetValue(int x, int y, int z)
 {
   if (x < 0)
     x = -x;
@@ -137,7 +137,7 @@ float ATFGenerator::GetValue(int x, int y, int z)
   else if (z >= m_depth)
     z = 2 * m_depth - 1 - z;
 
-  return m_volume->GetValue(x, y, z);
+  return m_volume->SampleVolume(x, y, z);
 }
 
 /// <summary>
@@ -212,7 +212,7 @@ void ATFGenerator::GenerateVolumeSlice(unsigned int k)
   {
     for (int i = 0; i < m_width; ++i)
     {
-      pgmfile.WriteByte(m_volume->GetValue(i,j,k));
+      pgmfile.WriteByte(m_volume->SampleVolume(i,j,k));
     }
     pgmfile.WriteEndLine();
   }
@@ -529,6 +529,25 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
     throw std::exception_ptr();
 
   float g = 0.0f;
+  int gx = GetValue(x + 1, y, z) - GetValue(x - 1, y, z);
+  int gy = GetValue(x, y + 1, z) - GetValue(x, y - 1, z);
+  int gz = GetValue(x, y, z + 1) - GetValue(x, y, z - 1);
+
+  g = sqrt(gx*gx + gy*gy + gz*gz);
+
+  g = fmax(0.0f, g);
+  if (g > m_max_global_gradient)
+    m_max_global_gradient = g;
+
+  return g;
+}
+
+float ATFGenerator::CalculateGradientByKernel(int x, int y, int z)
+{
+  if (!m_volume)
+    throw std::exception_ptr();
+
+  float g = 0.0f;
   float gx = 0.0f;
   float gy = 0.0f;
   float gz = 0.0f;
@@ -540,7 +559,7 @@ float ATFGenerator::CalculateGradient(int x, int y, int z)
   for (int i = xinit; i <= x + h; ++i) {
     for (int j = yinit; j <= y + h; ++j) {
       for (int k = zinit; k <= z + h; ++k) {
-        float v = GetValue(i, j, k);
+        int v = GetValue(i, j, k);
         float pglx;
         float pgly;
         float pglz;
@@ -574,6 +593,25 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   if (!m_volume)
     throw std::exception_ptr();
 
+  int v = GetValue(x, y, z) * 2;
+  int lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
+  int ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
+  int lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
+  float l = lx + ly + lz;
+
+  if (l > m_max_global_laplacian)
+    m_max_global_laplacian = l;
+  if (l < m_min_global_laplacian)
+    m_min_global_laplacian = l;
+
+  return l;
+}
+
+float ATFGenerator::CalculateLaplacianByKernel(int x, int y, int z)
+{
+  if (!m_volume)
+    throw std::exception_ptr();
+
   float l = 0.0f;
   float lx = 0.0f;
   float ly = 0.0f;
@@ -586,7 +624,7 @@ float ATFGenerator::CalculateLaplacian(int x, int y, int z)
   for (int i = xinit; i <= x + h; ++i) {
     for (int j = yinit; j <= y + h; ++j) {
       for (int k = zinit; k <= z + h; ++k) {
-        float v = GetValue(i, j, k);
+        int v = GetValue(i, j, k);
         float pglx;
         float pgly;
         float pglz;
@@ -695,7 +733,7 @@ bool ATFGenerator::GenerateHistogram()
           continue;
 #endif
 
-        unsigned char v = m_volume->GetValue(vol_id);
+        unsigned char v = m_volume->SampleVolume(vol_id);
         unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
         unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
 
@@ -726,14 +764,28 @@ bool ATFGenerator::GenerateHistogram()
 
     if (w > 0) {
       g /= w;
-      h /= w;
-
       g = m_max_global_gradient * g / ATFG_V_MAX;
-      h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
-      h += m_min_global_laplacian;
-
       m_average_gradient[i] = g;
-      m_average_laplacian[i] = h;
+      
+      w = 0;
+      h = 0.0f;
+      for (unsigned int k = 0; k < ATFG_V_RANGE; ++k) {
+        if (m_scalar_histogram[i][(int)g][k] > m_min_hist) {
+          h += k;
+          w++;
+        }
+      }
+
+      if (w > 0) {
+        h /= w;
+        h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
+        h += m_min_global_laplacian;
+        m_average_laplacian[i] = h;
+      }
+      else {
+        m_average_laplacian[i] = -FLT_MAX;
+      }
+
     }
     else {
       m_average_gradient[i] = -FLT_MAX;
