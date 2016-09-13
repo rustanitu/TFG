@@ -118,19 +118,6 @@ void Viewer::SetTransferFunction (vr::TransferFunction* tf, std::string file)
   }
 }
 
-void ConnectivityCleanup(vr::Volume* vol)
-{
-  bool* visited = new bool[vol->GetWidth() * vol->GetHeight() * vol->GetDepth()];
-  
-  for (int i = 0; i < vol->GetWidth(); ++i) {
-    for (int j = 0; j < vol->GetHeight(); ++j) {
-      for (int k = 0; k < vol->GetDepth(); ++k) {
-      }
-    }
-  }
-
-}
-
 void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
 {
   if (vol)
@@ -145,8 +132,6 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     delete m_atfg;
     delete m_fast_tfg;
 
-    ConnectivityCleanup(vol);
-    
 #ifdef ATFG
     try
     {
