@@ -255,6 +255,9 @@
     <ClCompile Include="src\AutomaticTransferFunction\FastTFGenerator.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\ConnectivityFilter.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ViewMethod\ViewMethod.h">
@@ -426,6 +429,9 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\FastTFGenerator.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\ConnectivityFilter.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>

@@ -231,8 +231,6 @@ private:
   /// to all 256 values, ordered by value.</returns>
   float GetBoundaryDistancies(float* x, unsigned char *v, int *n);
 
-  unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
-
 private:
   /// <summary>
   /// An array that storages the maximum gradient value for every intensity value.

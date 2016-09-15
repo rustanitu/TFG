@@ -71,6 +71,8 @@ public:
   /// <param name="n">The input arrays' size.</param>
   void SetClosestBoundaryDistances(unsigned char* values, float* distances, int n);
 
+  float GetDistance(unsigned char v);
+
 private:
   float CenteredTriangleFunction(float max, float base, float x);
 

@@ -20,6 +20,7 @@
 #define ATFG_FULL_RANGE
 #define ATFG_GAMA_CORRECTION 0.33f
 #define MASK_SIZE 3
+#define GETID(x, y, z) x + (y * m_width) + (z * m_width * m_height)
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -159,7 +160,7 @@ float ATFGenerator::GetGradient(int x, int y, int z)
   y = lqc::Clamp(y, 0, m_height - 1);
   z = lqc::Clamp(z, 0, m_depth - 1);
 
-  return m_scalar_gradient[GetId(x,y,z)];
+  return m_scalar_gradient[GETID(x,y,z)];
 }
 
 /// <summary>
@@ -181,7 +182,7 @@ float ATFGenerator::GetLaplacian(int x, int y, int z)
   y = lqc::Clamp(y, 0, m_height - 1);
   z = lqc::Clamp(z, 0, m_depth - 1);
 
-  return m_scalar_laplacian[GetId(x,y,z)];
+  return m_scalar_laplacian[GETID(x,y,z)];
 }
 
 /// <summary>
@@ -238,8 +239,8 @@ void ATFGenerator::GenerateGradientSlice(unsigned int k)
   for (int j = m_height - 1; j >= 0; --j) {
     for (int i = 0; i < m_width; ++i) {
       unsigned char v = 255;
-      if (m_scalar_gradient[GetId(i, j, k)] < 256.0f)
-        v = m_scalar_gradient[GetId(i, j, k)];
+      if (m_scalar_gradient[GETID(i, j, k)] < 256.0f)
+        v = m_scalar_gradient[GETID(i, j, k)];
       pgmfile.WriteByte(v);
     }
     pgmfile.WriteEndLine();
@@ -266,8 +267,8 @@ void ATFGenerator::GenerateLaplacianSlice(unsigned int k)
   for (int j = m_height - 1; j >= 0; --j) {
     for (int i = 0; i < m_width; ++i) {
       unsigned char v = 255;
-      if (m_scalar_laplacian[GetId(i, j, k)] < 256.0f)
-        v = m_scalar_laplacian[GetId(i, j, k)];
+      if (m_scalar_laplacian[GETID(i, j, k)] < 256.0f)
+        v = m_scalar_laplacian[GETID(i, j, k)];
       pgmfile.WriteByte(v);
     }
     pgmfile.WriteEndLine();
@@ -679,7 +680,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
     {
       for (int z = 0; z < m_depth; ++z)
       {
-        unsigned int id = GetId(x, y, z);
+        unsigned int id = GETID(x, y, z);
         m_scalar_gradient[id] = CalculateGradient(x, y, z);
         m_scalar_laplacian[id] = CalculateLaplacian(x, y, z);
       }
@@ -723,7 +724,7 @@ bool ATFGenerator::GenerateHistogram()
     {
       for (int z = 0; z < m_depth; z++)
       {
-        unsigned int vol_id = GetId(x,y,z);
+        unsigned int vol_id = GETID(x,y,z);
 
 #ifndef ATFG_FULL_RANGE
         if (m_scalar_gradient[vol_id] > m_max_global_gradient)
@@ -843,9 +844,4 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
 
   *n = c;
   return sigma;
-}
-
-unsigned int ATFGenerator::GetId(unsigned int x, unsigned int y, unsigned int z)
-{
-  return x + (y * m_width) + (z * m_width * m_height);
 }

@@ -185,6 +185,7 @@
     <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFInterface.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\ConnectivityFilter.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\DerivativeMask.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FastTFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\Histogram.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="src\AdaptiveEvaluation\ViewMethodAdaptive.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ATFInterface.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\ConnectivityFilter.h" />
     <ClInclude Include="src\AutomaticTransferFunction\DerivativeMask.h" />
     <ClInclude Include="src\AutomaticTransferFunction\FastTFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\Histogram.h" />

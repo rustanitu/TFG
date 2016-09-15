@@ -64,6 +64,12 @@ float TransferFunction::CenteredTriangleFunction(float max, float base, float x)
   return a;
 }
 
+float TransferFunction::GetDistance(unsigned char v)
+{
+  assert(m_distance);
+  return m_distance[v];
+}
+
 /// <summary>
 /// Generates a transfer function file at a given path.
 /// If a file with the same path already exists, it'll
