@@ -207,7 +207,7 @@ void ATFGenerator::GenerateVolumeSlice(unsigned int k)
     printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
     return;
   }
-  //delete[] filename;
+  delete[] filename;
 
   for (int j = m_height - 1; j >= 0; --j)
   {
@@ -234,7 +234,7 @@ void ATFGenerator::GenerateGradientSlice(unsigned int k)
     printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
     return;
   }
-  //delete[] filename;
+  delete[] filename;
 
   for (int j = m_height - 1; j >= 0; --j) {
     for (int i = 0; i < m_width; ++i) {
@@ -262,7 +262,7 @@ void ATFGenerator::GenerateLaplacianSlice(unsigned int k)
     printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
     return;
   }
-  //delete[] filename;
+  delete[] filename;
 
   for (int j = m_height - 1; j >= 0; --j) {
     for (int i = 0; i < m_width; ++i) {
@@ -324,7 +324,7 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
     printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
     return;
   }
-  //delete [] filename;
+  delete [] filename;
 
   unsigned char histogram[ATFG_V_RANGE][ATFG_V_RANGE];
 
@@ -666,6 +666,8 @@ bool ATFGenerator::CalculateVolumeDerivatives()
     throw std::out_of_range("The volume dimensions are not valid!\n");
   }
 
+  delete [] m_scalar_gradient;
+  delete [] m_scalar_laplacian;
   m_scalar_gradient = new float[size];
   m_scalar_laplacian = new float[size];
 

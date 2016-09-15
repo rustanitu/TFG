@@ -685,12 +685,12 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* plotDialog = IupDialog(IupVbox(m_iup_tf_plot_dialog, m_iup_bx_plot_dialog, NULL));
   IupSetAttribute(plotDialog, "TITLE", "Plot Area");
   IupSetAttribute(plotDialog, "SIZE", "QUARTER");
-  IupShow(plotDialog);
+  //IupShow(plotDialog);
 
   Ihandle* mainPlotDialog = IupDialog(IupVbox(m_iup_main_plot_dialog, NULL));
   IupSetAttribute(mainPlotDialog, "TITLE", "Plot Area");
   IupSetAttribute(mainPlotDialog, "SIZE", "QUARTER");
-  IupShow(mainPlotDialog);
+  //IupShow(mainPlotDialog);
   
   TransferFunctionsViewer::Instance()->BuildInterface ();
 

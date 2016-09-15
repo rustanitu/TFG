@@ -106,13 +106,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_19_1;..\include\cd_5_8\Win32;..\include\im_3_11;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_19_1;..\include\cd_5_10\Win32;..\include\im_3_11</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib;..\lib\raytracer;..\lib\volrend;..\lib\glutils;..\lib\lqc;..\lib\math;..\lib\pthreads_w32\x86;..\lib\iup_3_19_1\Win32;..\lib\cd_5_10\Win32;..\lib\im_3_11</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cd.lib;iupgl.lib;iup.lib;im.lib;pthreadVC2.lib;raytracer_d.lib;volrend_d.lib;glutils_d.lib;lqc_d.lib;math_d.lib;glew32.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>iup_plot.lib;iupgl.lib;iup.lib;im.lib;pthreadVC2.lib;raytracer_d.lib;volrend_d.lib;glutils_d.lib;lqc_d.lib;math_d.lib;glew32.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_19_1;...\include\cd_5_8\Win32;..\include\im_3_11;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_19_1;..\include\cd_5_10\Win32;..\include\im_3_11</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>

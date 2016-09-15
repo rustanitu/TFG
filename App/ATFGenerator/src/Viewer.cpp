@@ -207,9 +207,9 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
       vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
       Viewer::Instance()->SetTransferFunction(tfr, tf_file);
       Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-      Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-      Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-      Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+      //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
+      //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
+      //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
     }
   }
 #endif
@@ -246,9 +246,9 @@ int Viewer::SetGTresh(Ihandle* ih)
     vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
     Viewer::Instance()->SetTransferFunction(tfr, tf_file);
     Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
   }
 #endif
   return IUP_DEFAULT;
@@ -281,9 +281,9 @@ int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
     vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
     Viewer::Instance()->SetTransferFunction(tfr, tf_file);
     Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
   }
 #endif
   return IUP_DEFAULT;
@@ -300,9 +300,9 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
     vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
     Viewer::Instance()->SetTransferFunction(tfr, tf_file);
     Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-    Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
+    //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
   }
 #endif
   return IUP_DEFAULT;

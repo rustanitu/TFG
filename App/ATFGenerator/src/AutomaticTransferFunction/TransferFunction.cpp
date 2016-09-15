@@ -33,8 +33,8 @@ TransferFunction::TransferFunction(const char* path) : ITransferFunction(path, T
 /// </summary>
 TransferFunction::~TransferFunction()
 {
-  //free(m_value);
-  //delete [] m_distance;
+  delete [] m_value;
+  delete [] m_distance;
 }
 
 float TransferFunction::CenteredTriangleFunction(float max, float base, float x)
@@ -85,14 +85,6 @@ bool TransferFunction::Generate()
   std::ofstream file;
   file.open(m_path);
 
-  int len = strlen(m_path);
-  char* csv_name = new char[len];
-  csv_name = (char*)memcpy(csv_name, m_path, len);
-  csv_name[--len] = '\0';
-  csv_name[--len] = 'v';
-  csv_name[--len] = 's';
-  csv_name[--len] = 'c';
-  
   if (!file.is_open())
     return false;
 
