@@ -26,25 +26,14 @@ public:
   /// <param name="path">The full path to the transfer
   /// function file.</param>
   /// <param name="ext">The file extension.</param>
-  ITransferFunction(const char* path, const char* ext)
+  ITransferFunction()
   {
-    if (!path)
-      throw std::exception_ptr();
-
-    int path_len = strlen(path);
-    int ext_len = strlen(ext);
-    int length = path_len + ext_len;
-    m_path = new char[length + 1];
-    m_path = (char*)memcpy(m_path, path, path_len);
-    memcpy(m_path + path_len, ext, ext_len);
-    m_path[length] = '\0';
   }
 
   ~ITransferFunction()
   {
-    free(m_path);
   }
-  
+
   /// <summary>
   /// The implementation of this function must generate a
   /// transfer function at the given path.
@@ -59,7 +48,7 @@ public:
   /// associated to a value V.
   /// </summary>
   virtual bool Generate() = 0;
-  
+
   /// <summary>
   /// Sets the color associated to the intensity value.
   /// </summary>
@@ -75,7 +64,7 @@ public:
     m_color[(value * 3) + 1] = green;
     m_color[(value * 3) + 2] = blue;
   }
-  
+
   /// <summary>Gets the path.</summary>
   /// <returns>Returns the complete file path to the
   /// transfer function file.</returns>
@@ -89,7 +78,7 @@ protected:
   /// The transfer function file path.
   /// </summary>
   char* m_path;
-  
+
   /// <summary>
   /// The number of color-value associations.
   /// </summary>

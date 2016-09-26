@@ -12,12 +12,11 @@
 #include "ERN\ERNViewMethod.h"
 
 #include "volrend\Reader.h"
-#include "AutomaticTransferFunction\TransferFunction.h"
-#include "AutomaticTransferFunction\RAWFile.h"
+#include <volrend\TransferFunction.h>
 
 #include <cstdlib>
 
-#define ATFG
+#define ATFG "AutomaticTransferFunction"
 //#define FAST_TFG
 
 Viewer *Viewer::m_instance = 0;
@@ -96,7 +95,7 @@ void Viewer::InitAndStart (int argc, char **argv)
 
 void Viewer::ReloadTransferFunction ()
 {
-  if (m_transfer_function)
+  if (m_transfer_function && m_transfer_function_file != ATFG)
   {
     delete m_transfer_function;
     m_transfer_function = NULL;
@@ -116,6 +115,19 @@ void Viewer::SetTransferFunction (vr::TransferFunction* tf, std::string file)
     m_tf_name = tf->GetName ();
     m_transfer_function_file = file;
   }
+}
+
+void SetDefaultColor(vr::TransferFunction1D* tf)
+{
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 255 / 255.0, 255 / 255.0, 0));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 0 / 255.0, 0 / 255.0, 32));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 255 / 255.0, 0 / 255.0, 64));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 255 / 255.0, 96));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 127 / 255.0, 0 / 255.0, 128));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 0 / 255.0, 127 / 255.0, 160));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 127 / 255.0, 127 / 255.0, 192));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(84 / 255.0, 84 / 255.0, 85 / 255.0, 224));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 0 / 255.0, 255));
 }
 
 void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
@@ -144,27 +156,18 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         //m_atfg->GenerateVolumeSlices();
         //m_atfg->GenerateGradientSlices();
         //m_atfg->GenerateLaplacianSlices();
-        //m_atfg->GenerateHistogramSlices();
-        m_atfg->GenerateGradientSummedHistogram();
-        m_atfg->GenerateLaplacianSummedHistogram();
+        //m_atfg->GenerateHistogramSlice(0);
+        //m_atfg->GenerateGradientSummedHistogram();
+        //m_atfg->GenerateLaplacianSummedHistogram();
 
         if (m_atfg->ExtractTransferFunction())
         {
-          ITransferFunction* tf = m_atfg->GetTransferFunction();
-          tf->SetValueColor(0, 255, 255, 255);
-          tf->SetValueColor(32, 255, 0, 0);
-          tf->SetValueColor(64, 0, 255, 0);
-          tf->SetValueColor(96, 0, 0, 255);
-          tf->SetValueColor(128, 127, 127, 0);
-          tf->SetValueColor(160, 127, 0, 127);
-          tf->SetValueColor(192, 0, 127, 127);
-          tf->SetValueColor(224, 84, 84, 85);
-          tf->SetValueColor(255, 0, 0, 0);
+          vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
+          SetDefaultColor(tf);
 
           if (tf->Generate()) {
-            char* tf_file = tf->GetPath();
-            vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-            SetTransferFunction(tfr, tf_file);
+            m_transfer_function = tf;
+            m_transfer_function_file = ATFG;
           }
         }
       }
@@ -199,13 +202,11 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
   {
     Viewer::Instance()->m_boundary_thickness = scale;
     Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
-    TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
+    vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
     tf->SetBoundaryThickness(scale);
     if (tf->Generate())
     {
-      char* tf_file = tf->GetPath();
-      vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-      Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+      Viewer::Instance()->m_transfer_function = tf;
       Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
       //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
       //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
@@ -228,58 +229,13 @@ int Viewer::SetGTresh(Ihandle* ih)
   if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
     return IUP_DEFAULT;
 
-  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
-  tf->SetValueColor(0, 255, 255, 255);
-  tf->SetValueColor(32, 255, 0, 0);
-  tf->SetValueColor(64, 0, 255, 0);
-  tf->SetValueColor(96, 0, 0, 255);
-  tf->SetValueColor(128, 127, 127, 0);
-  tf->SetValueColor(160, 127, 0, 127);
-  tf->SetValueColor(192, 0, 127, 127);
-  tf->SetValueColor(224, 84, 84, 85);
-  tf->SetValueColor(255, 0, 0, 0);
+  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
+  SetDefaultColor(tf);
   tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
   tf->SetBoundary(Viewer::Instance()->m_boundary);
   if (tf->Generate())
   {
-    char* tf_file = tf->GetPath();
-    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
-    Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
-  }
-#endif
-  return IUP_DEFAULT;
-}
-
-int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
-{
-#ifdef ATFG
-  Viewer::Instance()->m_atfg->SetMinimumHistogramValue(min);
-  Viewer::Instance()->m_atfg->GenerateGradientSummedHistogram();
-  Viewer::Instance()->m_atfg->GenerateLaplacianSummedHistogram();
-  if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
-    return IUP_DEFAULT;
-
-  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
-  tf->SetValueColor(0, 255, 255, 255);
-  tf->SetValueColor(32, 255, 0, 0);
-  tf->SetValueColor(64, 0, 255, 0);
-  tf->SetValueColor(96, 0, 0, 255);
-  tf->SetValueColor(128, 127, 127, 0);
-  tf->SetValueColor(160, 127, 0, 127);
-  tf->SetValueColor(192, 0, 127, 127);
-  tf->SetValueColor(224, 84, 84, 85);
-  tf->SetValueColor(255, 0, 0, 0);
-  tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
-  tf->SetBoundary(Viewer::Instance()->m_boundary);
-  if (tf->Generate())
-  {
-    char* tf_file = tf->GetPath();
-    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+    Viewer::Instance()->m_transfer_function = tf;
     Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
     //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
     //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
@@ -292,13 +248,11 @@ int Viewer::SetMinHistogramValue(Ihandle* ih, int min)
 int Viewer::SetBoundary(Ihandle* ih, int boundary)
 {
 #ifdef ATFG
-  TransferFunction* tf = (TransferFunction*)Viewer::Instance()->m_atfg->GetTransferFunction();
+  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
   Viewer::Instance()->m_boundary = boundary;
   tf->SetBoundary(boundary);
   if (tf->Generate()) {
-    char* tf_file = tf->GetPath();
-    vr::TransferFunction* tfr = vr::ReadTransferFunction(tf_file);
-    Viewer::Instance()->SetTransferFunction(tfr, tf_file);
+    Viewer::Instance()->m_transfer_function = tf;
     Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
     //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
     //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
@@ -473,18 +427,20 @@ void Viewer::LoadViewerState ()
 {
   std::ifstream state_file;
   state_file.open ("iup_volume_redering_state.vrstate");
-  if (state_file.is_open ())
+  if (state_file.is_open())
   {
     std::string view_method_number;
-    std::getline (state_file, m_volume_file);
-    std::getline (state_file, m_transfer_function_file);
-    std::getline (state_file, view_method_number);
+    std::getline(state_file, m_volume_file);
+    std::getline(state_file, m_transfer_function_file);
+    std::getline(state_file, view_method_number);
 
-    vr::Volume* v = vr::ReadFromVolMod (m_volume_file);
-    Viewer::Instance ()->SetVolumeModel (v, m_volume_file);
+    vr::Volume* v = vr::ReadFromVolMod(m_volume_file);
+    Viewer::Instance()->SetVolumeModel(v, m_volume_file);
 
-    vr::TransferFunction* tf = vr::ReadTransferFunction (m_transfer_function_file);
-    Viewer::Instance ()->SetTransferFunction (tf, m_transfer_function_file);
+    if (m_transfer_function_file != ATFG) {
+      vr::TransferFunction* tf = vr::ReadTransferFunction(m_transfer_function_file);
+      Viewer::Instance()->SetTransferFunction(tf, m_transfer_function_file);
+    }
 
     m_current_view = static_cast<VRVIEWS>(atoi (view_method_number.c_str ()));
 

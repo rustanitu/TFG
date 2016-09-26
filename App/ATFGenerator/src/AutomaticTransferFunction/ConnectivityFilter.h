@@ -8,31 +8,37 @@
 #include <stack>
 #include <volrend/Volume.h>
 
-#define GETID(x, y, z) x + (y * m_width) + (z * m_width * m_height)
+class ATFGenerator;
 
 class ConnectivityFilter
 {
   struct Voxel
   {
-    int x, y, z, id;
+    int x, y, z, set;
+    bool visited;
+    Voxel() : x(0), y(0), z(0), set(0), visited(false) {}
   };
 
 public:
-  ConnectivityFilter(vr::Volume* vol);
+  ConnectivityFilter(vr::Volume* vol, ATFGenerator* atfg);
   ~ConnectivityFilter();
 
   void SeparateBoundaries();
 
 private:
 
-  int GetNeighborhod(int x, int y, int z, Voxel* neigh);
+  int GetNeighborhod(int x, int y, int z, Voxel** neigh);
 
 private:
   int m_width;
   int m_height;
   int m_depth;
-  bool* m_volume;
-  std::stack<Voxel> m_stack;
+  Voxel* m_voxels;
+  vr::Volume* m_volume;
+  std::stack<Voxel*> m_stack;
+  ATFGenerator* m_atfg;
+  int m_nsets;
+  int* m_set_voxels;
 };
 
 #endif

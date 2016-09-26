@@ -142,7 +142,6 @@ public:
 
   static int SetBoundaryThickness(Ihandle* ih);
   static int SetGTresh(Ihandle* ih);
-  static int SetMinHistogramValue(Ihandle* ih, int min);
   static int SetBoundary(Ihandle* ih, int boundary);
   
   ViewerInterface m_gui;

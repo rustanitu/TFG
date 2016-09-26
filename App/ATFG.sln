@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATFGeneratorApp", "ATFGenerator\ATFGeneratorApp.vcxproj", "{F897DAB0-1DCE-472A-808C-305D3C510A2B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{391CCFF5-EAF5-4262-B47A-F9DB0B220605} = {391CCFF5-EAF5-4262-B47A-F9DB0B220605}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_lib_volrend", "lqc_volrend\volrend.vcxproj", "{391CCFF5-EAF5-4262-B47A-F9DB0B220605}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{F897DAB0-1DCE-472A-808C-305D3C510A2B}.Debug|Win32.Build.0 = Debug|Win32
 		{F897DAB0-1DCE-472A-808C-305D3C510A2B}.Release|Win32.ActiveCfg = Release|Win32
 		{F897DAB0-1DCE-472A-808C-305D3C510A2B}.Release|Win32.Build.0 = Release|Win32
+		{391CCFF5-EAF5-4262-B47A-F9DB0B220605}.Debug|Win32.ActiveCfg = Debug|Win32
+		{391CCFF5-EAF5-4262-B47A-F9DB0B220605}.Debug|Win32.Build.0 = Debug|Win32
+		{391CCFF5-EAF5-4262-B47A-F9DB0B220605}.Release|Win32.ActiveCfg = Release|Win32
+		{391CCFF5-EAF5-4262-B47A-F9DB0B220605}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

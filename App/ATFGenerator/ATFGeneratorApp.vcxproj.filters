@@ -240,9 +240,6 @@
     <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
-    <ClCompile Include="src\AutomaticTransferFunction\TransferFunction.cpp">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClCompile>
     <ClCompile Include="src\AutomaticTransferFunction\RAWFile.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
@@ -253,9 +250,6 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
     <ClCompile Include="src\AutomaticTransferFunction\FastTFGenerator.cpp">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AutomaticTransferFunction\ConnectivityFilter.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
   </ItemGroup>
@@ -416,9 +410,6 @@
     <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
-    <ClInclude Include="src\AutomaticTransferFunction\TransferFunction.h">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\RAWFile.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
@@ -429,9 +420,6 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\FastTFGenerator.h">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AutomaticTransferFunction\ConnectivityFilter.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>

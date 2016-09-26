@@ -2,15 +2,16 @@
 #define VOLREND_VOLUME_H
 
 #include <iostream>
+#include <stack>
 #include <math/Vector3.h>
 #include <math/Vector4.h>
 
 #include <glutils/GLTexture3D.h>
 
+class ATFGenerator;
+
 namespace vr
 {
-  class TransferFunction;
-
   enum VolumeType
   {
     STRUCTURED,
@@ -33,9 +34,6 @@ namespace vr
     lqc::Vector3f GetAnchorMin();
     lqc::Vector3f GetAnchorMax();
     void SetAnchors(lqc::Vector3f pmin, lqc::Vector3f pmax);
-
-    float GetValue(int id);
-    float GetValue(int x, int y, int z);
 
     int SampleVolume(int x, int y, int z);
     int SampleVolume(float x, float y, float z);
@@ -66,6 +64,20 @@ namespace vr
       return m_scalar_values != NULL;
     }
 
+    int GetId(int x, int y, int z)
+    {
+      return x + (y * m_width) + (z * m_width * m_height);
+    }
+
+    void SeparateBoundaries(ATFGenerator* atfg);
+
+  private:
+    struct Voxel
+    {
+      int x, y, z;
+    };
+
+    int GetNeighborhod(int x, int y, int z, Voxel* neigh);
 
   private:
     std::string m_name;
@@ -75,6 +87,11 @@ namespace vr
 
     unsigned int m_width, m_height, m_depth;
     float* m_scalar_values;
+    int m_nsets;
+    bool* m_visited;
+    int* m_set_values;
+    int* m_set_qtd;
+    std::stack<Voxel> m_stack;
   };
 }
 

@@ -7,7 +7,7 @@
 
 #include "IATFGenerator.h"
 #include "DerivativeMask.h"
-#include <volrend/Volume.h>
+#include <volrend\TransferFunction1D.h>
 #include <iup.h>
 
 /*************************/
@@ -121,7 +121,7 @@ public:
   /// </summary>
   /// <param name="v">The value whose slice it's desired.
   /// The value must range from 0 to 255</param>
-  void GenerateHistogramSlice(unsigned int v);
+  bool GenerateHistogramSlice(unsigned int v);
 
   /// <summary>
   /// Generates the all the 256 histogram slices, trhought
@@ -153,7 +153,7 @@ public:
   /// Gets the transfer function.
   /// </summary>
   /// <returns>Returns a pointer to the transfer function generated automatically.</returns>
-  ITransferFunction* GetTransferFunction();
+  vr::TransferFunction* GetTransferFunction();
 
   void SetGTresh(float gt)
   {
@@ -285,7 +285,7 @@ private:
   /// <summary>
   /// The transfer function generated automatically.
   /// </summary>
-  TransferFunction* m_transfer_function;
+  vr::TransferFunction1D* m_transfer_function;
 
   /// <summary>
   /// Inidicates if the instance has already been

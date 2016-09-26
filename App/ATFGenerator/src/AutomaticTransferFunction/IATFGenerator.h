@@ -6,8 +6,7 @@
 #define IATFGenerator_H
 
 #include <volrend\volume.h>
-
-class ITransferFunction;
+#include <volrend\TransferFunction.h>
 
 /// <summary>
 /// This interface encapsulates the Transfer Function
@@ -37,7 +36,7 @@ public:
   /// automatically.
   /// </summary>
   /// <returns>Returns a Transfer Function.</returns>
-  virtual ITransferFunction* GetTransferFunction() = 0;
+  virtual vr::TransferFunction* GetTransferFunction() = 0;
 
 protected:
   /// <summary>

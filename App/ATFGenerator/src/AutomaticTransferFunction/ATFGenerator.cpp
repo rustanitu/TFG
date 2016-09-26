@@ -10,10 +10,10 @@
 
 #include <lqc/File/RAWLoader.h>
 #include <math/MUtils.h>
+#include <iup.h>
 #include <iup_plot.h>
 
 #include "PGMFile.h"
-#include "TransferFunction.h"
 #include "Histogram.h"
 
 
@@ -88,14 +88,9 @@ bool ATFGenerator::ExtractTransferFunction()
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
   
-  std::string filename = m_volume->GetName();
-  std::size_t init = filename.find_last_of("\\") + 1;
-  std::size_t end = filename.find_first_of(".");
-  filename = filename.substr(init, end - init);
-  filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename;
-
   delete m_transfer_function;
-  m_transfer_function = new TransferFunction(filename.c_str());
+  m_transfer_function = new vr::TransferFunction1D();
+  m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
   m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
   m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
 
@@ -306,10 +301,10 @@ void ATFGenerator::GenerateLaplacianSlices()
 /// </summary>
 /// <param name="v">The value whose slice it's desired.
 /// The value must range from 0 to 255</param>
-void ATFGenerator::GenerateHistogramSlice(unsigned int v)
+bool ATFGenerator::GenerateHistogramSlice(unsigned int v)
 {
-  if (!m_initialized)
-    throw std::domain_error("Instance not initialized. Init must be called once!\n");
+  //if (!m_initialized)
+  //  throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
   if (v >= ATFG_V_RANGE)
     throw std::domain_error("The value must range from 0 to 255!\n");
@@ -322,7 +317,7 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
   if (!pgmfile.Open())
   {
     printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
-    return;
+    return false;
   }
   delete [] filename;
 
@@ -342,16 +337,18 @@ void ATFGenerator::GenerateHistogramSlice(unsigned int v)
     }
   }
 
-  dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
+  //dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
 
   for (int j = ATFG_V_MAX; j >= 0; --j) {
     for (int i = 0; i < ATFG_V_RANGE; ++i) {
       unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
-      pgmfile.WriteByte(val);
+      pgmfile.WriteByte(histogram[i][j]);
     }
     pgmfile.WriteEndLine();
   }
   pgmfile.Close();
+
+  return true;
 }
 
 /// <summary>
@@ -511,7 +508,7 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
 /// Gets the transfer function.
 /// </summary>
 /// <returns>Returns a pointer to the transfer function generated automatically.</returns>
-ITransferFunction* ATFGenerator::GetTransferFunction()
+vr::TransferFunction* ATFGenerator::GetTransferFunction()
 {
   return m_transfer_function;
 }
@@ -765,15 +762,28 @@ bool ATFGenerator::GenerateHistogram()
       }
     }
 
+    m_average_gradient[i] = -FLT_MAX;
+    m_average_laplacian[i] = -FLT_MAX;
+
     if (w > 0) {
       g /= w;
+      h /= w;
+      int mg = g;
+
       g = m_max_global_gradient * g / ATFG_V_MAX;
       m_average_gradient[i] = g;
+      h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
+      h += m_min_global_laplacian;
+      m_average_laplacian[i] = h;
+
+#ifndef TF2D
+      continue;
+#endif
       
       w = 0;
       h = 0.0f;
       for (unsigned int k = 0; k < ATFG_V_RANGE; ++k) {
-        if (m_scalar_histogram[i][(int)g][k] > m_min_hist) {
+        if (m_scalar_histogram[i][mg][k] > m_min_hist) {
           h += k;
           w++;
         }
@@ -785,14 +795,6 @@ bool ATFGenerator::GenerateHistogram()
         h += m_min_global_laplacian;
         m_average_laplacian[i] = h;
       }
-      else {
-        m_average_laplacian[i] = -FLT_MAX;
-      }
-
-    }
-    else {
-      m_average_gradient[i] = -FLT_MAX;
-      m_average_laplacian[i] = -FLT_MAX;
     }
   }
 
@@ -822,6 +824,9 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
     if (m_average_laplacian[i] < min_laplacian && m_average_laplacian[i] > -FLT_MAX)
       min_laplacian = m_average_laplacian[i];
   }
+
+  if (max_laplacian == 0.0f)
+    return 0.0f;
 
   //float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
   float sigma = max_gradient / (max_laplacian * SQRT_E);

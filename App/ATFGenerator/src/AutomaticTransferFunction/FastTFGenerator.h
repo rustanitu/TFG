@@ -7,7 +7,7 @@
 
 #include "IATFGenerator.h"
 #include "DerivativeMask.h"
-#include <volrend/Volume.h>
+#include <volrend\TransferFunction1D.h>
 #include <iup.h>
 
 /*************************/
@@ -31,7 +31,7 @@ public:
 
   bool ExtractTransferFunction();
 
-  ITransferFunction* GetTransferFunction();
+  vr::TransferFunction* GetTransferFunction();
 
   void SetMainPlot(Ihandle * ih)
   {
@@ -69,7 +69,7 @@ private:
   float m_scalar_histogram[FAST_TFG_V_RANGE];
   float m_scalar_histogram_laplacian[FAST_TFG_V_RANGE];
 
-  TransferFunction* m_transfer_function;
+  vr::TransferFunction1D* m_transfer_function;
 
   bool m_initialized;
 

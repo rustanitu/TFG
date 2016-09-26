@@ -13,7 +13,6 @@
 #include <iup_plot.h>
 
 #include "PGMFile.h"
-#include "TransferFunction.h"
 #include "Histogram.h"
 
 
@@ -27,7 +26,7 @@ FastTFGenerator::FastTFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 
 FastTFGenerator::~FastTFGenerator()
 {
-  //delete m_transfer_function;
+  delete m_transfer_function;
 }
 
 bool FastTFGenerator::Init()
@@ -57,7 +56,7 @@ bool FastTFGenerator::ExtractTransferFunction()
   filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename;
 
   delete m_transfer_function;
-  m_transfer_function = new TransferFunction(filename.c_str());
+  m_transfer_function = new vr::TransferFunction1D();
   m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
   m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
 
@@ -109,10 +108,10 @@ float FastTFGenerator::GetValue(int x, int y, int z)
   else if (z >= m_depth)
     z = 2 * m_depth - 1 - z;
 
-  return m_volume->GetValue(x, y, z);
+  return m_volume->SampleVolume(x, y, z);
 }
 
-ITransferFunction* FastTFGenerator::GetTransferFunction()
+vr::TransferFunction* FastTFGenerator::GetTransferFunction()
 {
   return m_transfer_function;
 }
@@ -201,7 +200,7 @@ bool FastTFGenerator::GenerateHistogram()
       {
         unsigned int vol_id = GetId(x,y,z);
 
-        unsigned char v = m_volume->GetValue(vol_id);
+        unsigned char v = m_volume->SampleVolume(vol_id);
         m_scalar_histogram[v] += m_scalar_laplacian[vol_id];
       }
     }
