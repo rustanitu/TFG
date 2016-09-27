@@ -13,6 +13,7 @@ uniform int ScreenSizeH;
 
 uniform sampler2D ExitPoints;
 uniform sampler3D VolumeTex;
+uniform sampler3D SetTex;
 uniform sampler1D TransferFunc;  
 
 uniform int VolWidth;
@@ -37,7 +38,11 @@ vec3 real_normalized_step;
 
 vec4 GetFromTransferFunction (float p_d)
 {
-  return texture(TransferFunc, texture(VolumeTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r);
+  return texture(TransferFunc, texture(SetTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r);
+  if (texture(SetTex, vec3(0,0,0)).r == 0)//5367481)
+    return texture(TransferFunc, texture(VolumeTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r);
+  else
+    return vec4(0);
 }
 
 void main(void)

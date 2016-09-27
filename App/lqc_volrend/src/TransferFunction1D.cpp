@@ -8,7 +8,7 @@ namespace vr
 {
   TransferFunction1D::TransferFunction1D (double v0, double v1)
     : m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-    , m_value(NULL), m_distance(NULL)
+    , m_value(NULL), m_distance(NULL), m_boundary(0), m_thickness(1)
   {
     m_cpt_rgb.clear ();
     m_cpt_alpha.clear ();

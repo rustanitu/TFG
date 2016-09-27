@@ -448,11 +448,23 @@ void RendererGLSL2P::ReloadVolume (vr::Volume* volume, bool resetslicesizes)
   }
 
   m_glsl_volume = vr::GenerateRTexture (volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
+
+  gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(m_last_slice_x - m_init_slice_x, m_last_slice_y - m_init_slice_y, m_last_slice_z - m_init_slice_z);
+  tex3d_r->GenerateTexture(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+  tex3d_r->SetData(volume->GetVoxelSet(), GL_R32I, GL_RED, GL_INT); // HERE
+  gl::ExitOnGLError("ERROR: After SetData");
+
   if (m_glsl_volume)
   {
     m_shader_secondpass->Bind ();
     m_shader_secondpass->SetUniformTexture3D ("VolumeTex", m_glsl_volume->GetTextureID (), 1);
     m_shader_secondpass->BindUniform ("VolumeTex");
+
+    if (tex3d_r)
+    {
+      m_shader_secondpass->SetUniformTexture3D("SetTex", tex3d_r->GetTextureID(), 3);
+      m_shader_secondpass->BindUniform("SetTex");
+    }
 
     m_shader_secondpass->SetUniformInt ("VolWidth", m_glsl_volume->GetWidth ());
     m_shader_secondpass->BindUniform ("VolWidth");

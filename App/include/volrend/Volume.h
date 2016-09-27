@@ -7,6 +7,7 @@
 #include <math/Vector4.h>
 
 #include <glutils/GLTexture3D.h>
+#include <volrend/TransferFunction1D.h>
 
 class ATFGenerator;
 
@@ -69,7 +70,22 @@ namespace vr
       return x + (y * m_width) + (z * m_width * m_height);
     }
 
-    void SeparateBoundaries(ATFGenerator* atfg);
+    void SeparateBoundaries(vr::TransferFunction1D* atfg);
+
+    int* GetVoxelSet()
+    {
+      return m_set_values;
+    }
+
+    int* GetSetQtd()
+    {
+      return m_set_qtd;
+    }
+
+    float* GetValues()
+    {
+      return m_scalar_values;
+    }
 
   private:
     struct Voxel

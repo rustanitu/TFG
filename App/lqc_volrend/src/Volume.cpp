@@ -10,9 +10,6 @@
 #include <cstdlib>
 #include <fstream>
 
-//#include "..\..\ATFGenerator\src\AutomaticTransferFunction\TransferFunction.h"
-//#include "..\..\ATFGenerator\src\AutomaticTransferFunction\ATFGenerator.h"
-
 namespace vr
 {
 
@@ -66,6 +63,9 @@ namespace vr
   Volume::~Volume()
   {
     delete[] m_scalar_values;
+    delete[] m_visited;
+    delete[] m_set_qtd;
+    delete[] m_set_values;
   }
 
   int Volume::GetWidth()
@@ -99,10 +99,8 @@ namespace vr
     m_pmax = pmax;
   }
 
-  void Volume::SeparateBoundaries(ATFGenerator* atfg)
+  void Volume::SeparateBoundaries(vr::TransferFunction1D* tf)
   {
-    /*TransferFunction* tf = (TransferFunction*)atfg->GetTransferFunction();
-
     int set = 0;
     int size = m_width * m_height * m_depth;
     for (int x = 0; x < m_width; x++)
@@ -165,7 +163,7 @@ namespace vr
         }
       }
     }
-    m_nsets = set + 1;*/
+    m_nsets = set + 1;
   }
 
   int Volume::GetNeighborhod(int x, int y, int z, Voxel* neigh)

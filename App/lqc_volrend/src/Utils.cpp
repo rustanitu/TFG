@@ -21,9 +21,6 @@ namespace vr
     
     int size = size_x*size_y*size_z;
     GLfloat* scalar_values = new GLfloat[size];
-    GLint* set_values = new GLint[size];
-    GLint* set_voxels = new GLint[size];
-
 
     int max;
     for (int k = 0; k < size_z; k++)
@@ -31,16 +28,12 @@ namespace vr
         for (int i = 0; i < size_x; i++)
         {
           int id = vol->GetId(i, j, k);
-          scalar_values[id] = (GLfloat)vol->SampleVolume((i + init_x), (j + init_y), (k + init_z)) / 255.f;
-          //set_values[id] = ;
-          //set_voxels[id] = ;
+          scalar_values[id] = (GLfloat)vol->SampleVolume((i + init_x), (j + init_y), (k + init_z)) / 255.0f;
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
     tex3d_r->GenerateTexture(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
     tex3d_r->SetData(scalar_values, GL_RED, GL_RED, GL_FLOAT);
-    //tex3d_r->SetData(set_values, GL_GREEN, GL_GREEN, GL_INT);
-    //tex3d_r->SetData(set_voxels, GL_BLUE, GL_BLUE, GL_INT);
     gl::ExitOnGLError("ERROR: After SetData");
 
     delete[] scalar_values;
@@ -58,6 +51,8 @@ namespace vr
 
     gl::GLTexture3D* tex3d_rgba = new gl::GLTexture3D(width, height, depth);
     tex3d_rgba->GenerateTexture(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+
+    int set = 1;
 
     lqc::Vector4f* value_rgba = new lqc::Vector4f[width * height * depth];
     for (int i = 0; i < width*height*depth; i++)

@@ -166,6 +166,7 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
           SetDefaultColor(tf);
 
           if (tf->Generate()) {
+            m_volume->SeparateBoundaries(tf);
             m_transfer_function = tf;
             m_transfer_function_file = ATFG;
           }
@@ -207,10 +208,8 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
     if (tf->Generate())
     {
       Viewer::Instance()->m_transfer_function = tf;
-      Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-      //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-      //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-      //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+      Viewer::Instance()->m_volume->SeparateBoundaries(tf);
+      Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->ReloadTransferFunction();
     }
   }
 #endif
@@ -236,10 +235,8 @@ int Viewer::SetGTresh(Ihandle* ih)
   if (tf->Generate())
   {
     Viewer::Instance()->m_transfer_function = tf;
-    Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+    Viewer::Instance()->m_volume->SeparateBoundaries(tf);
+    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->ReloadTransferFunction();
   }
 #endif
   return IUP_DEFAULT;
@@ -253,10 +250,8 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
   tf->SetBoundary(boundary);
   if (tf->Generate()) {
     Viewer::Instance()->m_transfer_function = tf;
-    Viewer::Instance()->m_viewmethods[GLSL2P]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[IAS]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[EQUIDISTANT_GLSL]->ReloadTransferFunction();
-    //Viewer::Instance()->m_viewmethods[ADAPTIVE_GLSL]->ReloadTransferFunction();
+    Viewer::Instance()->m_volume->SeparateBoundaries(tf);
+    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->ReloadTransferFunction();
   }
 #endif
   return IUP_DEFAULT;
@@ -437,10 +432,8 @@ void Viewer::LoadViewerState ()
     vr::Volume* v = vr::ReadFromVolMod(m_volume_file);
     Viewer::Instance()->SetVolumeModel(v, m_volume_file);
 
-    if (m_transfer_function_file != ATFG) {
-      vr::TransferFunction* tf = vr::ReadTransferFunction(m_transfer_function_file);
-      Viewer::Instance()->SetTransferFunction(tf, m_transfer_function_file);
-    }
+    vr::TransferFunction* tf = vr::ReadTransferFunction(m_transfer_function_file);
+    Viewer::Instance()->SetTransferFunction(tf, m_transfer_function_file);
 
     m_current_view = static_cast<VRVIEWS>(atoi (view_method_number.c_str ()));
 
@@ -467,6 +460,7 @@ bool Viewer::FileDlg_VolumeModel ()
   {
     std::string file (IupGetAttribute (dlg, "VALUE"));
 
+    delete Viewer::Instance()->m_volume;
     vr::Volume* v = vr::ReadFromVolMod (file);
     if (v)
     {
