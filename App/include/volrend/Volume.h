@@ -65,7 +65,7 @@ namespace vr
       return m_scalar_values != NULL;
     }
 
-    int GetId(int x, int y, int z)
+    int GetId(int& x, int& y, int& z) const
     {
       return x + (y * m_width) + (z * m_width * m_height);
     }

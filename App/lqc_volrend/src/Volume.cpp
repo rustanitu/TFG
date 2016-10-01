@@ -101,6 +101,7 @@ namespace vr
 
   void Volume::SeparateBoundaries(vr::TransferFunction1D* tf)
   {
+    return;
     int set = 0;
     int size = m_width * m_height * m_depth;
     for (int x = 0; x < m_width; x++)
