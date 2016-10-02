@@ -48,7 +48,7 @@ public:
     m_bx_plot = ih;
   }
 
-  float GetValue(int x, int y, int z);
+  float GetValue(UINT32 x, UINT32 y, UINT32 z);
 
 private:
   float CalculateGradient(int x, int y, int z);

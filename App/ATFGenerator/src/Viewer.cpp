@@ -95,7 +95,7 @@ void Viewer::InitAndStart (int argc, char **argv)
 
 void Viewer::ReloadTransferFunction ()
 {
-  if (m_transfer_function && m_transfer_function_file != ATFG)
+  if (m_transfer_function && !m_atfg)
   {
     delete m_transfer_function;
     m_transfer_function = NULL;
@@ -117,17 +117,30 @@ void Viewer::SetTransferFunction (vr::TransferFunction* tf, std::string file)
   }
 }
 
-void SetDefaultColor(vr::TransferFunction1D* tf)
+bool Viewer::ExtractATFG()
 {
-  tf->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 255 / 255.0, 255 / 255.0, 0));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 0 / 255.0, 0 / 255.0, 32));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 255 / 255.0, 0 / 255.0, 64));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 255 / 255.0, 96));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 127 / 255.0, 0 / 255.0, 128));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 0 / 255.0, 127 / 255.0, 160));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 127 / 255.0, 127 / 255.0, 192));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(84 / 255.0, 84 / 255.0, 85 / 255.0, 224));
-  tf->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 0 / 255.0, 255));
+  Viewer::Instance()->m_atfg->SetGTresh(Viewer::Instance()->m_gtresh);
+  Viewer::Instance()->m_gui.UpdateGTreshLabel(Viewer::Instance()->m_gtresh);
+  if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
+    return false;
+
+  return GenerateATFG();
+}
+
+bool Viewer::GenerateATFG()
+{
+  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
+  tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
+  Viewer::Instance()->m_gui.UpdateBThickLabel(Viewer::Instance()->m_boundary_thickness);
+  tf->SetBoundary(Viewer::Instance()->m_boundary);
+  if (tf->Generate())
+  {
+    Viewer::Instance()->m_transfer_function = tf;
+    Viewer::Instance()->m_volume->SeparateBoundaries(tf);
+    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
+    return true;
+  }
+  return false;
 }
 
 void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
@@ -141,10 +154,15 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
     m_volumename = vol->GetName();
     m_volume_file = file;
 
-    delete m_atfg;
-    delete m_fast_tfg;
-
 #ifdef ATFG
+
+    delete m_atfg;
+    m_atfg = NULL;
+    delete m_fast_tfg;
+    m_fast_tfg = NULL;
+
+    m_transfer_function = NULL;
+
     try
     {
       m_atfg = new ATFGenerator(m_volume);
@@ -160,17 +178,7 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         //m_atfg->GenerateGradientSummedHistogram();
         //m_atfg->GenerateLaplacianSummedHistogram();
 
-        if (m_atfg->ExtractTransferFunction())
-        {
-          vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
-          SetDefaultColor(tf);
-
-          if (tf->Generate()) {
-            m_volume->SeparateBoundaries(tf);
-            m_transfer_function = tf;
-            m_transfer_function_file = ATFG;
-          }
-        }
+        ExtractATFG();
       }
     }
     catch (const std::out_of_range& e)
@@ -202,15 +210,7 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
   if (scale != Viewer::Instance()->m_boundary_thickness)
   {
     Viewer::Instance()->m_boundary_thickness = scale;
-    Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
-    vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
-    tf->SetBoundaryThickness(scale);
-    if (tf->Generate())
-    {
-      Viewer::Instance()->m_transfer_function = tf;
-      Viewer::Instance()->m_volume->SeparateBoundaries(tf);
-      Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->ReloadTransferFunction();
-    }
+    GenerateATFG();
   }
 #endif
   return IUP_DEFAULT;
@@ -223,21 +223,7 @@ int Viewer::SetGTresh(Ihandle* ih)
   std::string::size_type size;
   float scale = std::stof(val, &size);
   Viewer::Instance()->m_gtresh = scale;
-  Viewer::Instance()->m_gui.UpdateGTreshLabel(scale);
-  Viewer::Instance()->m_atfg->SetGTresh(scale);
-  if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
-    return IUP_DEFAULT;
-
-  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
-  SetDefaultColor(tf);
-  tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
-  tf->SetBoundary(Viewer::Instance()->m_boundary);
-  if (tf->Generate())
-  {
-    Viewer::Instance()->m_transfer_function = tf;
-    Viewer::Instance()->m_volume->SeparateBoundaries(tf);
-    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->ReloadTransferFunction();
-  }
+  ExtractATFG();
 #endif
   return IUP_DEFAULT;
 }
@@ -245,14 +231,8 @@ int Viewer::SetGTresh(Ihandle* ih)
 int Viewer::SetBoundary(Ihandle* ih, int boundary)
 {
 #ifdef ATFG
-  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
   Viewer::Instance()->m_boundary = boundary;
-  tf->SetBoundary(boundary);
-  if (tf->Generate()) {
-    Viewer::Instance()->m_transfer_function = tf;
-    Viewer::Instance()->m_volume->SeparateBoundaries(tf);
-    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->ReloadTransferFunction();
-  }
+  GenerateATFG();
 #endif
   return IUP_DEFAULT;
 }
@@ -296,11 +276,11 @@ void Viewer::GenerateVolHistogram ()
     h[i] = 0;
 
   int out = 0;
-  for (int x = 0; x < m_volume->GetWidth(); x++)
+  for (UINT32 x = 0; x < m_volume->GetWidth(); x++)
   {
-    for (int y = 0; y < m_volume->GetHeight(); y++)
+    for (UINT32 y = 0; y < m_volume->GetHeight(); y++)
     {
-      for (int z = 0; z < m_volume->GetDepth(); z++)
+      for (UINT32 z = 0; z < m_volume->GetDepth(); z++)
       {
         int v = m_volume->SampleVolume(x, y, z);
         if (v < 256)
@@ -461,6 +441,7 @@ bool Viewer::FileDlg_VolumeModel ()
     std::string file (IupGetAttribute (dlg, "VALUE"));
 
     delete Viewer::Instance()->m_volume;
+    Viewer::Instance()->m_volume = NULL;
     vr::Volume* v = vr::ReadFromVolMod (file);
     if (v)
     {

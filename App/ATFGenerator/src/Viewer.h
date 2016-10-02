@@ -152,6 +152,10 @@ protected:
   virtual ~Viewer ();
 
 private:
+  static bool ExtractATFG();
+  static bool GenerateATFG();
+
+private:
   /*! the pointer to the singleton instance.*/
   static Viewer* m_instance;
 

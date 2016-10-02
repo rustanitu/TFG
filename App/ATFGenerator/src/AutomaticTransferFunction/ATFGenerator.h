@@ -72,7 +72,7 @@ public:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-  int GetValue(int x, int y, int z);
+  int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
   /// Gets an aproximation of the voxel's gradient, using 
@@ -82,7 +82,7 @@ public:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-  float GetGradient(int x, int y, int z);
+  float GetGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
   /// Gets an aproximation of the voxel's laplacian, using 
@@ -92,7 +92,7 @@ public:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated laplacian.</returns>
-  float GetLaplacian(int x, int y, int z);
+  float GetLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
   /// Generates a PGM image file with a volume slice.
@@ -101,13 +101,13 @@ public:
   /// value input.
   /// </summary>
   /// <param name="v">The value whose slice it's desired.</param>
-  void GenerateVolumeSlice(unsigned int v);
-  void GenerateGradientSlice(unsigned int v);
-  void GenerateLaplacianSlice(unsigned int v);
+  void GenerateVolumeSlice(const UINT32& v);
+  void GenerateGradientSlice(const UINT32& v);
+  void GenerateLaplacianSlice(const UINT32& v);
 
   /// <summary>
   /// Generates the all the volume slices, trhought
-  /// calls to void GenerateVolumeSlice(int v).
+  /// calls to void GenerateVolumeSlice(const UINT32& v).
   /// </summary>
   void GenerateVolumeSlices();
   void GenerateGradientSlices();
@@ -121,11 +121,11 @@ public:
   /// </summary>
   /// <param name="v">The value whose slice it's desired.
   /// The value must range from 0 to 255</param>
-  bool GenerateHistogramSlice(unsigned int v);
+  bool GenerateHistogramSlice(const UINT32& v);
 
   /// <summary>
   /// Generates the all the 256 histogram slices, trhought
-  /// calls to void GenerateHistogramSlice(int v).
+  /// calls to void GenerateHistogramSlice(const UINT32& v).
   /// </summary>
   void GenerateHistogramSlices();
 
@@ -147,7 +147,7 @@ public:
   /// </summary>
   void GenerateLaplacianSummedHistogram();
 
-  void GenerateDataValuesFile(float *x, unsigned char *v, int n);
+  void GenerateDataValuesFile(float *x, unsigned char *v, const UINT32& n);
 
   /// <summary>
   /// Gets the transfer function.
@@ -160,7 +160,7 @@ public:
     m_gtresh = gt;
   }
 
-  void SetMinimumHistogramValue(int min)
+  void SetMinimumHistogramValue(UINT32 min)
   {
     m_min_hist = min;
     GenerateHistogram();
@@ -190,8 +190,8 @@ private:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-  float CalculateGradient(int x, int y, int z);
-  float CalculateGradientByKernel(int x, int y, int z);
+  float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
+  float CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
   /// Calculates an aproximation of the voxel's laplacian, 
@@ -201,8 +201,8 @@ private:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated laplacian.</returns>
-  float CalculateLaplacian(int x, int y, int z);
-  float CalculateLaplacianByKernel(int x, int y, int z);
+  float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+  float CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
   /// Iterates over the volume, calculating the gradient 
@@ -229,18 +229,14 @@ private:
   /// </summary>
   /// <returns>Returns a float array with the distances associated 
   /// to all 256 values, ordered by value.</returns>
-  float GetBoundaryDistancies(float* x, unsigned char *v, int *n);
+  float GetBoundaryDistancies(float* x, unsigned char *v, UINT32 *n);
+
+  void SetDefaultColor();
 
 private:
-  /// <summary>
-  /// An array that storages the maximum gradient value for every intensity value.
-  /// </summary>
   float m_max_gradient;
-
-  /// <summary>
-  /// An array that storages the maximum laplacian value for every intensity value.
-  /// </summary>
   float m_max_laplacian;
+  float m_min_laplacian;
 
   /// <summary>
   /// The global maximum gradient value.
@@ -294,7 +290,7 @@ private:
   bool m_initialized;
 
   float m_gtresh;
-  int m_min_hist;
+  UINT32 m_min_hist;
 
   DerivativeMask m_derivativeMask;
 

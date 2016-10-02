@@ -91,23 +91,8 @@ bool FastTFGenerator::ExtractTransferFunction()
   return true;
 }
 
-float FastTFGenerator::GetValue(int x, int y, int z)
+float FastTFGenerator::GetValue(UINT32 x, UINT32 y, UINT32 z)
 {
-  if (x < 0)
-    x = -x;
-  else if (x >= m_width)
-    x = 2 * m_width - 1 - x;
-
-  if (y < 0)
-    y = -y;
-  else if (y >= m_height)
-    y = 2 * m_height - 1 - y;
-
-  if (z < 0)
-    z = -z;
-  else if (z >= m_depth)
-    z = 2 * m_depth - 1 - z;
-
   return m_volume->SampleVolume(x, y, z);
 }
 

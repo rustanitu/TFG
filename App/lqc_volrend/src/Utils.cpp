@@ -23,12 +23,16 @@ namespace vr
     GLfloat* scalar_values = new GLfloat[size];
 
     int max;
-    for (int k = 0; k < size_z; k++)
-      for (int j = 0; j < size_y; j++)
-        for (int i = 0; i < size_x; i++)
+    UINT32 x, y, z;
+    for (UINT32 k = 0; k < size_z; k++)
+      for (UINT32 j = 0; j < size_y; j++)
+        for (UINT32 i = 0; i < size_x; i++)
         {
           int id = vol->GetId(i, j, k);
-          scalar_values[id] = (GLfloat)vol->SampleVolume((i + init_x), (j + init_y), (k + init_z)) / 255.0f;
+          x = i + init_x;
+          y = j + init_y;
+          z = k + init_z;
+          scalar_values[id] = (GLfloat)vol->SampleVolume(x, y, z) / 255.0f;
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
@@ -89,11 +93,11 @@ namespace vr
     lqc::Vector3f* gradients = new lqc::Vector3f[width * height * depth];
     lqc::Vector3f s1, s2;
     int index = 0;
-    for (int z = 0; z < depth; z++)
+    for (UINT32 z = 0; z < depth; z++)
     {
-      for (int y = 0; y < height; y++)
+      for (UINT32 y = 0; y < height; y++)
       {
-        for (int x = 0; x < width; x++)
+        for (UINT32 x = 0; x < width; x++)
         {
           s1.x = vol->SampleVolume(x - n, y, z);
           s2.x = vol->SampleVolume(x + n, y, z);

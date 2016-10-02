@@ -15,9 +15,9 @@ gl::GLTexture2D* ERNVolume2D::GenerateRGBATexture2D (vr::Volume* volume, vr::Tra
   int size_x = volume->GetWidth ();
   int size_y = volume->GetHeight ();
   GLfloat* scalar_values = new GLfloat[size_x * size_y * 4];
-  for (int j = 0; j < size_y; j++)
+  for (UINT32 j = 0; j < size_y; j++)
   {
-    for (int i = 0; i < size_x; i++)
+    for (UINT32 i = 0; i < size_x; i++)
     {
       double smp = (double)volume->SampleVolume(i, j, 0);
       if (smp == 1)

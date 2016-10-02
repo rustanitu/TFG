@@ -20,7 +20,6 @@
 #define ATFG_FULL_RANGE
 #define ATFG_GAMA_CORRECTION 0.33f
 #define MASK_SIZE 3
-#define GETID(x, y, z) x + (y * m_width) + (z * m_width * m_height)
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -32,9 +31,9 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_scalar_gradient(NULL)
 , m_scalar_laplacian(NULL)
 , m_transfer_function(NULL)
-, m_max_global_gradient(-LONG_MAX)
-, m_min_global_laplacian(LONG_MAX)
-, m_max_global_laplacian(-LONG_MAX)
+, m_max_global_gradient(-FLT_MAX)
+, m_min_global_laplacian(FLT_MAX)
+, m_max_global_laplacian(-FLT_MAX)
 , m_initialized(false)
 , m_gtresh(0.0f)
 , m_derivativeMask(MASK_SIZE)
@@ -42,6 +41,9 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_main_plot(NULL)
 , m_tf_plot(NULL)
 , m_bx_plot(NULL)
+, m_max_gradient(0.0f)
+, m_max_laplacian(0.0f)
+, m_min_laplacian(0.0f)
 {
 }
 
@@ -77,6 +79,19 @@ bool ATFGenerator::Init()
   return true;
 }
 
+void ATFGenerator::SetDefaultColor()
+{
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 255 / 255.0, 255 / 255.0, 0));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 0 / 255.0, 0 / 255.0, 32));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 255 / 255.0, 0 / 255.0, 64));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 255 / 255.0, 96));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 127 / 255.0, 0 / 255.0, 128));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 0 / 255.0, 127 / 255.0, 160));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 127 / 255.0, 127 / 255.0, 192));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(84 / 255.0, 84 / 255.0, 85 / 255.0, 224));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 0 / 255.0, 255));
+}
+
 /// <summary>
 /// Extract a transfer function from the volume, based in 
 /// Kindlmann's paper.
@@ -93,6 +108,7 @@ bool ATFGenerator::ExtractTransferFunction()
   m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
   m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
   m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
+  SetDefaultColor();
 
   float* x = new float[ATFG_V_RANGE];
   unsigned char* v = new unsigned char[ATFG_V_RANGE];
@@ -102,7 +118,7 @@ bool ATFGenerator::ExtractTransferFunction()
     return false;
   }
 
-  int n_v;
+  UINT32 n_v;
   float sigma = GetBoundaryDistancies(x, v, &n_v);
   GenerateDataValuesFile(x, v, n_v);
   m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
@@ -116,23 +132,8 @@ bool ATFGenerator::ExtractTransferFunction()
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated gradient.</returns>
-int ATFGenerator::GetValue(int x, int y, int z)
+int ATFGenerator::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-  if (x < 0)
-    x = -x;
-  else if (x >= m_width)
-    x = 2 * m_width - 1 - x;
-
-  if (y < 0)
-    y = -y;
-  else if (y >= m_height)
-    y = 2 * m_height - 1 - y;
-
-  if (z < 0)
-    z = -z;
-  else if (z >= m_depth)
-    z = 2 * m_depth - 1 - z;
-
   return m_volume->SampleVolume(x, y, z);
 }
 
@@ -144,18 +145,18 @@ int ATFGenerator::GetValue(int x, int y, int z)
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated gradient.</returns>
-float ATFGenerator::GetGradient(int x, int y, int z)
+float ATFGenerator::GetGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
   assert(m_scalar_gradient);
 
-  x = lqc::Clamp(x, 0, m_width - 1);
-  y = lqc::Clamp(y, 0, m_height - 1);
-  z = lqc::Clamp(z, 0, m_depth - 1);
+  UINT32 vx = lqc::Clamp(x, 0, m_width - 1);
+  UINT32 vy = lqc::Clamp(y, 0, m_height - 1);
+  UINT32 vz = lqc::Clamp(z, 0, m_depth - 1);
 
-  return m_scalar_gradient[GETID(x,y,z)];
+  return m_scalar_gradient[m_volume->GetId(vx,vy,vz)];
 }
 
 /// <summary>
@@ -166,18 +167,18 @@ float ATFGenerator::GetGradient(int x, int y, int z)
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated laplacian.</returns>
-float ATFGenerator::GetLaplacian(int x, int y, int z)
+float ATFGenerator::GetLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
   assert(m_scalar_laplacian);
 
-  x = lqc::Clamp(x, 0, m_width - 1);
-  y = lqc::Clamp(y, 0, m_height - 1);
-  z = lqc::Clamp(z, 0, m_depth - 1);
+  UINT32 vx = lqc::Clamp(x, 0, m_width - 1);
+  UINT32 vy = lqc::Clamp(y, 0, m_height - 1);
+  UINT32 vz = lqc::Clamp(z, 0, m_depth - 1);
 
-  return m_scalar_laplacian[GETID(x,y,z)];
+  return m_scalar_laplacian[m_volume->GetId(vx,vy,vz)];
 }
 
 /// <summary>
@@ -187,7 +188,7 @@ float ATFGenerator::GetLaplacian(int x, int y, int z)
 /// value input.
 /// </summary>
 /// <param name="v">The value whose slice it's desired.</param>
-void ATFGenerator::GenerateVolumeSlice(unsigned int k)
+void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
 {
   if (k >= m_depth)
     throw std::domain_error("The value must range from 0 to depth volume!\n");
@@ -204,18 +205,18 @@ void ATFGenerator::GenerateVolumeSlice(unsigned int k)
   }
   delete[] filename;
 
-  for (int j = m_height - 1; j >= 0; --j)
+  for (UINT32 j = m_height; j > 0; --j)
   {
-    for (int i = 0; i < m_width; ++i)
+    for (UINT32 i = 0; i < m_width; ++i)
     {
-      pgmfile.WriteByte(m_volume->SampleVolume(i,j,k));
+      pgmfile.WriteByte(m_volume->SampleVolume(i,j-1,k));
     }
     pgmfile.WriteEndLine();
   }
   pgmfile.Close();
 }
 
-void ATFGenerator::GenerateGradientSlice(unsigned int k)
+void ATFGenerator::GenerateGradientSlice(const UINT32& k)
 {
   if (k >= m_depth)
     throw std::domain_error("The value must range from 0 to depth volume!\n");
@@ -231,11 +232,11 @@ void ATFGenerator::GenerateGradientSlice(unsigned int k)
   }
   delete[] filename;
 
-  for (int j = m_height - 1; j >= 0; --j) {
-    for (int i = 0; i < m_width; ++i) {
+  for (UINT32 j = m_height; j > 0; --j) {
+    for (UINT32 i = 0; i < m_width; ++i) {
       unsigned char v = 255;
-      if (m_scalar_gradient[GETID(i, j, k)] < 256.0f)
-        v = m_scalar_gradient[GETID(i, j, k)];
+      if (m_scalar_gradient[m_volume->GetId(i, j-1, k)] < 256.0f)
+        v = m_scalar_gradient[m_volume->GetId(i, j-1, k)];
       pgmfile.WriteByte(v);
     }
     pgmfile.WriteEndLine();
@@ -243,7 +244,7 @@ void ATFGenerator::GenerateGradientSlice(unsigned int k)
   pgmfile.Close();
 }
 
-void ATFGenerator::GenerateLaplacianSlice(unsigned int k)
+void ATFGenerator::GenerateLaplacianSlice(const UINT32& k)
 {
   if (k >= m_depth)
     throw std::domain_error("The value must range from 0 to depth volume!\n");
@@ -259,11 +260,11 @@ void ATFGenerator::GenerateLaplacianSlice(unsigned int k)
   }
   delete[] filename;
 
-  for (int j = m_height - 1; j >= 0; --j) {
-    for (int i = 0; i < m_width; ++i) {
+  for (UINT32 j = m_height; j > 0; --j) {
+    for (UINT32 i = 0; i < m_width; ++i) {
       unsigned char v = 255;
-      if (m_scalar_laplacian[GETID(i, j, k)] < 256.0f)
-        v = m_scalar_laplacian[GETID(i, j, k)];
+      if (m_scalar_laplacian[m_volume->GetId(i, j-1, k)] < 256.0f)
+        v = m_scalar_laplacian[m_volume->GetId(i, j-1, k)];
       pgmfile.WriteByte(v);
     }
     pgmfile.WriteEndLine();
@@ -273,23 +274,23 @@ void ATFGenerator::GenerateLaplacianSlice(unsigned int k)
 
 /// <summary>
 /// Generates the all the volume slices, trhought
-/// calls to void GenerateVolumeSlice(int v).
+/// calls to void GenerateVolumeSlice(const UINT32& v).
 /// </summary>
 void ATFGenerator::GenerateVolumeSlices()
 {
-  for (int k = 0; k < m_depth; ++k)
+  for (UINT32 k = 0; k < m_depth; ++k)
     GenerateVolumeSlice(k);
 }
 
 void ATFGenerator::GenerateGradientSlices()
 {
-  for (int k = 0; k < m_depth; ++k)
+  for (UINT32 k = 0; k < m_depth; ++k)
     GenerateGradientSlice(k);
 }
 
 void ATFGenerator::GenerateLaplacianSlices()
 {
-  for (int k = 0; k < m_depth; ++k)
+  for (UINT32 k = 0; k < m_depth; ++k)
     GenerateLaplacianSlice(k);
 }
 
@@ -301,7 +302,7 @@ void ATFGenerator::GenerateLaplacianSlices()
 /// </summary>
 /// <param name="v">The value whose slice it's desired.
 /// The value must range from 0 to 255</param>
-bool ATFGenerator::GenerateHistogramSlice(unsigned int v)
+bool ATFGenerator::GenerateHistogramSlice(const UINT32& v)
 {
   //if (!m_initialized)
   //  throw std::domain_error("Instance not initialized. Init must be called once!\n");
@@ -323,26 +324,26 @@ bool ATFGenerator::GenerateHistogramSlice(unsigned int v)
 
   unsigned char histogram[ATFG_V_RANGE][ATFG_V_RANGE];
 
-  for (int j = ATFG_V_MAX; j >= 0; j--)
+  for (UINT32 j = ATFG_V_MAX + 1; j > 0; j--)
   {
-    for (int k = 0; k < ATFG_V_RANGE; k++)
+    for (UINT32 k = 0; k < ATFG_V_RANGE; k++)
     {
-      int h = ATFG_V_MAX;
-      if (m_scalar_histogram[v][j][k] >= 255)
+      UINT32 h = ATFG_V_MAX;
+      if (m_scalar_histogram[v][j-1][k] >= 255)
         h = 0;
-      else if (m_scalar_histogram[v][j][k] >= m_min_hist)
-        h -= m_scalar_histogram[v][j][k];
+      else if (m_scalar_histogram[v][j-1][k] >= m_min_hist)
+        h -= m_scalar_histogram[v][j-1][k];
 
-      histogram[j][k] = h;
+      histogram[j-1][k] = h;
     }
   }
 
-  //dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
+  dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
 
-  for (int j = ATFG_V_MAX; j >= 0; --j) {
-    for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
-      pgmfile.WriteByte(histogram[i][j]);
+  for (UINT32 j = ATFG_V_MAX + 1; j > 0; --j) {
+    for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
+      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j-1]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
+      pgmfile.WriteByte(histogram[i][j-1]);
     }
     pgmfile.WriteEndLine();
   }
@@ -353,11 +354,11 @@ bool ATFGenerator::GenerateHistogramSlice(unsigned int v)
 
 /// <summary>
 /// Generates the all the 256 histogram slices, trhought
-/// calls to void GenerateHistogramSlice(int v).
+/// calls to void GenerateHistogramSlice(const UINT32& v).
 /// </summary>
 void ATFGenerator::GenerateHistogramSlices()
 {
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
     GenerateHistogramSlice(i);
 }
 
@@ -379,31 +380,30 @@ void ATFGenerator::GenerateGradientSummedHistogram()
 
   unsigned char histogram[ATFG_V_RANGE][ATFG_V_RANGE];
 
-  for (int j = ATFG_V_MAX; j >= 0; --j)
+  for (UINT32 j = ATFG_V_MAX + 1; j > 0; --j)
   {
-    for (int i = 0; i < ATFG_V_RANGE; ++i)
+    for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
     {
-      unsigned char sum = ATFG_V_MAX;
+      int sum = ATFG_V_MAX;
       for (long k = 0; k < ATFG_V_RANGE; ++k) {
-        if ((int)sum - m_scalar_histogram[i][j][k] <= 0) {
+        sum -= m_scalar_histogram[i][j-1][k];
+        if (sum < 0) {
           sum = 0;
           break;
         }
-        else
-          sum -= m_scalar_histogram[i][j][k];
       }
       if (ATFG_V_MAX - sum > m_min_hist)
-        histogram[i][j] = sum;
+        histogram[i][j-1] = sum;
       else
-        histogram[i][j] = ATFG_V_MAX;
+        histogram[i][j-1] = ATFG_V_MAX;
     }
   }
 
   dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
 
-  for (int j = ATFG_V_MAX; j >= 0; --j) {
-    for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
+  for (UINT32 j = ATFG_V_MAX + 1; j > 0; --j) {
+    for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
+      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j-1]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
       pgmfile.WriteByte(val);
     }
     pgmfile.WriteEndLine();
@@ -429,33 +429,32 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
 
   unsigned char histogram[ATFG_V_RANGE][ATFG_V_RANGE];
 
-  for (long k = ATFG_V_MAX; k >= 0; --k)
+  for (UINT32 k = ATFG_V_MAX + 1; k > 0; --k)
   {
-    for (int i = 0; i < ATFG_V_RANGE; ++i)
+    for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
     {
-      unsigned char sum = ATFG_V_MAX;
-      for (long j = 0; j < ATFG_V_RANGE; ++j)
+      int sum = ATFG_V_MAX;
+      for (UINT32 j = 0; j < ATFG_V_RANGE; ++j)
       {
-        if ((int)sum - m_scalar_histogram[i][j][k] <= 0)
+        sum -= m_scalar_histogram[i][j][k-1];
+        if (sum < 0)
         {
           sum = 0;
           break;
         }
-        else
-          sum -= m_scalar_histogram[i][j][k];
       }
       if (ATFG_V_MAX - sum > m_min_hist)
-        histogram[i][k] = sum;
+        histogram[i][k-1] = sum;
       else
-        histogram[i][k] = ATFG_V_MAX;
+        histogram[i][k-1] = ATFG_V_MAX;
     }
   }
 
   dip::equalizeHistogram(&histogram[0][0], ATFG_V_RANGE, ATFG_V_RANGE, &histogram[0][0]);
 
-  for (int j = ATFG_V_MAX; j >= 0; --j) {
-    for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
+  for (UINT32 j = ATFG_V_MAX + 1; j > 0; --j) {
+    for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
+      unsigned char val = (unsigned char)(ATFG_V_MAX * pow(float(histogram[i][j-1]) / ATFG_V_MAX, ATFG_GAMA_CORRECTION));
       pgmfile.WriteByte(val);
     }
     pgmfile.WriteEndLine();
@@ -465,15 +464,15 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
 
 void PrintFloat(std::ofstream& stream, float val)
 {
-  int ipart = abs(val);
-  int fpart = abs((val - ipart) * 1000);
+  UINT32 ipart = abs(val);
+  UINT32 fpart = abs((val - ipart) * 1000);
 
   if (val < 0)
     stream << "-";
   stream << ipart << "," << fpart << ";";
 }
 
-void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
+void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT32& n)
 {
   if (!m_initialized)
     throw std::domain_error("Instance not initialized. Init must be called once!\n");
@@ -481,14 +480,14 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, int n)
   IupSetAttribute(m_main_plot, "CLEAR", "YES");
 
   IupPlotBegin(m_main_plot, 0);
-  for (int i = 0; i < ATFG_V_RANGE; i++)
+  for (UINT32 i = 0; i < ATFG_V_RANGE; i++)
     IupPlotAdd(m_main_plot, i, m_average_gradient[i]);
   IupPlotEnd(m_main_plot);
   IupSetAttribute(m_main_plot, "DS_NAME", "g(v)");
   IupSetAttribute(m_main_plot, "DS_COLOR", "0 0 128");
 
   IupPlotBegin(m_main_plot, 0);
-  for (int i = 0; i < ATFG_V_RANGE; i++)
+  for (UINT32 i = 0; i < ATFG_V_RANGE; i++)
     IupPlotAdd(m_main_plot, i, m_average_laplacian[i]);
   IupPlotEnd(m_main_plot);
   IupSetAttribute(m_main_plot, "DS_NAME", "h(v)");
@@ -521,26 +520,24 @@ vr::TransferFunction* ATFGenerator::GetTransferFunction()
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated gradient.</returns>
-float ATFGenerator::CalculateGradient(int x, int y, int z)
+float ATFGenerator::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
   if (!m_volume)
     throw std::exception_ptr();
 
-  float g = 0.0f;
-  int gx = GetValue(x + 1, y, z) - GetValue(x - 1, y, z);
-  int gy = GetValue(x, y + 1, z) - GetValue(x, y - 1, z);
-  int gz = GetValue(x, y, z + 1) - GetValue(x, y, z - 1);
+  float gx = GetValue(x + 1, y, z) - GetValue(x - 1, y, z);
+  float gy = GetValue(x, y + 1, z) - GetValue(x, y - 1, z);
+  float gz = GetValue(x, y, z + 1) - GetValue(x, y, z - 1);
 
-  g = sqrt(gx*gx + gy*gy + gz*gz);
+  float g = sqrt(gx*gx + gy*gy + gz*gz);
 
   g = fmax(0.0f, g);
-  if (g > m_max_global_gradient)
-    m_max_global_gradient = g;
+  m_max_global_gradient = fmax(m_max_global_gradient, g);
 
   return g;
 }
 
-float ATFGenerator::CalculateGradientByKernel(int x, int y, int z)
+float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
 {
   if (!m_volume)
     throw std::exception_ptr();
@@ -550,14 +547,14 @@ float ATFGenerator::CalculateGradientByKernel(int x, int y, int z)
   float gy = 0.0f;
   float gz = 0.0f;
 
-  int h = MASK_SIZE / 2;
-  int xinit = x - h;
-  int yinit = y - h;
-  int zinit = z - h;
-  for (int i = xinit; i <= x + h; ++i) {
-    for (int j = yinit; j <= y + h; ++j) {
-      for (int k = zinit; k <= z + h; ++k) {
-        int v = GetValue(i, j, k);
+  UINT32 h = MASK_SIZE / 2;
+  UINT32 xinit = x - h;
+  UINT32 yinit = y - h;
+  UINT32 zinit = z - h;
+  for (UINT32 i = xinit; i <= x + h; ++i) {
+    for (UINT32 j = yinit; j <= y + h; ++j) {
+      for (UINT32 k = zinit; k <= z + h; ++k) {
+        UINT32 v = GetValue(i, j, k);
         float pglx;
         float pgly;
         float pglz;
@@ -586,26 +583,24 @@ float ATFGenerator::CalculateGradientByKernel(int x, int y, int z)
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated laplacian.</returns>
-float ATFGenerator::CalculateLaplacian(int x, int y, int z)
+float ATFGenerator::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
   if (!m_volume)
     throw std::exception_ptr();
 
   int v = GetValue(x, y, z) * 2;
-  int lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
-  int ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
-  int lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
+  float lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
+  float ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
+  float lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
   float l = lx + ly + lz;
 
-  if (l > m_max_global_laplacian)
-    m_max_global_laplacian = l;
-  if (l < m_min_global_laplacian)
-    m_min_global_laplacian = l;
+  m_max_global_laplacian = fmax(m_max_global_laplacian, l);
+  m_min_global_laplacian = fmin(m_min_global_laplacian, l);
 
   return l;
 }
 
-float ATFGenerator::CalculateLaplacianByKernel(int x, int y, int z)
+float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
 {
   if (!m_volume)
     throw std::exception_ptr();
@@ -615,14 +610,14 @@ float ATFGenerator::CalculateLaplacianByKernel(int x, int y, int z)
   float ly = 0.0f;
   float lz = 0.0f;
 
-  int h = MASK_SIZE / 2;
-  int xinit = x - h;
-  int yinit = y - h;
-  int zinit = z - h;
-  for (int i = xinit; i <= x + h; ++i) {
-    for (int j = yinit; j <= y + h; ++j) {
-      for (int k = zinit; k <= z + h; ++k) {
-        int v = GetValue(i, j, k);
+  UINT32 h = MASK_SIZE / 2;
+  UINT32 xinit = x - h;
+  UINT32 yinit = y - h;
+  UINT32 zinit = z - h;
+  for (UINT32 i = xinit; i <= x + h; ++i) {
+    for (UINT32 j = yinit; j <= y + h; ++j) {
+      for (UINT32 k = zinit; k <= z + h; ++k) {
+        UINT32 v = GetValue(i, j, k);
         float pglx;
         float pgly;
         float pglz;
@@ -654,7 +649,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 {
   assert(!m_scalar_gradient && !m_scalar_laplacian);
 
-  unsigned int size = m_width * m_height * m_depth;
+  UINT32 size = m_width * m_height * m_depth;
   if (size < (unsigned long)m_width * m_height * m_depth) {
     throw std::out_of_range("The volume dimensions are too big!\n");
   }
@@ -673,13 +668,13 @@ bool ATFGenerator::CalculateVolumeDerivatives()
     return false;
   }
 
-  for (int x = 0; x < m_width; ++x)
+  for (UINT32 x = 0; x < m_width; ++x)
   {
-    for (int y = 0; y < m_height; ++y)
+    for (UINT32 y = 0; y < m_height; ++y)
     {
-      for (int z = 0; z < m_depth; ++z)
+      for (UINT32 z = 0; z < m_depth; ++z)
       {
-        unsigned int id = GETID(x, y, z);
+        UINT32 id = m_volume->GetId(x, y, z);
         m_scalar_gradient[id] = CalculateGradient(x, y, z);
         m_scalar_laplacian[id] = CalculateLaplacian(x, y, z);
       }
@@ -699,11 +694,11 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 /// False, otherwise.</returns>
 bool ATFGenerator::GenerateHistogram()
 {
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
   {
-    for (int j = 0; j < ATFG_V_RANGE; ++j)
+    for (UINT32 j = 0; j < ATFG_V_RANGE; ++j)
     {
-      for (int k = 0; k < ATFG_V_RANGE; ++k)
+      for (UINT32 k = 0; k < ATFG_V_RANGE; ++k)
       {
         m_scalar_histogram[i][j][k] = 0;
       }
@@ -717,13 +712,13 @@ bool ATFGenerator::GenerateHistogram()
 #endif
 
   // Fill Histogram 
-  for (int x = 0; x < m_width; x++)
+  for (UINT32 x = 0; x < m_width; x++)
   {
-    for (int y = 0; y < m_height; y++)
+    for (UINT32 y = 0; y < m_height; y++)
     {
-      for (int z = 0; z < m_depth; z++)
+      for (UINT32 z = 0; z < m_depth; z++)
       {
-        unsigned int vol_id = GETID(x,y,z);
+        UINT32 vol_id = m_volume->GetId(x,y,z);
 
 #ifndef ATFG_FULL_RANGE
         if (m_scalar_gradient[vol_id] > m_max_global_gradient)
@@ -742,16 +737,22 @@ bool ATFGenerator::GenerateHistogram()
       }
     }
   }
+  
+  m_max_gradient = 0.0f;
+  m_max_laplacian = 0.0f;
+  m_min_laplacian = 0.0f;
 
   // Calculate average laplacian and gradient
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
   {
-    unsigned int w = 0;
+    m_average_gradient[i] = -FLT_MAX;
+    m_average_laplacian[i] = -FLT_MAX;
+    UINT32 w = 0;
     float g = 0.0f;
     float h = 0.0f;
-    for (unsigned int j = 0; j < ATFG_V_RANGE; ++j)
+    for (UINT32 j = 0; j < ATFG_V_RANGE; ++j)
     {
-      for (unsigned int k = 0; k < ATFG_V_RANGE; ++k)
+      for (UINT32 k = 0; k < ATFG_V_RANGE; ++k)
       {
         if (m_scalar_histogram[i][j][k] > m_min_hist)
         {
@@ -761,40 +762,19 @@ bool ATFGenerator::GenerateHistogram()
         }
       }
     }
-
-    m_average_gradient[i] = -FLT_MAX;
-    m_average_laplacian[i] = -FLT_MAX;
-
-    if (w > 0) {
+    if (w > 0)
+    {
       g /= w;
-      h /= w;
-      int mg = g;
-
       g = m_max_global_gradient * g / ATFG_V_MAX;
       m_average_gradient[i] = g;
+      m_max_gradient = fmax(m_max_gradient, g);
+
+      h /= w;
       h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
       h += m_min_global_laplacian;
       m_average_laplacian[i] = h;
-
-#ifndef TF2D
-      continue;
-#endif
-      
-      w = 0;
-      h = 0.0f;
-      for (unsigned int k = 0; k < ATFG_V_RANGE; ++k) {
-        if (m_scalar_histogram[i][mg][k] > m_min_hist) {
-          h += k;
-          w++;
-        }
-      }
-
-      if (w > 0) {
-        h /= w;
-        h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
-        h += m_min_global_laplacian;
-        m_average_laplacian[i] = h;
-      }
+      m_max_laplacian = fmax(m_max_laplacian, h);
+      m_min_laplacian = fmin(m_min_laplacian, h);
     }
   }
 
@@ -808,35 +788,22 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, int *n)
+float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 {
   assert(m_scalar_histogram && x);
 
-  float max_gradient = 0.0f;
-  float max_laplacian = 0.0f;
-  float min_laplacian = 0.0f;
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
-  {
-    if (m_average_gradient[i] > max_gradient)
-      max_gradient = m_average_gradient[i];
-    if (m_average_laplacian[i] > max_laplacian)
-      max_laplacian = m_average_laplacian[i];
-    if (m_average_laplacian[i] < min_laplacian && m_average_laplacian[i] > -FLT_MAX)
-      min_laplacian = m_average_laplacian[i];
-  }
-
-  if (max_laplacian == 0.0f)
+  if (m_max_laplacian == 0.0f)
     return 0.0f;
 
-  //float sigma = 2 * SQRT_E * max_gradient / (max_laplacian - min_laplacian);
-  float sigma = max_gradient / (max_laplacian * SQRT_E);
+  float sigma = 2 * SQRT_E * m_max_gradient / (m_max_laplacian - m_min_laplacian);
+  //float sigma = m_max_gradient / (m_max_laplacian * SQRT_E);
 
-  int c = 0;
-  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  UINT32 c = 0;
+  for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
   {
     float g = m_average_gradient[i];
     float l = m_average_laplacian[i];
-    if (m_average_gradient[i] == -FLT_MAX || m_average_laplacian[i] == -FLT_MAX)
+    if (g == -FLT_MAX || l == -FLT_MAX)
     {
       continue;
     }

@@ -104,11 +104,11 @@ namespace vr
     return;
     int set = 0;
     int size = m_width * m_height * m_depth;
-    for (int x = 0; x < m_width; x++)
+    for (UINT x = 0; x < m_width; x++)
     {
-      for (int y = 0; y < m_height; y++)
+      for (UINT y = 0; y < m_height; y++)
       {
-        for (int z = 0; z < m_depth; z++)
+        for (UINT z = 0; z < m_depth; z++)
         {
           int id = GetId(x, y, z);
           if (m_visited[id])
@@ -197,13 +197,13 @@ namespace vr
     return count;
   }
 
-  int Volume::SampleVolume(int x, int y, int z)
+  int Volume::SampleVolume(const unsigned int& x, const unsigned int& y, const unsigned int& z)
   {
-    x = lqc::Clamp(x, 0, m_width - 1);
-    y = lqc::Clamp(y, 0, m_height - 1);
-    z = lqc::Clamp(z, 0, m_depth - 1);
+    unsigned int xt = lqc::Clamp(x, 0, m_width - 1);
+    unsigned int yt = lqc::Clamp(y, 0, m_height - 1);
+    unsigned int zt = lqc::Clamp(z, 0, m_depth - 1);
 
-    return (int)m_scalar_values[GetId(x, y, z)];
+    return (int)m_scalar_values[GetId(xt, yt, zt)];
   }
 
   int Volume::SampleVolume(float x, float y, float z)
@@ -224,9 +224,9 @@ namespace vr
     float y = ((py - m_pmin.y) / (m_pmax.y - m_pmin.y)) * (float)(m_height - 1);
     float z = ((pz - m_pmin.z) / (m_pmax.z - m_pmin.z)) * (float)(m_depth - 1);
 
-    int x0 = (int)x; int x1 = x0 + 1;
-    int y0 = (int)y; int y1 = y0 + 1;
-    int z0 = (int)z; int z1 = z0 + 1;
+    unsigned int x0 = (int)x; unsigned int x1 = x0 + 1;
+    unsigned int y0 = (int)y; unsigned int y1 = y0 + 1;
+    unsigned int z0 = (int)z; unsigned int z1 = z0 + 1;
 
     if (x0 == (float)(m_width - 1))
     {
@@ -303,9 +303,9 @@ namespace vr
     //scalar values of the cells
     float s[8];
     int m = 8, n = 8;
-    int px[8] = { x, x + 1, x, x + 1, x, x + 1, x, x + 1 };
-    int py[8] = { y, y, y, y, y + 1, y + 1, y + 1, y + 1 };
-    int pz[8] = { z, z, z + 1, z + 1, z, z, z + 1, z + 1 };
+    unsigned int px[8] = { x, x + 1, x, x + 1, x, x + 1, x, x + 1 };
+    unsigned int py[8] = { y, y, y, y, y + 1, y + 1, y + 1, y + 1 };
+    unsigned int pz[8] = { z, z, z + 1, z + 1, z, z, z + 1, z + 1 };
     for (int i = 0; i < n; i++)
       s[i] = (float)SampleVolume(px[i], py[i], pz[i]);
 

@@ -36,9 +36,9 @@ namespace vr
     lqc::Vector3f GetAnchorMax();
     void SetAnchors(lqc::Vector3f pmin, lqc::Vector3f pmax);
 
-    int SampleVolume(int x, int y, int z);
+    int SampleVolume(const unsigned int& x, const unsigned int& y, const unsigned int& z);
     int SampleVolume(float x, float y, float z);
-    int SampleVolume(int id)
+    int SampleVolume(const unsigned int& id)
     {
       return m_scalar_values[id];
     }
@@ -65,7 +65,7 @@ namespace vr
       return m_scalar_values != NULL;
     }
 
-    int GetId(int& x, int& y, int& z) const
+    int GetId(const unsigned int& x, const unsigned int& y, const unsigned int& z) const
     {
       return x + (y * m_width) + (z * m_width * m_height);
     }
