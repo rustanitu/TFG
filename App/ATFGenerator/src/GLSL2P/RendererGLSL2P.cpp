@@ -513,6 +513,14 @@ void RendererGLSL2P::ReloadTransferFunction (vr::TransferFunction* tfunction)
   }
 }
 
+void RendererGLSL2P::ReloadVisibleSet(int set)
+{
+  m_shader_secondpass->Bind();
+  m_shader_secondpass->SetUniformInt("VisibleSet", set);
+  m_shader_secondpass->BindUniform("VisibleSet");
+  m_shader_secondpass->Unbind();
+}
+
 void RendererGLSL2P::SetXRotation (float radius)
 {
   m_x_rotation = radius;

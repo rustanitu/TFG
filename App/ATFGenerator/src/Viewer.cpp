@@ -117,30 +117,35 @@ void Viewer::SetTransferFunction (vr::TransferFunction* tf, std::string file)
   }
 }
 
-bool Viewer::ExtractATFG()
+void Viewer::UpdateATFG()
 {
-  Viewer::Instance()->m_atfg->SetGTresh(Viewer::Instance()->m_gtresh);
-  Viewer::Instance()->m_gui.UpdateGTreshLabel(Viewer::Instance()->m_gtresh);
-  if (!Viewer::Instance()->m_atfg->ExtractTransferFunction())
-    return false;
-
-  return GenerateATFG();
+  if (m_extract_atfg)
+    ExtractATFG();
+  else if (m_generate_atfg)
+    GenerateATFG();
+  m_extract_atfg = false;
+  m_generate_atfg = false;
 }
 
-bool Viewer::GenerateATFG()
+void Viewer::ExtractATFG()
 {
-  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)Viewer::Instance()->m_atfg->GetTransferFunction();
-  tf->SetBoundaryThickness(Viewer::Instance()->m_boundary_thickness);
-  Viewer::Instance()->m_gui.UpdateBThickLabel(Viewer::Instance()->m_boundary_thickness);
-  tf->SetBoundary(Viewer::Instance()->m_boundary);
+  m_atfg->SetGTresh(m_gtresh);
+  if (!m_atfg->ExtractTransferFunction())
+    return;
+
+  GenerateATFG();
+}
+
+void Viewer::GenerateATFG()
+{
+  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
+  tf->SetBoundaryThickness(m_boundary_thickness);
+  tf->SetBoundary(m_boundary);
   if (tf->Generate())
   {
-    Viewer::Instance()->m_transfer_function = tf;
-    Viewer::Instance()->m_volume->SeparateBoundaries(tf);
-    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
-    return true;
+    m_transfer_function = tf;
+    m_volume->SeparateBoundaries(tf);
   }
-  return false;
 }
 
 void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
@@ -209,7 +214,8 @@ int Viewer::SetBoundaryThickness(Ihandle* ih)
   if (scale != Viewer::Instance()->m_boundary_thickness)
   {
     Viewer::Instance()->m_boundary_thickness = scale;
-    GenerateATFG();
+    Viewer::Instance()->m_gui.UpdateBThickLabel(scale);
+    Viewer::Instance()->m_generate_atfg = true;
   }
 #endif
   return IUP_DEFAULT;
@@ -222,7 +228,8 @@ int Viewer::SetGTresh(Ihandle* ih)
   std::string::size_type size;
   float scale = std::stof(val, &size);
   Viewer::Instance()->m_gtresh = scale;
-  ExtractATFG();
+  Viewer::Instance()->m_gui.UpdateGTreshLabel(scale);
+  Viewer::Instance()->m_extract_atfg = true;
 #endif
   return IUP_DEFAULT;
 }
@@ -231,7 +238,26 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
 {
 #ifdef ATFG
   Viewer::Instance()->m_boundary = boundary;
-  GenerateATFG();
+  Viewer::Instance()->m_generate_atfg = true;
+  Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
+#endif
+  return IUP_DEFAULT;
+}
+
+int Viewer::SetVisibleSet(Ihandle* ih, int set)
+{
+#ifdef ATFG
+  Viewer::Instance()->m_visible_set = set;
+  Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
+#endif
+  return IUP_DEFAULT;
+}
+
+int Viewer::MarkOutdated()
+{
+#ifdef ATFG
+  if (Viewer::Instance()->m_generate_atfg || Viewer::Instance()->m_extract_atfg)
+    Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
 #endif
   return IUP_DEFAULT;
 }
@@ -565,6 +591,9 @@ Viewer::Viewer ()
 
   m_atfg = NULL;
   m_fast_tfg = NULL;
+  m_extract_atfg = false;
+  m_generate_atfg = false;
+  m_visible_set = 0;
 }
 
 Viewer::~Viewer ()

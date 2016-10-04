@@ -20,6 +20,8 @@ uniform int VolWidth;
 uniform int VolHeight;
 uniform int VolDepth;
 
+uniform int VisibleSet;
+
 uniform vec3 tex_scale;
 //////////////////////
 //*VARIÁVEIS COMUNS*//
@@ -39,7 +41,7 @@ vec3 real_normalized_step;
 vec4 GetFromTransferFunction (float p_d)
 {
   int set = texture(SetTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r;
-  if (set != 0)
+  if (VisibleSet == set || VisibleSet == 0)
     return texture(TransferFunc, texture(VolumeTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r);
   else
     return vec4(0);

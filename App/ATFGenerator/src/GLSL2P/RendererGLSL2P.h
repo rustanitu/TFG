@@ -58,6 +58,7 @@ public:
   \param tfunction Transfer Function pointer used to generate the 1D texture.
   */
   void ReloadTransferFunction (vr::TransferFunction* tfunction);
+  void ReloadVisibleSet(int set);
 
   void SetXRotation (float radius);
   float GetXRotation ();

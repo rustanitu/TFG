@@ -20,6 +20,7 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
   {
     if (m_outdated)
     {
+      Viewer::Instance()->UpdateATFG();
       if (!m_renderer.m_glsl_volume || Viewer::Instance ()->m_volumename.compare (m_volumename) != 0)
       {
         m_volumename = Viewer::Instance ()->m_volumename;
@@ -31,6 +32,9 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
         m_trasnferfunctionname = Viewer::Instance ()->m_tf_name;
         m_renderer.ReloadTransferFunction (Viewer::Instance ()->m_transfer_function);
       }
+
+      m_renderer.ReloadVisibleSet(Viewer::Instance()->m_visible_set);
+
       UpdateIupUserInterface ();
       m_outdated = false;
     }

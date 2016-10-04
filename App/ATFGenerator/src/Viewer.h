@@ -143,17 +143,23 @@ public:
   static int SetBoundaryThickness(Ihandle* ih);
   static int SetGTresh(Ihandle* ih);
   static int SetBoundary(Ihandle* ih, int boundary);
+  static int SetVisibleSet(Ihandle* ih, int set);
+  static int MarkOutdated();
   
   ViewerInterface m_gui;
+  int m_visible_set;
+
+  void UpdateATFG();
+
+private:
+  void ExtractATFG();
+  void GenerateATFG();
+
 protected:
   /*! Constructor.*/
   Viewer ();
   /*! Destructor.*/
   virtual ~Viewer ();
-
-private:
-  static bool ExtractATFG();
-  static bool GenerateATFG();
 
 private:
   /*! the pointer to the singleton instance.*/
@@ -163,6 +169,8 @@ private:
   int m_boundary_thickness;
   float m_gtresh;
   float m_min_hist;
+  bool m_extract_atfg;
+  bool m_generate_atfg;
 };
 
 #endif

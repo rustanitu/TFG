@@ -319,7 +319,7 @@ namespace vr
   bool TransferFunction1D::ValidValue(unsigned char v)
   {
     assert(m_distance);
-    return int (abs(m_distance[v]) + 0.5) <= m_thickness;
+    return abs(m_distance[v]) < float(m_thickness) + 0.1f;
   }
 
   /// <summary>
