@@ -106,6 +106,8 @@ public:
   /*! Store the texture of the current transfer function.*/
   gl::GLTexture1D* m_glsl_transfer_function;
 
+  gl::GLTexture3D* m_glsl_settex;
+
 private:
   /*! First pass of Rendering algorithm.
   \note The volume rendering algorithm implemented is based on two pass volume rendering

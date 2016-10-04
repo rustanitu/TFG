@@ -105,6 +105,7 @@ bool ATFGenerator::ExtractTransferFunction()
   
   delete m_transfer_function;
   m_transfer_function = new vr::TransferFunction1D();
+  m_transfer_function->SetVolume(m_volume);
   m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
   m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
   m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);

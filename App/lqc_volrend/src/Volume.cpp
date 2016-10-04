@@ -26,38 +26,27 @@ namespace vr
     : m_width(width), m_height(height), m_depth(depth), m_nsets(0)
   {
     int size = m_width*m_height*m_depth;
-
     m_scalar_values = new float[size];
-    m_visited = new bool[size];
-    m_set_qtd = new int[size];
-    m_set_values = new int[size];
-
     for (int i = 0; i < size; i++)
     {
       m_scalar_values[i] = 0.0f;
-      m_visited[i] = false;
-      m_set_qtd[i] = 0;
-      m_set_values[i] = 0;
     }
+    m_visited = NULL;
+    m_set_values = NULL;
+    m_set_qtd = NULL;
   }
 
   Volume::Volume(unsigned int width, unsigned int height, unsigned int depth, float* scalars)
     : m_width(width), m_height(height), m_depth(depth), m_nsets(0)
   {
     int size = m_width*m_height*m_depth;
-
     m_scalar_values = new float[size];
-    m_visited = new bool[size];
-    m_set_qtd = new int[size];
-    m_set_values = new int[size];
-
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
       m_scalar_values[i] = (float)scalars[i];
-      m_visited[i] = false;
-      m_set_qtd[i] = 0;
-      m_set_values[i] = 0;
     }
+    m_visited = NULL;
+    m_set_values = NULL;
+    m_set_qtd = NULL;
   }
 
   Volume::~Volume()
@@ -101,9 +90,23 @@ namespace vr
 
   void Volume::SeparateBoundaries(vr::TransferFunction1D* tf)
   {
-    return;
-    int set = 0;
+    delete[] m_visited;
+    delete[] m_set_qtd;
+    delete[] m_set_values;
+
     int size = m_width * m_height * m_depth;
+    
+    m_visited = new bool[size];
+    m_set_qtd = new int[size];
+    m_set_values = new int[size];
+
+    for (int i = 0; i < size; i++) {
+      m_visited[i] = false;
+      m_set_qtd[i] = 0;
+      m_set_values[i] = 0;
+    }
+
+    int set = 0;
     for (UINT x = 0; x < m_width; x++)
     {
       for (UINT y = 0; y < m_height; y++)

@@ -1,5 +1,7 @@
 #include <volrend/TransferFunction.h>
 
+#include <volrend/Volume.h>
+
 #include <lqc/lqcdefines.h>
 
 #include <fstream>
@@ -8,6 +10,17 @@
 
 namespace vr
 {
+
+  void TransferFunction::SetVolume(vr::Volume* vol)
+  {
+    m_vol = vol;
+  }
+
+  vr::Volume* TransferFunction::GetVolume() const
+  {
+    return m_vol;
+  }
+
   /*TransferFunction1D::TransferFunction1D (double v0, double v1)
     : m_v0 (v0), m_v1 (v1), m_built (false)
   {

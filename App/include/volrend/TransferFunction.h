@@ -9,6 +9,8 @@
 
 namespace vr
 {
+  class Volume;
+
   enum TFInterpolationType
   {
     LINEAR,
@@ -68,7 +70,7 @@ namespace vr
   class TransferFunction
   {
   public:
-    TransferFunction () {}
+    TransferFunction() { m_vol = NULL; }
     ~TransferFunction () {}
 
     virtual const char* GetNameClass () = 0;
@@ -78,11 +80,14 @@ namespace vr
     
     std::string GetName () { return m_name; }
     void SetName (std::string name) { m_name = name; }
+
+    void SetVolume(vr::Volume* vol);
+    vr::Volume* GetVolume() const;
     
   protected:
     std::string m_name;
   private:
-
+    vr::Volume* m_vol;
   };
 
   /*class TransferFunction1D : public TransferFunction
