@@ -113,6 +113,7 @@ namespace vr
     int m_values_size;
     Ihandle * m_tf_plot;
     Ihandle * m_bx_plot;
+    bool m_valid[256];
   };
 
 }

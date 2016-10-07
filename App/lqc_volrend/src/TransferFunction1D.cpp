@@ -318,8 +318,7 @@ namespace vr
 
   bool TransferFunction1D::ValidValue(unsigned char v)
   {
-    assert(m_distance);
-    return abs(m_distance[v]) < float(m_thickness) + 0.1f;
+    return m_valid[v];
   }
 
   /// <summary>
@@ -340,6 +339,9 @@ namespace vr
     IupSetAttribute(m_bx_plot, "CLEAR", "YES");
     IupPlotBegin(m_bx_plot, 0);
 
+    for (int i = 0; i < 256; ++i)
+      m_valid[i] = false;
+
     float amax = 0.4f;
     float base = m_thickness;
 
@@ -353,7 +355,9 @@ namespace vr
 
       IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
 
-      float a = CenteredTriangleFunction(amax, base, x);
+      double a = CenteredTriangleFunction(amax, base, x);
+      if (a > FLT_MIN)
+        m_valid[value] = true;
 
       if (a != last_a && last_a == 0.0f)
         b++;

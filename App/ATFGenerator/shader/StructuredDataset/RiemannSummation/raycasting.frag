@@ -41,7 +41,7 @@ vec3 real_normalized_step;
 vec4 GetFromTransferFunction (float p_d)
 {
   int set = texture(SetTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r;
-  if (set == VisibleSet || VisibleSet == 0)
+  if (set == VisibleSet)// || VisibleSet == 0)
     return texture(TransferFunc, texture(VolumeTex, (real_minpos + p_d * real_normalized_step) * tex_scale).r);
   else
     return vec4(0);
