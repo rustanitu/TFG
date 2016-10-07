@@ -181,6 +181,11 @@ public:
     m_bx_plot = ih;
   }
 
+  float GetMinGradient()
+  {
+    return m_min_gradient;
+  }
+
 private:
   /// <summary>
   /// Calculates an aproximation of the voxel's gradient, 
@@ -235,6 +240,7 @@ private:
 
 private:
   float m_max_gradient;
+  float m_min_gradient;
   float m_max_laplacian;
   float m_min_laplacian;
 

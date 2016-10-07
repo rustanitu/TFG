@@ -72,6 +72,8 @@ artifacts/
 *.tf1d
 *.vrstate
 *.pgm
+*/lib/volrend/volrend.lib
+*/lib/volrend/volrend_d.lib
 
 # Chutzpah Test files
 _Chutzpah*

@@ -41,9 +41,10 @@ ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
 , m_main_plot(NULL)
 , m_tf_plot(NULL)
 , m_bx_plot(NULL)
-, m_max_gradient(0.0f)
-, m_max_laplacian(0.0f)
-, m_min_laplacian(0.0f)
+, m_max_gradient(-FLT_MAX)
+, m_min_gradient(FLT_MAX)
+, m_max_laplacian(-FLT_MAX)
+, m_min_laplacian(FLT_MAX)
 {
 }
 
@@ -482,14 +483,16 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 
   IupPlotBegin(m_main_plot, 0);
   for (UINT32 i = 0; i < ATFG_V_RANGE; i++)
-    IupPlotAdd(m_main_plot, i, m_average_gradient[i]);
+    if (m_average_gradient[i] != -FLT_MAX)
+      IupPlotAdd(m_main_plot, i, m_average_gradient[i]);
   IupPlotEnd(m_main_plot);
   IupSetAttribute(m_main_plot, "DS_NAME", "g(v)");
   IupSetAttribute(m_main_plot, "DS_COLOR", "0 0 128");
 
   IupPlotBegin(m_main_plot, 0);
   for (UINT32 i = 0; i < ATFG_V_RANGE; i++)
-    IupPlotAdd(m_main_plot, i, m_average_laplacian[i]);
+    if (m_average_laplacian[i] != -FLT_MAX)
+      IupPlotAdd(m_main_plot, i, m_average_laplacian[i]);
   IupPlotEnd(m_main_plot);
   IupSetAttribute(m_main_plot, "DS_NAME", "h(v)");
   IupSetAttribute(m_main_plot, "DS_COLOR", "0 128 0");
@@ -739,9 +742,10 @@ bool ATFGenerator::GenerateHistogram()
     }
   }
   
-  m_max_gradient = 0.0f;
-  m_max_laplacian = 0.0f;
-  m_min_laplacian = 0.0f;
+  m_max_gradient = -FLT_MAX;
+  m_min_gradient = FLT_MAX;
+  m_max_laplacian = -FLT_MAX;
+  m_min_laplacian = FLT_MAX;
 
   // Calculate average laplacian and gradient
   for (UINT32 i = 0; i < ATFG_V_RANGE; ++i)
@@ -769,6 +773,7 @@ bool ATFGenerator::GenerateHistogram()
       g = m_max_global_gradient * g / ATFG_V_MAX;
       m_average_gradient[i] = g;
       m_max_gradient = fmax(m_max_gradient, g);
+      m_min_gradient = fmin(m_min_gradient, g);
 
       h /= w;
       h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;

@@ -182,6 +182,8 @@ void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
         //m_atfg->GenerateHistogramSlice(0);
         //m_atfg->GenerateGradientSummedHistogram();
         //m_atfg->GenerateLaplacianSummedHistogram();
+        Viewer::Instance()->m_gtresh = m_atfg->GetMinGradient();
+        Viewer::Instance()->m_gui.UpdateGTreshLabel(Viewer::Instance()->m_gtresh);
         ExtractATFG();
       }
     }

@@ -7,8 +7,6 @@
 #ifndef VIEWERINTERFACE_H
 #define VIEWERINTERFACE_H
 
-#include "AutomaticTransferFunction/ATFInterface.h"
-
 #include <iup.h>
 #include <iupgl.h>
 
@@ -80,8 +78,6 @@ public:
   void UpdateAdInterface ();
 
   void ShowTransferFunctionViewer ();
-
-  void SetViewer(Viewer* atg);
 
   void UpdateBThickLabel(int bthick);
   void UpdateGTreshLabel(float gtresh);
@@ -157,10 +153,13 @@ public:
 
 protected:
 private:
+  static int ShowPlots();
 
-  ATFInterface* m_atfg_interface;
   Ihandle* m_bthick_label;
   Ihandle* m_gtresh_label;
+  Ihandle* m_plotDialog;
+  Ihandle* m_mainPlotDialog;
+  Ihandle* m_gtresh_bar;
 
 };
 

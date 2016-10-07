@@ -429,16 +429,16 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupSetCallback(sgima_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetBoundaryThickness);
   IupSetCallback(sgima_bar, "LEAVEWINDOW_CB", (Icallback)Viewer::MarkOutdated);
 
-  Ihandle* gtresh_bar = IupVal("VERTICAL");
-  IupSetAttribute(gtresh_bar, "ACTIVE", "YES");
-  IupSetAttribute(gtresh_bar, "SHOWTICKS", "51");
-  IupSetAttribute(gtresh_bar, "MAX", "50");
-  IupSetAttribute(gtresh_bar, "VALUE", "0.0");
-  IupSetAttribute(gtresh_bar, "EXPAND", "HORIZONTAL");
-  IupSetAttribute(gtresh_bar, "ALIGNMENT", "ACENTER");
-  IupSetAttribute(gtresh_bar, "RASTERSIZE", "0x200");
-  IupSetCallback(gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
-  IupSetCallback(gtresh_bar, "LEAVEWINDOW_CB", (Icallback)Viewer::MarkOutdated);
+  m_gtresh_bar = IupVal("VERTICAL");
+  IupSetAttribute(m_gtresh_bar, "ACTIVE", "YES");
+  IupSetAttribute(m_gtresh_bar, "SHOWTICKS", "101");
+  IupSetAttribute(m_gtresh_bar, "MAX", "100");
+  IupSetAttribute(m_gtresh_bar, "VALUE", "0.0");
+  IupSetAttribute(m_gtresh_bar, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(m_gtresh_bar, "ALIGNMENT", "ACENTER");
+  IupSetAttribute(m_gtresh_bar, "RASTERSIZE", "0x200");
+  IupSetCallback(m_gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
+  IupSetCallback(m_gtresh_bar, "LEAVEWINDOW_CB", (Icallback)Viewer::MarkOutdated);
 
   Ihandle* atfg_label = IupLabel("BThick    GTresh");
   Ihandle* atfg_boundary_label = IupLabel("Boundary");
@@ -462,7 +462,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
   //Ihandle* vbox_atfg = IupVbox(atfg_htresh_label, spinbox_htresh, atfg_boundary_label, spinbox_boundary, IupLabel(""), m_bthick_label, m_gtresh_label, NULL);
   Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, atfg_set_label, spinbox_set, m_bthick_label, m_gtresh_label, NULL);
-  Ihandle* hbox_atfg = IupHbox(sgima_bar, gtresh_bar, vbox_atfg, NULL);
+  Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
 
   Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
   IupSetAttribute (selected_int_label, "EXPAND", "HORIZONTAL");
@@ -660,12 +660,6 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
     NULL);
   m_iup_submenu_glblendoptions = IupSubmenu ("Blending", m_iup_menu_glblendoptions);
 
-  m_atfg_interface = ATFInterface::Instance();
-  m_atfg_interface->Build();
-
-  m_iup_menu = IupMenu(m_iup_sub_menu_file, m_iup_sub_menu_visualizations, m_iup_submenu_clearcolors, m_iup_submenu_glblendoptions, m_atfg_interface->GetMenu(), NULL);
-  IupSetHandle ("ViewerInterfaceIupMenu", m_iup_menu);
-
   m_iup_main_dialog = IupDialog (m_iup_hbox_dialog);
   IupSetAttribute (m_iup_main_dialog, "MENU", "ViewerInterfaceIupMenu");
   IupSetAttribute (m_iup_main_dialog, "TITLE", "Volume Visualization");
@@ -685,20 +679,35 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   IupSetAttribute(m_iup_bx_plot_dialog, "LEGEND", "YES");
   IupSetAttribute(m_iup_bx_plot_dialog, "LEGENDBOX", "NO");
 
-  Ihandle* plotDialog = IupDialog(IupVbox(m_iup_tf_plot_dialog, m_iup_bx_plot_dialog, NULL));
-  IupSetAttribute(plotDialog, "TITLE", "Plot Area");
-  IupSetAttribute(plotDialog, "SIZE", "QUARTER");
-  //IupShow(plotDialog);
+  m_plotDialog = IupDialog(IupVbox(m_iup_tf_plot_dialog, m_iup_bx_plot_dialog, NULL));
+  IupSetAttribute(m_plotDialog, "TITLE", "Plot Area");
+  IupSetAttribute(m_plotDialog, "SIZE", "QUARTER");
 
-  Ihandle* mainPlotDialog = IupDialog(IupVbox(m_iup_main_plot_dialog, NULL));
-  IupSetAttribute(mainPlotDialog, "TITLE", "Plot Area");
-  IupSetAttribute(mainPlotDialog, "SIZE", "QUARTER");
-  //IupShow(mainPlotDialog);
+  m_mainPlotDialog = IupDialog(IupVbox(m_iup_main_plot_dialog, NULL));
+  IupSetAttribute(m_mainPlotDialog, "TITLE", "Plot Area");
+  IupSetAttribute(m_mainPlotDialog, "SIZE", "QUARTER");
+
+  Ihandle* m_show_plots = IupItem("Exibir Gráficos", NULL);
+  IupSetAttribute(m_show_plots, "ACTIVE", "YES");
+
+  IupSetCallback(m_show_plots, "ACTION", (Icallback)ShowPlots);
+
+  Ihandle* m_atfg_menu = IupSubmenu("ATFG", IupMenu(m_show_plots, NULL));
+
+  m_iup_menu = IupMenu(m_iup_sub_menu_file, m_iup_sub_menu_visualizations, m_iup_submenu_clearcolors, m_iup_submenu_glblendoptions, m_atfg_menu, NULL);
+  IupSetHandle ("ViewerInterfaceIupMenu", m_iup_menu);
   
   TransferFunctionsViewer::Instance()->BuildInterface ();
 
   IupMap (m_iup_main_dialog);
   IupRefresh (m_iup_main_dialog);
+}
+
+int ViewerInterface::ShowPlots()
+{
+  IupShow(Viewer::Instance()->m_gui.m_plotDialog);
+  IupShow(Viewer::Instance()->m_gui.m_mainPlotDialog);
+  return IUP_DEFAULT;
 }
 
 void ViewerInterface::UpdateBThickLabel(int bthick)
@@ -711,13 +720,10 @@ void ViewerInterface::UpdateBThickLabel(int bthick)
 void ViewerInterface::UpdateGTreshLabel(float gtresh)
 {
   char *val = new char[15];
+  sprintf(val, "%.2f ", gtresh);
+  IupSetAttribute(m_gtresh_bar, "VALUE", val);
   sprintf(val, "GTresh: %.2f ", gtresh);
   IupSetAttribute(m_gtresh_label, "TITLE", val);
-}
-
-void ViewerInterface::SetViewer(Viewer* viewer)
-{
-  m_atfg_interface->SetViewer(viewer);
 }
 
 Ihandle* ViewerInterface::GetCanvasRenderer ()

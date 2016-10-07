@@ -103,9 +103,9 @@ namespace vr
     for (int i = 0; i < size; i++) {
       m_visited[i] = false;
       m_set_qtd[i] = 0;
-      m_set_values[i] = 0;
+      m_set_values[i] = -1;
     }
-
+    return;
     int set = 0;
     for (UINT x = 0; x < m_width; x++)
     {
