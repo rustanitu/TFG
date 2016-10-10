@@ -89,10 +89,10 @@ namespace vr
     /// <param name="n">The input arrays' size.</param>
     void SetClosestBoundaryDistances(unsigned char* values, float* distances, int n);
 
-    bool ValidValue(unsigned char v);
+    bool ValidValue(int v);
 
   private:
-    float CenteredTriangleFunction(float max, float base, float x);
+    float CenteredTriangleFunction(float max, float base, unsigned char v);
 
   private:
     /// <summary>

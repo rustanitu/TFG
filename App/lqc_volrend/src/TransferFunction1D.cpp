@@ -288,7 +288,7 @@ namespace vr
   return false;
   }*/
 
-  float TransferFunction1D::CenteredTriangleFunction(float max, float base, float x)
+  float TransferFunction1D::CenteredTriangleFunction(float max, float base, unsigned char v)
   {
     //  boundary center
     //         .
@@ -304,6 +304,7 @@ namespace vr
     //       base
 
     float a = 0.0f;
+    float x = m_distance[v];
     if (x >= -base && x <= base)
     {
       if (x >= 0.0)
@@ -313,10 +314,12 @@ namespace vr
 
       a += max;
     }
-    return a;
+    if (a >= 0.0f)
+      m_valid[v] = true;
+    return fmax(0.0f, a);
   }
 
-  bool TransferFunction1D::ValidValue(unsigned char v)
+  bool TransferFunction1D::ValidValue(int v)
   {
     return m_valid[v];
   }
@@ -350,14 +353,12 @@ namespace vr
     float last_a = 0.0f;
     for (int i = 0; i < m_values_size; ++i)
     {
-      unsigned int value = (unsigned int)m_value[i];
+      unsigned char value = m_value[i];
       float x = m_distance[value];
 
       IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
 
-      double a = CenteredTriangleFunction(amax, base, x);
-      if (a > FLT_MIN)
-        m_valid[value] = true;
+      double a = CenteredTriangleFunction(amax, base, value);
 
       if (a != last_a && last_a == 0.0f)
         b++;

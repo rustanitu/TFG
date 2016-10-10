@@ -632,6 +632,9 @@ void Viewer::InitGL (int argc, char *argv[])
     exit (EXIT_FAILURE);
   }
 
+  glutInitContextVersion(4, 5);
+  glutInitContextProfile(GLUT_CORE_PROFILE);
+
   fprintf (stdout, "INFO: OpenGL Version: %s\n", glGetString (GL_VERSION));
 
   glGetError ();
