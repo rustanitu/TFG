@@ -313,10 +313,10 @@ namespace vr
         a = (max * x) / base;
 
       a += max;
-    }
-    if (a >= 0.0f)
       m_valid[v] = true;
-    return fmax(0.0f, a);
+    }
+
+    return a;
   }
 
   bool TransferFunction1D::ValidValue(int v)

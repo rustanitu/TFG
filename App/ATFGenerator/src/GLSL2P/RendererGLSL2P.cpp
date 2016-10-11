@@ -501,7 +501,7 @@ void RendererGLSL2P::ReloadTransferFunction (vr::TransferFunction* tfunction)
 
       m_glsl_settex = new gl::GLTexture3D(m_last_slice_x - m_init_slice_x, m_last_slice_y - m_init_slice_y, m_last_slice_z - m_init_slice_z);
       if (m_glsl_settex) {
-        m_glsl_settex->GenerateTexture(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
+        m_glsl_settex->GenerateTexture(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
         m_glsl_settex->SetData(vol->GetVoxelSet(), GL_R32I, GL_RED_INTEGER, GL_INT);
         gl::ExitOnGLError("ERROR: After SetData");
         m_shader_secondpass->SetUniformTexture3D("SetTex", m_glsl_settex->GetTextureID(), 3);

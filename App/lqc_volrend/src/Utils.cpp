@@ -36,7 +36,7 @@ namespace vr
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
-    tex3d_r->GenerateTexture(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    tex3d_r->GenerateTexture(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
     tex3d_r->SetData(scalar_values, GL_RED, GL_RED, GL_FLOAT);
     gl::ExitOnGLError("ERROR: After SetData");
 
