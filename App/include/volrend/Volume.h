@@ -82,6 +82,11 @@ namespace vr
       return m_set_qtd;
     }
 
+    int GetSetQtdSize()
+    {
+      return m_nsets;
+    }
+
     float* GetValues()
     {
       return m_scalar_values;

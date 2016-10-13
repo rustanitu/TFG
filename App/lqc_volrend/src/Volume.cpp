@@ -150,7 +150,7 @@ namespace vr
 
               if (!tf->ValidValue(SampleVolume(id)))
               {
-                m_set_values[id] = 0;
+                m_set_values[id] = set;
                 m_set_qtd[0]++;
                 m_visited[id] = true;
                 continue;

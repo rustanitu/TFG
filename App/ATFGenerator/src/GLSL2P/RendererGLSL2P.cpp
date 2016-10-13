@@ -22,6 +22,7 @@ m_iterate (false),
 m_glsl_volume (NULL),
 m_glsl_transfer_function (NULL),
 m_glsl_settex(NULL),
+m_glsl_setqtdtex(NULL),
 m_shader_firstpass(NULL),
 m_shader_secondpass(NULL)
 {
@@ -501,11 +502,24 @@ void RendererGLSL2P::ReloadTransferFunction (vr::TransferFunction* tfunction)
 
       m_glsl_settex = new gl::GLTexture3D(m_last_slice_x - m_init_slice_x, m_last_slice_y - m_init_slice_y, m_last_slice_z - m_init_slice_z);
       if (m_glsl_settex) {
-        m_glsl_settex->GenerateTexture(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
+        m_glsl_settex->GenerateTexture(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
         m_glsl_settex->SetData(vol->GetVoxelSet(), GL_R32I, GL_RED_INTEGER, GL_INT);
         gl::ExitOnGLError("ERROR: After SetData");
         m_shader_secondpass->SetUniformTexture3D("SetTex", m_glsl_settex->GetTextureID(), 3);
         m_shader_secondpass->BindUniform("SetTex");
+      }
+
+      delete m_glsl_setqtdtex;
+      m_glsl_setqtdtex = NULL;
+
+      m_glsl_setqtdtex = new gl::GLTexture1D(vol->GetSetQtdSize());
+      if (m_glsl_setqtdtex)
+      {
+        m_glsl_setqtdtex->GenerateTexture(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
+        m_glsl_setqtdtex->SetData(vol->GetSetQtd(), GL_R32I, GL_RED_INTEGER, GL_INT);
+        gl::ExitOnGLError("ERROR: After SetData");
+        m_shader_secondpass->SetUniformTexture1D("SetQtdTex", m_glsl_setqtdtex->GetTextureID(), 4);
+        m_shader_secondpass->BindUniform("SetQtdTex");
       }
     }
 

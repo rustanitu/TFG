@@ -108,6 +108,7 @@ public:
   gl::GLTexture1D* m_glsl_transfer_function;
 
   gl::GLTexture3D* m_glsl_settex;
+  gl::GLTexture1D* m_glsl_setqtdtex;
 
 private:
   /*! First pass of Rendering algorithm.
