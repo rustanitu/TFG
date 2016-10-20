@@ -228,6 +228,8 @@
     <ClCompile Include="src\IAS\UserInterfaceIAS.cpp" />
     <ClCompile Include="src\IAS\ViewMethodIAS.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\TankAPI\Cell.cpp" />
+    <ClCompile Include="src\TankAPI\Tank.cpp" />
     <ClCompile Include="src\TransferFunctionViewer\TransferFunctionsViewer.cpp" />
     <ClCompile Include="src\Viewer.cpp" />
     <ClCompile Include="src\ViewerInterface.cpp" />
@@ -283,6 +285,8 @@
     <ClInclude Include="src\IAS\RendererIAS.h" />
     <ClInclude Include="src\IAS\UserInterfaceIAS.h" />
     <ClInclude Include="src\IAS\ViewMethodIAS.h" />
+    <ClInclude Include="src\TankAPI\Cell.h" />
+    <ClInclude Include="src\TankAPI\Tank.h" />
     <ClInclude Include="src\TransferFunctionViewer\TransferFunctionsViewer.h" />
     <ClInclude Include="src\Viewer.h" />
     <ClInclude Include="src\ViewerInterface.h" />
