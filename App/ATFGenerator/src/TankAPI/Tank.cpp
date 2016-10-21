@@ -51,7 +51,12 @@ bool Tank::Read(const char* filepath)
   {
     // sizeof("dd/mm/aaaa") = 11
     char timestep[11];
-    file.getline(timestep, 11);
+    int dd, mm, aaaa;
+    char b;
+    if (!(file >> dd >> b >> mm >> b >> aaaa))
+      return false;
+
+    sprintf_s(timestep, "%d/%d/%d", dd, mm, aaaa);
     m_steps.push_back(timestep);
   }
 

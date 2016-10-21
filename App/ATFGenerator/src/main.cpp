@@ -1,5 +1,7 @@
 #include "Viewer.h"
 
+#include "TankAPI/Tank.h"
+
 int main (int argc, char **argv)
 {
   /*
@@ -41,13 +43,18 @@ int main (int argc, char **argv)
     dst[2] += src[2] * src[3] * (1 - a);
     a += src[3] * (1.0 - a);
   }
-  printf ("1:\n %lf\n %lf \n%lf \n%lf \n", colorAcum[0], colorAcum[1], colorAcum[2], colorAcum[3]);
-  printf ("2:\n %lf\n %lf \n%lf \n%lf \n", dst[0], dst[1], dst[2], a);
+  printf ("1:/n %lf/n %lf /n%lf /n%lf /n", colorAcum[0], colorAcum[1], colorAcum[2], colorAcum[3]);
+  printf ("2:/n %lf/n %lf /n%lf /n%lf /n", dst[0], dst[1], dst[2], a);
   getchar ();
   */
 
+  Tank tank;
+  if (tank.Read("D:/user/rustam/PITUBA/pituba.gmdl"))
+    printf("Done!\n");
+  else
+    printf("Reading Error!!!\n");
 
-  Viewer::Instance ()->InitAndStart (argc, argv);
-  Viewer::DestroyInstance ();
+  //Viewer::Instance ()->InitAndStart (argc, argv);
+  //Viewer::DestroyInstance ();
   return 0;
 }
