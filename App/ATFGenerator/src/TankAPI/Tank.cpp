@@ -95,7 +95,7 @@ bool Tank::Read(const char* filepath)
     }
 
     // It sets the index of the adjacent ith cell
-    for (int a = 0; a < 6; ++a)
+    for (int a = 0; a < 5; ++a)
     {
       int index;
       if (!(file >> index))
