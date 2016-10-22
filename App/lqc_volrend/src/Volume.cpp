@@ -13,8 +13,8 @@
 namespace vr
 {
 
-  Volume::Volume()
-    : m_width(0), m_height(0), m_depth(0), m_nsets(0)
+  Volume::Volume() : ScalarField ()
+	, m_nsets(0)
   {
     m_scalar_values = NULL;
     m_visited = NULL;
@@ -22,8 +22,8 @@ namespace vr
     m_set_qtd = NULL;
   }
 
-  Volume::Volume(unsigned int width, unsigned int height, unsigned int depth)
-    : m_width(width), m_height(height), m_depth(depth), m_nsets(0)
+  Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth)
+		: ScalarField(width, height, depth), m_nsets (0)
   {
     int size = m_width*m_height*m_depth;
     m_scalar_values = new float[size];
@@ -36,8 +36,8 @@ namespace vr
     m_set_qtd = NULL;
   }
 
-  Volume::Volume(unsigned int width, unsigned int height, unsigned int depth, float* scalars)
-    : m_width(width), m_height(height), m_depth(depth), m_nsets(0)
+  Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars)
+		: ScalarField (width, height, depth), m_nsets (0)
   {
     int size = m_width*m_height*m_depth;
     m_scalar_values = new float[size];
@@ -55,21 +55,6 @@ namespace vr
     delete[] m_visited;
     delete[] m_set_qtd;
     delete[] m_set_values;
-  }
-
-  int Volume::GetWidth()
-  {
-    return m_width;
-  }
-
-  int Volume::GetHeight()
-  {
-    return m_height;
-  }
-
-  int Volume::GetDepth()
-  {
-    return m_depth;
   }
 
   lqc::Vector3f Volume::GetAnchorMin()
@@ -122,7 +107,7 @@ namespace vr
           vi.y = y;
           vi.z = z;
 
-          if (!tf->ValidValue(SampleVolume(id)))
+          if (!tf->ValidValue(GetValue(id)))
           {
             m_set_values[id] = 0;
             m_set_qtd[0]++;
@@ -148,7 +133,7 @@ namespace vr
               if (m_visited[id])
                 continue;
 
-              if (!tf->ValidValue(SampleVolume(id)))
+              if (!tf->ValidValue(GetValue(id)))
               {
                 m_set_values[id] = set;
                 m_set_qtd[0]++;
@@ -200,16 +185,16 @@ namespace vr
     return count;
   }
 
-  int Volume::SampleVolume(const unsigned int& x, const unsigned int& y, const unsigned int& z)
+	int Volume::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
   {
-    unsigned int xt = lqc::Clamp(x, 0, m_width - 1);
-    unsigned int yt = lqc::Clamp(y, 0, m_height - 1);
-    unsigned int zt = lqc::Clamp(z, 0, m_depth - 1);
+    UINT32 xt = std::min(x, m_width - 1);
+    UINT32 yt = std::min(y, m_height - 1);
+    UINT32 zt = std::min(z, m_depth - 1);
 
     return (int)m_scalar_values[GetId(xt, yt, zt)];
   }
 
-  int Volume::SampleVolume(float x, float y, float z)
+  int Volume::GetValue(float x, float y, float z)
   {
     if ((x >= m_pmin.x && x <= m_pmax.x) && (y >= m_pmin.y && y <= m_pmax.y) && (z >= m_pmin.z && z <= m_pmax.z))
       return -1;
@@ -227,9 +212,9 @@ namespace vr
     float y = ((py - m_pmin.y) / (m_pmax.y - m_pmin.y)) * (float)(m_height - 1);
     float z = ((pz - m_pmin.z) / (m_pmax.z - m_pmin.z)) * (float)(m_depth - 1);
 
-    unsigned int x0 = (int)x; unsigned int x1 = x0 + 1;
-    unsigned int y0 = (int)y; unsigned int y1 = y0 + 1;
-    unsigned int z0 = (int)z; unsigned int z1 = z0 + 1;
+    UINT32 x0 = (int)x; UINT32 x1 = x0 + 1;
+    UINT32 y0 = (int)y; UINT32 y1 = y0 + 1;
+    UINT32 z0 = (int)z; UINT32 z1 = z0 + 1;
 
     if (x0 == (float)(m_width - 1))
     {
@@ -254,17 +239,17 @@ namespace vr
     float zd = (z - (float)z0) / (float)(z1 - z0);
 
     // X interpolation
-    float c00 = SampleVolume(x0, y0, z0)*(1.0f - xd)
-      + SampleVolume(x1, y0, z0)*xd;
+    float c00 = GetValue(x0, y0, z0)*(1.0f - xd)
+      + GetValue(x1, y0, z0)*xd;
 
-    float c10 = SampleVolume(x0, y1, z0)*(1.0f - xd)
-      + SampleVolume(x1, y1, z0)*xd;
+    float c10 = GetValue(x0, y1, z0)*(1.0f - xd)
+      + GetValue(x1, y1, z0)*xd;
 
-    float c01 = SampleVolume(x0, y0, z1)*(1.0f - xd)
-      + SampleVolume(x1, y0, z1)*xd;
+    float c01 = GetValue(x0, y0, z1)*(1.0f - xd)
+      + GetValue(x1, y0, z1)*xd;
 
-    float c11 = SampleVolume(x0, y1, z1)*(1.0f - xd)
-      + SampleVolume(x1, y1, z1)*xd;
+    float c11 = GetValue(x0, y1, z1)*(1.0f - xd)
+      + GetValue(x1, y1, z1)*xd;
 
     // Y interpolation
     float c0 = c00*(1.0f - yd) + c10*yd;
@@ -310,7 +295,7 @@ namespace vr
     unsigned int py[8] = { y, y, y, y, y + 1, y + 1, y + 1, y + 1 };
     unsigned int pz[8] = { z, z, z + 1, z + 1, z, z, z + 1, z + 1 };
     for (int i = 0; i < n; i++)
-      s[i] = (float)SampleVolume(px[i], py[i], pz[i]);
+      s[i] = (float)GetValue(px[i], py[i], pz[i]);
 
     //mallocs
     float **a = (float**)malloc(sizeof(float*)* m);

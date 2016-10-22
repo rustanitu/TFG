@@ -25,9 +25,9 @@
 /// Initializes a new instance of the 
 /// <see cref="ATFGenerator" /> class.
 /// </summary>
-/// <param name="volume">The volume whose transfer 
+/// <param name="scalarfield">The scalarfield whose transfer 
 /// function one wants to extract.</param>
-ATFGenerator::ATFGenerator(vr::Volume* volume) : IATFGenerator(volume)
+ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarfield)
 , m_scalar_gradient(NULL)
 , m_scalar_laplacian(NULL)
 , m_transfer_function(NULL)
@@ -94,7 +94,7 @@ void ATFGenerator::SetDefaultColor()
 }
 
 /// <summary>
-/// Extract a transfer function from the volume, based in 
+/// Extract a transfer function from the scalarfield, based in 
 /// Kindlmann's paper.
 /// </summary>
 /// <returns>Returns true if the transfer function can be
@@ -106,7 +106,7 @@ bool ATFGenerator::ExtractTransferFunction()
   
   delete m_transfer_function;
   m_transfer_function = new vr::TransferFunction1D();
-  m_transfer_function->SetVolume(m_volume);
+  //m_transfer_function->SetVolume(m_scalarfield);
   m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
   m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
   m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
@@ -134,9 +134,12 @@ bool ATFGenerator::ExtractTransferFunction()
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated gradient.</returns>
-int ATFGenerator::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
+int ATFGenerator::GetValue(int x, int y, int z)
 {
-  return m_volume->SampleVolume(x, y, z);
+	const UINT32 xt = std::max(0, std::min(x, (int) m_width - 1));
+	const UINT32 yt = std::max(0, std::min(y, (int) m_height - 1));
+	const UINT32 zt = std::max(0, std::min(z, (int) m_depth - 1));
+  return m_scalarfield->GetValue(xt, yt, zt);
 }
 
 /// <summary>
@@ -158,7 +161,7 @@ float ATFGenerator::GetGradient(const UINT32& x, const UINT32& y, const UINT32& 
   UINT32 vy = lqc::Clamp(y, 0, m_height - 1);
   UINT32 vz = lqc::Clamp(z, 0, m_depth - 1);
 
-  return m_scalar_gradient[m_volume->GetId(vx,vy,vz)];
+  return m_scalar_gradient[m_scalarfield->GetId(vx,vy,vz)];
 }
 
 /// <summary>
@@ -180,11 +183,11 @@ float ATFGenerator::GetLaplacian(const UINT32& x, const UINT32& y, const UINT32&
   UINT32 vy = lqc::Clamp(y, 0, m_height - 1);
   UINT32 vz = lqc::Clamp(z, 0, m_depth - 1);
 
-  return m_scalar_laplacian[m_volume->GetId(vx,vy,vz)];
+  return m_scalar_laplacian[m_scalarfield->GetId(vx,vy,vz)];
 }
 
 /// <summary>
-/// Generates a PGM image file with a volume slice.
+/// Generates a PGM image file with a scalarfield slice.
 /// The image is generated in the working directory and 
 /// it's named "Volume Slice v", where 'v' is the 
 /// value input.
@@ -193,7 +196,7 @@ float ATFGenerator::GetLaplacian(const UINT32& x, const UINT32& y, const UINT32&
 void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
 {
   if (k >= m_depth)
-    throw std::domain_error("The value must range from 0 to depth volume!\n");
+    throw std::domain_error("The value must range from 0 to depth scalarfield!\n");
 
   char* filename = new char[50];
   sprintf(filename, "Volume\\Volume Slice %d", k);
@@ -202,7 +205,7 @@ void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
 
   if (!pgmfile.Open())
   {
-    printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
+    printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
     return;
   }
   delete[] filename;
@@ -211,7 +214,7 @@ void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
   {
     for (UINT32 i = 0; i < m_width; ++i)
     {
-      pgmfile.WriteByte(m_volume->SampleVolume(i,j-1,k));
+      pgmfile.WriteByte(m_scalarfield->GetValue(i,j-1,k));
     }
     pgmfile.WriteEndLine();
   }
@@ -221,7 +224,7 @@ void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
 void ATFGenerator::GenerateGradientSlice(const UINT32& k)
 {
   if (k >= m_depth)
-    throw std::domain_error("The value must range from 0 to depth volume!\n");
+    throw std::domain_error("The value must range from 0 to depth scalarfield!\n");
 
   char* filename = new char[50];
   sprintf(filename, "Histogram\\Gradient Slice %d", k);
@@ -229,7 +232,7 @@ void ATFGenerator::GenerateGradientSlice(const UINT32& k)
   PGMFile pgmfile(filename, m_width, m_height);
 
   if (!pgmfile.Open()) {
-    printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
+    printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
     return;
   }
   delete[] filename;
@@ -237,8 +240,8 @@ void ATFGenerator::GenerateGradientSlice(const UINT32& k)
   for (UINT32 j = m_height; j > 0; --j) {
     for (UINT32 i = 0; i < m_width; ++i) {
       unsigned char v = 255;
-      if (m_scalar_gradient[m_volume->GetId(i, j-1, k)] < 256.0f)
-        v = m_scalar_gradient[m_volume->GetId(i, j-1, k)];
+      if (m_scalar_gradient[m_scalarfield->GetId(i, j-1, k)] < 256.0f)
+        v = m_scalar_gradient[m_scalarfield->GetId(i, j-1, k)];
       pgmfile.WriteByte(v);
     }
     pgmfile.WriteEndLine();
@@ -249,7 +252,7 @@ void ATFGenerator::GenerateGradientSlice(const UINT32& k)
 void ATFGenerator::GenerateLaplacianSlice(const UINT32& k)
 {
   if (k >= m_depth)
-    throw std::domain_error("The value must range from 0 to depth volume!\n");
+    throw std::domain_error("The value must range from 0 to depth scalarfield!\n");
 
   char* filename = new char[50];
   sprintf(filename, "Histogram\\Laplacian Slice %d", k);
@@ -257,7 +260,7 @@ void ATFGenerator::GenerateLaplacianSlice(const UINT32& k)
   PGMFile pgmfile(filename, m_width, m_height);
 
   if (!pgmfile.Open()) {
-    printf("Erro - A fatia do volume '%s' nao pode ser gerado!\n", filename);
+    printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
     return;
   }
   delete[] filename;
@@ -265,8 +268,8 @@ void ATFGenerator::GenerateLaplacianSlice(const UINT32& k)
   for (UINT32 j = m_height; j > 0; --j) {
     for (UINT32 i = 0; i < m_width; ++i) {
       unsigned char v = 255;
-      if (m_scalar_laplacian[m_volume->GetId(i, j-1, k)] < 256.0f)
-        v = m_scalar_laplacian[m_volume->GetId(i, j-1, k)];
+      if (m_scalar_laplacian[m_scalarfield->GetId(i, j-1, k)] < 256.0f)
+        v = m_scalar_laplacian[m_scalarfield->GetId(i, j-1, k)];
       pgmfile.WriteByte(v);
     }
     pgmfile.WriteEndLine();
@@ -275,7 +278,7 @@ void ATFGenerator::GenerateLaplacianSlice(const UINT32& k)
 }
 
 /// <summary>
-/// Generates the all the volume slices, trhought
+/// Generates the all the scalarfield slices, trhought
 /// calls to void GenerateVolumeSlice(const UINT32& v).
 /// </summary>
 void ATFGenerator::GenerateVolumeSlices()
@@ -526,7 +529,7 @@ vr::TransferFunction* ATFGenerator::GetTransferFunction()
 /// <returns>Returns the float aproximated gradient.</returns>
 float ATFGenerator::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-  if (!m_volume)
+  if (!m_scalarfield)
     throw std::exception_ptr();
 
   float gx = GetValue(x + 1, y, z) - GetValue(x - 1, y, z);
@@ -543,7 +546,7 @@ float ATFGenerator::CalculateGradient(const UINT32& x, const UINT32& y, const UI
 
 float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-  if (!m_volume)
+  if (!m_scalarfield)
     throw std::exception_ptr();
 
   float g = 0.0f;
@@ -589,7 +592,7 @@ float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, 
 /// <returns>Returns the float aproximated laplacian.</returns>
 float ATFGenerator::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-  if (!m_volume)
+  if (!m_scalarfield)
     throw std::exception_ptr();
 
   int v = GetValue(x, y, z) * 2;
@@ -606,7 +609,7 @@ float ATFGenerator::CalculateLaplacian(const UINT32& x, const UINT32& y, const U
 
 float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-  if (!m_volume)
+  if (!m_scalarfield)
     throw std::exception_ptr();
 
   float l = 0.0f;
@@ -644,7 +647,7 @@ float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y,
 }
 
 /// <summary>
-/// Iterates over the volume, calculating the gradient 
+/// Iterates over the scalarfield, calculating the gradient 
 /// and the laplacian values for each voxel.
 /// </summary>
 /// <returns>Returns true if all the memory needed 
@@ -655,11 +658,11 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 
   UINT32 size = m_width * m_height * m_depth;
   if (size < (unsigned long)m_width * m_height * m_depth) {
-    throw std::out_of_range("The volume dimensions are too big!\n");
+    throw std::out_of_range("The scalarfield dimensions are too big!\n");
   }
 
   if (size == 0) {
-    throw std::out_of_range("The volume dimensions are not valid!\n");
+    throw std::out_of_range("The scalarfield dimensions are not valid!\n");
   }
 
   delete [] m_scalar_gradient;
@@ -668,7 +671,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
   m_scalar_laplacian = new float[size];
 
   if (!m_scalar_gradient || !m_scalar_laplacian) {
-    printf("Erro - Nao ha memoria suficiente para processar o volume!\n");
+    printf("Erro - Nao ha memoria suficiente para processar o scalarfield!\n");
     return false;
   }
 
@@ -678,7 +681,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
     {
       for (UINT32 z = 0; z < m_depth; ++z)
       {
-        UINT32 id = m_volume->GetId(x, y, z);
+        UINT32 id = m_scalarfield->GetId(x, y, z);
         m_scalar_gradient[id] = CalculateGradient(x, y, z);
         m_scalar_laplacian[id] = CalculateLaplacian(x, y, z);
       }
@@ -691,7 +694,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 /// <summary>
 /// Generates a 3D histogram which accumulates 
 /// occurrences of value-gradient-laplacian triplets.
-/// The volume derivatives must have been calculated 
+/// The scalarfield derivatives must have been calculated 
 /// before this call.
 /// </summary>
 /// <returns>Returns true if the histogram could be generated. 
@@ -722,7 +725,7 @@ bool ATFGenerator::GenerateHistogram()
     {
       for (UINT32 z = 0; z < m_depth; z++)
       {
-        UINT32 vol_id = m_volume->GetId(x,y,z);
+        UINT32 vol_id = m_scalarfield->GetId(x,y,z);
 
 #ifndef ATFG_FULL_RANGE
         if (m_scalar_gradient[vol_id] > m_max_global_gradient)
@@ -732,7 +735,7 @@ bool ATFGenerator::GenerateHistogram()
           continue;
 #endif
 
-        unsigned char v = m_volume->SampleVolume(vol_id);
+        unsigned char v = m_scalarfield->GetValue(vol_id);
         unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
         unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
 

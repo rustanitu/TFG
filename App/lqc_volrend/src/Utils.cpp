@@ -32,7 +32,7 @@ namespace vr
           x = i + init_x;
           y = j + init_y;
           z = k + init_z;
-          scalar_values[id] = (GLfloat)vol->SampleVolume(x, y, z) / 255.0f;
+          scalar_values[id] = (GLfloat)vol->GetValue(x, y, z) / 255.0f;
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
@@ -61,7 +61,7 @@ namespace vr
     lqc::Vector4f* value_rgba = new lqc::Vector4f[width * height * depth];
     for (int i = 0; i < width*height*depth; i++)
     {
-      lqc::Vector4d v = TF1D->Get(vol->SampleVolume(i));
+      lqc::Vector4d v = TF1D->Get(vol->GetValue(i));
       value_rgba[i] = lqc::Vector4f(v.x, v.y, v.z, v.w);
     }
 
@@ -99,12 +99,12 @@ namespace vr
       {
         for (UINT32 x = 0; x < width; x++)
         {
-          s1.x = vol->SampleVolume(x - n, y, z);
-          s2.x = vol->SampleVolume(x + n, y, z);
-          s1.y = vol->SampleVolume(x, y - n, z);
-          s2.y = vol->SampleVolume(x, y + n, z);
-          s1.z = vol->SampleVolume(x, y, z - n);
-          s2.z = vol->SampleVolume(x, y, z + n);
+          s1.x = vol->GetValue(x - n, y, z);
+          s2.x = vol->GetValue(x + n, y, z);
+          s1.y = vol->GetValue(x, y - n, z);
+          s2.y = vol->GetValue(x, y + n, z);
+          s1.z = vol->GetValue(x, y, z - n);
+          s2.z = vol->GetValue(x, y, z + n);
 
           lqc::Vector3f s2s1 = (s2 - s1);
 

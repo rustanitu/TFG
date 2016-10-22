@@ -19,7 +19,7 @@ gl::GLTexture2D* ERNVolume2D::GenerateRGBATexture2D (vr::Volume* volume, vr::Tra
   {
     for (UINT32 i = 0; i < size_x; i++)
     {
-      double smp = (double)volume->SampleVolume(i, j, 0);
+      double smp = (double)volume->GetValue(i, j, 0);
       if (smp == 1)
       {
         scalar_values[i * 4 + (j * size_x * 4) + 0] = 1;
@@ -35,7 +35,7 @@ gl::GLTexture2D* ERNVolume2D::GenerateRGBATexture2D (vr::Volume* volume, vr::Tra
         scalar_values[i * 4 + (j * size_x * 4) + 3] = 1;
       }
 
-      //lqc::Vector4d color = tfunction->Get ((double)volume->SampleVolume (i, j, 0));
+      //lqc::Vector4d color = tfunction->Get ((double)volume->GetValue (i, j, 0));
       //scalar_values[i * 4 + (j * size_x * 4) + 0] = (GLfloat)color.x;
       //scalar_values[i * 4 + (j * size_x * 4) + 1] = (GLfloat)color.y;
       //scalar_values[i * 4 + (j * size_x * 4) + 2] = (GLfloat)color.z;

@@ -38,6 +38,9 @@
     <ClInclude Include="..\include\volrend\Utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\volrend\ScalarField.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TransferFunction1D.cpp">

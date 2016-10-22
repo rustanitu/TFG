@@ -22,7 +22,7 @@ class TransferFunction;
 class FastTFGenerator : public IATFGenerator
 {
 public:
-  FastTFGenerator(vr::Volume* volume);
+	FastTFGenerator (vr::ScalarField* scalarfield);
 
   ~FastTFGenerator();
 

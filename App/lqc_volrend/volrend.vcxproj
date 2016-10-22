@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\volrend\Reader.h" />
+    <ClInclude Include="..\include\volrend\ScalarField.h" />
     <ClInclude Include="..\include\volrend\TransferFunction.h" />
     <ClInclude Include="..\include\volrend\TransferFunction1D.h" />
     <ClInclude Include="..\include\volrend\TransferFunctionGersa.h" />

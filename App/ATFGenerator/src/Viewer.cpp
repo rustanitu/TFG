@@ -309,7 +309,7 @@ void Viewer::GenerateVolHistogram ()
     {
       for (UINT32 z = 0; z < m_volume->GetDepth(); z++)
       {
-        int v = m_volume->SampleVolume(x, y, z);
+        int v = m_volume->GetValue(x, y, z);
         if (v < 256)
           h[v]++;
         else

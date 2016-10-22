@@ -25,7 +25,7 @@ class TransferFunction;
 /// Generator, based on Kindlmann's paper "Semi-automatic
 /// Generation of Transfer Functions for Direct Volume
 /// Rendering" (http://doi.acm.org/10.1145/288126.288167).
-/// Given a volume with greatest intensity value equals to
+/// Given a scalarfield with greatest intensity value equals to
 /// 255, this class provides functions to generate a good
 /// transfer function automatically.
 /// </summary>
@@ -37,9 +37,9 @@ public:
   /// Initializes a new instance of the 
   /// <see cref="ATFGenerator" /> class.
   /// </summary>
-  /// <param name="volume">The volume whose transfer 
+  /// <param name="scalarfield">The scalarfield whose transfer 
   /// function one wants to extract.</param>
-  ATFGenerator(vr::Volume* volume);
+	ATFGenerator (vr::ScalarField* scalarfield);
 
   /// <summary>
   /// Finalizes an instance of the 
@@ -57,7 +57,7 @@ public:
   bool Init();
 
   /// <summary>
-  /// Extract a transfer function from the volume, based in 
+  /// Extract a transfer function from the scalarfield, based in 
   /// Kindlmann's paper. This function needs to be called
   /// only once, to do all the calculations.
   /// </summary>
@@ -72,7 +72,7 @@ public:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-  int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+	int GetValue(int x, int y, int z);
 
   /// <summary>
   /// Gets an aproximation of the voxel's gradient, using 
@@ -95,7 +95,7 @@ public:
   float GetLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
-  /// Generates a PGM image file with a volume slice.
+  /// Generates a PGM image file with a scalarfield slice.
   /// The image is generated in the working directory and 
   /// it's named "Volume Slice v", where 'v' is the 
   /// value input.
@@ -106,7 +106,7 @@ public:
   void GenerateLaplacianSlice(const UINT32& v);
 
   /// <summary>
-  /// Generates the all the volume slices, trhought
+  /// Generates the all the scalarfield slices, trhought
   /// calls to void GenerateVolumeSlice(const UINT32& v).
   /// </summary>
   void GenerateVolumeSlices();
@@ -210,7 +210,7 @@ private:
   float CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
-  /// Iterates over the volume, calculating the gradient 
+  /// Iterates over the scalarfield, calculating the gradient 
   /// and the laplacian values for each voxel.
   /// </summary>
   /// <returns>Returns true if all the memory needed 
@@ -220,7 +220,7 @@ private:
   /// <summary>
   /// Generates a 3D histogram which accumulates 
   /// occurrences of value-gradient-laplacian triplets.
-  /// The volume derivatives must have been calculated 
+  /// The scalarfield derivatives must have been calculated 
   /// before this call.
   /// </summary>
   /// <returns>Returns true if the histogram could be generated. 
@@ -260,12 +260,12 @@ private:
   float m_min_global_laplacian;
 
   /// <summary>
-  /// The gradient of each volume voxel.
+  /// The gradient of each scalarfield voxel.
   /// </summary>
   float* m_scalar_gradient;
 
   /// <summary>
-  /// The laplacian of each volume voxel.
+  /// The laplacian of each scalarfield voxel.
   /// </summary>
   float* m_scalar_laplacian;
 

@@ -18,7 +18,7 @@
 
 #define MASK_SIZE 3
 
-FastTFGenerator::FastTFGenerator(vr::Volume* volume) : IATFGenerator(volume)
+FastTFGenerator::FastTFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarfield)
 , m_derivativeMask(MASK_SIZE)
 , m_initialized(false)
 {
@@ -46,54 +46,35 @@ bool FastTFGenerator::Init()
 
 bool FastTFGenerator::ExtractTransferFunction()
 {
-  if (!m_initialized)
-    throw std::domain_error("Instance not initialized. Init must be called once!\n");
-  
-  std::string filename = m_volume->GetName();
-  std::size_t init = filename.find_last_of("\\") + 1;
-  std::size_t end = filename.find_first_of(".");
-  filename = filename.substr(init, end - init);
-  filename = "..\\..\\Modelos\\TransferFunctions\\AutomaticTransferFunction" + filename;
+	//if ( !m_initialized )
+	//	throw std::domain_error ("Instance not initialized. Init must be called once!\n");
 
-  delete m_transfer_function;
-  m_transfer_function = new vr::TransferFunction1D();
-  m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
-  m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
+	//delete m_transfer_function;
+	//m_transfer_function = new vr::TransferFunction1D ();
+	////m_transfer_function->SetVolume(m_scalarfield);
+	//m_transfer_function->SetName (std::string ("AutomaticTransferFunction"));
+	//m_transfer_function->SetTransferFunctionPlot (m_tf_plot);
+	//m_transfer_function->SetBoundaryFunctionPlot (m_bx_plot);
+	//SetDefaultColor ();
 
-  float* x = new float[FAST_TFG_V_RANGE];
-  unsigned char* v = new unsigned char[FAST_TFG_V_RANGE];
-  if (!x || !v)
-  {
-    printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-    return false;
-  }
+	//float* x = new float[ATFG_V_RANGE];
+	//unsigned char* v = new unsigned char[ATFG_V_RANGE];
+	//if ( !x || !v )
+	//{
+	//	printf ("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+	//	return false;
+	//}
 
-  m_scalar_histogram_laplacian[0] = m_scalar_histogram_laplacian[1] - m_scalar_histogram_laplacian[0];
-  for (int i = 1; i < FAST_TFG_V_MAX; ++i)
-  {
-    m_scalar_histogram_laplacian[i] = m_scalar_histogram[i + 1] - m_scalar_histogram[i - 1];
-  }
-  m_scalar_histogram_laplacian[FAST_TFG_V_MAX] = m_scalar_histogram_laplacian[FAST_TFG_V_MAX] - m_scalar_histogram_laplacian[FAST_TFG_V_MAX - 1];
-
-  IupSetAttribute(m_bx_plot, "CLEAR", "YES");
-
-  IupPlotBegin(m_bx_plot, 0);
-  for (int i = 0; i < FAST_TFG_V_RANGE; i++)
-    IupPlotAdd(m_bx_plot, i, m_scalar_histogram_laplacian[i]);
-  IupPlotEnd(m_bx_plot);
-  IupSetAttribute(m_bx_plot, "DS_NAME", "F'(T)");
-  IupSetAttribute(m_bx_plot, "DS_COLOR", "0 0 128");
-
-  IupSetAttribute(m_bx_plot, "REDRAW", "YES");
-
-  //int n_v;
-  //m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
-  return true;
+	//UINT32 n_v;
+	//float sigma = GetBoundaryDistancies (x, v, &n_v);
+	//GenerateDataValuesFile (x, v, n_v);
+	//m_transfer_function->SetClosestBoundaryDistances (v, x, n_v);
+	return false;
 }
 
 float FastTFGenerator::GetValue(UINT32 x, UINT32 y, UINT32 z)
 {
-  return m_volume->SampleVolume(x, y, z);
+  return m_scalarfield->GetValue(x, y, z);
 }
 
 vr::TransferFunction* FastTFGenerator::GetTransferFunction()
@@ -103,7 +84,7 @@ vr::TransferFunction* FastTFGenerator::GetTransferFunction()
 
 float FastTFGenerator::CalculateLaplacian(int x, int y, int z)
 {
-  if (!m_volume)
+  if (!m_scalarfield)
     throw std::exception_ptr();
 
   float l = 0.0f;
@@ -140,17 +121,17 @@ bool FastTFGenerator::CalculateVolumeDerivatives()
 
   unsigned int size = m_width * m_height * m_depth;
   if (size < (unsigned long)m_width * m_height * m_depth) {
-    throw std::out_of_range("The volume dimensions are too big!\n");
+    throw std::out_of_range("The scalarfield dimensions are too big!\n");
   }
 
   if (size == 0) {
-    throw std::out_of_range("The volume dimensions are not valid!\n");
+    throw std::out_of_range("The scalarfield dimensions are not valid!\n");
   }
 
   m_scalar_laplacian = new float[size];
 
   if (!m_scalar_laplacian) {
-    printf("Erro - Nao ha memoria suficiente para processar o volume!\n");
+    printf("Erro - Nao ha memoria suficiente para processar o scalarfield!\n");
     return false;
   }
 
@@ -185,7 +166,7 @@ bool FastTFGenerator::GenerateHistogram()
       {
         unsigned int vol_id = GetId(x,y,z);
 
-        unsigned char v = m_volume->SampleVolume(vol_id);
+        unsigned char v = m_scalarfield->GetValue(vol_id);
         m_scalar_histogram[v] += m_scalar_laplacian[vol_id];
       }
     }

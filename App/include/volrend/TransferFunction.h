@@ -70,7 +70,7 @@ namespace vr
   class TransferFunction
   {
   public:
-    TransferFunction() { m_vol = NULL; }
+		TransferFunction () {}// m_vol = NULL; }
     ~TransferFunction () {}
 
     virtual const char* GetNameClass () = 0;
@@ -87,7 +87,7 @@ namespace vr
   protected:
     std::string m_name;
   private:
-    vr::Volume* m_vol;
+    //vr::Volume* m_vol;
   };
 
   /*class TransferFunction1D : public TransferFunction

@@ -1,11 +1,13 @@
 #ifndef ATFG_TANK_H
 #define ATFG_TANK_H
 
+#include <basetsd.h>
+#include <volrend/ScalarField.h>
 #include <vector>
 
 class Cell;
 
-class Tank
+class Tank : public vr::ScalarField
 {
 public:
   Tank();
@@ -13,6 +15,10 @@ public:
 
   void Clear();
   bool Read(const char* file);
+
+	int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+	int GetValue (float x, float y, float z);
+	int GetValue(const UINT32& id);
 
 private:
   int m_ncells;

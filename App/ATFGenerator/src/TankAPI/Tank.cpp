@@ -37,6 +37,10 @@ bool Tank::Read(const char* filepath)
   if (!(file >> ni >> nj >> nk >> nactive >> m_nvertices >> m_nsteps))
     return false;
 
+	m_width = ni;
+	m_height = nj;
+	m_depth = nk;
+
   m_ncells = ni * nj * nk;
   m_cells = new Cell[m_ncells];
   if (!m_cells)
@@ -81,8 +85,9 @@ bool Tank::Read(const char* filepath)
     if (!(file >> active >> i >> j >> k))
       return false;
 
-    m_cells[c].Init(i, j, k, active, m_nsteps);
-    Cell* cell = &(m_cells[c]);
+		int id = GetId (i, j, k);
+    Cell* cell = &(m_cells[id]);
+    cell->Init(i, j, k, active, m_nsteps);
 
     // It sets the index of the ith vertex
     for (int v = 0; v < 8; ++v)
@@ -111,9 +116,24 @@ bool Tank::Read(const char* filepath)
       if (!(file >> value))
         return false;
       
-      m_cells[c].SetValue(t, value);
+      cell->SetValue(t, value);
     }
   }
 
   return true;
+}
+
+int Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
+{
+	return GetValue (GetId (x, y, z));
+}
+
+int Tank::GetValue (float x, float y, float z)
+{
+	return GetValue(GetId (x, y, z));
+}
+
+int Tank::GetValue(const UINT32& id)
+{
+	return m_cells[id].GetValue (0);
 }

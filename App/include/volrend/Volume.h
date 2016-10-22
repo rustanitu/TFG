@@ -7,6 +7,7 @@
 #include <math/Vector4.h>
 
 #include <glutils/GLTexture3D.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction1D.h>
 
 class ATFGenerator;
@@ -20,25 +21,21 @@ namespace vr
   };
 
   //template<class T>
-  class Volume
+	class Volume : public ScalarField
   {
   public:
     Volume();
-    Volume(unsigned int width, unsigned int height, unsigned int depth);
-    Volume(unsigned int width, unsigned int height, unsigned int depth, float* scalars);
+    Volume(const UINT32& width, const UINT32& height, const UINT32& depth);
+    Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars);
     ~Volume();
-
-    int GetWidth();
-    int GetHeight();
-    int GetDepth();
 
     lqc::Vector3f GetAnchorMin();
     lqc::Vector3f GetAnchorMax();
     void SetAnchors(lqc::Vector3f pmin, lqc::Vector3f pmax);
 
-    int SampleVolume(const unsigned int& x, const unsigned int& y, const unsigned int& z);
-    int SampleVolume(float x, float y, float z);
-    int SampleVolume(const unsigned int& id)
+		int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+    int GetValue(float x, float y, float z);
+		int GetValue(const UINT32& id)
     {
       return m_scalar_values[id];
     }
@@ -63,11 +60,6 @@ namespace vr
     bool Validate()
     {
       return m_scalar_values != NULL;
-    }
-
-    int GetId(const unsigned int& x, const unsigned int& y, const unsigned int& z) const
-    {
-      return x + (y * m_width) + (z * m_width * m_height);
     }
 
     void SeparateBoundaries(vr::TransferFunction1D* atfg);
@@ -106,7 +98,6 @@ namespace vr
     lqc::Vector3f m_pmin;
     lqc::Vector3f m_pmax;
 
-    unsigned int m_width, m_height, m_depth;
     float* m_scalar_values;
     int m_nsets;
     bool* m_visited;
