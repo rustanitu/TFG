@@ -48,8 +48,8 @@ int main (int argc, char **argv)
   getchar ();
   */
 
-  Tank tank;
-  if (tank.Read("D:/user/rustam/PITUBA/pituba.gmdl"))
+	Tank tank;
+  if (tank.Read("../../Modelos/TankModels/pituba.gmdl"))
     printf("Done!\n");
   else
     printf("Reading Error!!!\n");
