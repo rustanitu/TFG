@@ -13,8 +13,8 @@ uniform int ScreenSizeH;
 
 uniform sampler2D ExitPoints;
 uniform sampler3D VolumeTex;
-uniform isampler3D SetTex;
-uniform isampler1D SetQtdTex;
+//uniform isampler3D SetTex;
+//uniform isampler1D SetQtdTex;
 uniform sampler1D TransferFunc;  
 
 uniform int VolWidth;
@@ -42,12 +42,13 @@ vec3 real_normalized_step;
 vec4 GetFromTransferFunction (float p_d)
 {
   vec3 voxel = (real_minpos + p_d * real_normalized_step) * tex_scale;
-  int set = texture(SetTex, voxel).r;
-  int qtd = texture(SetQtdTex, set).r;
-  if (qtd > 50)//int(0.01f * VolWidth * VolHeight * VolDepth))// VisibleSet || VisibleSet == 0)
-    return texture(TransferFunc, texture(VolumeTex, voxel).r);
-  else
-    return vec4(0);
+  return texture(TransferFunc, texture(VolumeTex, voxel).r);
+  //int set = texture(SetTex, voxel).r;
+  //int qtd = texture(SetQtdTex, set).r;
+  //if (qtd > 50)//int(0.01f * VolWidth * VolHeight * VolDepth))// VisibleSet || VisibleSet == 0)
+  //  return texture(TransferFunc, texture(VolumeTex, voxel).r);
+  //else
+  //  return vec4(0);
 }
 
 void main(void)

@@ -10,6 +10,7 @@
 #include <volrend/TransferFunctions_tf.h>
 #include <volrend/TransferFunctionGroups.h>
 #include <volrend/TransferFunctionGersa.h>
+#include "../../ATFGenerator/src/TankAPI/Tank.h"
 
 namespace vr
 {
@@ -31,6 +32,14 @@ namespace vr
       ret = ReadRawFile (filepath);
     else if (extension.compare("med") == 0)
       ret = ReadMedFile(filepath);
+    else if (extension.compare("gmdl") == 0) {
+      /*********************************************/
+      Tank* tank = new Tank();
+      if (tank->Read("../../Modelos/TankModels/pituba.gmdl")) {
+        ret = new vr::Volume(tank->GetWidth(), tank->GetHeight(), tank->GetDepth(), tank->GetValues());
+      }
+      /*********************************************/
+    }
     else
       printf ("Extension not found\n");
     printf ("--------------------------------------------\n");

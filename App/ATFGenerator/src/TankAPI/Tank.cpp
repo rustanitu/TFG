@@ -46,6 +46,13 @@ bool Tank::Read(const char* filepath)
   if (!m_cells)
     return false;
 
+  m_values = new float[m_ncells];
+  if (!m_values)
+    return false;
+
+  for (int v = 0; v < m_ncells; ++v)
+    m_values[v] = 0;
+
   m_vertices = new float[m_nvertices * 3];
   if (!m_vertices)
     return false;
@@ -117,6 +124,8 @@ bool Tank::Read(const char* filepath)
         return false;
       
       cell->SetValue(t, value);
+      if (t == 0)
+        m_values[id] = value;
     }
   }
 

@@ -148,7 +148,12 @@ void Viewer::GenerateATFG()
   }
 }
 
-void Viewer::SetVolumeModel (vr::Volume* vol, std::string file)
+/// <summary>
+/// Sets the volume model.
+/// </summary>
+/// <param name="vol">The vol.</param>
+/// <param name="file">The file.</param>
+void Viewer::SetVolumeModel(vr::Volume* vol, std::string file)
 {
   if (vol)
   {
@@ -459,7 +464,7 @@ bool Viewer::FileDlg_VolumeModel ()
   IupSetAttribute(dlg, "DIRECTORY", "../../Modelos/VolumeModels");
   IupSetAttribute (dlg, "DIALOGTYPE", "OPEN");
   IupSetAttribute (dlg, "TITLE", "Load Volume Model");
-  IupSetAttributes (dlg, "FILTER = \"*.vol;*.ele;*.node;*.raw;*.med\", FILTERINFO = \"Volume Files [.vol, .ele, .node, .raw, .med]\"");
+  IupSetAttributes(dlg, "FILTER = \"*.vol;*.ele;*.node;*.raw;*.med;*.gmdl\", FILTERINFO = \"Volume Files [.vol, .ele, .node, .raw, .med]\"");
 
   IupPopup (dlg, IUP_CURRENT, IUP_CURRENT);
 

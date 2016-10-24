@@ -75,6 +75,7 @@ namespace vr
 
   void Volume::SeparateBoundaries(vr::TransferFunction1D* tf)
   {
+    return;
     delete[] m_visited;
     delete[] m_set_qtd;
     delete[] m_set_values;

@@ -17,8 +17,12 @@ public:
   bool Read(const char* file);
 
 	int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
-	int GetValue (float x, float y, float z);
+	int GetValue(float x, float y, float z);
 	int GetValue(const UINT32& id);
+  float* GetValues()
+  {
+    return m_values;
+  }
 
 private:
   int m_ncells;
@@ -26,6 +30,7 @@ private:
   int m_nvertices;
   float* m_vertices;
   Cell* m_cells;
+  float* m_values;
   std::vector<std::string> m_steps;
 };
 

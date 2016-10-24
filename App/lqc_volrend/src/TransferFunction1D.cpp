@@ -345,27 +345,17 @@ namespace vr
     for (int i = 0; i < 256; ++i)
       m_valid[i] = false;
 
-    float amax = 0.4f;
+    float amax = 1.0f;
     float base = m_thickness;
 
     // Assign opacity to transfer function
-    int b = 0;
-    float last_a = 0.0f;
     for (int i = 0; i < m_values_size; ++i)
     {
       unsigned char value = m_value[i];
       float x = m_distance[value];
 
-      IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
-
+      //IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
       double a = CenteredTriangleFunction(amax, base, value);
-
-      if (a != last_a && last_a == 0.0f)
-        b++;
-
-      last_a = a;
-      if (m_boundary != 0 && b != m_boundary)
-        a = 0.0f;
 
       AddAlphaControlPoint(TransferControlPoint(a, value));
       IupPlotAdd(m_tf_plot, value, a);
