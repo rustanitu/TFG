@@ -72,7 +72,7 @@ public:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-	int GetValue(int x, int y, int z);
+	float GetValue(int x, int y, int z);
 
   /// <summary>
   /// Gets an aproximation of the voxel's gradient, using 
@@ -243,6 +243,16 @@ private:
   float m_min_gradient;
   float m_max_laplacian;
   float m_min_laplacian;
+
+  /// <summary>
+  /// The global maximum laplacian value.
+  /// </summary>
+  float m_max_global_value;
+
+  /// <summary>
+  /// The global minimum laplacian value.
+  /// </summary>
+  float m_min_global_value;
 
   /// <summary>
   /// The global maximum gradient value.

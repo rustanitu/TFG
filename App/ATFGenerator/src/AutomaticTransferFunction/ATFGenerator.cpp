@@ -134,7 +134,7 @@ bool ATFGenerator::ExtractTransferFunction()
 /// <param name="y">The voxel's y component.</param>
 /// <param name="z">The voxel's z component.</param>
 /// <returns>Returns the float aproximated gradient.</returns>
-int ATFGenerator::GetValue(int x, int y, int z)
+float ATFGenerator::GetValue(int x, int y, int z)
 {
 	const UINT32 xt = std::max(0, std::min(x, (int) m_width - 1));
 	const UINT32 yt = std::max(0, std::min(y, (int) m_height - 1));
@@ -541,6 +541,10 @@ float ATFGenerator::CalculateGradient(const UINT32& x, const UINT32& y, const UI
   g = fmax(0.0f, g);
   m_max_global_gradient = fmax(m_max_global_gradient, g);
 
+  float v = GetValue(x, y, z);
+  m_max_global_value = fmax(m_max_global_value, v);
+  m_min_global_value = fmin(m_min_global_value, v);
+
   return g;
 }
 
@@ -595,7 +599,7 @@ float ATFGenerator::CalculateLaplacian(const UINT32& x, const UINT32& y, const U
   if (!m_scalarfield)
     throw std::exception_ptr();
 
-  int v = GetValue(x, y, z) * 2;
+  float v = GetValue(x, y, z) * 2;
   float lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
   float ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
   float lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
@@ -735,7 +739,7 @@ bool ATFGenerator::GenerateHistogram()
           continue;
 #endif
 
-        unsigned char v = m_scalarfield->GetValue(vol_id);
+        unsigned char v = ((m_scalarfield->GetValue(vol_id) - m_min_global_value) / (m_max_global_value - m_min_global_value)) * ATFG_V_MAX;
         unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
         unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
 

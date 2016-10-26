@@ -132,17 +132,17 @@ bool Tank::Read(const char* filepath)
   return true;
 }
 
-int Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
+float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 	return GetValue (GetId (x, y, z));
 }
 
-int Tank::GetValue (float x, float y, float z)
+float Tank::GetValue(float x, float y, float z)
 {
 	return GetValue(GetId (x, y, z));
 }
 
-int Tank::GetValue(const UINT32& id)
+float Tank::GetValue(const UINT32& id)
 {
 	return m_cells[id].GetValue (0);
 }

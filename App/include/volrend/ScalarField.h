@@ -33,9 +33,9 @@ namespace vr
 			return m_depth;
 		}
 
-		virtual int GetValue(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
-		virtual int GetValue(float x, float y, float z) = 0;
-		virtual int GetValue(const UINT32& id) = 0;
+		virtual float GetValue(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
+		virtual float GetValue(float x, float y, float z) = 0;
+		virtual float GetValue(const UINT32& id) = 0;
 
 	protected:
 		unsigned int m_width, m_height, m_depth;

@@ -42,7 +42,7 @@ namespace vr
     int size = m_width*m_height*m_depth;
     m_scalar_values = new float[size];
     for (int i = 0; i < size; i++) {
-      m_scalar_values[i] = (float)scalars[i];
+      m_scalar_values[i] = scalars[i];
     }
     m_visited = NULL;
     m_set_values = NULL;
@@ -186,16 +186,16 @@ namespace vr
     return count;
   }
 
-	int Volume::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
+  float Volume::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
   {
     UINT32 xt = std::min(x, m_width - 1);
     UINT32 yt = std::min(y, m_height - 1);
     UINT32 zt = std::min(z, m_depth - 1);
 
-    return (int)m_scalar_values[GetId(xt, yt, zt)];
+    return m_scalar_values[GetId(xt, yt, zt)];
   }
 
-  int Volume::GetValue(float x, float y, float z)
+  float Volume::GetValue(float x, float y, float z)
   {
     if ((x >= m_pmin.x && x <= m_pmax.x) && (y >= m_pmin.y && y <= m_pmax.y) && (z >= m_pmin.z && z <= m_pmax.z))
       return -1;
@@ -204,7 +204,7 @@ namespace vr
     int py = (int)y;
     int pz = (int)z;
 
-    return (int)m_scalar_values[GetId(px, py, pz)];
+    return m_scalar_values[GetId(px, py, pz)];
   }
 
   float Volume::InterpolatedValue(float px, float py, float pz)

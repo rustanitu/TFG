@@ -16,9 +16,9 @@ public:
   void Clear();
   bool Read(const char* file);
 
-	int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
-	int GetValue(float x, float y, float z);
-	int GetValue(const UINT32& id);
+  float GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+  float GetValue(float x, float y, float z);
+  float GetValue(const UINT32& id);
   float* GetValues()
   {
     return m_values;

@@ -33,9 +33,9 @@ namespace vr
     lqc::Vector3f GetAnchorMax();
     void SetAnchors(lqc::Vector3f pmin, lqc::Vector3f pmax);
 
-		int GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
-    int GetValue(float x, float y, float z);
-		int GetValue(const UINT32& id)
+		float GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+    float GetValue(float x, float y, float z);
+		float GetValue(const UINT32& id)
     {
       return m_scalar_values[id];
     }

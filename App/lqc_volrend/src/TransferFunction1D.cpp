@@ -63,7 +63,7 @@ namespace vr
     if (m_transferfunction)
     {
       gl::GLTexture1D* ret = new gl::GLTexture1D (m_tflenght);
-      ret->GenerateTexture (GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE);
+      ret->GenerateTexture (GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER);
       float* data = new float[m_tflenght * 4];
       for (int i = 0; i < m_tflenght; i++)
       {
