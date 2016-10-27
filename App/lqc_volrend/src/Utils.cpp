@@ -32,7 +32,7 @@ namespace vr
           x = i + init_x;
           y = j + init_y;
           z = k + init_z;
-          scalar_values[id] = (GLfloat)vol->GetValue(x, y, z) / 255.0f;
+					scalar_values[id] = vol->GetValueReference(x, y, z) / 255.0f;
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);

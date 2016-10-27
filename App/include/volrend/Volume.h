@@ -40,6 +40,9 @@ namespace vr
       return m_scalar_values[id];
     }
 
+		float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
+		float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+
     float InterpolatedValue(float x, float y, float z);
     float InterpolatedValue(lqc::Vector3f pos);
 
@@ -98,7 +101,7 @@ namespace vr
     lqc::Vector3f m_pmin;
     lqc::Vector3f m_pmax;
 
-    float* m_scalar_values;
+		float* m_scalar_values;
     int m_nsets;
     bool* m_visited;
     int* m_set_values;

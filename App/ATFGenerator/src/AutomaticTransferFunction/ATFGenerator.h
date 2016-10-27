@@ -39,7 +39,7 @@ public:
   /// </summary>
   /// <param name="scalarfield">The scalarfield whose transfer 
   /// function one wants to extract.</param>
-	ATFGenerator (vr::ScalarField* scalarfield);
+	ATFGenerator (vr::Volume* scalarfield);
 
   /// <summary>
   /// Finalizes an instance of the 
@@ -195,7 +195,6 @@ private:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated gradient.</returns>
-  float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
   float CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
@@ -206,7 +205,6 @@ private:
   /// <param name="y">The voxel's y component.</param>
   /// <param name="z">The voxel's z component.</param>
   /// <returns>Returns the float aproximated laplacian.</returns>
-  float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
   float CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 
   /// <summary>
@@ -243,16 +241,6 @@ private:
   float m_min_gradient;
   float m_max_laplacian;
   float m_min_laplacian;
-
-  /// <summary>
-  /// The global maximum laplacian value.
-  /// </summary>
-  float m_max_global_value;
-
-  /// <summary>
-  /// The global minimum laplacian value.
-  /// </summary>
-  float m_min_global_value;
 
   /// <summary>
   /// The global maximum gradient value.

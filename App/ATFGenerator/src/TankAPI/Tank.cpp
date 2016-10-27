@@ -1,6 +1,7 @@
 #include "Tank.h"
 #include "Cell.h"
 
+#include <algorithm>
 #include <fstream>
 
 Tank::Tank()
@@ -124,7 +125,7 @@ bool Tank::Read(const char* filepath)
         return false;
       
       cell->SetValue(t, value);
-      if (t == 0)
+      if (t == 0 && cell->IsActive())
         m_values[id] = value;
     }
   }
@@ -134,15 +135,57 @@ bool Tank::Read(const char* filepath)
 
 float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-	return GetValue (GetId (x, y, z));
-}
+	UINT32 xt = std::min(x, m_width - 1);
+	UINT32 yt = std::min(y, m_height - 1);
+	UINT32 zt = std::min(z, m_depth - 1);
 
-float Tank::GetValue(float x, float y, float z)
-{
-	return GetValue(GetId (x, y, z));
+	return GetValue (GetId (xt, yt, zt));
 }
 
 float Tank::GetValue(const UINT32& id)
 {
 	return m_cells[id].GetValue (0);
+}
+
+float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
+{
+	if ( !m_cells[GetId(x, y, z)].IsActive() )
+		return 0.0f;
+
+	float v = GetValue(x, y, z);
+
+	UINT32 id = GetId(x - 1, y, z);
+	float lx = m_cells[id].IsActive() ? GetValue(id) : v;
+	id = GetId(x + 1, y, z);
+	float rx = m_cells[id].IsActive() ? GetValue(id) : v;
+	float gx = rx - lx;
+
+	id = GetId(x, y + 1, z);
+	float uy = m_cells[id].IsActive() ? GetValue(id) : v;
+	id = GetId(x, y - 1, z);
+	float dy = m_cells[id].IsActive() ? GetValue(id) : v;
+	float gy = uy - dy;
+
+	float gz = GetValue(x, y, z + 1) - GetValue(x, y, z - 1);
+
+	float g = sqrt(gx*gx + gy*gy + gz*gz);
+
+	g = fmax(0.0f, g);
+	m_max_gradient = fmax(m_max_gradient, g);
+
+	return g;
+}
+
+float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
+{
+	float v = GetValue(x, y, z) * 2;
+	float lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
+	float ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
+	float lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
+	float l = lx + ly + lz;
+
+	m_max_laplacian = fmax(m_max_laplacian, l);
+	m_min_laplacian = fmin(m_min_laplacian, l);
+
+	return l;
 }
