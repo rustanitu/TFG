@@ -136,7 +136,7 @@ float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 
 float Tank::GetValue(const UINT32& id)
 {
-	return m_cells[id].GetValue(m_current_timestep);
+  return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : 0.0f;
 }
 
 float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -144,30 +144,16 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 	if ( !m_cells[GetId(x, y, z)].IsActive() )
 		return 0.0f;
 
-	UINT32 id = GetId(x - 1, y, z);
-	float lx = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-	id = GetId(x + 1, y, z);
-  float rx = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-	float gx = rx - lx;
+  float gx = GetValue(x + 1, y, z) - GetValue(x - 1, y, z);
+  float gy = GetValue(x, y + 1, z) - GetValue(x, y - 1, z);
+  float gz = GetValue(x, y, z + 1) - GetValue(x, y, z - 1);
 
-	id = GetId(x, y + 1, z);
-  float uy = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-	id = GetId(x, y - 1, z);
-  float dy = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-	float gy = uy - dy;
+  float g = sqrt(gx*gx + gy*gy + gz*gz);
 
-  id = GetId(x, y, z + 1);
-  float fz = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  id = GetId(x, y, z - 1);
-  float bz = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-	float gz = fz - bz;
+  g = fmax(0.0f, g);
+  m_max_gradient = fmax(m_max_gradient, g);
 
-	float g = sqrt(gx*gx + gy*gy + gz*gz);
-
-	g = fmax(0.0f, g);
-	m_max_gradient = fmax(m_max_gradient, g);
-
-	return g;
+  return g;
 }
 
 float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -175,30 +161,14 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
   if (!m_cells[GetId(x, y, z)].IsActive())
     return 0.0f;
 
-  float vv = 2 * GetValue(x, y, z);
+  float v = GetValue(x, y, z) * 2;
+  float lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
+  float ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
+  float lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
+  float l = lx + ly + lz;
 
-  UINT32 id = GetId(x - 1, y, z);
-  float lx = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  id = GetId(x + 1, y, z);
-  float rx = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  lx = rx - vv + lx;
+  m_max_laplacian = fmax(m_max_laplacian, l);
+  m_min_laplacian = fmin(m_min_laplacian, l);
 
-  id = GetId(x, y + 1, z);
-  float uy = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  id = GetId(x, y - 1, z);
-  float dy = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  float ly = uy - vv + dy;
-
-  id = GetId(x, y, z + 1);
-  float fz = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  id = GetId(x, y, z - 1);
-  float bz = m_cells[id].IsActive() ? GetValue(id) : 0.0f;
-  float lz = fz - vv + bz;
-
-	float l = lx + ly + lz;
-
-	m_max_laplacian = fmax(m_max_laplacian, l);
-	m_min_laplacian = fmin(m_min_laplacian, l);
-
-	return l;
+  return l;
 }

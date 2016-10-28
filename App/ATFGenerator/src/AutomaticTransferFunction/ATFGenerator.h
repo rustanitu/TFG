@@ -183,7 +183,7 @@ public:
 
   float GetMinGradient()
   {
-    return m_min_gradient;
+    return m_min_average_gradient;
   }
 
 private:
@@ -237,25 +237,10 @@ private:
   void SetDefaultColor();
 
 private:
-  float m_max_gradient;
-  float m_min_gradient;
-  float m_max_laplacian;
-  float m_min_laplacian;
-
-  /// <summary>
-  /// The global maximum gradient value.
-  /// </summary>
-  float m_max_global_gradient;
-
-  /// <summary>
-  /// The global maximum laplacian value.
-  /// </summary>
-  float m_max_global_laplacian;
-
-  /// <summary>
-  /// The global minimum laplacian value.
-  /// </summary>
-  float m_min_global_laplacian;
+  float m_max_average_gradient;
+  float m_min_average_gradient;
+  float m_max_average_laplacian;
+  float m_min_average_laplacian;
 
   /// <summary>
   /// The gradient of each scalarfield voxel.

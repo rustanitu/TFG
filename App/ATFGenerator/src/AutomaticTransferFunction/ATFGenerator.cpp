@@ -31,9 +31,6 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_scalar_gradient(NULL)
 , m_scalar_laplacian(NULL)
 , m_transfer_function(NULL)
-, m_max_global_gradient(-FLT_MAX)
-, m_min_global_laplacian(FLT_MAX)
-, m_max_global_laplacian(-FLT_MAX)
 , m_initialized(false)
 , m_gtresh(0.0f)
 , m_derivativeMask(MASK_SIZE)
@@ -41,10 +38,10 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_main_plot(NULL)
 , m_tf_plot(NULL)
 , m_bx_plot(NULL)
-, m_max_gradient(-FLT_MAX)
-, m_min_gradient(FLT_MAX)
-, m_max_laplacian(-FLT_MAX)
-, m_min_laplacian(FLT_MAX)
+, m_max_average_gradient(-FLT_MAX)
+, m_min_average_gradient(FLT_MAX)
+, m_max_average_laplacian(-FLT_MAX)
+, m_min_average_laplacian(FLT_MAX)
 {
 }
 
@@ -122,8 +119,8 @@ bool ATFGenerator::ExtractTransferFunction()
 
 	UINT32 n_v;
 	float sigma = GetBoundaryDistancies(x, v, &n_v);
-	GenerateDataValuesFile(x, v, n_v);
 	m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
+	GenerateDataValuesFile(x, v, n_v);
 	return true;
 }
 
@@ -568,8 +565,8 @@ float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, 
 	g = sqrt(gx*gx + gy*gy + gz*gz);
 
 	g = fmax(0.0f, g);
-	if ( g > m_max_global_gradient )
-		m_max_global_gradient = g;
+	//if ( g > m_max_global_gradient )
+	//	m_max_global_gradient = g;
 
 	return g;
 }
@@ -608,10 +605,10 @@ float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y,
 
 	l = lx + ly + lz;
 
-	if ( l > m_max_global_laplacian )
-		m_max_global_laplacian = l;
-	if ( l < m_min_global_laplacian )
-		m_min_global_laplacian = l;
+	//if ( l > m_max_global_laplacian )
+	//	m_max_global_laplacian = l;
+	//if ( l < m_min_global_laplacian )
+	//	m_min_global_laplacian = l;
 
 	return l;
 }
@@ -685,10 +682,14 @@ bool ATFGenerator::GenerateHistogram()
 		}
 	}
 
+  float max_global_gradient = m_scalarfield->GetMaxGradient();
+  float max_global_laplacian = m_scalarfield->GetMaxLaplacian();
+  float min_global_laplacian = m_scalarfield->GetMinLaplacian();
+
 #ifndef ATFG_FULL_RANGE
-	m_max_global_gradient *= 0.9;
-	m_max_global_laplacian *= 0.9;
-	m_min_global_laplacian *= 0.8;
+	max_global_gradient *= 0.9;
+	max_global_laplacian *= 0.9;
+	min_global_laplacian *= 0.8;
 #endif
 
 	// Fill Histogram 
@@ -709,8 +710,8 @@ bool ATFGenerator::GenerateHistogram()
 #endif
 
 				unsigned char v = m_scalarfield->GetValue(vol_id);
-				unsigned char g = (m_scalar_gradient[vol_id] / m_max_global_gradient) * ATFG_V_MAX;
-				unsigned char l = ((m_scalar_laplacian[vol_id] - m_min_global_laplacian) / (m_max_global_laplacian - m_min_global_laplacian)) * ATFG_V_MAX;
+				unsigned char g = (m_scalar_gradient[vol_id] / max_global_gradient) * ATFG_V_MAX;
+				unsigned char l = ((m_scalar_laplacian[vol_id] - min_global_laplacian) / (max_global_laplacian - min_global_laplacian)) * ATFG_V_MAX;
 
 				if ( m_scalar_histogram[v][g][l] < ATFG_V_MAX )
 					m_scalar_histogram[v][g][l]++;
@@ -718,10 +719,10 @@ bool ATFGenerator::GenerateHistogram()
 		}
 	}
 
-	m_max_gradient = -FLT_MAX;
-	m_min_gradient = FLT_MAX;
-	m_max_laplacian = -FLT_MAX;
-	m_min_laplacian = FLT_MAX;
+	m_max_average_gradient = -FLT_MAX;
+	m_min_average_gradient = FLT_MAX;
+	m_max_average_laplacian = -FLT_MAX;
+	m_min_average_laplacian = FLT_MAX;
 
 	// Calculate average laplacian and gradient
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
@@ -746,17 +747,17 @@ bool ATFGenerator::GenerateHistogram()
 		if ( w > 0 )
 		{
 			g /= w;
-			g = m_max_global_gradient * g / ATFG_V_MAX;
+			g = max_global_gradient * g / ATFG_V_MAX;
 			m_average_gradient[i] = g;
-			m_max_gradient = fmax(m_max_gradient, g);
-			m_min_gradient = fmin(m_min_gradient, g);
+			m_max_average_gradient = fmax(m_max_average_gradient, g);
+			m_min_average_gradient = fmin(m_min_average_gradient, g);
 
 			h /= w;
-			h = (m_max_global_laplacian - m_min_global_laplacian) * h / ATFG_V_MAX;
-			h += m_min_global_laplacian;
+			h = (max_global_laplacian - min_global_laplacian) * h / ATFG_V_MAX;
+			h += min_global_laplacian;
 			m_average_laplacian[i] = h;
-			m_max_laplacian = fmax(m_max_laplacian, h);
-			m_min_laplacian = fmin(m_min_laplacian, h);
+			m_max_average_laplacian = fmax(m_max_average_laplacian, h);
+			m_min_average_laplacian = fmin(m_min_average_laplacian, h);
 		}
 	}
 
@@ -774,10 +775,15 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n
 {
 	assert(m_scalar_histogram && x);
 
-	if ( m_max_laplacian == 0.0f )
-		return 0.0f;
+  if (m_max_average_laplacian == 0.0f)
+  {
+    x = NULL;
+    v = NULL;
+    *n = 0;
+    return 0.0f;
+  }
 
-	float sigma = 2 * SQRT_E * m_max_gradient / (m_max_laplacian - m_min_laplacian);
+  float sigma = 2 * SQRT_E * m_max_average_gradient / (m_max_average_laplacian - m_min_average_laplacian);
 	//float sigma = m_max_gradient / (m_max_laplacian * SQRT_E);
 
 	UINT32 c = 0;

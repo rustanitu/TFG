@@ -11,7 +11,8 @@ namespace vr
 	class ScalarField
 	{
 	public:
-		ScalarField() : m_width(0), m_height(0), m_depth(0) {}
+    ScalarField() : m_width(0), m_height(0), m_depth(0), 
+      m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX) {}
 		ScalarField(const UINT32& width, const UINT32& height, const UINT32& depth)
 			: m_width(width), m_height(height), m_depth(depth)
 			, m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
