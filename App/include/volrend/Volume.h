@@ -21,7 +21,7 @@ namespace vr
   };
 
   //template<class T>
-	class Volume : public ScalarField
+  class Volume : public ScalarField
   {
   public:
     Volume();
@@ -49,16 +49,6 @@ namespace vr
     float TrilinearScalarFunction(lqc::Vector3f pos, lqc::Vector3f rayeye, lqc::Vector3f raydirection);
 
     bool IsOutOfBoundary(int x, int y, int z);
-
-    std::string GetName()
-    {
-      return m_name;
-    }
-
-    void SetName(std::string name)
-    {
-      m_name = name;
-    }
 
     bool Validate()
     {

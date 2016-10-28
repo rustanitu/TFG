@@ -1,11 +1,11 @@
 #include "RiemannSummation.hpp"
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include "defines.h"
 #include "VolumeEvaluator.h"
 
-RiemannSummation::RiemannSummation (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
+RiemannSummation::RiemannSummation(VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume_evaluator = veva;
   volume = vol;
@@ -26,7 +26,7 @@ RiemannSummation::~RiemannSummation () {}
 void RiemannSummation::Composite (lqc::Vector4d* color, lqc::Vector3d pos, double stepdistance)
 {
   lqc::Vector3f p = lqc::Vector3f (pos.x, pos.y, pos.z);
-  float value = volume_evaluator->GetValueFromVolume (volume, p);
+  float value = volume_evaluator->GetValueFromVolume(volume, p);
   lqc::Vector4d src;
   lqc::Vector4d tfsrc = volume_evaluator->TransferFunction (value);
   src = lqc::Vector4d (tfsrc.x, tfsrc.y, tfsrc.z, tfsrc.w);
@@ -62,7 +62,7 @@ RiemannManualSummation::RiemannManualSummation (VolumeEvaluator* veva)
 
 RiemannManualSummation::~RiemannManualSummation () {}
 
-void RiemannManualSummation::Init (vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step)
+void RiemannManualSummation::Init(vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step)
 {
   volume = vol;
   transfer_function = tf;
@@ -107,7 +107,7 @@ lqc::Vector4d RiemannManualSummation::GetFromTransferFunction (double p_d)
   lqc::Vector4d ret;
   lqc::Vector3d p = minpos + p_d * norm_step;
   if (!transfer_function || !volume) ret = lqc::Vector4d (0.0);
-  else ret = transfer_function->Get (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p.x, p.y, p.z)));
+  else ret = transfer_function->Get(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
 
@@ -124,7 +124,7 @@ RiemannExpManualSummation::RiemannExpManualSummation (VolumeEvaluator* veva)
 
 RiemannExpManualSummation::~RiemannExpManualSummation () {}
 
-void RiemannExpManualSummation::Init (vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step)
+void RiemannExpManualSummation::Init(vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step)
 {
   volume = vol;
   transfer_function = tf;
@@ -171,7 +171,7 @@ lqc::Vector4d RiemannExpManualSummation::GetFromTransferFunction (double p_d)
   lqc::Vector4d ret;
   lqc::Vector3d p = minpos + p_d * norm_step;
   if (!transfer_function || !volume) ret = lqc::Vector4d (0.0);
-  else ret = transfer_function->Get (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p.x, p.y, p.z)));
+  else ret = transfer_function->Get(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
 
@@ -183,7 +183,7 @@ void RiemannExpManualSummation::Composite ()
 
 void RiemannExpManualSummation::SumAndComposite (lqc::Vector4d* color, lqc::Vector3d pos, double stepdistance)
 {
-  lqc::Vector4d src = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (pos.x, pos.y, pos.z)));
+  lqc::Vector4d src = volume_evaluator->TransferFunction(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(pos.x, pos.y, pos.z)));
 
   double opacity = exp (-(src.w*stepdistance));
 

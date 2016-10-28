@@ -144,7 +144,7 @@ void Viewer::GenerateATFG()
   if (tf->Generate())
   {
     m_transfer_function = tf;
-    m_volume->SeparateBoundaries(tf);
+    //m_volume->SeparateBoundaries(tf);
   }
 }
 
@@ -153,7 +153,7 @@ void Viewer::GenerateATFG()
 /// </summary>
 /// <param name="vol">The vol.</param>
 /// <param name="file">The file.</param>
-void Viewer::SetVolumeModel(vr::Volume* vol, std::string file)
+void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 {
   if (vol)
   {
@@ -196,9 +196,10 @@ void Viewer::SetVolumeModel(vr::Volume* vol, std::string file)
     {
       printf("\nEste volume nao pode ser processado, devido a suas dimensoes!\n\n");
     }
-    catch (const std::exception&)
+    catch (const std::exception& ex)
     {
       printf("\nOcorreu um erro inesperado!\n\n");
+      printf("Exception Message:\n%s\n", ex.what());
     }
 #elif defined(FAST_TFG)
     m_fast_tfg = new FastTFGenerator(m_volume);
@@ -441,7 +442,7 @@ void Viewer::LoadViewerState ()
     std::getline(state_file, m_transfer_function_file);
     std::getline(state_file, view_method_number);
 
-    vr::Volume* v = vr::ReadFromVolMod(m_volume_file);
+    vr::ScalarField* v = vr::ReadFromVolMod(m_volume_file);
     Viewer::Instance()->SetVolumeModel(v, m_volume_file);
 
     vr::TransferFunction* tf = vr::ReadTransferFunction(m_transfer_function_file);
@@ -463,8 +464,8 @@ bool Viewer::FileDlg_VolumeModel ()
 
   IupSetAttribute(dlg, "DIRECTORY", "../../Modelos/VolumeModels");
   IupSetAttribute (dlg, "DIALOGTYPE", "OPEN");
-  IupSetAttribute (dlg, "TITLE", "Load Volume Model");
-  IupSetAttributes(dlg, "FILTER = \"*.vol;*.ele;*.node;*.raw;*.med;*.gmdl\", FILTERINFO = \"Volume Files [.vol, .ele, .node, .raw, .med]\"");
+  IupSetAttribute (dlg, "TITLE", "Load ScalarField Model");
+  IupSetAttributes(dlg, "FILTER = \"*.vol;*.ele;*.node;*.raw;*.med;*.gmdl\", FILTERINFO = \"ScalarField Files [.vol, .ele, .node, .raw, .med]\"");
 
   IupPopup (dlg, IUP_CURRENT, IUP_CURRENT);
 
@@ -474,7 +475,7 @@ bool Viewer::FileDlg_VolumeModel ()
 
     delete Viewer::Instance()->m_volume;
     Viewer::Instance()->m_volume = NULL;
-    vr::Volume* v = vr::ReadFromVolMod (file);
+    vr::ScalarField* v = vr::ReadFromVolMod(file);
     if (v)
     {
       Viewer::Instance ()->SetVolumeModel (v, file);

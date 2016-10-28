@@ -4,7 +4,7 @@
 
 namespace vr
 {
-  gl::GLTexture3D* GenerateRTexture (Volume* vol,
+  gl::GLTexture3D* GenerateRTexture (ScalarField* vol,
                                      int init_x,
                                      int init_y,
                                      int init_z,
@@ -32,7 +32,7 @@ namespace vr
           x = i + init_x;
           y = j + init_y;
           z = k + init_z;
-					scalar_values[id] = vol->GetValueReference(x, y, z) / 255.0f;
+					scalar_values[id] = vol->GetValue(x, y, z) / 255.0f;
         }
 
     gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
@@ -45,7 +45,7 @@ namespace vr
     return tex3d_r;
   }
 
-  gl::GLTexture3D* GenerateRGBATexture (Volume* vol, TransferFunction* TF1D)
+  gl::GLTexture3D* GenerateRGBATexture (ScalarField* vol, TransferFunction* TF1D)
   {
     if (!TF1D && !vol && !vol->Validate()) return NULL;
 
@@ -72,7 +72,7 @@ namespace vr
     return tex3d_rgba;
   }
 
-  gl::GLTexture3D* GenerateGradientTexture (Volume* vol,
+  gl::GLTexture3D* GenerateGradientTexture (ScalarField* vol,
                                             int gradient_sample_size,
                                             int filter_nxnxn,
                                             bool normalized_gradient,

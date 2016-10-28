@@ -21,7 +21,7 @@ Evaluator::Evaluator ()
   color = lqc::Vector4d (0);
 }
 
-Evaluator::Evaluator (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
+Evaluator::Evaluator(VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
 : m_volumeevaluator (veva), volume (vol), transferFunction (tf)
 {
   color = lqc::Vector4d (0);
@@ -82,7 +82,7 @@ lqc::Vector4d Evaluator::GetFromTransferFunction (lqc::Vector3d p)
 {
   lqc::Vector4d ret;
   if (!transferFunction || !volume) ret = lqc::Vector4d (0.0);
-  else ret = transferFunction->Get (m_volumeevaluator->GetValueFromVolume (volume, lqc::Vector3f (p.x, p.y, p.z)));
+  else ret = transferFunction->Get(m_volumeevaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
 
@@ -99,7 +99,7 @@ lqc::Vector4d Evaluator::GetFromTransferFunction (lqc::Vector3d p)
 // public methods  //
 /////////////////////
 
-ASEvaluator::ASEvaluator (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
+ASEvaluator::ASEvaluator(VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
 : Evaluator(veva, vol, tf),
 rec_current_opacity_eval (0.0),
 pre_computed_opacity (0.0),

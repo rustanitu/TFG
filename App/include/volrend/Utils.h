@@ -3,11 +3,11 @@
 
 #include <glutils/GLTexture3D.h>|
 #include <volrend/transferfunction.h>
-#include <volrend/volume.h>
+#include <volrend/ScalarField.h>
 
 namespace vr
 {
-  gl::GLTexture3D* GenerateRTexture (Volume* vol,
+  gl::GLTexture3D* GenerateRTexture (ScalarField* vol,
                                      int init_x = 0,
                                      int init_y = 0,
                                      int init_z = 0,
@@ -15,9 +15,9 @@ namespace vr
                                      int last_y = 0,
                                      int last_z = 0);
 
-  gl::GLTexture3D* GenerateRGBATexture (Volume* vol, TransferFunction* TF1D);
+  gl::GLTexture3D* GenerateRGBATexture (ScalarField* vol, TransferFunction* TF1D);
 
-  gl::GLTexture3D* GenerateGradientTexture (Volume* vol, 
+  gl::GLTexture3D* GenerateGradientTexture (ScalarField* vol, 
                                             int gradient_sample_size = 1,
                                             int filter_nxnxn = 0,
                                             bool normalized_gradient = true,

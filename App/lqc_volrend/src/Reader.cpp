@@ -14,9 +14,9 @@
 
 namespace vr
 {
-	Volume* ReadFromVolMod(std::string filepath)
+  ScalarField* ReadFromVolMod(std::string filepath)
 	{
-		Volume* ret = NULL;
+    ScalarField* ret = NULL;
 
 		int found = filepath.find_last_of('.');
 		std::string extension = filepath.substr(found + 1);
@@ -37,7 +37,7 @@ namespace vr
 			Tank* tank = new Tank();
 			if ( tank->Read(filepath.c_str()) )
 			{
-				ret = new vr::Volume(tank->GetWidth(), tank->GetHeight(), tank->GetDepth(), tank->GetValues());
+				ret = tank;
 			}
 		}
 		else
@@ -47,9 +47,9 @@ namespace vr
 		return ret;
 	}
 
-	Volume* ReadVolFile(std::string filename)
+  Volume* ReadVolFile(std::string filename)
 	{
-		Volume* ret = NULL;
+    Volume* ret = NULL;
 
 		printf("Started  -> Read Volume From .vol File\n");
 		printf("  - File .vol Path: %s\n", filename.c_str());
@@ -173,10 +173,10 @@ namespace vr
 		return scalar_values;
 	}
 
-	Volume* ReadEleFile(std::string filepath)
+  Volume* ReadEleFile(std::string filepath)
 	{
 		int w = 4740, h = 3540, d = 5;
-		Volume* ret = NULL;
+    Volume* ret = NULL;
 
 		printf("Started  -> Read Volume From .ele File\n");
 		printf("  - File .ele Path: %s\n", filepath.c_str());
@@ -201,7 +201,7 @@ namespace vr
 				scalar_values[i] = (float) value;
 			}
 
-			ret = new Volume(w, h, d, scalar_values);
+      ret = new Volume(w, h, d, scalar_values);
 			ret->SetName(filepath);
 
 			file_ele.close();
@@ -214,9 +214,9 @@ namespace vr
 		return ret;
 	}
 
-	Volume* ReadNodeFile(std::string filepath)
+  Volume* ReadNodeFile(std::string filepath)
 	{
-		Volume* ret = NULL;
+    Volume* ret = NULL;
 
 		printf("Started  -> Read Volume From .node File\n");
 		printf("  - File .node Path: %s\n", filepath.c_str());
@@ -297,7 +297,7 @@ namespace vr
 			bytesize = atoi(t_filebytesize.c_str());
 
 			float* scalar_values = ReadVolvisRaw(filepath, (size_t) bytesize, fw, fh, fd);
-			ret = new Volume(fw, fh, fd, scalar_values);
+      ret = new Volume(fw, fh, fd, scalar_values);
 			ret->SetName(filepath);
 
 			printf("  - Volume Name     : %s\n", filepath.c_str());
@@ -357,7 +357,7 @@ namespace vr
 				scalar_values[idx] = isovalue;
 			}
 
-			ret = new Volume(frows, fcolumns, 1, scalar_values);
+      ret = new Volume(frows, fcolumns, 1, scalar_values);
 
 			file.close();
 			printf("Finished -> Read Volume From .med File\n");

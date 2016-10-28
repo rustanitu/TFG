@@ -63,11 +63,11 @@ lqc::Vector4d SimpsonIntegrator::GetFromTransferFunction (double p_d)
   lqc::Vector4d ret;
   lqc::Vector3d p = minpos + p_d * normalized_step;
   if (!volume) ret = lqc::Vector4d (0.0);
-  else ret = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p.x, p.y, p.z)));
+  else ret = volume_evaluator->TransferFunction(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
 
-void SimpsonIntegrator::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume = vol;
   transfer_function = tf;

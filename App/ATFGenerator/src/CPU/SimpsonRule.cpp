@@ -1,11 +1,11 @@
 #include "SimpsonRule.hpp"
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include "defines.h"
 #include "VolumeEvaluator.h"
 
-SimpsonRuleSummation::SimpsonRuleSummation (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
+SimpsonRuleSummation::SimpsonRuleSummation(VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume_evaluator = veva;
   volume = vol;
@@ -20,11 +20,11 @@ SimpsonRuleSummation::~SimpsonRuleSummation () {}
 
 void SimpsonRuleSummation::Composite (lqc::Vector4d* color, double stepdistance, lqc::Vector3d p1, lqc::Vector3d p2, lqc::Vector3d p3)
 {
-  lqc::Vector4d tf_a = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p1.x, p1.y, p1.z)));
+  lqc::Vector4d tf_a = volume_evaluator->TransferFunction(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p1.x, p1.y, p1.z)));
   lqc::Vector4d tf_c = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p2.x, p2.y, p2.z)));
   lqc::Vector4d tf_b = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p3.x, p3.y, p3.z)));
   lqc::Vector4d tf_d = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f ((p1.x + p2.x) * 0.5, (p1.y + p2.y) * 0.5, (p1.z + p2.z) * 0.5)));
-  lqc::Vector4d tf_e = volume_evaluator->TransferFunction (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f ((p3.x + p2.x) * 0.5, (p3.y + p2.y) * 0.5, (p3.z + p2.z) * 0.5)));
+  lqc::Vector4d tf_e = volume_evaluator->TransferFunction(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f((p3.x + p2.x) * 0.5, (p3.y + p2.y) * 0.5, (p3.z + p2.z) * 0.5)));
   double d = stepdistance;
 
   double a_channel = tf_a.w * exp_opacity;

@@ -42,7 +42,7 @@ void RendererAdaptive::Destroy ()
   m_glfbo = NULL;
 }
 
-void RendererAdaptive::CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices)
+void RendererAdaptive::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
 {
   canvas_width = CurrentWidth;
   canvas_height = CurrentHeight;
@@ -165,7 +165,7 @@ void RendererAdaptive::MouseMotionCb (int x, int y, char *status)
   }
 }
 
-void RendererAdaptive::ReloadVolume (vr::Volume* volume)
+void RendererAdaptive::ReloadVolume (vr::ScalarField* volume)
 {
   if (m_glsl_volume) delete m_glsl_volume;
   m_glsl_volume = NULL;
@@ -218,7 +218,7 @@ void RendererAdaptive::ResetModelMatrix ()
   model = glm::mat4 ();
 }
 
-void RendererAdaptive::AutoResizeGeometry (vr::Volume* volume, int Width, int Height, bool stop_bef_shad_operations)
+void RendererAdaptive::AutoResizeGeometry (vr::ScalarField* volume, int Width, int Height, bool stop_bef_shad_operations)
 {
   if (m_glsl_volume)
   {

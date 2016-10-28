@@ -34,7 +34,7 @@ RendererCPU::~RendererCPU()
 
 bool RendererCPU::Render(int Width, int Height)
 {
-  Viewer::Instance()->m_volume->SetAnchors(m_aabbmin, m_aabbmax);
+  ((vr::Volume*)Viewer::Instance()->m_volume)->SetAnchors(m_aabbmin, m_aabbmax);
   rays_traced = 0;
   //m_voleval.m_statistics.Reset ();
   if (m_pthread_on) {

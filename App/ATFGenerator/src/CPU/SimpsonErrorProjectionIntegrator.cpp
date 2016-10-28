@@ -51,7 +51,7 @@ void SimpsonErrorProjectionIntegrator::Reset ()
   m_clc_proj_external_error = lqc::Vector4d (0);
 }
 
-void SimpsonErrorProjectionIntegrator::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonErrorProjectionIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume = vol;
   transfer_function = tf;

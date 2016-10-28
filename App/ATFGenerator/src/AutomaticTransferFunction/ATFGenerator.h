@@ -23,7 +23,7 @@ class TransferFunction;
 /// <summary>
 /// This classes implements an Automatic Transfer Function
 /// Generator, based on Kindlmann's paper "Semi-automatic
-/// Generation of Transfer Functions for Direct Volume
+/// Generation of Transfer Functions for Direct ScalarField
 /// Rendering" (http://doi.acm.org/10.1145/288126.288167).
 /// Given a scalarfield with greatest intensity value equals to
 /// 255, this class provides functions to generate a good
@@ -39,7 +39,7 @@ public:
   /// </summary>
   /// <param name="scalarfield">The scalarfield whose transfer 
   /// function one wants to extract.</param>
-	ATFGenerator (vr::Volume* scalarfield);
+	ATFGenerator (vr::ScalarField* scalarfield);
 
   /// <summary>
   /// Finalizes an instance of the 
@@ -97,7 +97,7 @@ public:
   /// <summary>
   /// Generates a PGM image file with a scalarfield slice.
   /// The image is generated in the working directory and 
-  /// it's named "Volume Slice v", where 'v' is the 
+  /// it's named "ScalarField Slice v", where 'v' is the 
   /// value input.
   /// </summary>
   /// <param name="v">The value whose slice it's desired.</param>

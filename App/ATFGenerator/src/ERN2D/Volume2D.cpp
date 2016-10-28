@@ -10,7 +10,7 @@ ERNVolume2D::~ERNVolume2D ()
 {
 }
 
-gl::GLTexture2D* ERNVolume2D::GenerateRGBATexture2D (vr::Volume* volume, vr::TransferFunction* tfunction)
+gl::GLTexture2D* ERNVolume2D::GenerateRGBATexture2D (vr::ScalarField* volume, vr::TransferFunction* tfunction)
 {
   int size_x = volume->GetWidth ();
   int size_y = volume->GetHeight ();

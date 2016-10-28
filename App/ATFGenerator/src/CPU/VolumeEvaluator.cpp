@@ -33,13 +33,13 @@ VolumeEvaluator::VolumeEvaluator ()
 VolumeEvaluator::~VolumeEvaluator ()
 {}
 
-void VolumeEvaluator::SetModelAndTransferFunction (vr::Volume* ivolume, vr::TransferFunction* itransfer_function)
+void VolumeEvaluator::SetModelAndTransferFunction(vr::Volume* ivolume, vr::TransferFunction* itransfer_function)
 {
   m_volume = ivolume;
   m_transfer_function = itransfer_function;
 }
 
-bool VolumeEvaluator::EvaluateIntegral (lqc::Vector4d *returncolor, vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data)
+bool VolumeEvaluator::EvaluateIntegral(lqc::Vector4d *returncolor, vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data)
 {
   (*returncolor) = lqc::Vector4d (-1.f);
   if (!volume) return false;
@@ -387,7 +387,7 @@ lqc::Vector4d VolumeEvaluator::C_RiemannWithExpCalc (vr::Volume *volume, lqc::Ve
   return color;
 }
 
-lqc::Vector4d VolumeEvaluator::C_SimpsonRule (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+lqc::Vector4d VolumeEvaluator::C_SimpsonRule(vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
   lqc::Vector4d color (0);
   lqc::Vector3d step = lqc::Vector3d::Normalize (lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z) - lqc::Vector3d (minpos.x, minpos.y, minpos.z));

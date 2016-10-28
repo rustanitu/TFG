@@ -9,7 +9,7 @@
 #include <glutils/GLShader.h>
 #include <glutils/GLUtils.h>
 #include <math/MUtils.h>
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <lqc/lqcdefines.h>
 

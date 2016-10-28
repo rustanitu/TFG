@@ -5,13 +5,13 @@
 #ifndef IATFGenerator_H
 #define IATFGenerator_H
 
-#include <volrend\Volume.h>
+#include <volrend\ScalarField.h>
 #include <volrend\TransferFunction.h>
 
 /// <summary>
 /// This interface encapsulates the Transfer Function
 /// Generator baic concept, which is to construct a
-/// transfer funciton given a volume as input.
+/// transfer funciton given a scalarfield as input.
 /// </summary>
 class IATFGenerator
 {
@@ -19,16 +19,16 @@ public:
   /// <summary>
   /// Initializes a new instance of the <see cref="IATFGenerator"/> class.
   /// </summary>
-  /// <param name="volume">The volume whose tranfer function will be constructed.</param>
-  IATFGenerator(vr::Volume* volume)
+  /// <param name="scalarfield">The scalarfield whose tranfer function will be constructed.</param>
+  IATFGenerator(vr::ScalarField* scalarfield)
   {
-    if (!volume)
+    if (!scalarfield)
       throw std::exception_ptr();
 
-    m_volume = volume;
-    m_width = volume->GetWidth();
-    m_height = volume->GetHeight();
-    m_depth = volume->GetDepth();
+    m_scalarfield = scalarfield;
+    m_width = scalarfield->GetWidth();
+    m_height = scalarfield->GetHeight();
+    m_depth = scalarfield->GetDepth();
   }
 
   /// <summary>
@@ -40,24 +40,24 @@ public:
 
 protected:
   /// <summary>
-  /// The width of the volume.
+  /// The width of the scalarfield.
   /// </summary>
   unsigned int m_width;
 
   /// <summary>
-  /// The height of the volume.
+  /// The height of the scalarfield.
   /// </summary>
   unsigned int m_height;
 
   /// <summary>
-  /// The depth of the volume.
+  /// The depth of the scalarfield.
   /// </summary>
   unsigned int m_depth;
 
   /// <summary>
-  /// A reference to the volume.
+  /// A reference to the scalarfield.
   /// </summary>
-	vr::Volume* m_volume;
+	vr::ScalarField* m_scalarfield;
 };
 
 #endif

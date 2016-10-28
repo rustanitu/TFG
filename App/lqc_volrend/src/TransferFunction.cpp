@@ -1,6 +1,6 @@
 #include <volrend/TransferFunction.h>
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 
 #include <lqc/lqcdefines.h>
 
@@ -11,12 +11,12 @@
 namespace vr
 {
 
-  //void TransferFunction::SetVolume(vr::Volume* vol)
+  //void TransferFunction::SetVolume(vr::ScalarField* vol)
   //{
   //  m_vol = vol;
   //}
 
-  //vr::Volume* TransferFunction::GetVolume() const
+  //vr::ScalarField* TransferFunction::GetVolume() const
   //{
   //  return m_vol;
   //}

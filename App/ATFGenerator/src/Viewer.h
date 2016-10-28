@@ -22,7 +22,7 @@
 #include <iup_plot.h>
 #include <iupgl.h>
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 
 #include <im.h>
@@ -64,7 +64,7 @@ public:
   void ReloadTransferFunction ();
   void SetTransferFunction (vr::TransferFunction* tf, std::string file);
   
-  void SetVolumeModel (vr::Volume* vol, std::string file);
+  void SetVolumeModel(vr::ScalarField* vol, std::string file);
 
   /*! Build all viewers added to Viewer.
   */
@@ -77,7 +77,7 @@ public:
 
   void GenerateVolHistogram ();
 
-  /*! Current Volume Model being visualized.
+  /*! Current ScalarField Model being visualized.
   */
   std::string m_volumename;
 
@@ -86,7 +86,7 @@ public:
   std::string m_tf_name;
 
   /*! The current volume loaded to be viewed.*/
-  vr::Volume* m_volume;
+  vr::ScalarField* m_volume;
   /*! The current transfer function loeaded.*/
   vr::TransferFunction* m_transfer_function;
   std::string m_transfer_function_file;

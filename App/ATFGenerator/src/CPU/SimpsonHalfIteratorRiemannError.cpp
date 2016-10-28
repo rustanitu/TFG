@@ -50,7 +50,7 @@ void SimpsonHalfIteratorRiemannError::PrintStepsEvaluation ()
 #endif
 }
 
-void SimpsonHalfIteratorRiemannError::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfIteratorRiemannError::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   SimpsonIntegrator::Init (minp, maxp, vol, tf);
   rms.Init (vol, tf, minpos, normalized_step);

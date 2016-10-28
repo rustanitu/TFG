@@ -17,7 +17,7 @@ SimpsonHalfIntegrator::SimpsonHalfIntegrator (VolumeEvaluator* veva)
 SimpsonHalfIntegrator::~SimpsonHalfIntegrator ()
 {}
 
-void SimpsonHalfIntegrator::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume = vol;
   transfer_function = tf;
@@ -447,7 +447,7 @@ lqc::Vector4d SimpsonHalfIntegrator::GetFromTransferFunction (double p_d)
   lqc::Vector4d ret;
   lqc::Vector3d p = minpos + p_d * normalized_step;
   if (!transfer_function || !volume) ret = lqc::Vector4d (0.0);
-  else ret = transfer_function->Get (volume_evaluator->GetValueFromVolume (volume, lqc::Vector3f (p.x, p.y, p.z)));
+  else ret = transfer_function->Get(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
 

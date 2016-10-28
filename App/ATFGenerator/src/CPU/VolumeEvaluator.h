@@ -14,6 +14,7 @@
 #include <math/MGeometry.h>
 #include <math/Vector3.h>
 #include <math/Vector4.h>
+#include <volrend/Volume.h>
 #include "SimpsonEvaluation.h"
 #include "Evaluator.h"
 
@@ -168,7 +169,7 @@ public:
 private:
   lqc::Vector4d C_Riemann (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
   lqc::Vector4d C_RiemannWithExpCalc (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d C_SimpsonRule (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  lqc::Vector4d C_SimpsonRule(vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
   
   lqc::Vector4d I_Recursive_Adaptive_Simpson (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
   lqc::Vector4d I_Recursive_Adaptive_Simpson_Particioned (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);

@@ -37,7 +37,7 @@ int ViewMethodCPU::Idle_Action_CB (Ihandle* cnv_renderer)
 				m_volumename = Viewer::Instance ()->m_volumename;
 				m_trasnferfunctionname = Viewer::Instance ()->m_tf_name;
 			}
-			m_viewer.SetModelVolumeAndTransferFunction (Viewer::Instance ()->m_volume, Viewer::Instance ()->m_transfer_function);
+			m_viewer.SetModelVolumeAndTransferFunction ((vr::Volume*)Viewer::Instance ()->m_volume, Viewer::Instance ()->m_transfer_function);
 			if (m_canvaswidth != Viewer::Instance ()->GetCanvasWidth () || m_canvasheight != Viewer::Instance ()->GetCanvasHeight ())
 				Resize (Viewer::Instance ()->GetCanvasWidth (), Viewer::Instance ()->GetCanvasHeight ());
 			m_outdated = false;
@@ -359,7 +359,7 @@ void ViewMethodCPU::BuildViewer ()
 {
 	if (!m_built)
 	{
-		m_viewer.ResetAABB (Viewer::Instance ()->m_volume);
+		m_viewer.ResetAABB ((vr::Volume*)Viewer::Instance()->m_volume);
 
 		Resize (Viewer::Instance ()->m_CurrentWidth, Viewer::Instance ()->m_CurrentHeight);
 
@@ -523,7 +523,7 @@ void ViewMethodCPU::RecalculateAABBSizes ()
 		z = d / 2.0f;
 	}
 
-	m_viewer.SetAABB (Viewer::Instance ()->m_volume, -x, -y, -z, x, y, z);
+  m_viewer.SetAABB((vr::Volume*)Viewer::Instance()->m_volume, -x, -y, -z, x, y, z);
 }
 
 lqc::Vector4f pixelerror;

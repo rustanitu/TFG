@@ -2,7 +2,7 @@
 
 #include "../gbuffer.h"
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <glutils/GLUtils.h>
 #include <math/MUtils.h>
@@ -49,7 +49,7 @@ RendererIAS::~RendererIAS ()
   Destroy ();
 }
 
-void RendererIAS::CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices)
+void RendererIAS::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
 {
   m_sdr_width = CurrentWidth;
   m_sdr_height = CurrentHeight;
@@ -475,7 +475,7 @@ void RendererIAS::CreateSecondPass ()
   gl::GLArrayObject::Unbind ();
 }
 
-void RendererIAS::ReloadVolume (vr::Volume* volume, bool resetslicesizes)
+void RendererIAS::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes)
 {
   if (m_glsl_volume) delete m_glsl_volume;
   m_glsl_volume = NULL; 
@@ -537,7 +537,7 @@ void RendererIAS::ReloadTransferFunction (vr::TransferFunction* tfunction)
   }
 }
 
-void RendererIAS::ResetUseGradient (int use_gradient, vr::Volume* volume)
+void RendererIAS::ResetUseGradient (int use_gradient, vr::ScalarField* volume)
 {
   //if (m_glsl_gradient == NULL)
   //{
@@ -650,7 +650,7 @@ void RendererIAS::SetLastZSlice (int value)
   m_last_slice_z = value;
 }
 
-void RendererIAS::AutoModeling (vr::Volume* volume)
+void RendererIAS::AutoModeling (vr::ScalarField* volume)
 {
   if (m_glsl_volume)
   {

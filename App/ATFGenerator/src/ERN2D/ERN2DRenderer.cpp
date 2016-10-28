@@ -2,7 +2,7 @@
 
 #include "../gbuffer.h"
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <glutils/GLUtils.h>
 #include <math/MUtils.h>
@@ -37,7 +37,7 @@ ERN2DRenderer::~ERN2DRenderer ()
   Destroy ();
 }
 
-void ERN2DRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices)
+void ERN2DRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
 {
   canvas_width = CurrentWidth;
   canvas_height = CurrentHeight;
@@ -265,7 +265,7 @@ void ERN2DRenderer::DestroyQuad ()
   m_qvao = NULL;
 }
 
-void ERN2DRenderer::ReloadVolume (vr::Volume* volume, vr::TransferFunction* tfunction, bool resetslicesizes)
+void ERN2DRenderer::ReloadVolume (vr::ScalarField* volume, vr::TransferFunction* tfunction, bool resetslicesizes)
 {
   if (m_glsl_preintegrated_texture) delete m_glsl_preintegrated_texture;
   m_glsl_preintegrated_texture = NULL;
@@ -380,7 +380,7 @@ void ERN2DRenderer::SetLastZSlice (int value)
   m_last_slice_z = value;
 }
 
-void ERN2DRenderer::AutoModeling (vr::Volume* volume)
+void ERN2DRenderer::AutoModeling (vr::ScalarField* volume)
 {
   if (m_glsl_preintegrated_texture)
   {

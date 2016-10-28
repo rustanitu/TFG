@@ -9,7 +9,7 @@
 
 namespace vr
 {
-  class Volume;
+  class ScalarField;
 
   enum TFInterpolationType
   {
@@ -81,13 +81,13 @@ namespace vr
     std::string GetName () { return m_name; }
     void SetName (std::string name) { m_name = name; }
 
-    void SetVolume(vr::Volume* vol);
-    vr::Volume* GetVolume() const;
+    void SetVolume(vr::ScalarField* vol);
+    vr::ScalarField* GetVolume() const;
     
   protected:
     std::string m_name;
   private:
-    //vr::Volume* m_vol;
+    //vr::ScalarField* m_vol;
   };
 
   /*class TransferFunction1D : public TransferFunction

@@ -22,9 +22,14 @@ public:
 	float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 	float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
 
-  float* GetValues()
+  void SetCurrentTimeStep(const UINT32& step)
   {
-    return m_values;
+    m_current_timestep = step;
+  }
+
+  bool Validate()
+  {
+    return m_cells != NULL;
   }
 
 private:
@@ -33,7 +38,7 @@ private:
   int m_nvertices;
   float* m_vertices;
   Cell* m_cells;
-  float* m_values;
+  UINT32 m_current_timestep;
   std::vector<std::string> m_steps;
 };
 

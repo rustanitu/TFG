@@ -3,24 +3,25 @@
 
 #include <volrend/TransferFunction.h>
 #include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 
 #include <iostream>
 
 namespace vr
 {
-  Volume* ReadFromVolMod (std::string filepath);
+  ScalarField* ReadFromVolMod(std::string filepath);
 
-  Volume* ReadVolFile (std::string filepath);
+  Volume* ReadVolFile(std::string filepath);
 
   float* ReadErnTXT (std::string volfilename, int w, int h, int d);
   float* ReadSyntheticModelTXT (std::string volfilename, int w, int h, int d);
   float* ReadVolvisRaw (std::string volfilename, size_t size, int w, int h, int d);
 
-  Volume* ReadEleFile (std::string filepath);
+  Volume* ReadEleFile(std::string filepath);
 
-  Volume* ReadNodeFile (std::string filepath);
+  Volume* ReadNodeFile(std::string filepath);
 
-  Volume* ReadRawFile (std::string filepath);
+  Volume* ReadRawFile(std::string filepath);
 
   Volume* ReadMedFile(std::string filepath);
 

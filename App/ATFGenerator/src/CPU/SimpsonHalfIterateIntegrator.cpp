@@ -83,7 +83,7 @@ void SimpsonHalfIterateIntegrator::PrintStepsEvaluation ()
 #endif
 }
 
-void SimpsonHalfIterateIntegrator::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfIterateIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   SimpsonIntegrator::Init (minp, maxp, vol, tf);
 

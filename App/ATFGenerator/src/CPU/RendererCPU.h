@@ -9,6 +9,7 @@
 
 #include <pthread.h>
 
+#include <volrend/ScalarField.h>
 #include <volrend/Volume.h>
 #include <volrend/TransferFunction.h>
 #include <raytracer/Camera/RTCamera.h>
@@ -44,10 +45,10 @@ public:
   /*! Destroy all the objects of Renderer.*/
   void Destroy ();
 
-  void ResetAABB (vr::Volume* volume);
-  void SetAABB (vr::Volume* volume, float x0, float y0, float z0, float x1, float y1, float z1);
+  void ResetAABB(vr::Volume* volume);
+  void SetAABB(vr::Volume* volume, float x0, float y0, float z0, float x1, float y1, float z1);
 
-  /*! Volume Evaluator instance used in CPU rendering.*/
+  /*! ScalarField Evaluator instance used in CPU rendering.*/
   VolumeEvaluator m_voleval;
  
   /*! Camera used in CPU rendering.*/
@@ -68,7 +69,7 @@ public:
   /*! Trace a ray.*/
   lqc::Vector4f Trace (rt::RTRay ray, int  depth, int i, int j);
 
-  void SetModelVolumeAndTransferFunction (vr::Volume* ivolume, vr::TransferFunction* itransfer_function);
+  void SetModelVolumeAndTransferFunction(vr::Volume* ivolume, vr::TransferFunction* itransfer_function);
 
   bool IsRenderErrorTest ();
   void PrintErrorTestResults ()

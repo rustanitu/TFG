@@ -9,7 +9,7 @@
 
 #include <volrend/Utils.h>
 #include "../gbuffer.h"
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <glutils/GLUtils.h>
 #include <math/MUtils.h>
@@ -37,7 +37,7 @@ public:
   void Destroy ();
 
   /*! Initialize the Renderer objects.*/
-  void CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices = true);
+  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices = true);
  
   /*! Render a frame of the scene.*/
   bool Render (int Width, int Height);
@@ -45,10 +45,10 @@ public:
   void MouseButtonCb (int b, int p, int x, int y, char* st);
   void MouseMotionCb (int x, int y, char *status);
 
-  void ReloadVolume (vr::Volume* volume);
+  void ReloadVolume (vr::ScalarField* volume);
   void ReloadTransferFunction (vr::TransferFunction* tfunction);
   void ResetModelMatrix ();
-  void AutoResizeGeometry (vr::Volume* volume, int Width, int Height, bool stop_bef_shad_operations = false);
+  void AutoResizeGeometry (vr::ScalarField* volume, int Width, int Height, bool stop_bef_shad_operations = false);
 
   void SetStepDistance (float stp);
   

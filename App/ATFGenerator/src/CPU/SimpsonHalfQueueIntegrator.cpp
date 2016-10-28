@@ -46,7 +46,7 @@ void SimpsonHalfQueueIntegrator::PrintStepsEvaluation ()
 #endif
 }
 
-void SimpsonHalfQueueIntegrator::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfQueueIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   SimpsonIntegrator::Init (minp, maxp, vol, tf);
 }

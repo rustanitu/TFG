@@ -2,7 +2,7 @@
 
 #include "../gbuffer.h"
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <volrend/Utils.h>
 
@@ -47,7 +47,7 @@ ERNRenderer::~ERNRenderer ()
   Destroy ();
 }
 
-void ERNRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices)
+void ERNRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
 {
   m_sdr_width = CurrentWidth;
   m_sdr_height = CurrentHeight;
@@ -420,7 +420,7 @@ void ERNRenderer::CreateSecondPass ()
   gl::GLArrayObject::Unbind ();
 }
 
-void ERNRenderer::ReloadVolume (vr::Volume* volume, bool resetslicesizes)
+void ERNRenderer::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes)
 {
   if (m_glsl_volume) delete m_glsl_volume;
   m_glsl_volume = NULL;
@@ -471,7 +471,7 @@ void ERNRenderer::ReloadTransferFunction (vr::TransferFunction* tfunction)
   }
 }
 
-void ERNRenderer::ResetUseGradient (int use_gradient, vr::Volume* volume)
+void ERNRenderer::ResetUseGradient (int use_gradient, vr::ScalarField* volume)
 {
   //if (m_glsl_gradient == NULL)
   //{
@@ -592,7 +592,7 @@ void ERNRenderer::SetLastZSlice (int value)
   m_last_slice_z = value;
 }
 
-void ERNRenderer::AutoModeling (vr::Volume* volume)
+void ERNRenderer::AutoModeling (vr::ScalarField* volume)
 {
   if (m_glsl_volume)
   {

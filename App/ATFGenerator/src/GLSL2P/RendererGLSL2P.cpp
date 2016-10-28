@@ -2,7 +2,7 @@
 
 #include "../gbuffer.h"
 
-#include <volrend/Volume.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <glutils/GLUtils.h>
 #include <math/MUtils.h>
@@ -48,7 +48,7 @@ RendererGLSL2P::~RendererGLSL2P ()
   Destroy ();
 }
 
-void RendererGLSL2P::CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices)
+void RendererGLSL2P::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
 {
   m_sdr_width = CurrentWidth;
   m_sdr_height = CurrentHeight;
@@ -437,7 +437,7 @@ void RendererGLSL2P::CreateSecondPass ()
   gl::GLArrayObject::Unbind ();
 }
 
-void RendererGLSL2P::ReloadVolume (vr::Volume* volume, bool resetslicesizes)
+void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes)
 {
   if (m_glsl_volume) delete m_glsl_volume;
   m_glsl_volume = NULL; 
@@ -495,7 +495,7 @@ void RendererGLSL2P::ReloadTransferFunction (vr::TransferFunction* tfunction)
     m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
     m_shader_secondpass->BindUniform("TransferFunc");
 
-    //vr::Volume* vol = tfunction->GetVolume();
+    //vr::ScalarField* vol = tfunction->GetVolume();
     //if (vol) {
     //  delete m_glsl_settex;
     //  m_glsl_settex = NULL;
@@ -636,7 +636,7 @@ void RendererGLSL2P::SetLastZSlice (int value)
   m_last_slice_z = value;
 }
 
-void RendererGLSL2P::AutoModeling (vr::Volume* volume)
+void RendererGLSL2P::AutoModeling (vr::ScalarField* volume)
 {
   if (m_glsl_volume)
   {

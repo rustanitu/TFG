@@ -663,7 +663,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
   m_iup_main_dialog = IupDialog (m_iup_hbox_dialog);
   IupSetAttribute (m_iup_main_dialog, "MENU", "ViewerInterfaceIupMenu");
-  IupSetAttribute (m_iup_main_dialog, "TITLE", "Volume Visualization");
+  IupSetAttribute (m_iup_main_dialog, "TITLE", "ScalarField Visualization");
   
   m_iup_tf_plot_dialog = IupPlot();
   IupSetAttribute(m_iup_tf_plot_dialog, "SYNCVIEW", "YES");

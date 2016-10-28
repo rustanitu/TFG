@@ -10,7 +10,8 @@
 #include <GL/glew.h>
 #include <ctime>
 
-#include <volrend/Volume.h>
+#include <glutils/GLTexture3D.h>
+#include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 
 #include <math/Matrix4.h>
@@ -37,7 +38,7 @@ public:
   ~RendererGLSL2P ();
 
   /*! Initialize the Renderer objects.*/
-  void CreateScene (int CurrentWidth, int CurrentHeight, vr::Volume* volume, gl::GLTexture1D* tf, bool resetslices = true);
+  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices = true);
  
   /*! Render a frame of the scene.*/
   bool Render (int Width, int Height);
@@ -51,9 +52,9 @@ public:
   void ResetGeometry ();
 
   /*! Generate the textures from volume.
-  \param volume Volume pointer used to generate the 3D textures.
+  \param volume ScalarField pointer used to generate the 3D textures.
   */
-  void ReloadVolume (vr::Volume* volume, bool resetslicesizes = true);
+  void ReloadVolume (vr::ScalarField* volume, bool resetslicesizes = true);
   /*! Generate the texture from transfer function.
   \param tfunction Transfer Function pointer used to generate the 1D texture.
   */
@@ -84,7 +85,7 @@ public:
   void SetInitZSlice (int value);
   void SetLastZSlice (int value);
 
-  void AutoModeling (vr::Volume* volume);
+  void AutoModeling (vr::ScalarField* volume);
   void ApplyModeling (float xw, float yh, float zd);
 
   void SetCubeWidth (float w);

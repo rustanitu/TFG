@@ -49,7 +49,7 @@ SimpsonErrorHalfIntegrator::SimpsonErrorHalfIntegrator (VolumeEvaluator* veva)
 SimpsonErrorHalfIntegrator::~SimpsonErrorHalfIntegrator ()
 {}
 
-void SimpsonErrorHalfIntegrator::Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonErrorHalfIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume = vol;
   transfer_function = tf;
