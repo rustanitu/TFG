@@ -30,11 +30,11 @@ public:
 
   int GetIthVertexIndex(const int& i);
   int GetAdjcentCellIndex(const int& face);
-  int GetValue(const int& step);
+  float GetValue(const int& step);
 
   bool SetIthVertexIndex(const int& ith_vertex, const int& index);
   bool SetAdjcentCellIndex(const int& face, const int& index);
-  bool SetValue(const int& step, const int& value);
+  bool SetValue(const int& step, const float& value);
 
 private:
   int m_i;
@@ -44,7 +44,7 @@ private:
   int m_vertex_index[8];
   int m_adjcell_index[6];
   int m_nsteps;
-  int* m_values;
+  float* m_values;
 };
 
 #endif

@@ -19,7 +19,7 @@ void Cell::Init(const int& i, const int& j, const int& k, const bool& active, co
   m_k = k;
   m_active = active;
   m_nsteps = nsteps;
-  m_values = new int[nsteps];
+  m_values = new float[nsteps];
 }
 
 int Cell::GetIthVertexIndex(const int& i)
@@ -36,7 +36,7 @@ int Cell::GetAdjcentCellIndex(const int& face)
   return m_adjcell_index[face];
 }
 
-int Cell::GetValue(const int& step)
+float Cell::GetValue(const int& step)
 {
   if (step < 0 || step > m_nsteps - 1)
     return -1;
@@ -61,7 +61,7 @@ bool Cell::SetAdjcentCellIndex(const int& face, const int& index)
   return true;
 }
 
-bool Cell::SetValue(const int& step, const int& value)
+bool Cell::SetValue(const int& step, const float& value)
 {
   if (step < 0 || step > m_nsteps - 1)
     return false;

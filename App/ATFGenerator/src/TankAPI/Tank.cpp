@@ -119,6 +119,11 @@ bool Tank::Read(const char* filepath)
         return false;
       
       cell->SetValue(t, value);
+			if ( active )
+			{
+				m_max_value = fmax(m_max_value, value);
+				m_min_value = fmin(m_min_value, value);
+			}
     }
   }
 

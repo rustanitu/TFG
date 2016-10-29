@@ -709,7 +709,7 @@ bool ATFGenerator::GenerateHistogram()
 					continue;
 #endif
 
-				unsigned char v = m_scalarfield->GetValue(vol_id);
+				unsigned char v = ((m_scalarfield->GetValue(vol_id) - m_scalarfield->GetMinValue()) / (m_scalarfield->GetMaxValue() - m_scalarfield->GetMinValue())) * ATFG_V_MAX;
 				unsigned char g = (m_scalar_gradient[vol_id] / max_global_gradient) * ATFG_V_MAX;
 				unsigned char l = ((m_scalar_laplacian[vol_id] - min_global_laplacian) / (max_global_laplacian - min_global_laplacian)) * ATFG_V_MAX;
 
