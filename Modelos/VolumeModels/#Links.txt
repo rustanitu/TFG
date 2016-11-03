@@ -1,6 +1,0 @@
-http://www9.informatik.uni-erlangen.de/External/vollib/
-http://www.volvis.org/
-
-- V3 library
-https://code.google.com/p/vvv/source/checkout
-

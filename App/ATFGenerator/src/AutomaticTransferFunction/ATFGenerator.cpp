@@ -196,7 +196,7 @@ void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
 		throw std::domain_error("The value must range from 0 to depth scalarfield!\n");
 
 	char* filename = new char[50];
-	sprintf(filename, "ScalarField\\ScalarField Slice %d", k);
+	sprintf(filename, "Volume\\Volume Slice %d", k);
 
 	PGMFile pgmfile(filename, m_width, m_height);
 

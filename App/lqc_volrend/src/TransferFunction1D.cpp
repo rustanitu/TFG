@@ -354,7 +354,7 @@ namespace vr
       unsigned char value = m_value[i];
       float x = m_distance[value];
 
-      IupPlotAdd(m_bx_plot, value, fmax(fmin(x, 20), -20));
+			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
       double a = CenteredTriangleFunction(amax, base, value);
 
       AddAlphaControlPoint(TransferControlPoint(a, value));
@@ -376,19 +376,19 @@ namespace vr
     IupSetAttribute(m_bx_plot, "DS_NAME", "0");
     IupSetAttribute(m_bx_plot, "DS_COLOR", "0 0 0");
 
-    IupPlotBegin(m_bx_plot, 0);
-    IupPlotAdd(m_bx_plot, 0, m_thickness);
-    IupPlotAdd(m_bx_plot, 255, m_thickness);
-    IupPlotEnd(m_bx_plot);
-    IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
-    IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
+    //IupPlotBegin(m_bx_plot, 0);
+    //IupPlotAdd(m_bx_plot, 0, m_thickness);
+    //IupPlotAdd(m_bx_plot, 255, m_thickness);
+    //IupPlotEnd(m_bx_plot);
+    //IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
+    //IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
 
-    IupPlotBegin(m_bx_plot, 0);
-    IupPlotAdd(m_bx_plot, 0, -m_thickness);
-    IupPlotAdd(m_bx_plot, 255, -m_thickness);
-    IupPlotEnd(m_bx_plot);
-    IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
-    IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
+    //IupPlotBegin(m_bx_plot, 0);
+    //IupPlotAdd(m_bx_plot, 0, -m_thickness);
+    //IupPlotAdd(m_bx_plot, 255, -m_thickness);
+    //IupPlotEnd(m_bx_plot);
+    //IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
+    //IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
 
     IupSetAttribute(m_bx_plot, "REDRAW", "YES");
 

@@ -67,51 +67,27 @@ bool RAWFile::Open()
     return false;
   }
 
-#if 0
-  int c = m_width / 2;
-  int d = m_width / 4;
-  for (int z = 0; z < m_depth; z++) {
-    for (int y = 0; y < m_height; y++) {
-      for (int x = 0; x < m_width; x++) {
-        unsigned char v = 50;
-        int difx = abs(x - c);
-        int dify = abs(y - c);
-        int difz = abs(z - c);
-        if (difx <= d && dify <= d && difz <= d)
-        {
-          v = 150;
-        }
-        WriteByte(v);
-      }
-    }
-  }
-#endif
+	int vmin = 115;
+	int vmax = 2*vmin;
+	float erf[17] = {0.9953f, 0.9866f, 0.9661f, 0.9229f, 0.8427f, 0.7111f, 0.5205f, 0.2763f, 0.0f, -0.2763f, -0.5205f, -0.7111f, -0.8427f, -0.9229f, -0.9661f, -0.9866f, -0.9953f};
+	//float erf[9] = {0.9953f, 0.9661f, 0.8427f, 0.5205f, 0.0f, -0.5205f, -0.8427f, -0.9661f, -0.9953f};
+	//float erf[5] = {0.9953f, 0.8427f, 0.0f, -0.8427f, -0.9953f};
 
-#if 1
   int c = m_width / 2;
-  float d = m_width / 4;
-  d *= d;
-  float t = d / 6;
-  float h = m_width / 4;
+	int q = m_width / 4;
   for (int z = 0; z < m_depth; z++) {
     for (int y = 0; y < m_height; y++) {
       for (int x = 0; x < m_width; x++) {
-        unsigned char v = 50;
-        float dist = (x - c) * (x - c) + (z - c) * (z - c);
-        float disty = (y - c) * (y - c);
-        if (dist <= d && abs(y - c) <= h) {
-          if (d - dist <= t)
-            v += 100 * (d - dist) / t;
-          else if (d - disty <= t)
-            v += 100 * (d - disty) / t;
-          else
-            v = 150;
-        }
+				int p = sqrt((c - x) * (c - x) + (c - y) * (c - y) + (c - z) * (c - z)) - q;
+				if ( p < 0 )
+					p = 0;
+				else if ( p > 16 )
+					p = 16;
+				int v = vmin + (vmax - vmin) * erf[p];
         WriteByte(v);
       }
     }
   }
-#endif
   return true;
 }
 
