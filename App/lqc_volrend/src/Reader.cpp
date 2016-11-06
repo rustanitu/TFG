@@ -1,6 +1,7 @@
 #include <volrend/Reader.h>
 
 #include <cstdio>
+#include <stdio.h>
 #include <fstream>
 #include <string>
 
@@ -14,9 +15,9 @@
 
 namespace vr
 {
-  ScalarField* ReadFromVolMod(std::string filepath)
+	ScalarField* ReadFromVolMod(std::string filepath)
 	{
-    ScalarField* ret = NULL;
+		ScalarField* ret = NULL;
 
 		int found = filepath.find_last_of('.');
 		std::string extension = filepath.substr(found + 1);
@@ -34,6 +35,7 @@ namespace vr
 			ret = ReadMedFile(filepath);
 		else if ( extension.compare("gmdl") == 0 )
 		{
+			printf(" File: %s\n", filepath.c_str());
 			Tank* tank = new Tank();
 			if ( tank->Read(filepath.c_str()) )
 			{
@@ -47,9 +49,9 @@ namespace vr
 		return ret;
 	}
 
-  Volume* ReadVolFile(std::string filename)
+	Volume* ReadVolFile(std::string filename)
 	{
-    Volume* ret = NULL;
+		Volume* ret = NULL;
 
 		printf("Started  -> Read Volume From .vol File\n");
 		printf("  - File .vol Path: %s\n", filename.c_str());
@@ -111,13 +113,13 @@ namespace vr
 		for ( int i = 0; i < w*h*d; i++ )
 			scalar_values[i] = 0.0f;
 
-		std::ifstream filereading(volfilename.c_str());
-		if ( filereading.is_open() )
+		std::ifstream file(volfilename.c_str());
+		if ( file.is_open() )
 		{
 			double x, y, z = 0, value;
-			while ( filereading >> x >> y >> z >> value )
+			while ( file >> x >> y >> z >> value )
 				scalar_values[(int) x + ((int) y * w) + ((int) z * w * h)] = (float) value;
-			filereading.close();
+			file.close();
 		}
 		return scalar_values;
 	}
@@ -125,21 +127,29 @@ namespace vr
 	float* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d)
 	{
 		float* scalar_values = NULL;
-		scalar_values = new float[w*h*d];
-
-		for ( int i = 0; i < w*h*d; i++ )
-			scalar_values[i] = 0.0f;
-
-		std::ifstream filereading(volfilename.c_str());
-		if ( filereading.is_open() )
+		FILE* file = NULL;
+		int stderror = fopen_s(&file, volfilename.c_str(), "rb");
+		if ( stderror == 0 )
 		{
-			double x, y, z, value;
-			while ( filereading >> x >> y >> z >> value )
-				scalar_values[(int) x + ((int) y * w) + ((int) z * w * h)] = (float) value;
-			filereading.close();
+			int size = w*h*d;
+			scalar_values = new float[size];
+
+			char trash[100];
+			fscanf_s(file, "%s", trash, sizeof(trash));
+			fscanf_s(file, "%s", trash, sizeof(trash));
+			fscanf_s(file, "%s", trash, sizeof(trash));
+			fscanf_s(file, "%s", trash, sizeof(trash));
+			fscanf_s(file, "%s", trash, sizeof(trash));
+			fscanf_s(file, "%s", trash, sizeof(trash));
+
+			float value;
+			for ( int i = 0; i < size; ++i )
+			{
+				fscanf_s(file, "%f", &value);
+				scalar_values[i] = value;
+			}
 		}
 		return scalar_values;
-
 	}
 
 	float* ReadVolvisRaw(std::string volfilename, size_t bytes_per_value, int w, int h, int d)
@@ -173,10 +183,10 @@ namespace vr
 		return scalar_values;
 	}
 
-  Volume* ReadEleFile(std::string filepath)
+	Volume* ReadEleFile(std::string filepath)
 	{
 		int w = 4740, h = 3540, d = 5;
-    Volume* ret = NULL;
+		Volume* ret = NULL;
 
 		printf("Started  -> Read Volume From .ele File\n");
 		printf("  - File .ele Path: %s\n", filepath.c_str());
@@ -201,7 +211,7 @@ namespace vr
 				scalar_values[i] = (float) value;
 			}
 
-      ret = new Volume(w, h, d, scalar_values);
+			ret = new Volume(w, h, d, scalar_values);
 			ret->SetName(filepath);
 
 			file_ele.close();
@@ -214,9 +224,9 @@ namespace vr
 		return ret;
 	}
 
-  Volume* ReadNodeFile(std::string filepath)
+	Volume* ReadNodeFile(std::string filepath)
 	{
-    Volume* ret = NULL;
+		Volume* ret = NULL;
 
 		printf("Started  -> Read Volume From .node File\n");
 		printf("  - File .node Path: %s\n", filepath.c_str());
@@ -297,7 +307,7 @@ namespace vr
 			bytesize = atoi(t_filebytesize.c_str());
 
 			float* scalar_values = ReadVolvisRaw(filepath, (size_t) bytesize, fw, fh, fd);
-      ret = new Volume(fw, fh, fd, scalar_values);
+			ret = new Volume(fw, fh, fd, scalar_values);
 			ret->SetName(filepath);
 
 			printf("  - Volume Name     : %s\n", filepath.c_str());
@@ -357,7 +367,7 @@ namespace vr
 				scalar_values[idx] = isovalue;
 			}
 
-      ret = new Volume(frows, fcolumns, 1, scalar_values);
+			ret = new Volume(frows, fcolumns, 1, scalar_values);
 
 			file.close();
 			printf("Finished -> Read Volume From .med File\n");

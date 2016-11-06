@@ -6,6 +6,7 @@
 #include <volrend/ScalarField.h>
 
 #include <iostream>
+#include <fstream>
 
 namespace vr
 {
@@ -13,8 +14,8 @@ namespace vr
 
   Volume* ReadVolFile(std::string filepath);
 
-  float* ReadErnTXT (std::string volfilename, int w, int h, int d);
-  float* ReadSyntheticModelTXT (std::string volfilename, int w, int h, int d);
+	float* ReadErnTXT(std::string volfilename, int w, int h, int d);
+	float* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d);
   float* ReadVolvisRaw (std::string volfilename, size_t size, int w, int h, int d);
 
   Volume* ReadEleFile(std::string filepath);

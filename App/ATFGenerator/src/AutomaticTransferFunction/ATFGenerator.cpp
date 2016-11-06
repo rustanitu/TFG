@@ -17,7 +17,6 @@
 #include "Histogram.h"
 
 
-#define ATFG_FULL_RANGE
 #define ATFG_GAMA_CORRECTION 0.33f
 #define MASK_SIZE 3
 
@@ -35,9 +34,9 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_gtresh(0.0f)
 , m_derivativeMask(MASK_SIZE)
 , m_min_hist(0)
-, m_main_plot(NULL)
+, m_deriv_plot(NULL)
 , m_tf_plot(NULL)
-, m_bx_plot(NULL)
+, m_dist_plot(NULL)
 , m_max_average_gradient(-FLT_MAX)
 , m_min_average_gradient(FLT_MAX)
 , m_max_average_laplacian(-FLT_MAX)
@@ -106,7 +105,7 @@ bool ATFGenerator::ExtractTransferFunction()
 	//m_transfer_function->SetVolume(m_scalarfield);
 	m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
 	m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
-	m_transfer_function->SetBoundaryFunctionPlot(m_bx_plot);
+	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
 	SetDefaultColor();
 
 	float* x = new float[ATFG_V_RANGE];
@@ -133,10 +132,7 @@ bool ATFGenerator::ExtractTransferFunction()
 /// <returns>Returns the float aproximated gradient.</returns>
 float ATFGenerator::GetValue(int x, int y, int z)
 {
-	const UINT32 xt = std::max(0, std::min(x, (int) m_width - 1));
-	const UINT32 yt = std::max(0, std::min(y, (int) m_height - 1));
-	const UINT32 zt = std::max(0, std::min(z, (int) m_depth - 1));
-	return m_scalarfield->GetValue(xt, yt, zt);
+	return m_scalarfield->GetValue(x, y, z);
 }
 
 /// <summary>
@@ -154,11 +150,7 @@ float ATFGenerator::GetGradient(const UINT32& x, const UINT32& y, const UINT32& 
 
 	assert(m_scalar_gradient);
 
-	UINT32 vx = lqc::Clamp(x, 0, m_width - 1);
-	UINT32 vy = lqc::Clamp(y, 0, m_height - 1);
-	UINT32 vz = lqc::Clamp(z, 0, m_depth - 1);
-
-	return m_scalar_gradient[m_scalarfield->GetId(vx, vy, vz)];
+	return m_scalar_gradient[m_scalarfield->GetId(x, y, z)];
 }
 
 /// <summary>
@@ -176,11 +168,7 @@ float ATFGenerator::GetLaplacian(const UINT32& x, const UINT32& y, const UINT32&
 
 	assert(m_scalar_laplacian);
 
-	UINT32 vx = lqc::Clamp(x, 0, m_width - 1);
-	UINT32 vy = lqc::Clamp(y, 0, m_height - 1);
-	UINT32 vz = lqc::Clamp(z, 0, m_depth - 1);
-
-	return m_scalar_laplacian[m_scalarfield->GetId(vx, vy, vz)];
+	return m_scalar_laplacian[m_scalarfield->GetId(x, y, z)];
 }
 
 /// <summary>
@@ -493,32 +481,36 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 	if ( !m_initialized )
 		throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
-	IupSetAttribute(m_main_plot, "CLEAR", "YES");
+	IupSetAttribute(m_deriv_plot, "CLEAR", "YES");
 
-	IupPlotBegin(m_main_plot, 0);
+	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
 		if ( m_average_gradient[i] != -FLT_MAX )
-			IupPlotAdd(m_main_plot, i, m_average_gradient[i]);
-	IupPlotEnd(m_main_plot);
-	IupSetAttribute(m_main_plot, "DS_NAME", "g(v)");
-	IupSetAttribute(m_main_plot, "DS_COLOR", "0 0 128");
+			IupPlotAdd(m_deriv_plot, i, m_average_gradient[i]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARKLINE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "PLUS");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "g(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 128");
 
-	IupPlotBegin(m_main_plot, 0);
+	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
 		if ( m_average_laplacian[i] != -FLT_MAX )
-			IupPlotAdd(m_main_plot, i, m_average_laplacian[i]);
-	IupPlotEnd(m_main_plot);
-	IupSetAttribute(m_main_plot, "DS_NAME", "h(v)");
-	IupSetAttribute(m_main_plot, "DS_COLOR", "0 128 0");
+			IupPlotAdd(m_deriv_plot, i, m_average_laplacian[i]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARKLINE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "PLUS");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "h(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 0");
 
-	IupPlotBegin(m_main_plot, 0);
-	IupPlotAdd(m_main_plot, 0, 0);
-	IupPlotAdd(m_main_plot, 255, 0);
-	IupPlotEnd(m_main_plot);
-	IupSetAttribute(m_main_plot, "DS_NAME", "0");
-	IupSetAttribute(m_main_plot, "DS_COLOR", "0 0 0");
+	IupPlotBegin(m_deriv_plot, 0);
+	IupPlotAdd(m_deriv_plot, 0, 0);
+	IupPlotAdd(m_deriv_plot, 255, 0);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "0");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 0");
 
-	IupSetAttribute(m_main_plot, "REDRAW", "YES");
+	IupSetAttribute(m_deriv_plot, "REDRAW", "YES");
 }
 
 /// <summary>
@@ -536,39 +528,87 @@ float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, 
 		throw std::exception_ptr();
 
 	float g = 0.0f;
-	float gx = 0.0f;
-	float gy = 0.0f;
-	float gz = 0.0f;
+	float dfx = 0.0f;
+	float dfy = 0.0f;
+	float dfz = 0.0f;
 
-	UINT32 h = MASK_SIZE / 2;
-	UINT32 xinit = x - h;
-	UINT32 yinit = y - h;
-	UINT32 zinit = z - h;
-	for ( UINT32 i = xinit; i <= x + h; ++i )
+	int h = MASK_SIZE / 2;
+	int xinit = x - h;
+	int yinit = y - h;
+	int zinit = z - h;
+	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
 	{
-		for ( UINT32 j = yinit; j <= y + h; ++j )
+		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
 		{
-			for ( UINT32 k = zinit; k <= z + h; ++k )
+			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				UINT32 v = GetValue(i, j, k);
-				float pglx;
-				float pgly;
-				float pglz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
-				gx += pglx * v;
-				gy += pgly * v;
-				gz += pglz * v;
+				float dx;
+				float dy;
+				float dz;
+				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+				
+				float v = GetValue(i, j, k);
+				dfx += dx * v;
+				dfy += dy * v;
+				dfz += dz * v;
 			}
 		}
 	}
 
-	g = sqrt(gx*gx + gy*gy + gz*gz);
-
-	g = fmax(0.0f, g);
-	//if ( g > m_max_global_gradient )
-	//	m_max_global_gradient = g;
+	g = sqrt(dfx*dfx + dfy*dfy + dfz*dfz);
+	m_scalarfield->m_max_gradient = fmax(m_scalarfield->m_max_gradient, g);
 
 	return g;
+}
+
+float ATFGenerator::CalculateGradientGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
+{
+	if ( !m_scalarfield )
+		throw std::exception_ptr();
+
+	float dfx = 0.0f;
+	float dfy = 0.0f;
+	float dfz = 0.0f;
+
+	float dgx = 0.0f;
+	float dgy = 0.0f;
+	float dgz = 0.0f;
+
+	int h = MASK_SIZE / 2;
+	int xinit = x - h;
+	int yinit = y - h;
+	int zinit = z - h;
+	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
+	{
+		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
+		{
+			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
+			{
+				float dx, dy, dz;
+				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+
+				float f = GetValue(i, j, k);
+				dfx += dx * f;
+				dfy += dy * f;
+				dfz += dz * f;
+
+				float g = m_scalar_gradient[m_scalarfield->GetId(i, j, k)];
+				dgx += dx * g;
+				dgy += dy * g;
+				dgz += dz * g;
+			}
+		}
+	}
+
+	float gm = m_scalar_gradient[m_scalarfield->GetId(x, y, z)];
+
+	float gg = 0.0f;
+	if ( gm > gg )
+		gg = (dgx * dfx + dgy * dfy + dgz * dfz) / gm;
+	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, gg);
+	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, gg);
+
+	return gg;
 }
 
 float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -581,34 +621,33 @@ float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y,
 	float ly = 0.0f;
 	float lz = 0.0f;
 
-	UINT32 h = MASK_SIZE / 2;
-	UINT32 xinit = x - h;
-	UINT32 yinit = y - h;
-	UINT32 zinit = z - h;
-	for ( UINT32 i = xinit; i <= x + h; ++i )
+	int h = MASK_SIZE / 2;
+	int xinit = x - h;
+	int yinit = y - h;
+	int zinit = z - h;
+	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
 	{
-		for ( UINT32 j = yinit; j <= y + h; ++j )
+		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
 		{
-			for ( UINT32 k = zinit; k <= z + h; ++k )
+			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				UINT32 v = GetValue(i, j, k);
-				float pglx;
-				float pgly;
-				float pglz;
-				m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
-				lx += pglx * v;
-				ly += pgly * v;
-				lz += pglz * v;
+				float dx;
+				float dy;
+				float dz;
+				m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+				
+				float v = GetValue(i, j, k);
+				lx += dx * v;
+				ly += dy * v;
+				lz += dz * v;
 			}
 		}
 	}
 
 	l = lx + ly + lz;
 
-	//if ( l > m_max_global_laplacian )
-	//	m_max_global_laplacian = l;
-	//if ( l < m_min_global_laplacian )
-	//	m_min_global_laplacian = l;
+	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, l);
+	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, l);
 
 	return l;
 }
@@ -652,11 +691,65 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-				m_scalar_gradient[id] = m_scalarfield->CalculateGradient(x, y, z);
-				m_scalar_laplacian[id] = m_scalarfield->CalculateLaplacian(x, y, z);
+
+				// gradiente e laplaciano direto
+				//m_scalar_gradient[id] = m_scalarfield->CalculateGradient(x, y, z);
+				//m_scalar_laplacian[id] = m_scalarfield->CalculateLaplacian(x, y, z);
+				
+				// gradiente por mascara
+				m_scalar_gradient[id]  = CalculateGradientByKernel(x, y, z);
+				//m_scalar_laplacian[id] = CalculateLaplacianByKernel(x, y, z);
 			}
 		}
 	}
+
+	for ( UINT32 x = 0; x < m_width; ++x )
+	{
+		for ( UINT32 y = 0; y < m_height; ++y )
+		{
+			for ( UINT32 z = 0; z < m_depth; ++z )
+			{
+				UINT32 id = m_scalarfield->GetId(x, y, z);
+
+				m_scalar_laplacian[id] = CalculateGradientGradientByKernel(x, y, z);
+			}
+		}
+	}
+
+	// Gradiente do gradiente
+	//for ( UINT32 x = 0; x < m_width; ++x )
+	//{
+	//	for ( UINT32 y = 0; y < m_height; ++y )
+	//	{
+	//		for ( UINT32 z = 0; z < m_depth; ++z )
+	//		{
+	//			UINT32 id = m_scalarfield->GetId(x, y, z);
+	//			UINT32 xp = std::min(x + 1, m_width - 1);
+	//			UINT32 xl = std::max(x - 1, m_width - 1);
+	//			float dgx = m_scalar_gradient[m_scalarfield->GetId(xp, y, z)] - m_scalar_gradient[m_scalarfield->GetId(xl, y, z)];
+	//			float dfx = m_scalarfield->GetValue(m_scalarfield->GetId(xp, y, z)) - m_scalarfield->GetValue(m_scalarfield->GetId(xl, y, z));
+
+	//			UINT32 yp = std::min(y + 1, m_height - 1);
+	//			UINT32 yl = std::max(y - 1, m_height - 1);
+	//			float dgy = m_scalar_gradient[m_scalarfield->GetId(x, yp, z)] - m_scalar_gradient[m_scalarfield->GetId(x, yl, z)];
+	//			float dfy = m_scalarfield->GetValue(m_scalarfield->GetId(x, yp, z)) - m_scalarfield->GetValue(m_scalarfield->GetId(x, yl, z));
+
+	//			UINT32 zp = std::min(z + 1, m_depth - 1);
+	//			UINT32 zl = std::max(z - 1, m_depth - 1);
+	//			float dgz = m_scalar_gradient[m_scalarfield->GetId(x, y, zp)] - m_scalar_gradient[m_scalarfield->GetId(x, y, zl)];
+	//			float dfz = m_scalarfield->GetValue(m_scalarfield->GetId(x, y, zp)) - m_scalarfield->GetValue(m_scalarfield->GetId(x, y, zl));
+
+	//			float l = 0.0f;
+	//			if ( m_scalar_gradient[id] > l )
+	//				l = (dgx * dfx + dgy * dfy + dgz * dfz) / m_scalar_gradient[id];
+
+	//			m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, l);
+	//			m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, l);
+
+	//			m_scalar_laplacian[id] = l;
+	//		}
+	//	}
+	//}
 
 	return true;
 }
@@ -682,16 +775,6 @@ bool ATFGenerator::GenerateHistogram()
 		}
 	}
 
-  float max_global_gradient = m_scalarfield->GetMaxGradient();
-  float max_global_laplacian = m_scalarfield->GetMaxLaplacian();
-  float min_global_laplacian = m_scalarfield->GetMinLaplacian();
-
-#ifndef ATFG_FULL_RANGE
-	max_global_gradient *= 0.9;
-	max_global_laplacian *= 0.9;
-	min_global_laplacian *= 0.8;
-#endif
-
 	// Fill Histogram 
 	for ( UINT32 x = 0; x < m_width; x++ )
 	{
@@ -701,17 +784,9 @@ bool ATFGenerator::GenerateHistogram()
 			{
 				UINT32 vol_id = m_scalarfield->GetId(x, y, z);
 
-#ifndef ATFG_FULL_RANGE
-				if ( m_scalar_gradient[vol_id] > m_max_global_gradient )
-					continue;
-
-				if ( m_scalar_laplacian[vol_id] > m_max_global_laplacian || m_scalar_laplacian[vol_id] < m_min_global_laplacian )
-					continue;
-#endif
-
-				unsigned char v = ((m_scalarfield->GetValue(vol_id) - m_scalarfield->GetMinValue()) / (m_scalarfield->GetMaxValue() - m_scalarfield->GetMinValue())) * ATFG_V_MAX;
-				unsigned char g = (m_scalar_gradient[vol_id] / max_global_gradient) * ATFG_V_MAX;
-				unsigned char l = ((m_scalar_laplacian[vol_id] - min_global_laplacian) / (max_global_laplacian - min_global_laplacian)) * ATFG_V_MAX;
+				unsigned char v = m_scalarfield->GetHistogramValue(vol_id, ATFG_V_MAX);
+				unsigned char g = m_scalarfield->GetHistogramGradient(m_scalar_gradient[vol_id], ATFG_V_MAX);
+				unsigned char l = m_scalarfield->GetHistogramLaplacian(m_scalar_laplacian[vol_id], ATFG_V_MAX);
 
 				if ( m_scalar_histogram[v][g][l] < ATFG_V_MAX )
 					m_scalar_histogram[v][g][l]++;
@@ -744,17 +819,18 @@ bool ATFGenerator::GenerateHistogram()
 				}
 			}
 		}
+
 		if ( w > 0 )
 		{
 			g /= w;
-			g = max_global_gradient * g / ATFG_V_MAX;
+			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
 			m_average_gradient[i] = g;
 			m_max_average_gradient = fmax(m_max_average_gradient, g);
 			m_min_average_gradient = fmin(m_min_average_gradient, g);
 
 			h /= w;
-			h = (max_global_laplacian - min_global_laplacian) * h / ATFG_V_MAX;
-			h += min_global_laplacian;
+			h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
+			h += m_scalarfield->GetMinLaplacian();
 			m_average_laplacian[i] = h;
 			m_max_average_laplacian = fmax(m_max_average_laplacian, h);
 			m_min_average_laplacian = fmin(m_min_average_laplacian, h);
@@ -775,15 +851,15 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n
 {
 	assert(m_scalar_histogram && x);
 
-  if (m_max_average_laplacian == 0.0f)
-  {
-    x = NULL;
-    v = NULL;
-    *n = 0;
-    return 0.0f;
-  }
+	if (m_max_average_laplacian == 0.0f)
+	{
+		x = NULL;
+		v = NULL;
+		*n = 0;
+		return 0.0f;
+	}
 
-  float sigma = 2 * SQRT_E * m_max_average_gradient / (m_max_average_laplacian - m_min_average_laplacian);
+	float sigma = 2 * SQRT_E * m_max_average_gradient / (m_max_average_laplacian - m_min_average_laplacian);
 	//float sigma = m_max_gradient / (m_max_laplacian * SQRT_E);
 
 	UINT32 c = 0;

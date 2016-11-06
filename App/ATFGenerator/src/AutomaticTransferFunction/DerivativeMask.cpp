@@ -27,7 +27,7 @@ static const int SECOND_DERIVATIVE_KERNEL[4][7] = {
 
 static const int SECOND_DERIVATIVE_KERNEL_D[4] = { 1, 1, 12, 180 };
 
-DerivativeMask::DerivativeMask(int n)
+DerivativeMask::DerivativeMask(const int& n)
 : m_n(n)
 , m_gradient_mask(NULL)
 , m_laplacian_mask(NULL)
@@ -68,22 +68,22 @@ DerivativeMask::DerivativeMask(int n)
   GenerateLaplacianMask();
 }
 
-unsigned int DerivativeMask::GetId(int x, int y, int z)
+unsigned int DerivativeMask::GetId(const int& x, const int& y, const int& z)
 {
-  if (x < 0)
-    x = -x;
-  else if (x >= m_n)
-    x = 2 * m_n - 1 - x;
+  //if (x < 0)
+  //  x = -x;
+  //else if (x >= m_n)
+  //  x = 2 * m_n - 1 - x;
 
-  if (y < 0)
-    y = -y;
-  else if (y >= m_n)
-    y = 2 * m_n - 1 - y;
+  //if (y < 0)
+  //  y = -y;
+  //else if (y >= m_n)
+  //  y = 2 * m_n - 1 - y;
 
-  if (z < 0)
-    z = -z;
-  else if (z >= m_n)
-    z = 2 * m_n - 1 - z;
+  //if (z < 0)
+  //  z = -z;
+  //else if (z >= m_n)
+  //  z = 2 * m_n - 1 - z;
 
   return x + (y * m_n) + (z * m_n * m_n);
 }
@@ -122,7 +122,7 @@ void DerivativeMask::GenerateLaplacianMask()
   }
 }
 
-void DerivativeMask::GetGradient(int x, int y, int z, float* gx, float* gy, float* gz)
+void DerivativeMask::GetGradient(const int& x, const int& y, const int& z, float* gx, float* gy, float* gz)
 {
   if (x < 0 || y < 0 || z < 0 || x >= m_n || y >= m_n || z >= m_n) {
     gx = gy = gz = NULL;
@@ -134,7 +134,7 @@ void DerivativeMask::GetGradient(int x, int y, int z, float* gx, float* gy, floa
   *gz = m_gradient_mask[GetId(z, y, x)];
 }
 
-void DerivativeMask::GetLaplacian(int x, int y, int z, float* lx, float* ly, float* lz)
+void DerivativeMask::GetLaplacian(const int& x, const int& y, const int& z, float* lx, float* ly, float* lz)
 {
   if (x < 0 || y < 0 || z < 0 || x >= m_n || y >= m_n || z >= m_n) {
     lx = ly = lz = NULL;

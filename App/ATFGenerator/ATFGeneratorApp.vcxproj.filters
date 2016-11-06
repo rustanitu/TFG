@@ -240,9 +240,6 @@
     <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
-    <ClCompile Include="src\AutomaticTransferFunction\RAWFile.cpp">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClCompile>
     <ClCompile Include="src\AutomaticTransferFunction\Histogram.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
@@ -411,9 +408,6 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h">
-      <Filter>Source Files\AutomaticTransferFunction</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AutomaticTransferFunction\RAWFile.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\Histogram.h">

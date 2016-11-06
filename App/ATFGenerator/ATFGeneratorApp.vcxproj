@@ -187,7 +187,6 @@
     <ClCompile Include="src\AutomaticTransferFunction\DerivativeMask.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FastTFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\Histogram.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\RAWFile.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp" />
     <ClCompile Include="src\CPUTimer.cpp" />
@@ -243,7 +242,6 @@
     <ClInclude Include="src\AutomaticTransferFunction\FastTFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\Histogram.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\RAWFile.h" />
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
     <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h" />

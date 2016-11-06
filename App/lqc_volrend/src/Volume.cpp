@@ -13,7 +13,7 @@
 namespace vr
 {
 
-  Volume::Volume() : ScalarField()
+	Volume::Volume() : ScalarField()
 		, m_nsets(0)
 	{
 		m_scalar_values = NULL;
@@ -23,7 +23,7 @@ namespace vr
 	}
 
 	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth)
-    : ScalarField(width, height, depth), m_nsets(0)
+		: ScalarField(width, height, depth), m_nsets(0)
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new float[size];
@@ -37,7 +37,7 @@ namespace vr
 	}
 
 	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars)
-    : ScalarField(width, height, depth), m_nsets(0)
+		: ScalarField(width, height, depth), m_nsets(0)
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new float[size];

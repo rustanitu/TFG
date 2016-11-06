@@ -4,23 +4,22 @@
 static class DerivativeMask
 {
 public:
-  DerivativeMask(int n);
+	DerivativeMask(const int& n);
 
-  void GetGradient(int x, int y, int z, float* gx, float* gy, float* gz);
-
-  void GetLaplacian(int x, int y, int z, float* lx, float* ly, float* lz);
+	void GetGradient(const int& x, const int& y, const int& z, float* gx, float* gy, float* gz);
+	void GetLaplacian(const int& x, const int& y, const int& z, float* lx, float* ly, float* lz);
 
 private:
-  unsigned int GetId(int x, int y, int z);
-  void GenerateGradientMask();
-  void GenerateLaplacianMask();
+	unsigned int GetId(const int& x, const int& y, const int& z);
+	void GenerateGradientMask();
+	void GenerateLaplacianMask();
 private:
-  int m_n;
-  float *m_gaussian_kernel;
-  float *m_gradient_kernel;
-  float *m_laplacian_kernel;
-  float *m_gradient_mask;
-  float *m_laplacian_mask;
+	int m_n;
+	float *m_gaussian_kernel;
+	float *m_gradient_kernel;
+	float *m_laplacian_kernel;
+	float *m_gradient_mask;
+	float *m_laplacian_mask;
 };
 
 #endif

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\volrend\RAWFile.h" />
     <ClInclude Include="..\include\volrend\Reader.h" />
     <ClInclude Include="..\include\volrend\ScalarField.h" />
     <ClInclude Include="..\include\volrend\TransferFunction.h" />
@@ -21,8 +22,10 @@
     <ClInclude Include="..\include\volrend\UnstructuredVolume.h" />
     <ClInclude Include="..\include\volrend\Utils.h" />
     <ClInclude Include="..\include\volrend\Volume.h" />
+    <ClInclude Include="..\include\volrend\VolWriter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\RAWFile.cpp" />
     <ClCompile Include="src\Reader.cpp" />
     <ClCompile Include="src\TransferFunction.cpp" />
     <ClCompile Include="src\TransferFunction1D.cpp" />
@@ -30,6 +33,7 @@
     <ClCompile Include="src\TransferFunctionGroups.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Volume.cpp" />
+    <ClCompile Include="src\VolWriter.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{391CCFF5-EAF5-4262-B47A-F9DB0B220605}</ProjectGuid>
