@@ -197,6 +197,7 @@ private:
 	/// <returns>Returns the float aproximated gradient.</returns>
 	float CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 	float CalculateGradientGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
+	float CalculateHessianByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
 
 	/// <summary>
 	/// Calculates an aproximation of the voxel's laplacian, 
@@ -252,6 +253,10 @@ private:
 	/// The laplacian of each scalarfield voxel.
 	/// </summary>
 	float* m_scalar_laplacian;
+
+	float* m_scalar_fx;
+	float* m_scalar_fy;
+	float* m_scalar_fz;
 
 	/// <summary>
 	/// The average gradient of each intensity value.

@@ -170,7 +170,6 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 		m_atfg = NULL;
 		delete m_fast_tfg;
 		m_fast_tfg = NULL;
-
 		m_transfer_function = NULL;
 
 		try

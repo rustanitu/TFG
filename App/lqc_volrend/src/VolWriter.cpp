@@ -5,6 +5,7 @@
 #include <volrend\VolWriter.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 
 /// <summary>
 /// Initializes a new instance of the <see cref="VolWriter"/> class.
@@ -62,37 +63,30 @@ bool VolWriter::Open()
 	fprintf_s(m_file, "0\n");
 	fprintf_s(m_file, "%d %d %d\n", m_width, m_height, m_depth);
 
-	int vmin = 0;
-	int vmax = 255;
-	int vmin2 = vmax;
-	int vmax2 = vmin2 + vmax - vmin;
-	int size = 17;
-	int halfsize = size / 2;
-	float erf[17] = {-0.9953f, -0.9866f, -0.9661f, -0.9229f, -0.8427f, -0.7111f, -0.5205f, -0.2763f, 0.0f, 0.2763f, 0.5205f, 0.7111f, 0.8427f, 0.9229f, 0.9661f, 0.9866f, 0.9953f};
-
-	int c = m_width / 2;
-	int maxdist = sqrt(3 * c * c);
-	int c1 = (maxdist / 2) - halfsize;
-	int c2 = (3 * maxdist / 4) - halfsize;
+	double c = m_width / 2.0f;
+	double q = m_width / 4.0f;
 	for (int z = 0; z < m_depth; z++) {
 		for (int y = 0; y < m_height; y++) {
 			for (int x = 0; x < m_width; x++) {
-				int p = abs(sqrt((c - x) * (c - x) + (c - y) * (c - y) + (c - z) * (c - z)) - maxdist);
-				float v = vmin + (vmax - vmin) * (1 + erf[0]) * 0.5f;
-				if ( p >= c1 && p - c1 < size )
-					v = vmin + (vmax - vmin) * (1 + erf[p - c1]) * 0.5f;
-#if 1 // One Sphere
-				else if (p >= c1 )
-					v = vmin + (vmax - vmin) * (1 + erf[size - 1]) * 0.5f;
-#else // Two Spheres
-				else if ( p >= c2 && p - c2 < size)
-					v = vmin2 + (vmax2 - vmin2) * (1 + erf[p - c2]) * 0.5f;
-				else if ( p >= c1 && p <= c2 )
-					v = vmin2 + (vmax2 - vmin2) * (1 + erf[0]) * 0.5f;
-				else if (p > c2 )
-					v = vmin2 + (vmax2 - vmin2) * (1 + erf[size - 1]) * 0.5f;
-#endif
-				Write(v);
+				double dist = sqrt((c - x) * (c - x) + (c - y) * (c - y) + (c - z) * (c - z));
+				if ( dist > c )
+				{
+					Write(0);
+					continue;
+				}
+
+				double p = c - dist;
+				float f = 0.0f;
+				if ( p > q )
+				{
+					p -= q;
+					f = 127.0f;
+				}
+				p = p / q;
+				p = p * 4.0f;
+				p -= 2.0f;
+				f += 127.0f * (1 + erf(p)) * 0.5f;
+				Write(f);
 			}
 		}
 	}
