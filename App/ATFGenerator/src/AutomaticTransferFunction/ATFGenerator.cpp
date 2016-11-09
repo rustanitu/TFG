@@ -563,13 +563,16 @@ float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, 
 		}
 	}
 
-	g = sqrt(dfx*dfx + dfy*dfy + dfz*dfz);
+	g = dfx*dfx + dfy*dfy + dfz*dfz;
+	float gm = sqrt(g);
+	g = g / fmax(gm, 0.000001f);
+
 	m_scalarfield->m_max_gradient = fmax(m_scalarfield->m_max_gradient, g);
 
 	int id = m_scalarfield->GetId(x, y, z);
-	m_scalar_fx[id] = dfx * 2;
-	m_scalar_fy[id] = dfy * 2;
-	m_scalar_fz[id] = dfz * 2;
+	m_scalar_fx[id] = dfx;
+	m_scalar_fy[id] = dfy;
+	m_scalar_fz[id] = dfz;
 
 	return g;
 }
@@ -657,17 +660,17 @@ float ATFGenerator::CalculateHessianByKernel(const UINT32& x, const UINT32& y, c
 				float dfy = m_scalar_fy[id];
 				float dfz = m_scalar_fz[id];
 
-				fdxdx += dfx * dx;
-				fdxdy += dfx * dy;
-				fdxdz += dfx * dz;
-
-				fdydx += dfy * dx;
-				fdydy += dfy * dy;
-				fdydz += dfy * dz;
-
-				fdzdx += dfz * dx;
-				fdzdy += dfz * dy;
-				fdzdz += dfz * dz;
+				fdxdx += dx * dfx;
+				fdxdy += dx * dfy;
+				fdxdz += dx * dfz;
+											 
+				fdydx += dy * dfx;
+				fdydy += dy * dfy;
+				fdydz += dy * dfz;
+											 
+				fdzdx += dz * dfx;
+				fdzdy += dz * dfy;
+				fdzdz += dz * dfz;
 			}
 		}
 	}
@@ -676,9 +679,13 @@ float ATFGenerator::CalculateHessianByKernel(const UINT32& x, const UINT32& y, c
 	float dfx = m_scalar_fx[id];
 	float dfy = m_scalar_fy[id];
 	float dfz = m_scalar_fz[id];
-	float hessres[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
+	float hess_x_gradient[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
 
-	return (hessres[0] * dfx + hessres[1] * dfy + hessres[2] * dfz) / fmax(m_scalar_gradient[id] * m_scalar_gradient[id], 0.000001f);
+	float sec_deriv = (hess_x_gradient[0] * dfx + hess_x_gradient[1] * dfy + hess_x_gradient[2] * dfz) / fmax(m_scalar_gradient[id] * m_scalar_gradient[id], 0.000001f);
+
+	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, sec_deriv);
+	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, sec_deriv);
+	return sec_deriv;
 }
 
 float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -748,6 +755,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 	delete[] m_scalar_fx;
 	delete[] m_scalar_fy;
 	delete[] m_scalar_fz;
+
 	m_scalar_gradient = new float[size];
 	m_scalar_laplacian = new float[size];
 	m_scalar_fx = new float[size];
@@ -767,16 +775,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-
-				// gradiente e laplaciano pontual
-				//m_scalar_gradient[id] = m_scalarfield->CalculateGradient(x, y, z);
-				//m_scalar_laplacian[id] = m_scalarfield->CalculateLaplacian(x, y, z);
-				
-				// gradiente por mascara
 				m_scalar_gradient[id]  = CalculateGradientByKernel(x, y, z);
-
-				// laplaciano por mascara
-				//m_scalar_laplacian[id] = CalculateLaplacianByKernel(x, y, z);
 			}
 		}
 	}
@@ -789,8 +788,6 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-
-				//m_scalar_laplacian[id] = CalculateGradientGradientByKernel(x, y, z);
 				m_scalar_laplacian[id] = CalculateHessianByKernel(x, y, z);
 			}
 		}
@@ -939,8 +936,8 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n
 		return 0.0f;
 	}
 
-	float sigma = 2 * SQRT_E * m_max_average_gradient / (m_max_average_laplacian - m_min_average_laplacian);
-	//float sigma = m_max_gradient / (m_max_laplacian * SQRT_E);
+	//float sigma = 2 * SQRT_E * m_max_average_gradient / (m_max_average_laplacian - m_min_average_laplacian);
+	float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
 
 	UINT32 c = 0;
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
