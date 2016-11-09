@@ -775,7 +775,10 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-				m_scalar_gradient[id]  = CalculateGradientByKernel(x, y, z);
+				if (x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1)
+					m_scalar_gradient[id] = 0.0f;
+				else
+					m_scalar_gradient[id]  = CalculateGradientByKernel(x, y, z);
 			}
 		}
 	}
@@ -788,7 +791,10 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-				m_scalar_laplacian[id] = CalculateHessianByKernel(x, y, z);
+				if (x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1)
+					m_scalar_laplacian[id] = 0.0f;
+				else
+					m_scalar_laplacian[id] = CalculateHessianByKernel(x, y, z);
 			}
 		}
 	}
@@ -853,11 +859,11 @@ bool ATFGenerator::GenerateHistogram()
 	}
 
 	// Fill Histogram 
-	for ( UINT32 x = 0; x < m_width; x++ )
+	for ( UINT32 x = 1; x < m_width-1; x++ )
 	{
-		for ( UINT32 y = 0; y < m_height; y++ )
+		for ( UINT32 y = 1; y < m_height-1; y++ )
 		{
-			for ( UINT32 z = 0; z < m_depth; z++ )
+			for ( UINT32 z = 1; z < m_depth-1; z++ )
 			{
 				UINT32 vol_id = m_scalarfield->GetId(x, y, z);
 
