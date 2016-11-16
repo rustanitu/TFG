@@ -36,6 +36,15 @@ public:
   virtual void BuildViewer ();
   virtual void CleanViewer ();
 
+  virtual void CleanTextures()
+  {
+    delete m_renderer.m_glsl_volume;
+    m_renderer.m_glsl_volume = NULL;
+
+    delete m_renderer.m_glsl_transfer_function;
+    m_renderer.m_glsl_transfer_function = NULL;
+  }
+
   virtual void SetRedisplay (bool vredisplay);
   
   /*! Set if the renderer will automatic rotate the volume by adding rotations.*/

@@ -21,13 +21,12 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
     if (m_outdated)
     {
       Viewer::Instance()->UpdateATFG();
-      if (!m_renderer.m_glsl_volume || Viewer::Instance ()->m_volumename.compare (m_volumename) != 0)
+      if (!m_renderer.m_glsl_volume || Viewer::Instance()->m_volumename.compare(m_volumename) != 0)
       {
         m_volumename = Viewer::Instance ()->m_volumename;
         m_renderer.ReloadVolume (Viewer::Instance ()->m_volume);
       }
-      if (!m_renderer.m_glsl_transfer_function || Viewer::Instance ()->m_tf_name.compare (m_trasnferfunctionname) != 0 ||
-          Viewer::Instance()->m_atfg)
+      if (!m_renderer.m_glsl_transfer_function || Viewer::Instance ()->m_tf_name.compare (m_trasnferfunctionname) != 0)
       {
         m_trasnferfunctionname = Viewer::Instance ()->m_tf_name;
         m_renderer.ReloadTransferFunction (Viewer::Instance ()->m_transfer_function);

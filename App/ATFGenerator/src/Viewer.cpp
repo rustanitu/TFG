@@ -157,12 +157,12 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 {
 	if (vol)
 	{
-		if (m_volume)
-			delete m_volume;
-
+		delete m_volume;
 		m_volume = vol;
 		m_volumename = vol->GetName();
 		m_volume_file = file;
+		
+		Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->CleanTextures();
 
 #ifdef ATFG
 
