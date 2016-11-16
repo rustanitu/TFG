@@ -55,6 +55,7 @@ namespace vr
 
 	Volume::~Volume()
 	{
+		printf("\n--Volume destruído--\n");
 		delete[] m_scalar_values;
 		delete[] m_visited;
 		delete[] m_set_qtd;

@@ -18,7 +18,6 @@
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
-#define MASK_SIZE 3
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -29,13 +28,9 @@
 ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarfield)
 , m_scalar_gradient(NULL)
 , m_scalar_laplacian(NULL)
-, m_scalar_fx(NULL)
-, m_scalar_fy(NULL)
-, m_scalar_fz(NULL)
 , m_transfer_function(NULL)
 , m_initialized(false)
 , m_gtresh(0.0f)
-, m_derivativeMask(MASK_SIZE)
 , m_min_hist(0)
 , m_deriv_plot(NULL)
 , m_tf_plot(NULL)
@@ -45,6 +40,7 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_max_average_laplacian(-FLT_MAX)
 , m_min_average_laplacian(FLT_MAX)
 {
+	printf("ATFGenerator criado.\n");
 }
 
 /// <summary>
@@ -56,9 +52,7 @@ ATFGenerator::~ATFGenerator()
 	delete m_transfer_function;
 	delete[] m_scalar_gradient;
 	delete[] m_scalar_laplacian;
-	delete[] m_scalar_fx;
-	delete[] m_scalar_fy;
-	delete[] m_scalar_fz;
+	printf("ATFGenerator destruido.\n");
 }
 
 /// <summary>It does all the math necessary so information
@@ -69,6 +63,8 @@ ATFGenerator::~ATFGenerator()
 /// initialized and false otherwise.</returns>
 bool ATFGenerator::Init()
 {
+	printf("--------------------------------------------------\n");
+	printf("Inicializando ATFGenerator\n");
 	if ( m_initialized )
 		return true;
 
@@ -79,6 +75,8 @@ bool ATFGenerator::Init()
 		return false;
 
 	m_initialized = true;
+	printf("ATFGenerator Inicializado.\n");
+	printf("--------------------------------------------------\n");
 	return true;
 }
 
@@ -472,16 +470,6 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
 	pgmfile.Close();
 }
 
-void PrintFloat(std::ofstream& stream, float val)
-{
-	UINT32 ipart = abs(val);
-	UINT32 fpart = abs((val - ipart) * 1000);
-
-	if ( val < 0 )
-		stream << "-";
-	stream << ipart << "," << fpart << ";";
-}
-
 void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT32& n)
 {
 	if ( !m_initialized )
@@ -530,205 +518,6 @@ vr::TransferFunction* ATFGenerator::GetTransferFunction()
 	return m_transfer_function;
 }
 
-float ATFGenerator::CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
-{
-	if ( !m_scalarfield )
-		throw std::exception_ptr();
-
-	float g = 0.0f;
-	float dfx = 0.0f;
-	float dfy = 0.0f;
-	float dfz = 0.0f;
-
-	int h = MASK_SIZE / 2;
-	int xinit = x - h;
-	int yinit = y - h;
-	int zinit = z - h;
-	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
-	{
-		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
-		{
-			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
-			{
-				float dx;
-				float dy;
-				float dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
-				
-				float v = GetValue(i, j, k);
-				dfx += dx * v;
-				dfy += dy * v;
-				dfz += dz * v;
-			}
-		}
-	}
-
-	g = dfx*dfx + dfy*dfy + dfz*dfz;
-	float gm = sqrt(g);
-	g = g / fmax(gm, 0.000001f);
-
-	m_scalarfield->m_max_gradient = fmax(m_scalarfield->m_max_gradient, g);
-
-	int id = m_scalarfield->GetId(x, y, z);
-	m_scalar_fx[id] = dfx;
-	m_scalar_fy[id] = dfy;
-	m_scalar_fz[id] = dfz;
-
-	return g;
-}
-
-float ATFGenerator::CalculateGradientGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
-{
-	if ( !m_scalarfield )
-		throw std::exception_ptr();
-
-	float dfx = 0.0f;
-	float dfy = 0.0f;
-	float dfz = 0.0f;
-
-	float dgx = 0.0f;
-	float dgy = 0.0f;
-	float dgz = 0.0f;
-
-	int h = MASK_SIZE / 2;
-	int xinit = x - h;
-	int yinit = y - h;
-	int zinit = z - h;
-	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
-	{
-		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
-		{
-			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
-			{
-				float dx, dy, dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
-
-				float f = GetValue(i, j, k);
-				dfx += dx * f;
-				dfy += dy * f;
-				dfz += dz * f;
-
-				float g = m_scalar_gradient[m_scalarfield->GetId(i, j, k)];
-				dgx += dx * g;
-				dgy += dy * g;
-				dgz += dz * g;
-			}
-		}
-	}
-
-	float gm = m_scalar_gradient[m_scalarfield->GetId(x, y, z)];
-
-	float gg = (dgx * dfx + dgy * dfy + dgz * dfz) / fmax(gm, 0.000001f);
-	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, gg);
-	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, gg);
-
-	return gg;
-}
-
-float ATFGenerator::CalculateHessianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
-{
-	if ( !m_scalarfield )
-		throw std::exception_ptr();
-
-	float fdxdx = 0.0f;
-	float fdxdy = 0.0f;
-	float fdxdz = 0.0f;
-
-	float fdydx = 0.0f;
-	float fdydy = 0.0f;
-	float fdydz = 0.0f;
-
-	float fdzdx = 0.0f;
-	float fdzdy = 0.0f;
-	float fdzdz = 0.0f;
-
-	int h = MASK_SIZE / 2;
-	int xinit = x - h;
-	int yinit = y - h;
-	int zinit = z - h;
-	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
-	{
-		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
-		{
-			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
-			{
-				float dx, dy, dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
-
-				int id = m_scalarfield->GetId(i, j, k);
-				float dfx = m_scalar_fx[id];
-				float dfy = m_scalar_fy[id];
-				float dfz = m_scalar_fz[id];
-
-				fdxdx += dx * dfx;
-				fdxdy += dx * dfy;
-				fdxdz += dx * dfz;
-											 
-				fdydx += dy * dfx;
-				fdydy += dy * dfy;
-				fdydz += dy * dfz;
-											 
-				fdzdx += dz * dfx;
-				fdzdy += dz * dfy;
-				fdzdz += dz * dfz;
-			}
-		}
-	}
-
-	int id = m_scalarfield->GetId(x, y, z);
-	float dfx = m_scalar_fx[id];
-	float dfy = m_scalar_fy[id];
-	float dfz = m_scalar_fz[id];
-	float hess_x_gradient[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
-
-	float sec_deriv = (hess_x_gradient[0] * dfx + hess_x_gradient[1] * dfy + hess_x_gradient[2] * dfz) / fmax(m_scalar_gradient[id] * m_scalar_gradient[id], 0.000001f);
-
-	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, sec_deriv);
-	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, sec_deriv);
-	return sec_deriv;
-}
-
-float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
-{
-	if ( !m_scalarfield )
-		throw std::exception_ptr();
-
-	float l = 0.0f;
-	float lx = 0.0f;
-	float ly = 0.0f;
-	float lz = 0.0f;
-
-	int h = MASK_SIZE / 2;
-	int xinit = x - h;
-	int yinit = y - h;
-	int zinit = z - h;
-	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
-	{
-		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
-		{
-			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
-			{
-				float dx;
-				float dy;
-				float dz;
-				m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
-				
-				float v = GetValue(i, j, k);
-				lx += dx * v;
-				ly += dy * v;
-				lz += dz * v;
-			}
-		}
-	}
-
-	l = lx + ly + lz;
-
-	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, l);
-	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, l);
-
-	return l;
-}
-
 /// <summary>
 /// Iterates over the scalarfield, calculating the gradient 
 /// and the laplacian values for each voxel.
@@ -738,6 +527,9 @@ float ATFGenerator::CalculateLaplacianByKernel(const UINT32& x, const UINT32& y,
 bool ATFGenerator::CalculateVolumeDerivatives()
 {
 	assert(!m_scalar_gradient && !m_scalar_laplacian);
+	
+	printf("--------------------------------------------------\n");
+	printf("Calculando derivadas do campo escalar.\n");
 
 	UINT32 size = m_width * m_height * m_depth;
 	if ( size < (unsigned long) m_width * m_height * m_depth )
@@ -752,15 +544,9 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 
 	delete[] m_scalar_gradient;
 	delete[] m_scalar_laplacian;
-	delete[] m_scalar_fx;
-	delete[] m_scalar_fy;
-	delete[] m_scalar_fz;
 
 	m_scalar_gradient = new float[size];
 	m_scalar_laplacian = new float[size];
-	m_scalar_fx = new float[size];
-	m_scalar_fy = new float[size];
-	m_scalar_fz = new float[size];
 
 	if ( !m_scalar_gradient || !m_scalar_laplacian )
 	{
@@ -775,15 +561,14 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-				if (x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1)
+				if ( x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1 )
 					m_scalar_gradient[id] = 0.0f;
 				else
-					m_scalar_gradient[id]  = CalculateGradientByKernel(x, y, z);
+					m_scalar_gradient[id] = m_scalarfield->CalculateGradient(x, y, z);
 			}
 		}
 	}
 
-	// gradiente do gradiente por mascara
 	for ( UINT32 x = 0; x < m_width; ++x )
 	{
 		for ( UINT32 y = 0; y < m_height; ++y )
@@ -792,47 +577,19 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
 				if (x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1)
-					m_scalar_laplacian[id] = 0.0f;
+					m_scalar_laplacian[id] = 0;
 				else
-					m_scalar_laplacian[id] = CalculateHessianByKernel(x, y, z);
+					m_scalar_laplacian[id] = m_scalarfield->CalculateLaplacian(x, y, z);
 			}
 		}
 	}
 
-	// Gradiente do gradiente pontual
-	//for ( UINT32 x = 0; x < m_width; ++x )
-	//{
-	//	for ( UINT32 y = 0; y < m_height; ++y )
-	//	{
-	//		for ( UINT32 z = 0; z < m_depth; ++z )
-	//		{
-	//			UINT32 id = m_scalarfield->GetId(x, y, z);
-	//			UINT32 xp = std::min(x + 1, m_width - 1);
-	//			UINT32 xl = std::max(x - 1, 0u);
-	//			float dgx = m_scalar_gradient[m_scalarfield->GetId(xp, y, z)] - m_scalar_gradient[m_scalarfield->GetId(xl, y, z)];
-	//			float dfx = m_scalarfield->GetValue(m_scalarfield->GetId(xp, y, z)) - m_scalarfield->GetValue(m_scalarfield->GetId(xl, y, z));
+	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
+	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());
+	printf("MaxLaplacian: %.2f\n", m_scalarfield->GetMaxLaplacian());
 
-	//			UINT32 yp = std::min(y + 1, m_height - 1);
-	//			UINT32 yl = std::max(y - 1, 0u);
-	//			float dgy = m_scalar_gradient[m_scalarfield->GetId(x, yp, z)] - m_scalar_gradient[m_scalarfield->GetId(x, yl, z)];
-	//			float dfy = m_scalarfield->GetValue(m_scalarfield->GetId(x, yp, z)) - m_scalarfield->GetValue(m_scalarfield->GetId(x, yl, z));
-
-	//			UINT32 zp = std::min(z + 1, m_depth - 1);
-	//			UINT32 zl = std::max(z - 1, 0u);
-	//			float dgz = m_scalar_gradient[m_scalarfield->GetId(x, y, zp)] - m_scalar_gradient[m_scalarfield->GetId(x, y, zl)];
-	//			float dfz = m_scalarfield->GetValue(m_scalarfield->GetId(x, y, zp)) - m_scalarfield->GetValue(m_scalarfield->GetId(x, y, zl));
-
-	//			float l = 0.0f;
-	//			if ( m_scalar_gradient[id] > l )
-	//				l = (dgx * dfx + dgy * dfy + dgz * dfz) / m_scalar_gradient[id];
-
-	//			m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, l);
-	//			m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, l);
-
-	//			m_scalar_laplacian[id] = l;
-	//		}
-	//	}
-	//}
+	printf("Derivadas calculadas.\n");
+	printf("--------------------------------------------------\n");
 
 	return true;
 }
@@ -847,6 +604,9 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 /// False, otherwise.</returns>
 bool ATFGenerator::GenerateHistogram()
 {
+	printf("--------------------------------------------------\n");
+	printf("Gerando histograma.\n");
+
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
 	{
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
@@ -876,6 +636,8 @@ bool ATFGenerator::GenerateHistogram()
 			}
 		}
 	}
+
+	printf("Extraindo derivadas medias, pelo histograma.\n");
 
 	m_max_average_gradient = -FLT_MAX;
 	m_min_average_gradient = FLT_MAX;
@@ -918,7 +680,15 @@ bool ATFGenerator::GenerateHistogram()
 			m_max_average_laplacian = fmax(m_max_average_laplacian, h);
 			m_min_average_laplacian = fmin(m_min_average_laplacian, h);
 		}
+
+		printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
 	}
+
+	printf("G(v): %.2f\t-\t%.2f\n", m_min_average_gradient, m_max_average_gradient);
+	printf("H(v): %.2f\t-\t%.2f\n", m_min_average_laplacian, m_max_average_laplacian);
+
+	printf("Histograma gerado.\n");
+	printf("--------------------------------------------------\n");
 
 	return true;
 }

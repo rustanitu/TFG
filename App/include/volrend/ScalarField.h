@@ -13,14 +13,19 @@ namespace vr
 	{
 	public:
 		ScalarField() : m_width(0), m_height(0), m_depth(0), 
-			m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX) {}
+			m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
+		{
+			printf("ScalarField criado.\n");
+		}
+
 		ScalarField(const UINT32& width, const UINT32& height, const UINT32& depth)
 			: m_width(width), m_height(height), m_depth(depth)
 			, m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
 		{
+			printf("ScalarField criado.\n");
 		}
 
-		virtual ~ScalarField() {}
+		virtual ~ScalarField() { printf("ScalarField destruido.\n"); }
 
 		int GetId(const int& x, const int& y, const int& z) const
 		{
@@ -120,7 +125,6 @@ namespace vr
 		unsigned int m_width, m_height, m_depth;
 		float m_max_value;
 		float m_min_value;
-	public:
 		float m_max_gradient;
 		float m_min_laplacian;
 		float m_max_laplacian;

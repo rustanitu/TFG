@@ -184,11 +184,12 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 				//m_atfg->GenerateGradientSlices();
 				//m_atfg->GenerateLaplacianSlices();
 				//m_atfg->GenerateHistogramSlices();
-				m_atfg->GenerateGradientSummedHistogram();
-				m_atfg->GenerateLaplacianSummedHistogram();
-				Viewer::Instance()->m_gtresh = m_atfg->GetMinGradient();
+				//m_atfg->GenerateGradientSummedHistogram();
+				//m_atfg->GenerateLaplacianSummedHistogram();
+				Viewer::Instance()->m_gtresh = m_atfg->GetMinGradient() * 100 / m_atfg->GetMaxGradient();
 				Viewer::Instance()->m_gui.UpdateGTreshLabel(Viewer::Instance()->m_gtresh);
 				ExtractATFG();
+				return;
 			}
 		}
 		catch (const std::out_of_range& e)
@@ -209,6 +210,11 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 			m_fast_tfg->ExtractTransferFunction();
 		}
 #endif
+		delete m_atfg;
+		m_atfg = NULL;
+		delete m_fast_tfg;
+		m_fast_tfg = NULL;
+		m_transfer_function = NULL;
 	}
 }
 
@@ -444,8 +450,8 @@ void Viewer::LoadViewerState ()
 		vr::ScalarField* v = vr::ReadFromVolMod(m_volume_file);
 		Viewer::Instance()->SetVolumeModel(v, m_volume_file);
 
-		vr::TransferFunction* tf = vr::ReadTransferFunction(m_transfer_function_file);
-		Viewer::Instance()->SetTransferFunction(tf, m_transfer_function_file);
+		//vr::TransferFunction* tf = vr::ReadTransferFunction(m_transfer_function_file);
+		//Viewer::Instance()->SetTransferFunction(tf, m_transfer_function_file);
 
 		m_current_view = static_cast<VRVIEWS>(atoi (view_method_number.c_str ()));
 

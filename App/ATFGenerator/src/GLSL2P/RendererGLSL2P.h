@@ -38,7 +38,7 @@ public:
   ~RendererGLSL2P ();
 
   /*! Initialize the Renderer objects.*/
-  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices = true);
+  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, bool resetslices = true);
  
   /*! Render a frame of the scene.*/
   bool Render (int Width, int Height);

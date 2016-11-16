@@ -13,16 +13,17 @@ namespace vr
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
 		m_transferfunction = NULL;
+		m_gradients = NULL;
+		printf("TransferFunction1D criado.\n");
 	}
 
 	TransferFunction1D::~TransferFunction1D ()
 	{
+		printf("TransferFunction1D destruido.\n");
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
-		if (m_transferfunction)
-			m_transferfunction;
-		if (m_gradients)
-			m_gradients;
+		delete[] m_transferfunction;
+		delete[] m_gradients;
 
 		delete[] m_value;
 		delete[] m_distance;
@@ -57,6 +58,8 @@ namespace vr
 
 	gl::GLTexture1D* TransferFunction1D::GenerateTexture_1D_RGBA ()
 	{
+		printf("TransferFunction1D: GenerateTexture_1D_RGBA.\n");
+
 		if (!m_built)
 			Build (m_interpolation_type);
 
@@ -145,7 +148,7 @@ namespace vr
 				}
 			}
 		}
-		printf ("lqc: Transfer Function 1D Built!\n");
+		printf ("TransferFunction1D: Build!\n");
 		m_built = true;
 	}
 
@@ -314,6 +317,7 @@ namespace vr
 
 			a += max;
 			m_valid[v] = true;
+			printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", v, x, a);
 		}
 
 		return a;
@@ -335,6 +339,8 @@ namespace vr
 	{
 		if (!m_value || !m_distance)
 			throw std::exception_ptr();
+
+		printf("TransferFunction1D: Generate (from ATFG).\n");
 
 		ClearAlphaControlPoints();
 		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
@@ -378,20 +384,6 @@ namespace vr
 		IupPlotEnd(m_bx_plot);
 		IupSetAttribute(m_bx_plot, "DS_NAME", "0");
 		IupSetAttribute(m_bx_plot, "DS_COLOR", "0 0 0");
-
-		//IupPlotBegin(m_bx_plot, 0);
-		//IupPlotAdd(m_bx_plot, 0, m_thickness);
-		//IupPlotAdd(m_bx_plot, 255, m_thickness);
-		//IupPlotEnd(m_bx_plot);
-		//IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
-		//IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
-
-		//IupPlotBegin(m_bx_plot, 0);
-		//IupPlotAdd(m_bx_plot, 0, -m_thickness);
-		//IupPlotAdd(m_bx_plot, 255, -m_thickness);
-		//IupPlotEnd(m_bx_plot);
-		//IupSetAttribute(m_bx_plot, "DS_NAME", "b(x)");
-		//IupSetAttribute(m_bx_plot, "DS_COLOR", "128 128 0");
 
 		IupSetAttribute(m_bx_plot, "REDRAW", "YES");
 

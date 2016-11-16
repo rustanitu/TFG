@@ -189,8 +189,7 @@ void ViewMethodGLSL2P::BuildViewer ()
   {
     m_renderer.CreateScene (Viewer::Instance ()->m_CurrentWidth,
       Viewer::Instance ()->m_CurrentHeight,
-      Viewer::Instance ()->m_volume,
-      Viewer::Instance ()->m_transfer_function->GenerateTexture_1D_RGBA ());
+      Viewer::Instance ()->m_volume);
     MarkOutdated ();
     
     printf ("ViewMethodGLSL2P Built\n");
@@ -239,7 +238,6 @@ void ViewMethodGLSL2P::ResetShaders (std::string shadername)
     Viewer::Instance ()->m_CurrentWidth,
     Viewer::Instance ()->m_CurrentHeight,
     Viewer::Instance ()->m_volume,
-    Viewer::Instance ()->m_transfer_function->GenerateTexture_1D_RGBA (),
     false);
   MarkOutdated ();
 }

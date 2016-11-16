@@ -4,22 +4,30 @@
 #include <algorithm>
 #include <fstream>
 
+#define MASK_SIZE 3
+
 Tank::Tank()
 : m_cells(NULL)
 , m_vertices(NULL)
 , m_current_timestep(0)
+, m_derivativeMask(MASK_SIZE)
+, m_scalar_fx(NULL)
+, m_scalar_fy(NULL)
+, m_scalar_fz(NULL)
 {
+	printf("Tank criado.\n");
 }
 
 Tank::~Tank()
 {
+	printf("Tank destruido.\n");
 	m_steps.clear();
 	
 	delete[] m_cells;
-	m_cells = NULL;
-	
 	delete[] m_vertices;
-	m_vertices = NULL;
+	delete[] m_scalar_fx;
+	delete[] m_scalar_fy;
+	delete[] m_scalar_fz;
 }
 
 bool Tank::Read(const char* filepath)
@@ -40,7 +48,10 @@ bool Tank::Read(const char* filepath)
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
-	if (!m_cells)
+	m_scalar_fx = new float[m_ncells];
+	m_scalar_fy = new float[m_ncells];
+	m_scalar_fz = new float[m_ncells];
+	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
 	m_vertices = new float[m_nvertices * 3];
@@ -86,6 +97,10 @@ bool Tank::Read(const char* filepath)
 		Cell* cell = &(m_cells[id]);
 		cell->Init(i, j, k, active, m_nsteps);
 
+		m_scalar_fx[id] = 0.0f;
+		m_scalar_fy[id] = 0.0f;
+		m_scalar_fz[id] = 0.0f;
+
 		// It sets the index of the ith vertex
 		for (int v = 0; v < 8; ++v)
 		{
@@ -127,6 +142,9 @@ bool Tank::Read(const char* filepath)
 
 float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 {
+	if ( IsOutOfBoundary(x, y, z) )
+		return m_min_value;
+
 	return GetValue (GetId (x, y, z));
 }
 
@@ -135,18 +153,53 @@ float Tank::GetValue(const UINT32& id)
 	return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : 0.0f;
 }
 
+float Tank::GetQuadraticGradientNorm(const UINT32& id)
+{
+	const float dfx = m_scalar_fx[id];
+	const float dfy = m_scalar_fy[id];
+	const float dfz = m_scalar_fz[id];
+	return dfx*dfx + dfy*dfy + dfz*dfz;
+}
+
 float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 	if ( !m_cells[GetId(x, y, z)].IsActive() )
 		return 0.0f;
 
-	float gx = GetValue(x + 1, y, z) - GetValue(x - 1, y, z);
-	float gy = GetValue(x, y + 1, z) - GetValue(x, y - 1, z);
-	float gz = GetValue(x, y, z + 1) - GetValue(x, y, z - 1);
+	float g = 0.0f;
+	float dfx = 0.0f;
+	float dfy = 0.0f;
+	float dfz = 0.0f;
 
-	float g = sqrt(gx*gx + gy*gy + gz*gz);
+	int h = MASK_SIZE / 2;
+	int xinit = x - h;
+	int yinit = y - h;
+	int zinit = z - h;
+	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
+	{
+		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
+		{
+			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
+			{
+				float dx;
+				float dy;
+				float dz;
+				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
-	g = fmax(0.0f, g);
+				float v = GetValue(i, j, k);
+				dfx += dx * v;
+				dfy += dy * v;
+				dfz += dz * v;
+			}
+		}
+	}
+
+	int id = GetId(x, y, z);
+	m_scalar_fx[id] = dfx;
+	m_scalar_fy[id] = dfy;
+	m_scalar_fz[id] = dfz;
+
+	g = sqrt(GetQuadraticGradientNorm(id));
 	m_max_gradient = fmax(m_max_gradient, g);
 
 	return g;
@@ -157,14 +210,154 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 	if (!m_cells[GetId(x, y, z)].IsActive())
 		return 0.0f;
 
-	float v = GetValue(x, y, z) * 2;
-	float lx = GetValue(x + 1, y, z) - v + GetValue(x - 1, y, z);
-	float ly = GetValue(x, y + 1, z) - v + GetValue(x, y - 1, z);
-	float lz = GetValue(x, y, z + 1) - v + GetValue(x, y, z - 1);
-	float l = lx + ly + lz;
+	float fdxdx = 0.0f;
+	float fdxdy = 0.0f;
+	float fdxdz = 0.0f;
 
-	m_max_laplacian = fmax(m_max_laplacian, l);
-	m_min_laplacian = fmin(m_min_laplacian, l);
+	float fdydx = 0.0f;
+	float fdydy = 0.0f;
+	float fdydz = 0.0f;
 
-	return l;
+	float fdzdx = 0.0f;
+	float fdzdy = 0.0f;
+	float fdzdz = 0.0f;
+
+	int h = MASK_SIZE / 2;
+	int xinit = x - h;
+	int yinit = y - h;
+	int zinit = z - h;
+	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
+	{
+		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
+		{
+			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
+			{
+				float dx, dy, dz;
+				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+
+				int id = GetId(x, y, z);
+				float dfx = 0.0f;//m_scalar_fx[id];
+				float dfy = 0.0f;//m_scalar_fy[id];
+				float dfz = 0.0f;//m_scalar_fz[id];
+
+				if ( !IsOutOfBoundary(x, y, z) )
+				{
+					int id = GetId(i, j, k);
+					dfx = m_scalar_fx[id];
+					dfy = m_scalar_fy[id];
+					dfz = m_scalar_fz[id];
+				}
+
+				fdxdx += dx * dfx;
+				fdxdy += dx * dfy;
+				fdxdz += dx * dfz;
+
+				fdydx += dy * dfx;
+				fdydy += dy * dfy;
+				fdydz += dy * dfz;
+
+				fdzdx += dz * dfx;
+				fdzdy += dz * dfy;
+				fdzdz += dz * dfz;
+			}
+		}
+	}
+
+	int id = GetId(x, y, z);
+	float dfx = m_scalar_fx[id];
+	float dfy = m_scalar_fy[id];
+	float dfz = m_scalar_fz[id];
+	float hess_x_gradient[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
+
+	float sec_deriv = (hess_x_gradient[0] * dfx + hess_x_gradient[1] * dfy + hess_x_gradient[2] * dfz) / GetQuadraticGradientNorm(id);
+	
+	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
+	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
+	return sec_deriv;
 }
+
+//float CalculateGradientGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
+//{
+//	float dfx = 0.0f;
+//	float dfy = 0.0f;
+//	float dfz = 0.0f;
+//
+//	float dgx = 0.0f;
+//	float dgy = 0.0f;
+//	float dgz = 0.0f;
+//
+//	int h = MASK_SIZE / 2;
+//	int xinit = x - h;
+//	int yinit = y - h;
+//	int zinit = z - h;
+//	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
+//	{
+//		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
+//		{
+//			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
+//			{
+//				float dx, dy, dz;
+//				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+//
+//				float f = GetValue(i, j, k);
+//				dfx += dx * f;
+//				dfy += dy * f;
+//				dfz += dz * f;
+//
+//				float g = m_scalar_gradient[GetId(i, j, k)];
+//				dgx += dx * g;
+//				dgy += dy * g;
+//				dgz += dz * g;
+//			}
+//		}
+//	}
+//
+//	float gm = m_scalar_gradient[GetId(x, y, z)];
+//
+//	float gg = (dgx * dfx + dgy * dfy + dgz * dfz) / fmax(gm, 0.000001f);
+//	m_min_laplacian = fmin(m_min_laplacian, gg);
+//	m_max_laplacian = fmax(m_max_laplacian, gg);
+//
+//	return gg;
+//}
+
+//float CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z)
+//{
+//	if ( !m_scalarfield )
+//		throw std::exception_ptr();
+//
+//	float l = 0.0f;
+//	float lx = 0.0f;
+//	float ly = 0.0f;
+//	float lz = 0.0f;
+//
+//	int h = MASK_SIZE / 2;
+//	int xinit = x - h;
+//	int yinit = y - h;
+//	int zinit = z - h;
+//	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
+//	{
+//		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
+//		{
+//			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
+//			{
+//				float dx;
+//				float dy;
+//				float dz;
+//				m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+//
+//				float v = GetValue(i, j, k);
+//				lx += dx * v;
+//				ly += dy * v;
+//				lz += dz * v;
+//			}
+//		}
+//	}
+//
+//	l = lx + ly + lz;
+//
+//	m_scalarfield->m_max_laplacian = fmax(m_scalarfield->m_max_laplacian, l);
+//	m_scalarfield->m_min_laplacian = fmin(m_scalarfield->m_min_laplacian, l);
+//
+//	return l;
+//}

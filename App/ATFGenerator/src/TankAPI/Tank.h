@@ -1,6 +1,8 @@
 #ifndef ATFG_TANK_H
 #define ATFG_TANK_H
 
+#include "../AutomaticTransferFunction/DerivativeMask.h"
+
 #include <basetsd.h>
 #include <volrend/ScalarField.h>
 #include <vector>
@@ -32,6 +34,9 @@ public:
 	}
 
 private:
+	float GetQuadraticGradientNorm(const UINT32& id);
+
+private:
 	int m_ncells;
 	int m_nsteps;
 	int m_nvertices;
@@ -39,6 +44,11 @@ private:
 	Cell* m_cells;
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
+	DerivativeMask m_derivativeMask;
+
+	float* m_scalar_fx;
+	float* m_scalar_fy;
+	float* m_scalar_fz;
 };
 
 #endif

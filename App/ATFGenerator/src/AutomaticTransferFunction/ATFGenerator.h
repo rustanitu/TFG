@@ -6,7 +6,6 @@
 #define ATFGenerator_H
 
 #include "IATFGenerator.h"
-#include "DerivativeMask.h"
 #include <volrend\TransferFunction1D.h>
 #include <iup.h>
 
@@ -157,7 +156,7 @@ public:
 
 	void SetGTresh(float gt)
 	{
-		m_gtresh = gt;
+		m_gtresh = gt * m_scalarfield->GetMaxGradient() * 0.01f;
 	}
 
 	void SetMinimumHistogramValue(UINT32 min)
@@ -186,29 +185,12 @@ public:
 		return m_min_average_gradient;
 	}
 
+	float GetMaxGradient()
+	{
+		return m_max_average_gradient;
+	}
+
 private:
-	/// <summary>
-	/// Calculates an aproximation of the voxel's gradient, 
-	/// using its first derivatives.
-	/// </summary>
-	/// <param name="x">The voxel's x component.</param>
-	/// <param name="y">The voxel's y component.</param>
-	/// <param name="z">The voxel's z component.</param>
-	/// <returns>Returns the float aproximated gradient.</returns>
-	float CalculateGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
-	float CalculateGradientGradientByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
-	float CalculateHessianByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
-
-	/// <summary>
-	/// Calculates an aproximation of the voxel's laplacian, 
-	/// using its second derivatives.
-	/// </summary>
-	/// <param name="x">The voxel's x component.</param>
-	/// <param name="y">The voxel's y component.</param>
-	/// <param name="z">The voxel's z component.</param>
-	/// <returns>Returns the float aproximated laplacian.</returns>
-	float CalculateLaplacianByKernel(const UINT32& x, const UINT32& y, const UINT32& z);
-
 	/// <summary>
 	/// Iterates over the scalarfield, calculating the gradient 
 	/// and the laplacian values for each voxel.
@@ -254,10 +236,6 @@ private:
 	/// </summary>
 	float* m_scalar_laplacian;
 
-	float* m_scalar_fx;
-	float* m_scalar_fy;
-	float* m_scalar_fz;
-
 	/// <summary>
 	/// The average gradient of each intensity value.
 	/// </summary>
@@ -286,8 +264,6 @@ private:
 
 	float m_gtresh;
 	UINT32 m_min_hist;
-
-	DerivativeMask m_derivativeMask;
 
 	Ihandle* m_deriv_plot;
 	Ihandle* m_tf_plot;
