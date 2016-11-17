@@ -36,11 +36,14 @@ public:
   virtual void BuildViewer ();
   virtual void CleanViewer ();
 
-  virtual void CleanTextures()
+  virtual void CleanVolumeTexture()
   {
     delete m_renderer.m_glsl_volume;
     m_renderer.m_glsl_volume = NULL;
+  }
 
+  virtual void CleanTransferFunctionTexture()
+  {
     delete m_renderer.m_glsl_transfer_function;
     m_renderer.m_glsl_transfer_function = NULL;
   }

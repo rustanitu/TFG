@@ -137,7 +137,8 @@ public:
 
   virtual void ReloadTransferFunction(){}
 
-  virtual void CleanTextures() {}
+  virtual void CleanVolumeTexture() {}
+  virtual void CleanTransferFunctionTexture() {}
 
 protected:
   /*! If the ViewMethod needs a update check for volume and transfer function being rendered.*/
