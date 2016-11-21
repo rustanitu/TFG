@@ -48,9 +48,9 @@ DerivativeMask::DerivativeMask(const int& n)
     vsum += m_gaussian_kernel[i];
   }
 
-  for (i = 0; i < m_n; i++) {
-    m_gaussian_kernel[i] = m_gaussian_kernel[i] / vsum;
-  }
+  //for (i = 0; i < m_n; i++) {
+  //  m_gaussian_kernel[i] = m_gaussian_kernel[i] / vsum;
+  //}
 
   // Initializes gradient kernel acording to the specified size
   m_gradient_kernel = new float[m_n];

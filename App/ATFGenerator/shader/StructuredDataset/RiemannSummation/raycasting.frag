@@ -43,10 +43,9 @@ vec4 GetFromTransferFunction (float p_d)
 {
 	vec3 voxel = (real_minpos + p_d * real_normalized_step) * tex_scale;
 	float voxel_value = texture(VolumeTex, voxel).r;
-	if (voxel_value > -1)
-		return texture(TransferFunc, voxel_value);
-	else
+	if (voxel_value < 0.0f)
 		return vec4(0);
+	return texture(TransferFunc, voxel_value);
 }
 
 void main(void)

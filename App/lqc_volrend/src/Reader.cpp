@@ -24,13 +24,43 @@ namespace vr
 
 		printf("------------Reading Volume Model------------\n");
 		if ( extension.compare("vol") == 0 )
-			ret = ReadVolFile(filepath);
+		{
+			Volume* vol = ReadVolFile(filepath);
+			Tank* tank = new Tank();
+			if ( tank->ReadFromVolume(vol->GetWidth(), vol->GetHeight(), vol->GetDepth(), vol->GetValues()) )
+			{
+				delete vol;
+				vol = NULL;
+				ret = tank;
+			}
+			else
+			{
+				delete tank;
+				tank = NULL;
+				ret = vol;
+			}
+		}
 		else if ( extension.compare("ele") == 0 || extension.compare("txt") == 0 )
 			ret = ReadEleFile(filepath);
 		else if ( extension.compare("node") == 0 )
 			ret = ReadNodeFile(filepath);
 		else if ( extension.compare("raw") == 0 )
-			ret = ReadRawFile(filepath);
+		{
+			Volume* vol = ReadRawFile(filepath);
+			Tank* tank = new Tank();
+			if ( tank->ReadFromVolume(vol->GetWidth(), vol->GetHeight(), vol->GetDepth(), vol->GetValues()) )
+			{
+				delete vol;
+				vol = NULL;
+				ret = tank;
+			}
+			else
+			{
+				delete tank;
+				tank = NULL;
+				ret = vol;
+			}
+		}
 		else if ( extension.compare("med") == 0 )
 			ret = ReadMedFile(filepath);
 		else if ( extension.compare("gmdl") == 0 )

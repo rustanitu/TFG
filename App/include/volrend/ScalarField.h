@@ -92,25 +92,49 @@ namespace vr
 				&& (z >= 0 && z < m_depth));
 		}
 
-		int GetHistogramValue(const UINT32& id, const int& max_histo_value)
+		int GetScalarValue(const UINT32& id, const int& max_histo_value)
 		{
 			float value = GetValue(id);
 			return ((value - m_min_value) / (m_max_value - m_min_value)) * max_histo_value;
 		}
 
-		int GetHistogramValue(const UINT32& x, const UINT32& y, const UINT32& z, const int& max_histo_value)
+		int GetScalarValue(const UINT32& x, const UINT32& y, const UINT32& z, const int& max_histo_value)
 		{
-			return GetHistogramValue(GetId(x, y, z), max_histo_value);
+			return GetScalarValue(GetId(x, y, z), max_histo_value);
 		}
 
-		int GetHistogramGradient(const float& value, const int& max_histo_value)
+		int GetScalarGradient(const float& value, const int& max_histo_value)
 		{
 			return (value / m_max_gradient) * max_histo_value;
 		}
 
-		int GetHistogramLaplacian(const float& value, const int& max_histo_value)
+		int GetScalarLaplacian(const float& value, const int& max_histo_value)
 		{
 			return ((value - m_min_laplacian) / (m_max_laplacian - m_min_laplacian)) * max_histo_value;
+		}
+
+		float ConvertScalarToValue(const int& histo_value, const int& max_histo_value)
+		{
+			float p = histo_value / float(max_histo_value);
+			return m_max_value* p;
+		}
+
+		float ConvertScalarToGradient(const int& histo_value, const int& max_histo_value)
+		{
+			float p = histo_value / float(max_histo_value);
+			return m_max_gradient * p;
+		}
+
+		float ConvertScalarToLaplacian(const int& histo_value, const int& max_histo_value)
+		{
+			float p = histo_value / float(max_histo_value);
+			float h = p * (m_max_laplacian - m_min_laplacian);
+			return h + m_min_laplacian;
+		}
+
+		virtual bool IsActive(const UINT32& x, const UINT32& y, const UINT32& z)
+		{
+			return true;
 		}
 
 		virtual float GetValue(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
