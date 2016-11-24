@@ -6,7 +6,9 @@
 
 #define MASK_SIZE 3
 
-#define BALANCE_WEIGHT
+//#define BALANCE_WEIGHT // Comportamento ruim
+//#define AVERAGE_INACTIVE // Não muda nada
+#define ONLY_ACTIVE_CELLS
 
 Tank::Tank()
 	: m_cells(NULL)
@@ -138,38 +140,39 @@ bool Tank::Read(const char* filepath)
 				m_max_value = fmax(m_max_value, value);
 				m_min_value = fmin(m_min_value, value);
 			}
-			else
-				inactives.push_back(id);
+      else {
+        cell->SetValue(t, 0.0f);
+        inactives.push_back(id);
+      }
 		}
 	}
 
-	/*
-	TankComp tc;
-	tc.m_cells = m_cells;
-	std::sort(inactives.begin(), inactives.end(), tc);
+#ifdef AVERAGE_INACTIVE
+  TankComp tc;
+  tc.m_cells = m_cells;
+  std::sort(inactives.begin(), inactives.end(), tc);
 
-	while (inactives.size() > 0)
-	{
-	int id = inactives.back();
-	inactives.pop_back();
+  while (inactives.size() > 0) {
+    int id = inactives.back();
+    inactives.pop_back();
 
-	Cell* cell = &m_cells[id];
+    Cell* cell = &m_cells[id];
 
-	for (int t = 0; t < m_nsteps; ++t) {
-	int actives = 0;
-	float values = 0.0f;
-	for (int i = 0; i < 6; ++i) {
-	int idx = cell->GetAdjcentCellIndex(i);
-	if (idx > -1 && m_cells[idx].IsActive()) {
-	actives++;
-	values += m_cells[idx].GetValue(t);
-	}
-	}
+    for (int t = 0; t < m_nsteps; ++t) {
+      int actives = 0;
+      float values = 0.0f;
+      for (int i = 0; i < 6; ++i) {
+        int idx = cell->GetAdjcentCellIndex(i);
+        if (idx > -1 && m_cells[idx].IsActive()) {
+          actives++;
+          values += m_cells[idx].GetValue(t);
+        }
+      }
 
-	cell->SetValue(t, values / actives);
-	}
-	}
-	//*/
+      cell->SetValue(t, values / actives);
+    }
+  }
+#endif
 
 	return true;
 }
@@ -241,9 +244,6 @@ float Tank::GetQuadraticGradientNorm(const UINT32& id)
 
 float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-	if ( !m_cells[GetId(x, y, z)].IsActive() )
-		return 0.0f;
-
 	float g = 0.0f;
 	float dfx = 0.0f;
 	float dfy = 0.0f;
@@ -269,7 +269,11 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
 				float v = GetValue(i, j, k);
-				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
+#ifdef ONLY_ACTIVE_CELLS
+        if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+#else
+				if ( IsOutOfBoundary(i, j, k) )
+#endif
 				{
 					v = GetValue(x, y, z);
 
@@ -313,9 +317,6 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 
 float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-	if ( !m_cells[GetId(x, y, z)].IsActive() )
-		return -FLT_MAX;
-
 	float fdxdx = 0.0f;
 	float fdxdy = 0.0f;
 	float fdxdz = 0.0f;
@@ -349,7 +350,12 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 				float dfx = m_scalar_fx[id];
 				float dfy = m_scalar_fy[id];
 				float dfz = m_scalar_fz[id];
-				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
+
+#ifdef ONLY_ACTIVE_CELLS
+        if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+#else
+        if (IsOutOfBoundary(i, j, k))
+#endif
 				{
 					id = GetId(x, y, z);
 

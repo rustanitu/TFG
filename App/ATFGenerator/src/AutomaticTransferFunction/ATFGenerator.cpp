@@ -684,31 +684,40 @@ bool ATFGenerator::GenerateHistogram()
 	{
 		m_average_gradient[i] = -FLT_MAX;
 		m_average_laplacian[i] = -FLT_MAX;
-		UINT32 w = 0;
+		UINT32 wg = 0;
+		UINT32 wh = 0;
 		float g = 0.0f;
 		float h = 0.0f;
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
 		{
 			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
 			{
-				if ( m_scalar_histogram[i][j][k] > 0)// && (histgrad_accum[i][j] > m_min_hist && histlapl_accum[i][k] > m_min_hist ))
+				if ( m_scalar_histogram[i][j][k] > 0)
 				{
-					g += j;
-					h += k;
-					w++;
+          if (histgrad_accum[i][j] > m_min_hist)
+          {
+					  g += j;
+					  wg++;
+          }
+          if (histlapl_accum[i][k] > m_min_hist)
+          {
+            h += k;
+            wh++;
+          }
 				}
 			}
 		}
 
-		if ( w > 0 )
-		{
-			g /= w;
-			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
-			m_average_gradient[i] = g;
-			m_max_average_gradient = fmax(m_max_average_gradient, g);
-			m_min_average_gradient = fmin(m_min_average_gradient, g);
-
-			h /= w;
+    if (wg > 0) {
+      g /= wg;
+      g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
+      m_average_gradient[i] = g;
+      m_max_average_gradient = fmax(m_max_average_gradient, g);
+      m_min_average_gradient = fmin(m_min_average_gradient, g);
+    }
+    if (wh > 0)
+    {
+			h /= wh;
 			h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
 			h += m_scalarfield->GetMinLaplacian();
 			m_average_laplacian[i] = h;
