@@ -31,7 +31,7 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_transfer_function(NULL)
 , m_initialized(false)
 , m_gtresh(0.0f)
-, m_min_hist(1)
+, m_min_hist(0)
 , m_deriv_plot(NULL)
 , m_tf_plot(NULL)
 , m_dist_plot(NULL)
@@ -484,9 +484,9 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 		if ( m_average_gradient[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, m_scalarfield->ConvertScalarToValue(i, ATFG_V_MAX), m_average_gradient[i]);
 	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARKLINE");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "PLUS");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "5");
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "g(v)");
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 128");
 
@@ -495,9 +495,9 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 		if ( m_average_laplacian[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, m_scalarfield->ConvertScalarToValue(i, ATFG_V_MAX), m_average_laplacian[i]);
 	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARKLINE");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "PLUS");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "5");
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "h(v)");
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 0");
 
@@ -622,15 +622,10 @@ bool ATFGenerator::GenerateHistogram()
 	printf("--------------------------------------------------\n");
 	printf("Gerando histograma.\n");
 
-	int histgrad_accum[ATFG_V_RANGE][ATFG_V_RANGE];
-	int histlapl_accum[ATFG_V_RANGE][ATFG_V_RANGE];
-
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
 	{
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
 		{
-			histgrad_accum[i][j] = 0;
-			histlapl_accum[i][j] = 0;
 			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
 			{
 				m_scalar_histogram[i][j][k] = 0;
@@ -662,18 +657,6 @@ bool ATFGenerator::GenerateHistogram()
 
 	printf("Extraindo derivadas medias, pelo histograma.\n");
 
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
-	{
-		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
-		{
-			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
-			{
-				histgrad_accum[i][j] += m_scalar_histogram[i][j][k];
-				histlapl_accum[i][k] += m_scalar_histogram[i][j][k];
-			}
-		}
-	}
-
 	m_max_average_gradient = -FLT_MAX;
 	m_min_average_gradient = FLT_MAX;
 	m_max_average_laplacian = -FLT_MAX;
@@ -684,8 +667,7 @@ bool ATFGenerator::GenerateHistogram()
 	{
 		m_average_gradient[i] = -FLT_MAX;
 		m_average_laplacian[i] = -FLT_MAX;
-		UINT32 wg = 0;
-		UINT32 wh = 0;
+		UINT32 w = 0;
 		float g = 0.0f;
 		float h = 0.0f;
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
@@ -694,30 +676,21 @@ bool ATFGenerator::GenerateHistogram()
 			{
 				if ( m_scalar_histogram[i][j][k] > 0)
 				{
-          if (histgrad_accum[i][j] > m_min_hist)
-          {
-					  g += j;
-					  wg++;
-          }
-          if (histlapl_accum[i][k] > m_min_hist)
-          {
-            h += k;
-            wh++;
-          }
+					g += j;
+          h += k;
+					w++;
 				}
 			}
 		}
 
-    if (wg > 0) {
-      g /= wg;
+    if (w > 50) {
+      g /= w;
       g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
       m_average_gradient[i] = g;
       m_max_average_gradient = fmax(m_max_average_gradient, g);
       m_min_average_gradient = fmin(m_min_average_gradient, g);
-    }
-    if (wh > 0)
-    {
-			h /= wh;
+
+      h /= w;
 			h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
 			h += m_scalarfield->GetMinLaplacian();
 			m_average_laplacian[i] = h;

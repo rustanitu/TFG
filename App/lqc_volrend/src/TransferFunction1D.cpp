@@ -373,9 +373,9 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "REDRAW", "YES");
 
 		IupPlotEnd(m_bx_plot);
-		IupSetAttribute(m_bx_plot, "DS_MODE", "MARKLINE");
-		IupSetAttribute(m_bx_plot, "DS_MARKSTYLE", "PLUS");
-		IupSetAttribute(m_bx_plot, "DS_MARKSIZE", "5");
+    IupSetAttribute(m_bx_plot, "DS_MODE", "MARK");
+    IupSetAttribute(m_bx_plot, "DS_MARKSTYLE", "CIRCLE");
+    IupSetAttribute(m_bx_plot, "DS_MARKSIZE", "3");
 		IupSetAttribute(m_bx_plot, "DS_NAME", "p(v)");
 
 		IupPlotBegin(m_bx_plot, 0);

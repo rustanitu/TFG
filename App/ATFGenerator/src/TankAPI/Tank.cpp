@@ -36,6 +36,7 @@ Tank::~Tank()
 
 bool Tank::Read(const char* filepath)
 {
+  printf("Inicio da leitura do tank.\n");
 	// It opens the tank file
 	std::ifstream file(filepath);
 	if ( !file || !file.is_open() )
@@ -49,6 +50,11 @@ bool Tank::Read(const char* filepath)
 	m_width = ni;
 	m_height = nj;
 	m_depth = nk;
+
+  printf("Tamanho do Tank:\n");
+  printf(" - tWidth: %d\n", m_width);
+  printf(" - tHeight: %d\n", m_height);
+  printf(" - tDepth: %d\n", m_depth);
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
@@ -174,6 +180,8 @@ bool Tank::Read(const char* filepath)
   }
 #endif
 
+  printf("Fim da leitura do tank.\n");
+
 	return true;
 }
 
@@ -186,6 +194,11 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 	m_width = width;
 	m_height = height;
 	m_depth = depth;
+
+  printf("Tamanho do Tank:\n");
+  printf(" - tWidth: %d\n", m_width);
+  printf(" - tHeight: %d\n", m_height);
+  printf(" - tDepth: %d\n", m_depth);
 
 	m_ncells = m_width * m_height * m_depth;
 	m_cells = new Cell[m_ncells];
@@ -218,6 +231,8 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 			}
 		}
 	}
+
+  printf("Fim da leitura do tank.\n");
 }
 
 float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -310,6 +325,8 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 	m_scalar_fz[id] = dfz;
 
 	g = sqrt(GetQuadraticGradientNorm(id));
+  if (g > 40300)
+    printf("AQUI\n");
 	m_max_gradient = fmax(m_max_gradient, g);
 
 	return g;
