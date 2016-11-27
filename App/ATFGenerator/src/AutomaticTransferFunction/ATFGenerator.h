@@ -216,7 +216,7 @@ private:
 	/// </summary>
 	/// <returns>Returns a float array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
-	float GetBoundaryDistancies(float* x, unsigned char *v, UINT32 *n);
+	void GetBoundaryDistancies(float* x, unsigned char *v, UINT32 *n);
 
 	void SetDefaultColor();
 

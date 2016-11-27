@@ -18,6 +18,8 @@
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
+#define PLOT_STYLE "LINE"
+//#define PLOT_STYLE "MARK"
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -121,7 +123,7 @@ bool ATFGenerator::ExtractTransferFunction()
 	}
 
 	UINT32 n_v;
-	float sigma = GetBoundaryDistancies(x, v, &n_v);
+	GetBoundaryDistancies(x, v, &n_v);
 	m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
 	GenerateDataValuesFile(x, v, n_v);
 	return true;
@@ -484,7 +486,7 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 		if ( m_average_gradient[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, m_scalarfield->ConvertScalarToValue(i, ATFG_V_MAX), m_average_gradient[i]);
 	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
+	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
 	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
 	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "g(v)");
@@ -495,7 +497,7 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 		if ( m_average_laplacian[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, m_scalarfield->ConvertScalarToValue(i, ATFG_V_MAX), m_average_laplacian[i]);
 	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
+	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
 	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
 	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "h(v)");
@@ -622,8 +624,11 @@ bool ATFGenerator::GenerateHistogram()
 	printf("--------------------------------------------------\n");
 	printf("Gerando histograma.\n");
 
+	int hits[ATFG_V_RANGE];
+
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
 	{
+		hits[i] = 0;
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
 		{
 			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
@@ -650,10 +655,28 @@ bool ATFGenerator::GenerateHistogram()
 				unsigned char l = m_scalarfield->GetScalarLaplacian(m_scalar_laplacian[vol_id], ATFG_V_MAX);
 
 				if ( m_scalar_histogram[v][g][l] < ATFG_V_MAX )
+				{
+					hits[v]++;
 					m_scalar_histogram[v][g][l]++;
+				}
 			}
 		}
 	}
+
+	int valid_values = 0;
+	int sum_hits = 0;
+	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
+	{
+		if ( hits[i] > 0 )
+		{
+			sum_hits += hits[i];
+			valid_values++;
+		}
+	}
+
+	int average_hit = sum_hits / valid_values;
+	average_hit /= 2;
+	printf("Hit Medio: %d\n", average_hit);
 
 	printf("Extraindo derivadas medias, pelo histograma.\n");
 
@@ -677,20 +700,21 @@ bool ATFGenerator::GenerateHistogram()
 				if ( m_scalar_histogram[i][j][k] > 0)
 				{
 					g += j;
-          h += k;
+					h += k;
 					w++;
 				}
 			}
 		}
 
-    if (w > 50) {
-      g /= w;
-      g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
-      m_average_gradient[i] = g;
-      m_max_average_gradient = fmax(m_max_average_gradient, g);
-      m_min_average_gradient = fmin(m_min_average_gradient, g);
+		if ( w >= average_hit )
+		{
+			g /= w;
+			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
+			m_average_gradient[i] = g;
+			m_max_average_gradient = fmax(m_max_average_gradient, g);
+			m_min_average_gradient = fmin(m_min_average_gradient, g);
 
-      h /= w;
+			h /= w;
 			h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
 			h += m_scalarfield->GetMinLaplacian();
 			m_average_laplacian[i] = h;
@@ -717,7 +741,7 @@ bool ATFGenerator::GenerateHistogram()
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
+void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 {
 	assert(m_scalar_histogram && x);
 
@@ -726,10 +750,77 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n
 		x = NULL;
 		v = NULL;
 		*n = 0;
-		return 0.0f;
+		return;
 	}
 
-	//float sigma = 2 * SQRT_E * m_max_average_gradient / (m_max_average_laplacian - m_min_average_laplacian);
+	/////////////////////////////////////////////////////
+	int valid_values = 0;
+	float average_gradient[ATFG_V_RANGE];
+	for ( int i = 0; i < ATFG_V_RANGE; ++i )
+	{
+		average_gradient[i] = m_average_gradient[i];
+		if ( average_gradient[i] != -FLT_MAX )
+			++valid_values;
+	}
+
+	int vi = 0;
+	int* valid_indexes = new int[valid_values];
+	for ( int i = 0; i < ATFG_V_RANGE; ++i )
+	{
+		if ( average_gradient[i] != -FLT_MAX )
+		{
+			valid_indexes[vi] = i;
+			++vi;
+		}
+	}
+
+	int gc = 0;
+	while ( gc < 10 )
+	{
+		for ( int i = 1; i < valid_values - 1; ++i )
+		{
+			average_gradient[valid_indexes[i]] = (average_gradient[valid_indexes[i - 1]] + 2 * average_gradient[valid_indexes[i]] + average_gradient[valid_indexes[i + 1]]) / 4.0f;
+		}
+		++gc;
+	}
+
+	float* deriv_g = new float[valid_values];
+	deriv_g[0] = deriv_g[valid_values - 1] = 0.0f;
+	for ( int i = 1; i < valid_values - 1; ++i )
+	{
+		deriv_g[i] = (average_gradient[valid_indexes[i + 1]] - average_gradient[valid_indexes[i - 1]]) / 2.0f;
+	}
+
+	int up = 0, down = 0;
+	int max_indices[ATFG_V_RANGE];
+	float max_grad[ATFG_V_RANGE];
+	int idx = 0;
+	for ( int i = 0; i < ATFG_V_RANGE; ++i )
+	{
+		max_grad[i] = 0.0f;
+		max_indices[i] = down;
+		if ( valid_indexes[idx] == i )
+		{
+			if ( signbit(deriv_g[idx]) ^ signbit(deriv_g[idx + 1]) )
+			{
+				if ( deriv_g[idx + 1] > deriv_g[idx] )
+				{
+					down++;
+				}
+				else
+				{
+					max_grad[up] = average_gradient[i];
+					up++;
+				}
+			}
+			idx++;
+		}
+	}
+
+	delete valid_indexes;
+	delete deriv_g;
+	/////////////////////////////////////////////////////
+
 	float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
@@ -744,6 +835,9 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n
 		}
 		else
 		{
+			//float sigma = max_grad[max_indices[i]] / (m_max_average_laplacian * SQRT_E);
+			//printf("Max Gradient Ref: %.2f\n", max_grad[max_indices[i]]);
+			//printf("Sigma(%d): %.2f\n", i, sigma);
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}
 
@@ -752,5 +846,4 @@ float ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n
 	}
 
 	*n = c;
-	return sigma;
 }
