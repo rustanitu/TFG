@@ -18,8 +18,8 @@
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
-#define PLOT_STYLE "LINE"
-//#define PLOT_STYLE "MARK"
+//#define PLOT_STYLE "LINE"
+#define PLOT_STYLE "MARK"
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -675,7 +675,7 @@ bool ATFGenerator::GenerateHistogram()
 	}
 
 	int average_hit = sum_hits / valid_values;
-	average_hit /= 2;
+	average_hit *= 0.5f;
 	printf("Hit Medio: %d\n", average_hit);
 
 	printf("Extraindo derivadas medias, pelo histograma.\n");
@@ -699,14 +699,14 @@ bool ATFGenerator::GenerateHistogram()
 			{
 				if ( m_scalar_histogram[i][j][k] > 0)
 				{
-					g += j;
-					h += k;
-					w++;
+					g += j * m_scalar_histogram[i][j][k];
+					h += k * m_scalar_histogram[i][j][k];
+          w += m_scalar_histogram[i][j][k];
 				}
 			}
 		}
 
-		if ( w >= average_hit )
+    if (w >= average_hit)
 		{
 			g /= w;
 			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
@@ -753,6 +753,7 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 		return;
 	}
 
+#if 1
 	/////////////////////////////////////////////////////
 	int valid_values = 0;
 	float average_gradient[ATFG_V_RANGE];
@@ -793,7 +794,7 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 
 	int up = 0, down = 0;
 	int max_indices[ATFG_V_RANGE];
-	float max_grad[ATFG_V_RANGE];
+	int max_grad[ATFG_V_RANGE];
 	int idx = 0;
 	for ( int i = 0; i < ATFG_V_RANGE; ++i )
 	{
@@ -809,7 +810,7 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 				}
 				else
 				{
-					max_grad[up] = average_gradient[i];
+					max_grad[up] = i;
 					up++;
 				}
 			}
@@ -820,6 +821,7 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 	delete valid_indexes;
 	delete deriv_g;
 	/////////////////////////////////////////////////////
+#endif
 
 	float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
@@ -835,9 +837,9 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 		}
 		else
 		{
-			//float sigma = max_grad[max_indices[i]] / (m_max_average_laplacian * SQRT_E);
-			//printf("Max Gradient Ref: %.2f\n", max_grad[max_indices[i]]);
-			//printf("Sigma(%d): %.2f\n", i, sigma);
+			sigma = m_average_gradient[max_grad[max_indices[i]]] / (m_average_laplacian[max_grad[max_indices[i]]] * SQRT_E);
+      //sigma = m_average_gradient[i] / (m_average_laplacian[i] * SQRT_E);
+			printf("Sigma(%d): %.2f\n", i, sigma);
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}
 

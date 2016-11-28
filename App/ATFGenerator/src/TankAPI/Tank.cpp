@@ -325,8 +325,6 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 	m_scalar_fz[id] = dfz;
 
 	g = sqrt(GetQuadraticGradientNorm(id));
-  if (g > 40300)
-    printf("AQUI\n");
 	m_max_gradient = fmax(m_max_gradient, g);
 
 	return g;
