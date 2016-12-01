@@ -317,7 +317,6 @@ namespace vr
 
 			a += max;
 			m_valid[v] = true;
-			printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", v, x, a);
 		}
 
 		return a;
@@ -365,6 +364,7 @@ namespace vr
 
 			AddAlphaControlPoint(TransferControlPoint(a, value));
 			IupPlotAdd(m_tf_plot, value, a);
+      printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value, x, a);
 		}
 
 		IupPlotEnd(m_tf_plot);

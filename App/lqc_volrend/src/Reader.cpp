@@ -35,6 +35,7 @@ namespace vr
 			}
 			else
 			{
+        printf("Não foi possível converter volume em tank.");
 				delete tank;
 				tank = NULL;
 				ret = vol;
@@ -56,6 +57,7 @@ namespace vr
 			}
 			else
 			{
+        printf("Não foi possível converter volume em tank.");
 				delete tank;
 				tank = NULL;
 				ret = vol;

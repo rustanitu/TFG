@@ -484,7 +484,7 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
 		if ( m_average_gradient[i] != -FLT_MAX )
-			IupPlotAdd(m_deriv_plot, m_scalarfield->ConvertScalarToValue(i, ATFG_V_MAX), m_average_gradient[i]);
+			IupPlotAdd(m_deriv_plot, i, m_average_gradient[i]);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
 	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
@@ -495,7 +495,7 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
 		if ( m_average_laplacian[i] != -FLT_MAX )
-			IupPlotAdd(m_deriv_plot, m_scalarfield->ConvertScalarToValue(i, ATFG_V_MAX), m_average_laplacian[i]);
+			IupPlotAdd(m_deriv_plot, i, m_average_laplacian[i]);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
 	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
@@ -505,7 +505,7 @@ void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT
 
 	IupPlotBegin(m_deriv_plot, 0);
 	IupPlotAdd(m_deriv_plot, 0, 0);
-	IupPlotAdd(m_deriv_plot, m_scalarfield->GetMaxValue(), 0);
+	IupPlotAdd(m_deriv_plot, ATFG_V_MAX, 0);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "0");
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 0");
@@ -706,7 +706,7 @@ bool ATFGenerator::GenerateHistogram()
 			}
 		}
 
-    if (w >= average_hit)
+    if (w > 0)//= average_hit)
 		{
 			g /= w;
 			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
@@ -753,7 +753,7 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 		return;
 	}
 
-#if 1
+#if 0
 	/////////////////////////////////////////////////////
 	int valid_values = 0;
 	float average_gradient[ATFG_V_RANGE];
@@ -837,8 +837,8 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 		}
 		else
 		{
-			sigma = m_average_gradient[max_grad[max_indices[i]]] / (m_average_laplacian[max_grad[max_indices[i]]] * SQRT_E);
-      //sigma = m_average_gradient[i] / (m_average_laplacian[i] * SQRT_E);
+      //sigma = m_average_gradient[max_grad[max_indices[i]]] / (m_max_average_laplacian * SQRT_E);
+      //sigma = g / (l * SQRT_E);
 			printf("Sigma(%d): %.2f\n", i, sigma);
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}
