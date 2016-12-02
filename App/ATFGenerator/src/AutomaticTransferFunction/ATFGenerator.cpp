@@ -18,8 +18,8 @@
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
-//#define PLOT_STYLE "LINE"
-#define PLOT_STYLE "MARK"
+#define PLOT_STYLE "LINE"
+//#define PLOT_STYLE "MARK"
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -42,7 +42,7 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_max_average_laplacian(-FLT_MAX)
 , m_min_average_laplacian(FLT_MAX)
 {
-	printf("ATFGenerator criado.\n");
+	//printf("ATFGenerator criado.\n");
 }
 
 /// <summary>
@@ -54,7 +54,7 @@ ATFGenerator::~ATFGenerator()
 	delete m_transfer_function;
 	delete[] m_scalar_gradient;
 	delete[] m_scalar_laplacian;
-	printf("ATFGenerator destruido.\n");
+	//printf("ATFGenerator destruido.\n");
 }
 
 /// <summary>It does all the math necessary so information
@@ -65,8 +65,8 @@ ATFGenerator::~ATFGenerator()
 /// initialized and false otherwise.</returns>
 bool ATFGenerator::Init()
 {
-	printf("--------------------------------------------------\n");
-	printf("Inicializando ATFGenerator\n");
+	//printf("--------------------------------------------------\n");
+	//printf("Inicializando ATFGenerator\n");
 	if ( m_initialized )
 		return true;
 
@@ -77,8 +77,8 @@ bool ATFGenerator::Init()
 		return false;
 
 	m_initialized = true;
-	printf("ATFGenerator Inicializado.\n");
-	printf("--------------------------------------------------\n");
+	//printf("ATFGenerator Inicializado.\n");
+	//printf("--------------------------------------------------\n");
 	return true;
 }
 
@@ -114,18 +114,80 @@ bool ATFGenerator::ExtractTransferFunction()
 	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
 	SetDefaultColor();
 
+	/*
 	float* x = new float[ATFG_V_RANGE];
 	unsigned char* v = new unsigned char[ATFG_V_RANGE];
 	if ( !x || !v )
 	{
-		printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+		//printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
 		return false;
 	}
 
 	UINT32 n_v;
 	GetBoundaryDistancies(x, v, &n_v);
 	m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
-	GenerateDataValuesFile(x, v, n_v);
+	//*/
+
+	int size;
+	float* values;
+	int* indexes;
+	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
+	
+	const int times = 10;
+#if 1
+	SmoothCurveWithGaussian(values, size, times);
+#else
+	float* val = SmoothCurveWithMidpoints<float>(values, size, times);
+	delete[] values;
+	values = val;
+
+	int* idx = SmoothCurveWithMidpoints<int>(indexes, size, times);
+	delete[] indexes;
+	indexes = idx;
+
+	size -= times;
+#endif
+
+	float max = -FLT_MAX;
+	float min = FLT_MAX;
+	for ( int i = 0; i < size; ++i )
+	{
+		m_average_gradient[indexes[i]] = values[i];
+		max = fmax(values[i], max);
+		min = fmin(values[i], min);
+	}
+
+	//printf("MAX: %.2f - MIN: %.2f\n", max, min);
+
+	//printf("IDX: %d\n", indexes[1]);
+
+	//printf("UM: %.2f\n", values[1]);
+
+	for ( int i = 0; i < size; ++i )
+	{
+		values[i] = 1.0f - (values[i] - min) / (max - min);
+	}
+
+	//printf("UM: %.2f\n", values[1]);
+
+	float *distances = new float[ATFG_V_RANGE];
+	for ( int i = 0, idx = 0; i < ATFG_V_RANGE; ++i )
+	{
+		if ( i == indexes[idx] )
+		{
+			distances[i] = values[idx];
+			++idx;
+		}
+		else
+			distances[i] = -FLT_MAX;
+	}
+
+	//printf("UM: %.2f\n", distances[1]);
+
+	m_transfer_function->SetClosestBoundaryDistances(indexes, distances, size);
+
+	GenerateDataChart();
+
 	return true;
 }
 
@@ -196,7 +258,7 @@ void ATFGenerator::GenerateVolumeSlice(const UINT32& k)
 
 	if ( !pgmfile.Open() )
 	{
-		printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
+		//printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
 		return;
 	}
 	delete[] filename;
@@ -224,7 +286,7 @@ void ATFGenerator::GenerateGradientSlice(const UINT32& k)
 
 	if ( !pgmfile.Open() )
 	{
-		printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
+		//printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
 		return;
 	}
 	delete[] filename;
@@ -256,7 +318,7 @@ void ATFGenerator::GenerateLaplacianSlice(const UINT32& k)
 
 	if ( !pgmfile.Open() )
 	{
-		printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
+		//printf("Erro - A fatia do scalarfield '%s' nao pode ser gerado!\n", filename);
 		return;
 	}
 	delete[] filename;
@@ -321,7 +383,7 @@ bool ATFGenerator::GenerateHistogramSlice(const UINT32& v)
 
 	if ( !pgmfile.Open() )
 	{
-		printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
+		//printf("Erro - O Histograma '%s' nao pode ser gerado!\n", filename);
 		return false;
 	}
 	delete[] filename;
@@ -474,7 +536,7 @@ void ATFGenerator::GenerateLaplacianSummedHistogram()
 	pgmfile.Close();
 }
 
-void ATFGenerator::GenerateDataValuesFile(float *x, unsigned char *v, const UINT32& n)
+void ATFGenerator::GenerateDataChart()
 {
 	if ( !m_initialized )
 		throw std::domain_error("Instance not initialized. Init must be called once!\n");
@@ -532,8 +594,8 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 {
 	assert(!m_scalar_gradient && !m_scalar_laplacian);
 	
-	printf("--------------------------------------------------\n");
-	printf("Calculando derivadas do campo escalar.\n");
+	//printf("--------------------------------------------------\n");
+	//printf("Calculando derivadas do campo escalar.\n");
 
 	UINT32 size = m_width * m_height * m_depth;
 	if ( size < (unsigned long) m_width * m_height * m_depth )
@@ -554,7 +616,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 
 	if ( !m_scalar_gradient || !m_scalar_laplacian )
 	{
-		printf("Erro - Nao ha memoria suficiente para processar o scalarfield!\n");
+		//printf("Erro - Nao ha memoria suficiente para processar o scalarfield!\n");
 		return false;
 	}
 
@@ -601,12 +663,12 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 		}
 	}
 
-	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
-	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());
-	printf("MaxLaplacian: %.2f\n", m_scalarfield->GetMaxLaplacian());
+	//printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
+	//printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());
+	//printf("MaxLaplacian: %.2f\n", m_scalarfield->GetMaxLaplacian());
 
-	printf("Derivadas calculadas.\n");
-	printf("--------------------------------------------------\n");
+	//printf("Derivadas calculadas.\n");
+	//printf("--------------------------------------------------\n");
 
 	return true;
 }
@@ -621,8 +683,8 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 /// False, otherwise.</returns>
 bool ATFGenerator::GenerateHistogram()
 {
-	printf("--------------------------------------------------\n");
-	printf("Gerando histograma.\n");
+	//printf("--------------------------------------------------\n");
+	//printf("Gerando histograma.\n");
 
 	int hits[ATFG_V_RANGE];
 
@@ -676,9 +738,9 @@ bool ATFGenerator::GenerateHistogram()
 
 	int average_hit = sum_hits / valid_values;
 	average_hit *= 0.5f;
-	printf("Hit Medio: %d\n", average_hit);
+	//printf("Hit Medio: %d\n", average_hit);
 
-	printf("Extraindo derivadas medias, pelo histograma.\n");
+	//printf("Extraindo derivadas medias, pelo histograma.\n");
 
 	m_max_average_gradient = -FLT_MAX;
 	m_min_average_gradient = FLT_MAX;
@@ -701,12 +763,12 @@ bool ATFGenerator::GenerateHistogram()
 				{
 					g += j * m_scalar_histogram[i][j][k];
 					h += k * m_scalar_histogram[i][j][k];
-          w += m_scalar_histogram[i][j][k];
+					w += m_scalar_histogram[i][j][k];
 				}
 			}
 		}
 
-    if (w > 0)//= average_hit)
+		if (w > 0)//= average_hit)
 		{
 			g /= w;
 			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
@@ -722,16 +784,76 @@ bool ATFGenerator::GenerateHistogram()
 			m_min_average_laplacian = fmin(m_min_average_laplacian, h);
 		}
 
-		printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
+		//printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
 	}
 
-	printf("G(v): %.2f\t-\t%.2f\n", m_min_average_gradient, m_max_average_gradient);
-	printf("H(v): %.2f\t-\t%.2f\n", m_min_average_laplacian, m_max_average_laplacian);
+	//printf("G(v): %.2f\t-\t%.2f\n", m_min_average_gradient, m_max_average_gradient);
+	//printf("H(v): %.2f\t-\t%.2f\n", m_min_average_laplacian, m_max_average_laplacian);
 
-	printf("Histograma gerado.\n");
-	printf("--------------------------------------------------\n");
+	//printf("Histograma gerado.\n");
+	//printf("--------------------------------------------------\n");
 
 	return true;
+}
+
+void ATFGenerator::SmoothCurveWithGaussian(float* v, const int& n, const int& times)
+{
+	int t = 0;
+	while ( t < times )
+	{
+		for ( int i = 1; i < n - 1; ++i )
+		{
+			v[i] = (v[i - 1] + 2 * v[i] + v[i + 1]) / 4.0f;
+		}
+		++t;
+	}
+}
+
+template<typename T>
+T* ATFGenerator::SmoothCurveWithMidpoints(T* v, const int& n, const int& times)
+{
+	T* midpoints = new T[n];
+	memcpy(midpoints, v, n * sizeof(T));
+
+	int t = 0;
+	int size = 0;
+	while ( t < times )
+	{
+		size = n - t - 1;
+		T* aux = new T[size];
+		for ( int i = 0; i < size; ++i )
+		{
+			aux[i] = (midpoints[i] + midpoints[i + 1]) / 2.0f;
+		}
+
+		delete[] midpoints;
+		midpoints = aux;
+
+		++t;
+	}
+
+	return midpoints;
+}
+
+void ATFGenerator::GetValidValuesAndIndexes(float* vin, const int& nin, float*& vout, int*& indexes, int& nout)
+{
+	int valid_values = 0;
+	for ( int i = 0; i < nin; ++i )
+		if ( vin[i] != -FLT_MAX && vin[i] != FLT_MAX )
+			++valid_values;
+
+	nout = valid_values;
+	vout = new float[valid_values];
+	indexes = new int[valid_values];
+	for ( int i = 0, vi = 0; i < nin; ++i )
+	{
+		if ( vin[i] != -FLT_MAX && vin[i] != FLT_MAX )
+		{
+			vout[vi] = vin[i];
+			indexes[vi] = i;
+			++vi;
+		}
+	}
 }
 
 /// <summary>
@@ -753,38 +875,35 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 		return;
 	}
 
-#if 0
-	/////////////////////////////////////////////////////
-	int valid_values = 0;
-	float average_gradient[ATFG_V_RANGE];
-	for ( int i = 0; i < ATFG_V_RANGE; ++i )
-	{
-		average_gradient[i] = m_average_gradient[i];
-		if ( average_gradient[i] != -FLT_MAX )
-			++valid_values;
-	}
+	float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
+	//printf("Sigma: %.2f\n", sigma);
 
-	int vi = 0;
-	int* valid_indexes = new int[valid_values];
-	for ( int i = 0; i < ATFG_V_RANGE; ++i )
+	UINT32 c = 0;
+	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
 	{
-		if ( average_gradient[i] != -FLT_MAX )
+		float g = m_average_gradient[i];
+		float l = m_average_laplacian[i];
+		if ( g == -FLT_MAX || l == -FLT_MAX )
 		{
-			valid_indexes[vi] = i;
-			++vi;
+			continue;
 		}
-	}
-
-	int gc = 0;
-	while ( gc < 10 )
-	{
-		for ( int i = 1; i < valid_values - 1; ++i )
+		else
 		{
-			average_gradient[valid_indexes[i]] = (average_gradient[valid_indexes[i - 1]] + 2 * average_gradient[valid_indexes[i]] + average_gradient[valid_indexes[i + 1]]) / 4.0f;
+			//sigma = m_average_gradient[max_grad[max_indices[i]]] / (m_max_average_laplacian * SQRT_E);
+			//sigma = g / (l * SQRT_E);
+			//printf("Sigma(%d): %.2f\n", i, sigma);
+			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}
-		++gc;
+
+		v[c] = i;
+		++c;
 	}
 
+	*n = c;
+}
+
+/* Old Code for derivating a curve
+{
 	float* deriv_g = new float[valid_values];
 	deriv_g[0] = deriv_g[valid_values - 1] = 0.0f;
 	for ( int i = 1; i < valid_values - 1; ++i )
@@ -820,32 +939,5 @@ void ATFGenerator::GetBoundaryDistancies(float * x, unsigned char *v, UINT32 *n)
 
 	delete valid_indexes;
 	delete deriv_g;
-	/////////////////////////////////////////////////////
-#endif
-
-	float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
-	printf("Sigma: %.2f\n", sigma);
-
-	UINT32 c = 0;
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
-	{
-		float g = m_average_gradient[i];
-		float l = m_average_laplacian[i];
-		if ( g == -FLT_MAX || l == -FLT_MAX )
-		{
-			continue;
-		}
-		else
-		{
-      //sigma = m_average_gradient[max_grad[max_indices[i]]] / (m_max_average_laplacian * SQRT_E);
-      //sigma = g / (l * SQRT_E);
-			printf("Sigma(%d): %.2f\n", i, sigma);
-			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
-		}
-
-		v[c] = i;
-		++c;
-	}
-
-	*n = c;
 }
+//*/

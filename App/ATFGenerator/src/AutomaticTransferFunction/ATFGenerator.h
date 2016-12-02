@@ -146,7 +146,7 @@ public:
 	/// </summary>
 	void GenerateLaplacianSummedHistogram();
 
-	void GenerateDataValuesFile(float *x, unsigned char *v, const UINT32& n);
+	void GenerateDataChart();
 
 	/// <summary>
 	/// Gets the transfer function.
@@ -217,6 +217,13 @@ private:
 	/// <returns>Returns a float array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
 	void GetBoundaryDistancies(float* x, unsigned char *v, UINT32 *n);
+
+	void SmoothCurveWithGaussian(float* v, const int& n, const int& times);
+
+	template<typename T>
+	T* SmoothCurveWithMidpoints(T* v, const int& n, const int& times);
+
+	void GetValidValuesAndIndexes(float* vin, const int& nin, float*& vout, int*& indexes, int& nout);
 
 	void SetDefaultColor();
 

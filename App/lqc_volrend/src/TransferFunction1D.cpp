@@ -14,12 +14,12 @@ namespace vr
 		m_cpt_alpha.clear ();
 		m_transferfunction = NULL;
 		m_gradients = NULL;
-		printf("TransferFunction1D criado.\n");
+		//printf("TransferFunction1D criado.\n");
 	}
 
 	TransferFunction1D::~TransferFunction1D ()
 	{
-		printf("TransferFunction1D destruido.\n");
+		//printf("TransferFunction1D destruido.\n");
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
 		delete[] m_transferfunction;
@@ -58,7 +58,7 @@ namespace vr
 
 	gl::GLTexture1D* TransferFunction1D::GenerateTexture_1D_RGBA ()
 	{
-		printf("TransferFunction1D: GenerateTexture_1D_RGBA.\n");
+		//printf("TransferFunction1D: GenerateTexture_1D_RGBA.\n");
 
 		if (!m_built)
 			Build (m_interpolation_type);
@@ -148,7 +148,7 @@ namespace vr
 				}
 			}
 		}
-		printf ("TransferFunction1D: Build!\n");
+		//printf ("TransferFunction1D: Build!\n");
 		m_built = true;
 	}
 
@@ -180,30 +180,30 @@ namespace vr
 
 	void TransferFunction1D::PrintControlPoints ()
 	{
-		printf ("Print Transfer Function: Control Points\n");
+		//printf ("Print Transfer Function: Control Points\n");
 		int rgb_pts = (int)m_cpt_rgb.size ();
-		printf ("- Printing the RGB Control Points\n");
-		printf ("  Format: \"Number: Red Green Blue, Isovalue\"\n");
+		//printf ("- Printing the RGB Control Points\n");
+		//printf ("  Format: \"Number: Red Green Blue, Isovalue\"\n");
 		for (int i = 0; i < rgb_pts; i++)
 		{
-			printf ("  %d: %.2f %.2f %.2f, %d\n", i + 1, m_cpt_rgb[i].m_color.x, m_cpt_rgb[i].m_color.y, m_cpt_rgb[i].m_color.z, m_cpt_rgb[i].m_isoValue);
+			//printf ("  %d: %.2f %.2f %.2f, %d\n", i + 1, m_cpt_rgb[i].m_color.x, m_cpt_rgb[i].m_color.y, m_cpt_rgb[i].m_color.z, m_cpt_rgb[i].m_isoValue);
 		}
-		printf ("\n");
+		//printf ("\n");
 
 		int alpha_pts = (int)m_cpt_alpha.size ();
-		printf ("- Printing the Alpha Control Points\n");
-		printf ("  Format: \"Number: Alpha, Isovalue\"\n");
+		//printf ("- Printing the Alpha Control Points\n");
+		//printf ("  Format: \"Number: Alpha, Isovalue\"\n");
 		for (int i = 0; i < alpha_pts; i++)
 		{
-			printf ("  %d: %.2f, %d\n", i + 1, m_cpt_alpha[i].m_color.w, m_cpt_alpha[i].m_isoValue);
+			//printf ("  %d: %.2f, %d\n", i + 1, m_cpt_alpha[i].m_color.w, m_cpt_alpha[i].m_isoValue);
 		}
-		printf ("\n");
+		//printf ("\n");
 	}
 
 	void TransferFunction1D::PrintTransferFunction ()
 	{
-		printf ("Print Transfer Function: Control Points\n");
-		printf ("  Format: \"IsoValue: Red Green Blue, Alpha\"\n");
+		//printf ("Print Transfer Function: Control Points\n");
+		//printf ("  Format: \"IsoValue: Red Green Blue, Alpha\"\n");
 		for (int i = 0; i < m_tflenght; i++)
 		{
 			printf ("%d: %.2f %.2f %.2f, %.2f\n", i, m_transferfunction[i].x
@@ -240,11 +240,11 @@ namespace vr
 	m_cpt_alpha[i].m_isoValue << " " << "\n";
 	}
 	myfile.close ();
-	printf ("lqc: Transfer Function 1D Control Points Saved!\n");
+	//printf ("lqc: Transfer Function 1D Control Points Saved!\n");
 	}
 	else
 	{
-	printf ("lqc: Error on opening file at VRTransferFunction::Save().\n");
+	//printf ("lqc: Error on opening file at VRTransferFunction::Save().\n");
 	}
 	}
 	}
@@ -282,16 +282,16 @@ namespace vr
 	m_cpt_alpha.push_back (TransferControlPoint (a, isovalue));
 	}
 	myfile.close ();
-	printf ("lqc: Transfer Function 1D Control Points Loaded!\n");
+	//printf ("lqc: Transfer Function 1D Control Points Loaded!\n");
 	return true;
 	}
 	else
-	printf ("lqc: Error on opening file at VRTransferFunction::AddControlPointsReadFile().\n");
+	//printf ("lqc: Error on opening file at VRTransferFunction::AddControlPointsReadFile().\n");
 	}
 	return false;
 	}*/
 
-	float TransferFunction1D::CenteredTriangleFunction(float max, float base, unsigned char v)
+	float TransferFunction1D::CenteredTriangleFunction(float max, float base, const int& v)
 	{
 		//  boundary center
 		//         .
@@ -339,7 +339,7 @@ namespace vr
 		if (!m_value || !m_distance)
 			throw std::exception_ptr();
 
-		printf("TransferFunction1D: Generate (from ATFG).\n");
+		//printf("TransferFunction1D: Generate (from ATFG).\n");
 
 		ClearAlphaControlPoints();
 		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
@@ -356,7 +356,7 @@ namespace vr
 		// Assign opacity to transfer function
 		for (int i = 0; i < m_values_size; ++i)
 		{
-			unsigned char value = m_value[i];
+			int value = m_value[i];
 			float x = m_distance[value];
 
 			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
@@ -364,7 +364,7 @@ namespace vr
 
 			AddAlphaControlPoint(TransferControlPoint(a, value));
 			IupPlotAdd(m_tf_plot, value, a);
-      printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value, x, a);
+			//printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value, x, a);
 		}
 
 		IupPlotEnd(m_tf_plot);
@@ -373,9 +373,9 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "REDRAW", "YES");
 
 		IupPlotEnd(m_bx_plot);
-    IupSetAttribute(m_bx_plot, "DS_MODE", "MARK");
-    IupSetAttribute(m_bx_plot, "DS_MARKSTYLE", "CIRCLE");
-    IupSetAttribute(m_bx_plot, "DS_MARKSIZE", "3");
+		IupSetAttribute(m_bx_plot, "DS_MODE", "MARK");
+		IupSetAttribute(m_bx_plot, "DS_MARKSTYLE", "CIRCLE");
+		IupSetAttribute(m_bx_plot, "DS_MARKSIZE", "3");
 		IupSetAttribute(m_bx_plot, "DS_NAME", "p(v)");
 
 		IupPlotBegin(m_bx_plot, 0);
@@ -400,7 +400,7 @@ namespace vr
 	/// <param name="distances">The distances to the closest boundaries.</param>
 	/// <param name="sigmas">The sigmas of the boundaries.</param>
 	/// <param name="n">The input arrays' size.</param>
-	void TransferFunction1D::SetClosestBoundaryDistances(unsigned char* values, float* distances, int n)
+	void TransferFunction1D::SetClosestBoundaryDistances(int* values, float* distances, const int& n)
 	{
 		if (n < 2 || n > MAX_V)
 			throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");
