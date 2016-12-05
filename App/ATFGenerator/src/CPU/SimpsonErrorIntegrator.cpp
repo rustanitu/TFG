@@ -179,7 +179,7 @@ double SimpsonErrorIntegrator::CalculateInternalError (double s, double h, doubl
     //state_file2 << 0.0 << "\n";
     //state_file2.close ();
   }
-  //printf ("Proportional error: %lf\n", ret / (tol*15.0));.
+  printf ("Proportional error: %lf\n", ret / (tol*15.0));
   //std::fstream state_file;
   //state_file.open ("hie.txt", std::ios::in | std::ios::out | std::ios::app);
   //state_file << ret / (tol*15.0) << "\n";

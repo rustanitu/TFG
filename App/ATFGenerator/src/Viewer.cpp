@@ -18,6 +18,7 @@
 
 #define ATFG "AutomaticTransferFunction"
 //#define FAST_TFG
+#define GORDON
 
 Viewer *Viewer::m_instance = 0;
 
@@ -86,7 +87,7 @@ void Viewer::InitAndStart(int argc, char **argv)
   InitGL(argc, argv);
   Init(argc, argv);
 
-  //printf ("GL_ARB_gpu_shader_f64 %d\n", glewGetExtension ("GL_ARB_gpu_shader_fp64"));
+  printf ("GL_ARB_gpu_shader_f64 %d\n", glewGetExtension ("GL_ARB_gpu_shader_fp64"));
   Start();
 }
 
@@ -125,7 +126,11 @@ void Viewer::UpdateATFG()
 void Viewer::ExtractATFG()
 {
   m_atfg->SetGTresh(m_gtresh);
-  if (!m_atfg->ExtractTransferFunction())
+#ifdef GORDON
+  if (!m_atfg->ExtractGordonTransferFunction())
+#else
+	if ( !m_atfg->ExtractTransferFunction() )
+#endif
     return;
 
   GenerateATFG();
@@ -136,10 +141,14 @@ void Viewer::GenerateATFG()
   vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
   tf->SetBoundaryThickness(m_boundary_thickness);
   tf->SetBoundary(m_boundary);
-  if (tf->Generate()) {
+#ifdef GORDON
+  if (tf->GenerateGordonBased()) {
+#else
+	if ( tf->Generate() )
+	{
+#endif
     Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->CleanTransferFunctionTexture();
     m_transfer_function = tf;
-    //m_volume->SeparateBoundaries(tf);
   }
 }
 

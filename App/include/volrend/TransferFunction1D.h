@@ -56,6 +56,8 @@ namespace vr
 		/// </summary>
 		/// <returns>Returns true if the transfer function can
 		/// be generated, false otherwise.</returns>
+		bool GenerateGordonBased();
+
 		bool Generate();
 
 		void SetBoundaryThickness(int thickness)
@@ -89,7 +91,7 @@ namespace vr
 		/// <param name="n">The input arrays' size.</param>
 		void SetClosestBoundaryDistances(int* values, float* distances, const int& n);
 
-		bool ValidValue(int v);
+		void SetAlphaValues(int* values, float* alphas, const int& n);
 
 	private:
 		float CenteredTriangleFunction(float max, float base, const int& v);
@@ -99,21 +101,22 @@ namespace vr
 		/// It storages the values setted by
 		/// SetClosestBoundaryDistances.
 		/// </summary>
-		int* m_value;
+		int* m_indexes;
 		/// <summary>
 		/// It storages the distances setted by 
 		/// SetClosestBoundaryDistances.
 		/// </summary>
-		float* m_distance;
+		float* m_values;
 		/// <summary>
 		/// The boundary's sigma
 		/// </summary>
+		bool m_direct_tf;
+		bool m_gordon_tf;
 		int m_thickness;
 		int m_boundary;
 		int m_values_size;
 		Ihandle * m_tf_plot;
 		Ihandle * m_bx_plot;
-		bool m_valid[256];
 	};
 
 }

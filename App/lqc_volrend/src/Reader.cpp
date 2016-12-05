@@ -395,7 +395,7 @@ namespace vr
 			{
 				file >> j >> i >> isovalue;
 				int idx = i + (j * frows);
-				//printf("[%d, %d] = %d\n", i, j, isovalue);
+				printf("[%d, %d] = %d\n", i, j, isovalue);
 				scalar_values[idx] = isovalue;
 			}
 
@@ -547,7 +547,7 @@ namespace vr
 			else
 				fscanf(fp, "%f %f %f %f %f", &scalar, &color[0], &color[1], &color[2], &color[3]);
 
-			//printf ("Control Point: %f %f %f %f %f\n", color[0], color[1], color[2], color[3], scalar);
+			printf ("Control Point: %f %f %f %f %f\n", color[0], color[1], color[2], color[3], scalar);
 			transfer_functions->AddControlPoint(color[0], color[1], color[2], color[3], scalar);
 		}
 

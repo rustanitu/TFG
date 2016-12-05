@@ -55,8 +55,6 @@ namespace vr
 			return m_scalar_values != NULL;
 		}
 
-		void SeparateBoundaries(vr::TransferFunction1D* atfg);
-
 		int* GetVoxelSet()
 		{
 			return m_set_values;

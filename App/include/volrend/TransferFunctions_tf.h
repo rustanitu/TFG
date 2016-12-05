@@ -61,7 +61,7 @@ namespace vr
           return (1.0 - t)*v1 + (t)*v2;
         }
       }
-      //printf ("Out of Range: [Value = %lf]\n", value);
+      printf ("Out of Range: [Value = %lf]\n", value);
       return lqc::Vector4d (0.0);
     }
 

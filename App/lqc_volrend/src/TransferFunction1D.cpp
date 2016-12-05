@@ -8,25 +8,25 @@ namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_value(NULL), m_distance(NULL), m_boundary(0), m_thickness(1)
+		, m_indexes(NULL), m_values(NULL), m_boundary(0), m_thickness(1), m_direct_tf(false), m_gordon_tf(false)
 	{
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
 		m_transferfunction = NULL;
 		m_gradients = NULL;
-		//printf("TransferFunction1D criado.\n");
+		printf("TransferFunction1D criado.\n");
 	}
 
 	TransferFunction1D::~TransferFunction1D ()
 	{
-		//printf("TransferFunction1D destruido.\n");
+		printf("TransferFunction1D destruido.\n");
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
 		delete[] m_transferfunction;
 		delete[] m_gradients;
 
-		delete[] m_value;
-		delete[] m_distance;
+		delete[] m_indexes;
+		delete[] m_values;
 	}
 
 	const char* TransferFunction1D::GetNameClass ()
@@ -58,7 +58,7 @@ namespace vr
 
 	gl::GLTexture1D* TransferFunction1D::GenerateTexture_1D_RGBA ()
 	{
-		//printf("TransferFunction1D: GenerateTexture_1D_RGBA.\n");
+		printf("TransferFunction1D: GenerateTexture_1D_RGBA.\n");
 
 		if (!m_built)
 			Build (m_interpolation_type);
@@ -148,7 +148,7 @@ namespace vr
 				}
 			}
 		}
-		//printf ("TransferFunction1D: Build!\n");
+		printf ("TransferFunction1D: Build!\n");
 		m_built = true;
 	}
 
@@ -180,30 +180,30 @@ namespace vr
 
 	void TransferFunction1D::PrintControlPoints ()
 	{
-		//printf ("Print Transfer Function: Control Points\n");
+		printf ("Print Transfer Function: Control Points\n");
 		int rgb_pts = (int)m_cpt_rgb.size ();
-		//printf ("- Printing the RGB Control Points\n");
-		//printf ("  Format: \"Number: Red Green Blue, Isovalue\"\n");
+		printf ("- Printing the RGB Control Points\n");
+		printf ("  Format: \"Number: Red Green Blue, Isovalue\"\n");
 		for (int i = 0; i < rgb_pts; i++)
 		{
-			//printf ("  %d: %.2f %.2f %.2f, %d\n", i + 1, m_cpt_rgb[i].m_color.x, m_cpt_rgb[i].m_color.y, m_cpt_rgb[i].m_color.z, m_cpt_rgb[i].m_isoValue);
+			printf ("  %d: %.2f %.2f %.2f, %d\n", i + 1, m_cpt_rgb[i].m_color.x, m_cpt_rgb[i].m_color.y, m_cpt_rgb[i].m_color.z, m_cpt_rgb[i].m_isoValue);
 		}
-		//printf ("\n");
+		printf ("\n");
 
 		int alpha_pts = (int)m_cpt_alpha.size ();
-		//printf ("- Printing the Alpha Control Points\n");
-		//printf ("  Format: \"Number: Alpha, Isovalue\"\n");
+		printf ("- Printing the Alpha Control Points\n");
+		printf ("  Format: \"Number: Alpha, Isovalue\"\n");
 		for (int i = 0; i < alpha_pts; i++)
 		{
-			//printf ("  %d: %.2f, %d\n", i + 1, m_cpt_alpha[i].m_color.w, m_cpt_alpha[i].m_isoValue);
+			printf ("  %d: %.2f, %d\n", i + 1, m_cpt_alpha[i].m_color.w, m_cpt_alpha[i].m_isoValue);
 		}
-		//printf ("\n");
+		printf ("\n");
 	}
 
 	void TransferFunction1D::PrintTransferFunction ()
 	{
-		//printf ("Print Transfer Function: Control Points\n");
-		//printf ("  Format: \"IsoValue: Red Green Blue, Alpha\"\n");
+		printf ("Print Transfer Function: Control Points\n");
+		printf ("  Format: \"IsoValue: Red Green Blue, Alpha\"\n");
 		for (int i = 0; i < m_tflenght; i++)
 		{
 			printf ("%d: %.2f %.2f %.2f, %.2f\n", i, m_transferfunction[i].x
@@ -240,11 +240,11 @@ namespace vr
 	m_cpt_alpha[i].m_isoValue << " " << "\n";
 	}
 	myfile.close ();
-	//printf ("lqc: Transfer Function 1D Control Points Saved!\n");
+	printf ("lqc: Transfer Function 1D Control Points Saved!\n");
 	}
 	else
 	{
-	//printf ("lqc: Error on opening file at VRTransferFunction::Save().\n");
+	printf ("lqc: Error on opening file at VRTransferFunction::Save().\n");
 	}
 	}
 	}
@@ -282,11 +282,11 @@ namespace vr
 	m_cpt_alpha.push_back (TransferControlPoint (a, isovalue));
 	}
 	myfile.close ();
-	//printf ("lqc: Transfer Function 1D Control Points Loaded!\n");
+	printf ("lqc: Transfer Function 1D Control Points Loaded!\n");
 	return true;
 	}
 	else
-	//printf ("lqc: Error on opening file at VRTransferFunction::AddControlPointsReadFile().\n");
+	printf ("lqc: Error on opening file at VRTransferFunction::AddControlPointsReadFile().\n");
 	}
 	return false;
 	}*/
@@ -307,7 +307,7 @@ namespace vr
 		//       base
 
 		float a = 0.0f;
-		float x = m_distance[v];
+		float x = m_values[v];
 		if (x >= -base && x <= base)
 		{
 			if (x >= 0.0)
@@ -316,15 +316,9 @@ namespace vr
 				a = (max * x) / base;
 
 			a += max;
-			m_valid[v] = true;
 		}
 
 		return a;
-	}
-
-	bool TransferFunction1D::ValidValue(int v)
-	{
-		return m_valid[v];
 	}
 
 	/// <summary>
@@ -334,12 +328,15 @@ namespace vr
 	/// </summary>
 	/// <returns>Returns true if the transfer function can
 	/// be generated, false otherwise.</returns>
-	bool TransferFunction1D::Generate()
+	bool TransferFunction1D::GenerateGordonBased()
 	{
-		if (!m_value || !m_distance)
+		if ( !m_indexes || !m_values )
 			throw std::exception_ptr();
 
-		//printf("TransferFunction1D: Generate (from ATFG).\n");
+		if ( m_direct_tf )
+			throw std::domain_error("Direct transfer function set. Call Generate instead.");
+
+		printf("TransferFunction1D: GenerateGordonBased (from ATFG).\n");
 
 		ClearAlphaControlPoints();
 		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
@@ -347,24 +344,21 @@ namespace vr
 		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
 		IupPlotBegin(m_bx_plot, 0);
 
-		for (int i = 0; i < 256; ++i)
-			m_valid[i] = false;
-
 		float amax = 1.0f;
 		float base = m_thickness;
 
 		// Assign opacity to transfer function
-		for (int i = 0; i < m_values_size; ++i)
+		for ( int i = 0; i < m_values_size; ++i )
 		{
-			int value = m_value[i];
-			float x = m_distance[value];
+			int value = m_indexes[i];
+			float x = m_values[value];
 
 			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
 			double a = CenteredTriangleFunction(amax, base, value);
 
 			AddAlphaControlPoint(TransferControlPoint(a, value));
 			IupPlotAdd(m_tf_plot, value, a);
-			//printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value, x, a);
+			printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value, x, a);
 		}
 
 		IupPlotEnd(m_tf_plot);
@@ -390,6 +384,43 @@ namespace vr
 		return true;
 	}
 
+	bool TransferFunction1D::Generate()
+	{
+		if (!m_indexes || !m_values)
+			throw std::exception_ptr();
+
+		if ( m_gordon_tf )
+			throw std::domain_error("Gordon's transfer function set. Call GenerateGordonBased instead.");
+
+		printf("TransferFunction1D: Generate (from ATFG).\n");
+
+		ClearAlphaControlPoints();
+		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
+		IupPlotBegin(m_tf_plot, 0);
+		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
+		IupPlotBegin(m_bx_plot, 0);
+
+		float amax = 1.0f;
+		float base = m_thickness;
+
+		// Assign opacity to transfer function
+		for (int i = 0; i < m_values_size; ++i)
+		{
+			int value = m_indexes[i];
+			float a = m_values[i];
+			AddAlphaControlPoint(TransferControlPoint(a, value));
+			IupPlotAdd(m_tf_plot, value, a);
+			printf("TF: value: %d,\talpha: %.2f.\n", value, a);
+		}
+
+		IupPlotEnd(m_tf_plot);
+		IupSetAttribute(m_tf_plot, "DS_NAME", "Transfer Function");
+		IupSetAttribute(m_tf_plot, "DS_COLOR", "128 128 128");
+		IupSetAttribute(m_tf_plot, "REDRAW", "YES");
+
+		return true;
+	}
+
 	/// <summary>
 	/// Specifies the distance between a intensity value
 	/// and its closest boundary. Thus, the input arrays'
@@ -403,18 +434,42 @@ namespace vr
 	void TransferFunction1D::SetClosestBoundaryDistances(int* values, float* distances, const int& n)
 	{
 		if (n < 2 || n > MAX_V)
-			throw std::length_error("At least 2 values are needed to interpolate the transfer funciton!");
+			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
 
+		if ( m_direct_tf )
+			throw std::domain_error("Direct transfer function already set (not as Gordon's).");
+
+		m_gordon_tf = true;
 		m_values_size = n;
 
-		delete[] m_value;
-		delete[] m_distance;
+		delete[] m_indexes;
+		delete[] m_values;
 
 		if (values)
-			m_value = values;
+			m_indexes = values;
 
 		if (distances)
-			m_distance = distances;
+			m_values = distances;
 	}
 
+	void TransferFunction1D::SetAlphaValues(int* values, float* alphas, const int& n)
+	{
+		if ( n < 2 || n > MAX_V )
+			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
+
+		if ( m_gordon_tf )
+			throw std::domain_error("Transfer function already set as Gordon's.");
+
+		m_direct_tf = true;
+		m_values_size = n;
+
+		delete[] m_indexes;
+		delete[] m_values;
+
+		if ( values )
+			m_indexes = values;
+
+		if ( alphas )
+			m_values = alphas;
+	}
 }
