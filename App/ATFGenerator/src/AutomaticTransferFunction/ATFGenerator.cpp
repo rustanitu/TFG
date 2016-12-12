@@ -187,12 +187,6 @@ bool ATFGenerator::ExtractTransferFunction()
 
 	GenerateDataChart();
 
-	// Scale values from 0..1 for opacity
-	for ( int i = 0; i < size; ++i )
-	{
-		values[i] = (values[i] - min) / (max - min);
-	}
-
 	m_transfer_function->SetAlphaValues(indexes, values, size);
 	return true;
 }
