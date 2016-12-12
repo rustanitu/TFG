@@ -113,6 +113,30 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
 	SetDefaultColor();
 
+	const int times = 10;
+	int size;
+	float* values;
+	int* indexes;
+
+	float* curves[6] = {m_average_gradient, m_min_gradient, m_max_gradient, m_average_laplacian, m_min_laplacian, m_max_laplacian};
+	for ( int k = 0; k < 6; ++k )
+	{
+		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
+		SmoothCurveWithGaussian(values, size, times);
+
+		float max = -FLT_MAX;
+		float min = FLT_MAX;
+		for ( int i = 0; i < size; ++i )
+			curves[k][indexes[i]] = values[i];
+
+		delete[] values;
+		values = NULL;
+		delete[] indexes;
+		indexes = NULL;
+	}
+
+	GenerateDataChart();
+
 	// Gordon Transfer Function
 	float* x = new float[ATFG_V_RANGE];
 	int* v = new int[ATFG_V_RANGE];
@@ -121,7 +145,6 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 		printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
 		return false;
 	}
-
 	UINT32 n_v;
 	GetBoundaryDistancies(x, v, &n_v);
 	m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
@@ -141,45 +164,26 @@ bool ATFGenerator::ExtractTransferFunction()
 	SetDefaultColor();
 
 	const int times = 10;
-
 	int size;
 	float* values;
 	int* indexes;
 
-	// Get Laplacian average curve smooth
-	GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
-	SmoothCurveWithGaussian(values, size, times);
-
-	float max = -FLT_MAX;
-	float min = FLT_MAX;
-	for ( int i = 0; i < size; ++i )
+	float* curves[6] = {m_average_gradient, m_min_gradient, m_max_gradient, m_average_laplacian, m_min_laplacian, m_max_laplacian};
+	for ( int k = 0; k < 6; ++k )
 	{
-		m_average_laplacian[indexes[i]] = values[i];
-		max = fmax(values[i], max);
-		min = fmin(values[i], min);
+		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
+		SmoothCurveWithGaussian(values, size, times);
+
+		float max = -FLT_MAX;
+		float min = FLT_MAX;
+		for ( int i = 0; i < size; ++i )
+			curves[k][indexes[i]] = values[i];
+
+		delete[] values;
+		values = NULL;
+		delete[] indexes;
+		indexes = NULL;
 	}
-
-	printf("Smooth Laplacian MAX: %.2f - MIN: %.2f\n", max, min);
-	delete[] values;
-	values = NULL;
-	delete[] indexes;
-	indexes = NULL;
-	
-	// Get gradient average curve smooth
-	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
-	SmoothCurveWithGaussian(values, size, times);
-
-	max = -FLT_MAX;
-	min = FLT_MAX;
-	for ( int i = 0; i < size; ++i )
-	{
-		m_average_gradient[indexes[i]] = values[i];
-		max = fmax(values[i], max);
-		min = fmin(values[i], min);
-	}
-
-	printf("Smooth Gradient MAX: %.2f - MIN: %.2f\n", max, min);
-
 
 	GenerateDataChart();
 
@@ -546,6 +550,13 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "CLEAR", "YES");
 
 	IupPlotBegin(m_deriv_plot, 0);
+	IupPlotAdd(m_deriv_plot, 0, 0);
+	IupPlotAdd(m_deriv_plot, ATFG_V_MAX, 0);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "0");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 0");
+
+	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
 		if ( m_average_gradient[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, i, m_average_gradient[i]);
@@ -568,11 +579,48 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 0");
 
 	IupPlotBegin(m_deriv_plot, 0);
-	IupPlotAdd(m_deriv_plot, 0, 0);
-	IupPlotAdd(m_deriv_plot, ATFG_V_MAX, 0);
+	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
+		if ( m_min_gradient[i] != INT_MAX )
+			IupPlotAdd(m_deriv_plot, i, m_min_gradient[i]);
 	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_NAME", "0");
-	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 0");
+	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "g_min(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 128");
+
+	IupPlotBegin(m_deriv_plot, 0);
+	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
+		if ( m_max_gradient[i] != -INT_MAX )
+			IupPlotAdd(m_deriv_plot, i, m_max_gradient[i]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "g_max(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 255");
+
+	IupPlotBegin(m_deriv_plot, 0);
+	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
+		if ( m_min_laplacian[i] != INT_MAX )
+			IupPlotAdd(m_deriv_plot, i, m_min_laplacian[i]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "h_min(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "128 128 0");
+
+	IupPlotBegin(m_deriv_plot, 0);
+	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
+		if ( m_max_laplacian[i] != -INT_MAX )
+			IupPlotAdd(m_deriv_plot, i, m_max_laplacian[i]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "h_max(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 255 0");
 
 	IupSetAttribute(m_deriv_plot, "REDRAW", "YES");
 }
@@ -754,6 +802,10 @@ bool ATFGenerator::GenerateHistogram()
 	{
 		m_average_gradient[i] = -FLT_MAX;
 		m_average_laplacian[i] = -FLT_MAX;
+		m_min_gradient[i] = FLT_MAX;
+		m_min_laplacian[i] = FLT_MAX;
+		m_max_gradient[i] = -FLT_MAX;
+		m_max_laplacian[i] = -FLT_MAX;
 		UINT32 w = 0;
 		float g = 0.0f;
 		float h = 0.0f;
@@ -763,6 +815,15 @@ bool ATFGenerator::GenerateHistogram()
 			{
 				if ( m_scalar_histogram[i][j][k] > 0)
 				{
+					if ( (float) j < m_min_gradient[i] )
+						m_min_gradient[i] = j;
+					if ( (float) k < m_min_laplacian[i] )
+						m_min_laplacian[i] = k;
+					if ( (float) j > m_max_gradient[i] )
+						m_max_gradient[i] = j;
+					if ( (float) k > m_max_laplacian[i] )
+						m_max_laplacian[i] = k;
+
 					g += j * m_scalar_histogram[i][j][k];
 					h += k * m_scalar_histogram[i][j][k];
 					w += m_scalar_histogram[i][j][k];
@@ -784,6 +845,15 @@ bool ATFGenerator::GenerateHistogram()
 			m_average_laplacian[i] = h;
 			m_max_average_laplacian = fmax(m_max_average_laplacian, h);
 			m_min_average_laplacian = fmin(m_min_average_laplacian, h);
+
+			m_min_gradient[i] = m_scalarfield->GetMaxGradient() * m_min_gradient[i] / ATFG_V_MAX;
+			m_max_gradient[i] = m_scalarfield->GetMaxGradient() * m_max_gradient[i] / ATFG_V_MAX;
+
+			m_min_laplacian[i] = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * m_min_laplacian[i] / ATFG_V_MAX;
+			m_min_laplacian[i] += m_scalarfield->GetMinLaplacian();
+
+			m_max_laplacian[i] = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * m_max_laplacian[i] / ATFG_V_MAX;
+			m_max_laplacian[i] += m_scalarfield->GetMinLaplacian();
 		}
 
 		printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
@@ -891,8 +961,6 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 		}
 		else
 		{
-			//sigma = m_average_gradient[max_grad[max_indices[i]]] / (m_max_average_laplacian * SQRT_E);
-			//sigma = g / (l * SQRT_E);
 			printf("Sigma(%d): %.2f\n", i, sigma);
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}

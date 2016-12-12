@@ -245,15 +245,13 @@ private:
 	/// </summary>
 	float* m_scalar_laplacian;
 
-	/// <summary>
-	/// The average gradient of each intensity value.
-	/// </summary>
 	float m_average_gradient[ATFG_V_RANGE];
-
-	/// <summary>
-	/// The average laplacian of each intensity value.
-	/// </summary>
 	float m_average_laplacian[ATFG_V_RANGE];
+
+	float m_min_gradient[ATFG_V_RANGE];
+	float m_min_laplacian[ATFG_V_RANGE];
+	float m_max_gradient[ATFG_V_RANGE];
+	float m_max_laplacian[ATFG_V_RANGE];
 
 	/// <summary>
 	/// Histogram of occurences for each triple value x gradient x laplacian.
