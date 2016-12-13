@@ -187,6 +187,7 @@ bool ATFGenerator::ExtractTransferFunction()
 
 	GenerateDataChart();
 
+  GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
 	m_transfer_function->SetAlphaValues(indexes, values, size);
 	return true;
 }
