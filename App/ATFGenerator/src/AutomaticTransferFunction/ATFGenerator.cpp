@@ -124,8 +124,6 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
 		SmoothCurveWithGaussian(values, size, times);
 
-		float max = -FLT_MAX;
-		float min = FLT_MAX;
 		for ( int i = 0; i < size; ++i )
 			curves[k][indexes[i]] = values[i];
 
@@ -174,8 +172,6 @@ bool ATFGenerator::ExtractTransferFunction()
 		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
 		SmoothCurveWithGaussian(values, size, times);
 
-		float max = -FLT_MAX;
-		float min = FLT_MAX;
 		for ( int i = 0; i < size; ++i )
 			curves[k][indexes[i]] = values[i];
 
@@ -575,7 +571,7 @@ void ATFGenerator::GenerateDataChart()
 
 	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_min_gradient[i] != INT_MAX )
+		if ( m_min_gradient[i] != FLT_MAX )
 			IupPlotAdd(m_deriv_plot, i, m_min_gradient[i]);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
@@ -586,7 +582,7 @@ void ATFGenerator::GenerateDataChart()
 
 	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_max_gradient[i] != -INT_MAX )
+		if ( m_max_gradient[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, i, m_max_gradient[i]);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
@@ -597,7 +593,7 @@ void ATFGenerator::GenerateDataChart()
 
 	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_min_laplacian[i] != INT_MAX )
+		if ( m_min_laplacian[i] != FLT_MAX )
 			IupPlotAdd(m_deriv_plot, i, m_min_laplacian[i]);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
@@ -608,7 +604,7 @@ void ATFGenerator::GenerateDataChart()
 
 	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_max_laplacian[i] != -INT_MAX )
+		if ( m_max_laplacian[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, i, m_max_laplacian[i]);
 	IupPlotEnd(m_deriv_plot);
 	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
