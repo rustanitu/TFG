@@ -92,6 +92,8 @@ namespace vr
 		void SetClosestBoundaryDistances(int* values, float* distances, const int& n);
 
 		void SetAlphaValues(int* values, float* alphas, const int& n);
+    
+    void SetPeakPoints(int* peaks, float* values, const int& n);
 
 	private:
 		float CenteredTriangleFunction(float max, float base, const int& v);
@@ -111,6 +113,7 @@ namespace vr
 		/// The boundary's sigma
 		/// </summary>
 		bool m_direct_tf;
+    bool m_peakbased_tf;
 		bool m_gordon_tf;
 		int m_thickness;
 		int m_boundary;

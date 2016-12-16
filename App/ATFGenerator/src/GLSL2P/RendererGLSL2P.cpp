@@ -103,7 +103,7 @@ void RendererGLSL2P::Resize (int Width, int Height)
 	glViewport (0, 0, Width, Height);
 	m_ProjectionMatrix =
 		lqc::CreateProjectionMatrix (
-		45,
+		30,
 		(float)Width / (float)Height,
 		1.0f,
 		100.0f
@@ -412,7 +412,7 @@ void RendererGLSL2P::CreateSecondPass ()
 	}
 	else
 	{
-		m_shader_secondpass->SetUniformFloat ("step_size", .1f);
+		m_shader_secondpass->SetUniformFloat ("step_size", .05f);
 	}
 	
 	gl::ExitOnGLError ("ERROR: Could not get shader uniform locations");

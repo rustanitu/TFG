@@ -8,7 +8,7 @@ namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_indexes(NULL), m_values(NULL), m_boundary(0), m_thickness(1), m_direct_tf(false), m_gordon_tf(false)
+    , m_indexes(NULL), m_values(NULL), m_boundary(0), m_thickness(1), m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false)
 	{
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
@@ -333,8 +333,8 @@ namespace vr
 		if ( !m_indexes || !m_values )
 			throw std::exception_ptr();
 
-		if ( m_direct_tf )
-			throw std::domain_error("Direct transfer function set. Call Generate instead.");
+    if (m_direct_tf || m_peakbased_tf)
+			throw std::domain_error("Transfer function already set (not a Gordon's one).");
 
 		printf("TransferFunction1D: GenerateGordonBased (from ATFG).\n");
 
@@ -389,8 +389,8 @@ namespace vr
 		if (!m_indexes || !m_values)
 			throw std::exception_ptr();
 
-		if ( m_gordon_tf )
-			throw std::domain_error("Gordon's transfer function set. Call GenerateGordonBased instead.");
+    if (m_gordon_tf)
+			throw std::domain_error("Transfer function already set as Gordon's.");
 
 		printf("TransferFunction1D: Generate (from ATFG).\n");
 
@@ -436,10 +436,10 @@ namespace vr
 		if (n < 2 || n > MAX_V)
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
 
-		if ( m_direct_tf )
-			throw std::domain_error("Direct transfer function already set (not as Gordon's).");
+    if (m_direct_tf || m_peakbased_tf)
+			throw std::domain_error("Transfer function already set (not as Gordon).");
 
-		m_gordon_tf = true;
+    m_gordon_tf = true;
 		m_values_size = n;
 
 		delete[] m_indexes;
@@ -457,8 +457,8 @@ namespace vr
 		if ( n < 2 || n > MAX_V )
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
 
-		if ( m_gordon_tf )
-			throw std::domain_error("Transfer function already set as Gordon's.");
+    if (m_gordon_tf || m_peakbased_tf)
+			throw std::domain_error("Transfer function already set Direct.");
 
 		m_direct_tf = true;
 		m_values_size = n;
@@ -472,4 +472,25 @@ namespace vr
 		if ( alphas )
 			m_values = alphas;
 	}
+
+  void TransferFunction1D::SetPeakPoints(int* peaks, float* values, const int& n)
+  {
+    if (n < 2 || n > MAX_V)
+      throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
+
+    if (m_gordon_tf || m_direct_tf)
+      throw std::domain_error("Transfer function already set as Gordon's.");
+
+    m_peakbased_tf = true;
+    m_values_size = n;
+
+    delete[] m_indexes;
+    delete[] m_values;
+
+    if (peaks)
+      m_indexes = peaks;
+
+    if (values)
+      m_values = values;
+  }
 }
