@@ -36,7 +36,7 @@ Tank::~Tank()
 
 bool Tank::Read(const char* filepath)
 {
-  printf("Inicio da leitura do tank.\n");
+	printf("Inicio da leitura do tank.\n");
 	// It opens the tank file
 	std::ifstream file(filepath);
 	if ( !file || !file.is_open() )
@@ -51,10 +51,10 @@ bool Tank::Read(const char* filepath)
 	m_height = nj;
 	m_depth = nk;
 
-  printf("Tamanho do Tank:\n");
-  printf(" - tWidth: %d\n", m_width);
-  printf(" - tHeight: %d\n", m_height);
-  printf(" - tDepth: %d\n", m_depth);
+	printf("Tamanho do Tank:\n");
+	printf(" - tWidth: %d\n", m_width);
+	printf(" - tHeight: %d\n", m_height);
+	printf(" - tDepth: %d\n", m_depth);
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
@@ -146,41 +146,41 @@ bool Tank::Read(const char* filepath)
 				m_max_value = fmax(m_max_value, value);
 				m_min_value = fmin(m_min_value, value);
 			}
-      else {
-        cell->SetValue(t, 0.0f);
-        inactives.push_back(id);
-      }
+			else {
+				cell->SetValue(t, 0.0f);
+				inactives.push_back(id);
+			}
 		}
 	}
 
 #ifdef AVERAGE_INACTIVE
-  TankComp tc;
-  tc.m_cells = m_cells;
-  std::sort(inactives.begin(), inactives.end(), tc);
+	TankComp tc;
+	tc.m_cells = m_cells;
+	std::sort(inactives.begin(), inactives.end(), tc);
 
-  while (inactives.size() > 0) {
-    int id = inactives.back();
-    inactives.pop_back();
+	while (inactives.size() > 0) {
+		int id = inactives.back();
+		inactives.pop_back();
 
-    Cell* cell = &m_cells[id];
+		Cell* cell = &m_cells[id];
 
-    for (int t = 0; t < m_nsteps; ++t) {
-      int actives = 0;
-      float values = 0.0f;
-      for (int i = 0; i < 6; ++i) {
-        int idx = cell->GetAdjcentCellIndex(i);
-        if (idx > -1 && m_cells[idx].IsActive()) {
-          actives++;
-          values += m_cells[idx].GetValue(t);
-        }
-      }
+		for (int t = 0; t < m_nsteps; ++t) {
+			int actives = 0;
+			float values = 0.0f;
+			for (int i = 0; i < 6; ++i) {
+				int idx = cell->GetAdjcentCellIndex(i);
+				if (idx > -1 && m_cells[idx].IsActive()) {
+					actives++;
+					values += m_cells[idx].GetValue(t);
+				}
+			}
 
-      cell->SetValue(t, values / actives);
-    }
-  }
+			cell->SetValue(t, values / actives);
+		}
+	}
 #endif
 
-  printf("Fim da leitura do tank.\n");
+	printf("Fim da leitura do tank.\n");
 
 	return true;
 }
@@ -195,10 +195,10 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 	m_height = height;
 	m_depth = depth;
 
-  printf("Tamanho do Tank:\n");
-  printf(" - tWidth: %d\n", m_width);
-  printf(" - tHeight: %d\n", m_height);
-  printf(" - tDepth: %d\n", m_depth);
+	printf("Tamanho do Tank:\n");
+	printf(" - tWidth: %d\n", m_width);
+	printf(" - tHeight: %d\n", m_height);
+	printf(" - tDepth: %d\n", m_depth);
 
 	m_ncells = m_width * m_height * m_depth;
 	m_cells = new Cell[m_ncells];
@@ -232,7 +232,7 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 		}
 	}
 
-  printf("Fim da leitura do tank.\n");
+	printf("Fim da leitura do tank.\n");
 }
 
 float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -285,7 +285,7 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 
 				float v = GetValue(i, j, k);
 #ifdef ONLY_ACTIVE_CELLS
-        if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
 #else
 				if ( IsOutOfBoundary(i, j, k) )
 #endif
@@ -367,9 +367,9 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 				float dfz = m_scalar_fz[id];
 
 #ifdef ONLY_ACTIVE_CELLS
-        if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
 #else
-        if (IsOutOfBoundary(i, j, k))
+				if (IsOutOfBoundary(i, j, k))
 #endif
 				{
 					id = GetId(x, y, z);

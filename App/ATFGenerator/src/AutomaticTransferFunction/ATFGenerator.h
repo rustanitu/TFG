@@ -229,8 +229,8 @@ private:
 
 	void SetDefaultColor();
 
-  int GetMaxPoints(const float* curve, const int* indexes, const int& curve_size, int*& max_indexes);
-  int GetInflectionPoints(const float* curve, const int* indexes, const int& curve_size, int*& inflct_indexes);
+	int GetMaxPoints(const float* curve, const int* indexes, const int& curve_size, int*& max_indexes);
+	int GetInflectionPoints(const float* curve, const int* indexes, const int& curve_size, int*& inflct_indexes);
 
 private:
 	float m_max_average_gradient;
@@ -256,10 +256,10 @@ private:
 	float m_max_gradient[ATFG_V_RANGE];
 	float m_max_laplacian[ATFG_V_RANGE];
 
-  int m_max_size;
-  int* m_max_indexes;
-  int m_inflct_size;
-  int* m_inflct_indexes;
+	int m_max_size;
+	int* m_max_indexes;
+	int m_inflct_size;
+	int* m_inflct_indexes;
 
 	/// <summary>
 	/// Histogram of occurences for each triple value x gradient x laplacian.

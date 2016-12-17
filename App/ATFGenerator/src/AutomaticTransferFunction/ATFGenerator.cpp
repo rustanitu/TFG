@@ -136,24 +136,24 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 		values = NULL;
 		delete[] indexes;
 		indexes = NULL;
-  }
+	}
 
-  m_inflct_size = 0;
-  delete[] m_inflct_indexes;
-  m_inflct_indexes = NULL;
-  GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
-  m_inflct_size = GetInflectionPoints(values, indexes, size, m_inflct_indexes);
+	m_inflct_size = 0;
+	delete[] m_inflct_indexes;
+	m_inflct_indexes = NULL;
+	GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
+	m_inflct_size = GetInflectionPoints(values, indexes, size, m_inflct_indexes);
 
-  delete[] values;
-  delete[] indexes;
+	delete[] values;
+	delete[] indexes;
 
-  m_max_size = 0;
-  delete[] m_max_indexes;
-  m_max_indexes = NULL;
-  GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
-  m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes);
+	m_max_size = 0;
+	delete[] m_max_indexes;
+	m_max_indexes = NULL;
+	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
+	m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes);
 
-  GenerateDataChart();
+	GenerateDataChart();
 
 	// Gordon Transfer Function
 	float* x = new float[ATFG_V_RANGE];
@@ -201,98 +201,98 @@ bool ATFGenerator::ExtractTransferFunction()
 		indexes = NULL;
 	}
 
-  m_inflct_size = 0;
-  delete[] m_inflct_indexes;
-  m_inflct_indexes = NULL;
-  GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
-  m_inflct_size = GetInflectionPoints(values, indexes, size, m_inflct_indexes);
+	m_inflct_size = 0;
+	delete[] m_inflct_indexes;
+	m_inflct_indexes = NULL;
+	GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
+	m_inflct_size = GetInflectionPoints(values, indexes, size, m_inflct_indexes);
 
-  delete[] values;
-  delete[] indexes;
+	delete[] values;
+	delete[] indexes;
 
-  m_max_size = 0;
-  delete[] m_max_indexes;
-  m_max_indexes = NULL;
-  GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
-  m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes); 
+	m_max_size = 0;
+	delete[] m_max_indexes;
+	m_max_indexes = NULL;
+	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
+	m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes); 
 
 	GenerateDataChart();
 
 	//m_transfer_function->SetAlphaValues(indexes, values, size);
 
-  float max_grad = 0.0f;
-  for (int i = 0; i < size; ++i)
-  {
-    max_grad = fmax(max_grad, m_average_gradient[indexes[i]]);
-  }
+	float max_grad = 0.0f;
+	for (int i = 0; i < size; ++i)
+	{
+		max_grad = fmax(max_grad, m_average_gradient[indexes[i]]);
+	}
 
 #if 0
-  float* aux_values = new float[size];
-  int* aux_indexes = new int[size];
+	float* aux_values = new float[size];
+	int* aux_indexes = new int[size];
 
-  int match = 0;
-  int max_idx = 0;
-  int inflct_idx = 0;
-  while (max_idx < m_max_size || inflct_idx < m_inflct_size) {
-    if (max_idx < m_max_size && inflct_idx < m_inflct_size && m_max_indexes[max_idx] == m_inflct_indexes[inflct_idx])
-    {
-      aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
-      aux_indexes[match] = m_max_indexes[max_idx];
-      ++match;
-      ++max_idx;
-      ++inflct_idx;
-    }
-    else if (max_idx < m_max_size && m_max_indexes[max_idx] < m_inflct_indexes[inflct_idx])
-    {
-      ++max_idx;
-    }
-    else
-    {
-      ++inflct_idx;
-    }
-  }
+	int match = 0;
+	int max_idx = 0;
+	int inflct_idx = 0;
+	while (max_idx < m_max_size || inflct_idx < m_inflct_size) {
+		if (max_idx < m_max_size && inflct_idx < m_inflct_size && m_max_indexes[max_idx] == m_inflct_indexes[inflct_idx])
+		{
+			aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
+			aux_indexes[match] = m_max_indexes[max_idx];
+			++match;
+			++max_idx;
+			++inflct_idx;
+		}
+		else if (max_idx < m_max_size && m_max_indexes[max_idx] < m_inflct_indexes[inflct_idx])
+		{
+			++max_idx;
+		}
+		else
+		{
+			++inflct_idx;
+		}
+	}
 #else
-  float* aux_values = new float[m_max_size + m_inflct_size];
-  int* aux_indexes = new int[m_max_size + m_inflct_size];
+	float* aux_values = new float[m_max_size + m_inflct_size];
+	int* aux_indexes = new int[m_max_size + m_inflct_size];
 
-  int match = 0;
-  int max_idx = 0;
-  int inflct_idx = 0;
-  while (max_idx < m_max_size || inflct_idx < m_inflct_size) {
-    if (max_idx < m_max_size && inflct_idx < m_inflct_size && m_max_indexes[max_idx] == m_inflct_indexes[inflct_idx])
-    {
-      aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
-      aux_indexes[match] = m_max_indexes[max_idx];
-      ++max_idx;
-      ++inflct_idx;
-    }
-    else if (max_idx < m_max_size && m_max_indexes[max_idx] < m_inflct_indexes[inflct_idx])
-    {
-      aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
-      aux_indexes[match] = m_max_indexes[max_idx];
-      ++max_idx;
-    }
-    else
-    {
-      aux_values[match] = 0.0f;
-      aux_indexes[match] = m_inflct_indexes[inflct_idx];
-      ++inflct_idx;
-    }
+	int match = 0;
+	int max_idx = 0;
+	int inflct_idx = 0;
+	while (max_idx < m_max_size || inflct_idx < m_inflct_size) {
+		if (max_idx < m_max_size && inflct_idx < m_inflct_size && m_max_indexes[max_idx] == m_inflct_indexes[inflct_idx])
+		{
+			aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
+			aux_indexes[match] = m_max_indexes[max_idx];
+			++max_idx;
+			++inflct_idx;
+		}
+		else if (max_idx < m_max_size && m_max_indexes[max_idx] < m_inflct_indexes[inflct_idx])
+		{
+			aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
+			aux_indexes[match] = m_max_indexes[max_idx];
+			++max_idx;
+		}
+		else
+		{
+			aux_values[match] = 0.0f;
+			aux_indexes[match] = m_inflct_indexes[inflct_idx];
+			++inflct_idx;
+		}
 
-    ++match;
-  }
+		++match;
+	}
 #endif
 
-  float* peaks_vals = new float[match];
-  int* peaks_ids = new int[match];
+	float* peaks_vals = new float[match];
+	int* peaks_ids = new int[match];
 
-  memcpy(peaks_vals, aux_values, match * sizeof(float));
-  memcpy(peaks_ids, aux_indexes, match * sizeof(int));
+	memcpy(peaks_vals, aux_values, match * sizeof(float));
+	memcpy(peaks_ids, aux_indexes, match * sizeof(int));
 
-  delete[] aux_values;
-  delete[] aux_indexes;
+	delete[] aux_values;
+	delete[] aux_indexes;
 
-  m_transfer_function->SetPeakPoints(peaks_ids, peaks_vals, match);
+	m_transfer_function->SetPeakPoints(peaks_ids, peaks_vals, match);
 
 	return true;
 }
@@ -724,25 +724,25 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 255 0");
 #endif
 
-  IupPlotBegin(m_deriv_plot, 0);
-  for (UINT32 i = 0; i < m_max_size; i++)
-    IupPlotAdd(m_deriv_plot, m_max_indexes[i], m_average_gradient[m_max_indexes[i]]);
-  IupPlotEnd(m_deriv_plot);
-  IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
-  IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
-  IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
-  IupSetAttribute(m_deriv_plot, "DS_NAME", "Max(v)");
-  IupSetAttribute(m_deriv_plot, "DS_COLOR", "255 0 0");
+	IupPlotBegin(m_deriv_plot, 0);
+	for (UINT32 i = 0; i < m_max_size; i++)
+		IupPlotAdd(m_deriv_plot, m_max_indexes[i], m_average_gradient[m_max_indexes[i]]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "Max(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "255 0 0");
 
-  IupPlotBegin(m_deriv_plot, 0);
-  for (UINT32 i = 0; i < m_inflct_size; i++)
-    IupPlotAdd(m_deriv_plot, m_inflct_indexes[i], m_average_laplacian[m_inflct_indexes[i]]);
-  IupPlotEnd(m_deriv_plot);
-  IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
-  IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
-  IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
-  IupSetAttribute(m_deriv_plot, "DS_NAME", "Inflct(v)");
-  IupSetAttribute(m_deriv_plot, "DS_COLOR", "255 0 255");
+	IupPlotBegin(m_deriv_plot, 0);
+	for (UINT32 i = 0; i < m_inflct_size; i++)
+		IupPlotAdd(m_deriv_plot, m_inflct_indexes[i], m_average_laplacian[m_inflct_indexes[i]]);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "MARK");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
+	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "Inflct(v)");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "255 0 255");
 
 	IupSetAttribute(m_deriv_plot, "REDRAW", "YES");
 }
@@ -1096,100 +1096,100 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 
 int ATFGenerator::GetMaxPoints(const float* curve, const int* indexes, const int& curve_size, int*& max_indexes)
 {
-  float* first_derivative = new float[curve_size];
-  first_derivative[0] = first_derivative[curve_size - 1] = 0.0f;
-  for (int i = 1; i < curve_size - 1; ++i) {
-    first_derivative[i] = (curve[i + 1] - curve[i - 1]) / 2.0f;
-  }
+	float* first_derivative = new float[curve_size];
+	first_derivative[0] = first_derivative[curve_size - 1] = 0.0f;
+	for (int i = 1; i < curve_size - 1; ++i) {
+		first_derivative[i] = (curve[i + 1] - curve[i - 1]) / 2.0f;
+	}
 
-  float* second_derivative = new float[curve_size];
-  second_derivative[0] = second_derivative[curve_size - 1] = 0.0f;
-  for (int i = 1; i < curve_size - 1; ++i) {
-    second_derivative[i] = (first_derivative[i + 1] - first_derivative[i - 1]) / 2.0f;
-  }
+	float* second_derivative = new float[curve_size];
+	second_derivative[0] = second_derivative[curve_size - 1] = 0.0f;
+	for (int i = 1; i < curve_size - 1; ++i) {
+		second_derivative[i] = (first_derivative[i + 1] - first_derivative[i - 1]) / 2.0f;
+	}
 
-  int up = 0, down = 0;
-  int* max_indices = new int[curve_size];
-  int max_indices_size = 0;
-  for (int i = 0; i < curve_size - 1; ++i) {
-    if (signbit(first_derivative[i]) ^ signbit(first_derivative[i + 1])) {
-      if (second_derivative[i] < 0 && second_derivative[i + 1] < 0)
-      {
-        if (curve[i] > curve[i + 1])
-          max_indices[max_indices_size++] = indexes[i];
-        else
-          max_indices[max_indices_size++] = indexes[i + 1];
-      }
-      else if (second_derivative[i] < 0)
-      {
-        max_indices[max_indices_size++] = indexes[i];
-      }
-      else if (second_derivative[i + 1] < 0)
-      {
-        max_indices[max_indices_size++] = indexes[i + 1];
-      }
-    }
-  }
+	int up = 0, down = 0;
+	int* max_indices = new int[curve_size];
+	int max_indices_size = 0;
+	for (int i = 0; i < curve_size - 1; ++i) {
+		if (signbit(first_derivative[i]) ^ signbit(first_derivative[i + 1])) {
+			if (second_derivative[i] < 0 && second_derivative[i + 1] < 0)
+			{
+				if (curve[i] > curve[i + 1])
+					max_indices[max_indices_size++] = indexes[i];
+				else
+					max_indices[max_indices_size++] = indexes[i + 1];
+			}
+			else if (second_derivative[i] < 0)
+			{
+				max_indices[max_indices_size++] = indexes[i];
+			}
+			else if (second_derivative[i + 1] < 0)
+			{
+				max_indices[max_indices_size++] = indexes[i + 1];
+			}
+		}
+	}
 
-  int* res = new int[max_indices_size];
-  memcpy(res, max_indices, max_indices_size*sizeof(int));
+	int* res = new int[max_indices_size];
+	memcpy(res, max_indices, max_indices_size*sizeof(int));
 
-  delete[] first_derivative;
-  delete[] second_derivative;
-  delete[] max_indices;
+	delete[] first_derivative;
+	delete[] second_derivative;
+	delete[] max_indices;
 
-  max_indexes = res;
-  return max_indices_size;
+	max_indexes = res;
+	return max_indices_size;
 }
 
 int ATFGenerator::GetInflectionPoints(const float* curve, const int* indexes, const int& curve_size, int*& inflct_indexes)
 {
-  float* curve_derivative = new float[curve_size];
-  curve_derivative[0] = curve_derivative[curve_size - 1] = 0.0f;
-  for (int i = 1; i < curve_size - 1; ++i) {
-    curve_derivative[i] = (curve[i + 1] - curve[i - 1]) / 2.0f;
-  }
-  
-  float* first_derivative = new float[curve_size];
-  first_derivative[0] = first_derivative[curve_size - 1] = 0.0f;
-  for (int i = 1; i < curve_size - 1; ++i) {
-    first_derivative[i] = (curve_derivative[i + 1] - curve_derivative[i - 1]) / 2.0f;
-  }
+	float* curve_derivative = new float[curve_size];
+	curve_derivative[0] = curve_derivative[curve_size - 1] = 0.0f;
+	for (int i = 1; i < curve_size - 1; ++i) {
+		curve_derivative[i] = (curve[i + 1] - curve[i - 1]) / 2.0f;
+	}
+	
+	float* first_derivative = new float[curve_size];
+	first_derivative[0] = first_derivative[curve_size - 1] = 0.0f;
+	for (int i = 1; i < curve_size - 1; ++i) {
+		first_derivative[i] = (curve_derivative[i + 1] - curve_derivative[i - 1]) / 2.0f;
+	}
 
-  float* second_derivative = new float[curve_size];
-  second_derivative[0] = second_derivative[curve_size - 1] = 0.0f;
-  for (int i = 1; i < curve_size - 1; ++i) {
-    second_derivative[i] = (first_derivative[i + 1] - first_derivative[i - 1]) / 2.0f;
-  }
+	float* second_derivative = new float[curve_size];
+	second_derivative[0] = second_derivative[curve_size - 1] = 0.0f;
+	for (int i = 1; i < curve_size - 1; ++i) {
+		second_derivative[i] = (first_derivative[i + 1] - first_derivative[i - 1]) / 2.0f;
+	}
 
-  int up = 0, down = 0;
-  int* max_indices = new int[curve_size];
-  int max_indices_size = 0;
-  for (int i = 0; i < curve_size - 1; ++i) {
-    if (signbit(first_derivative[i]) ^ signbit(first_derivative[i + 1])) {
-      if (second_derivative[i] > 0 && second_derivative[i + 1] > 0) {
-        if (curve[i] > curve[i + 1])
-          max_indices[max_indices_size++] = indexes[i];
-        else
-          max_indices[max_indices_size++] = indexes[i + 1];
-      }
-      else if (second_derivative[i] > 0) {
-        max_indices[max_indices_size++] = indexes[i];
-      }
-      else if (second_derivative[i + 1] > 0) {
-        max_indices[max_indices_size++] = indexes[i + 1];
-      }
-    }
-  }
+	int up = 0, down = 0;
+	int* max_indices = new int[curve_size];
+	int max_indices_size = 0;
+	for (int i = 0; i < curve_size - 1; ++i) {
+		if (signbit(first_derivative[i]) ^ signbit(first_derivative[i + 1])) {
+			if (second_derivative[i] > 0 && second_derivative[i + 1] > 0) {
+				if (curve[i] > curve[i + 1])
+					max_indices[max_indices_size++] = indexes[i];
+				else
+					max_indices[max_indices_size++] = indexes[i + 1];
+			}
+			else if (second_derivative[i] > 0) {
+				max_indices[max_indices_size++] = indexes[i];
+			}
+			else if (second_derivative[i + 1] > 0) {
+				max_indices[max_indices_size++] = indexes[i + 1];
+			}
+		}
+	}
 
-  int* res = new int[max_indices_size];
-  memcpy(res, max_indices, max_indices_size*sizeof(int));
+	int* res = new int[max_indices_size];
+	memcpy(res, max_indices, max_indices_size*sizeof(int));
 
-  delete[] curve_derivative;
-  delete[] first_derivative;
-  delete[] second_derivative;
-  delete[] max_indices;
+	delete[] curve_derivative;
+	delete[] first_derivative;
+	delete[] second_derivative;
+	delete[] max_indices;
 
-  inflct_indexes = res;
-  return max_indices_size;
+	inflct_indexes = res;
+	return max_indices_size;
 }

@@ -24,60 +24,60 @@ class FastTFGenerator : public IATFGenerator
 public:
 	FastTFGenerator (vr::ScalarField* scalarfield);
 
-  ~FastTFGenerator();
+	~FastTFGenerator();
 
 public:
-  bool Init();
+	bool Init();
 
-  bool ExtractTransferFunction();
+	bool ExtractTransferFunction();
 
-  vr::TransferFunction* GetTransferFunction();
+	vr::TransferFunction* GetTransferFunction();
 
-  void SetMainPlot(Ihandle * ih)
-  {
-    m_main_plot = ih;
-  }
+	void SetMainPlot(Ihandle * ih)
+	{
+		m_main_plot = ih;
+	}
 
-  void SetTransferFunctionPlot(Ihandle * ih)
-  {
-    m_tf_plot = ih;
-  }
+	void SetTransferFunctionPlot(Ihandle * ih)
+	{
+		m_tf_plot = ih;
+	}
 
-  void SetBoundaryFunctionPlot(Ihandle * ih)
-  {
-    m_bx_plot = ih;
-  }
+	void SetBoundaryFunctionPlot(Ihandle * ih)
+	{
+		m_bx_plot = ih;
+	}
 
-  float GetValue(UINT32 x, UINT32 y, UINT32 z);
-
-private:
-  float CalculateGradient(int x, int y, int z);
-
-  float CalculateLaplacian(int x, int y, int z);
-
-  bool CalculateVolumeDerivatives();
-
-  bool GenerateHistogram();
-
-  float GetBoundaryDistancies(float* x, unsigned char *v, int *n);
-
-  unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
+	float GetValue(UINT32 x, UINT32 y, UINT32 z);
 
 private:
-  float* m_scalar_laplacian;
+	float CalculateGradient(int x, int y, int z);
 
-  float m_scalar_histogram[FAST_TFG_V_RANGE];
-  float m_scalar_histogram_laplacian[FAST_TFG_V_RANGE];
+	float CalculateLaplacian(int x, int y, int z);
 
-  vr::TransferFunction1D* m_transfer_function;
+	bool CalculateVolumeDerivatives();
 
-  bool m_initialized;
+	bool GenerateHistogram();
 
-  DerivativeMask m_derivativeMask;
+	float GetBoundaryDistancies(float* x, unsigned char *v, int *n);
 
-  Ihandle* m_main_plot;
-  Ihandle* m_tf_plot;
-  Ihandle* m_bx_plot;
+	unsigned int GetId(unsigned int x, unsigned int y, unsigned int z);
+
+private:
+	float* m_scalar_laplacian;
+
+	float m_scalar_histogram[FAST_TFG_V_RANGE];
+	float m_scalar_histogram_laplacian[FAST_TFG_V_RANGE];
+
+	vr::TransferFunction1D* m_transfer_function;
+
+	bool m_initialized;
+
+	DerivativeMask m_derivativeMask;
+
+	Ihandle* m_main_plot;
+	Ihandle* m_tf_plot;
+	Ihandle* m_bx_plot;
 };
 
 #endif
