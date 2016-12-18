@@ -24,7 +24,9 @@ m_glsl_transfer_function (NULL),
 m_glsl_settex(NULL),
 m_glsl_setqtdtex(NULL),
 m_shader_firstpass(NULL),
-m_shader_secondpass(NULL)
+m_shader_secondpass(NULL), 
+m_bo(0),
+m_to(0)
 {
 	m_fvao = NULL; m_fvbo = NULL; m_fibo = NULL;
 	m_svao = NULL; m_svbo = NULL; m_sibo = NULL;
@@ -390,6 +392,13 @@ void RendererGLSL2P::CreateSecondPass ()
 	m_shader_secondpass->SetUniformInt ("VolHeight", volheight);
 	m_shader_secondpass->SetUniformInt ("VolDepth", voldepth);
 
+	if ( m_to > 0 )
+	{
+		glActiveTexture(GL_TEXTURE0 + m_to);
+		glBindTexture(GL_TEXTURE_BUFFER, m_to);
+		m_shader_secondpass->SetUniformInt("ActiveTex", (int) m_to);
+	}
+
 	if (USE_DOUBLE_PRECISION)
 	{
 
@@ -456,7 +465,50 @@ void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes
 
 	if (m_glsl_volume)
 	{
+		int width = volume->GetWidth();
+		int height = volume->GetHeight();
+		int depth = volume->GetDepth();
+		int size = width * height * depth;
+		unsigned char* active_values = new unsigned char[size];
+
+		for ( UINT32 k = 0; k < depth; k++ )
+		{
+			for ( UINT32 j = 0; j < height; j++ )
+			{
+				for ( UINT32 i = 0; i < width; i++ )
+				{
+					int id = volume->GetId(i, j, k);
+					active_values[id] = volume->IsActive(i, j, k) ? 1 : 0;
+				}
+			}
+		}
+
 		m_shader_secondpass->Bind ();
+
+		if ( m_bo > 0 )
+		{
+			glDeleteBuffers(1, &m_bo);
+			m_bo = 0;
+		}
+
+		if ( m_to > 0 )
+		{
+			glDeleteTextures(1, &m_to);
+			m_to = 0;
+		}
+
+		glGenBuffers(1, &m_bo);
+		glBindBuffer(GL_TEXTURE_BUFFER, m_bo);
+		glBufferData(GL_TEXTURE_BUFFER, size * sizeof(unsigned char), active_values, GL_STATIC_DRAW);
+		delete[] active_values;
+
+		glGenTextures(1, &m_to);
+		glActiveTexture(GL_TEXTURE0 + m_to);
+		glBindTexture(GL_TEXTURE_BUFFER, m_to);
+		glTexBuffer(GL_TEXTURE_BUFFER, GL_R8UI, m_bo);
+		m_shader_secondpass->SetUniformInt("ActiveTex", (int) m_to);
+		m_shader_secondpass->BindUniform("ActiveTex");
+
 		m_shader_secondpass->SetUniformTexture3D ("VolumeTex", m_glsl_volume->GetTextureID (), 1);
 		m_shader_secondpass->BindUniform ("VolumeTex");
 

@@ -13,8 +13,7 @@ uniform int ScreenSizeH;
 
 uniform sampler2D ExitPoints;
 uniform sampler3D VolumeTex;
-//uniform isampler3D SetTex;
-//uniform isampler1D SetQtdTex;
+uniform usamplerBuffer ActiveTex;
 uniform sampler1D TransferFunc;  
 
 uniform int VolWidth;
@@ -43,9 +42,10 @@ vec4 GetFromTransferFunction (float p_d)
 {
 	vec3 voxel = (real_minpos + p_d * real_normalized_step) * tex_scale;
 	float voxel_value = texture(VolumeTex, voxel).r;
-	if (false && voxel_value < 0.5f)
-		return vec4(0);
-	return texture(TransferFunc, voxel_value);
+	uint active_cell = texelFetch(ActiveTex, int(voxel.x + (VolWidth * voxel.y) + (voxel.z * VolWidth * VolHeight))).r;
+	if (active_cell == 1)
+		return texture(TransferFunc, voxel_value);
+	return vec4(0);
 }
 
 void main(void)

@@ -33,8 +33,7 @@ namespace vr
 					y = j + init_y;
 					z = k + init_z;
 					scalar_values[id] = ((vol->GetValue(x, y, z) - vol->GetMinValue()) / (vol->GetMaxValue() - vol->GetMinValue()));
-					if ( scalar_values[id] > 1.0f )
-						scalar_values[id] = -1.0f;
+					assert(scalar_values[id] >= 0.0f && scalar_values[id] <= 1.0f);
 				}
 
 		gl::GLTexture3D* tex3d_r = new gl::GLTexture3D(size_x, size_y, size_z);
