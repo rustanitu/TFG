@@ -18,7 +18,7 @@
 
 #define ATFG "AutomaticTransferFunction"
 //#define FAST_TFG
-//#define GORDON
+#define GORDON
 
 Viewer *Viewer::m_instance = 0;
 

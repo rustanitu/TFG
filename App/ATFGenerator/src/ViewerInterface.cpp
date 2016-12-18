@@ -444,25 +444,25 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	Ihandle* atfg_boundary_label = IupLabel("Boundary");
 	IupSetAttribute(atfg_boundary_label, "ALIGNMENT", "ACENTER");
 
-	//Ihandle* spinbox_boundary = IupText("0");
-	//IupSetAttribute(spinbox_boundary, "ALIGNMENT", "ACENTER");
-	//IupSetAttribute(spinbox_boundary, "SPIN", "YES");
-	//IupSetCallback(spinbox_boundary, "SPIN_CB", (Icallback)Viewer::SetBoundary);
+	Ihandle* spinbox_boundary = IupText("0");
+	IupSetAttribute(spinbox_boundary, "ALIGNMENT", "ACENTER");
+	IupSetAttribute(spinbox_boundary, "SPIN", "YES");
+	IupSetCallback(spinbox_boundary, "SPIN_CB", (Icallback)Viewer::SetBoundary);
 
 	Ihandle* atfg_set_label = IupLabel("Set");
 	IupSetAttribute(atfg_set_label, "ALIGNMENT", "ACENTER");
 
-	Ihandle* spinbox_set = IupText("0");
-	IupSetAttribute(spinbox_set, "ALIGNMENT", "ACENTER");
-	IupSetAttribute(spinbox_set, "SPIN", "YES");
-	IupSetAttribute(spinbox_set, "SPINMAX", "999999999");
-	IupSetCallback(spinbox_set, "SPIN_CB", (Icallback)Viewer::SetVisibleSet);
+	//Ihandle* spinbox_set = IupText("0");
+	//IupSetAttribute(spinbox_set, "ALIGNMENT", "ACENTER");
+	//IupSetAttribute(spinbox_set, "SPIN", "YES");
+	//IupSetAttribute(spinbox_set, "SPINMAX", "999999999");
+	//IupSetCallback(spinbox_set, "SPIN_CB", (Icallback)Viewer::SetVisibleSet);
 
 	m_bthick_label = IupLabel("BThick: 1   ");
 	m_gtresh_label = IupLabel("GTresh: 0.0f");
 
 	//Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, atfg_set_label, spinbox_set, m_bthick_label, m_gtresh_label, NULL);
-	Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, atfg_set_label, spinbox_set, m_bthick_label, m_gtresh_label, NULL);
+	Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, atfg_set_label, spinbox_boundary, m_bthick_label, m_gtresh_label, NULL);
 	Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
 
 	Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
