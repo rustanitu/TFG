@@ -84,6 +84,7 @@ vr::TransferFunction* FastTFGenerator::GetTransferFunction()
 
 float FastTFGenerator::CalculateLaplacian(int x, int y, int z)
 {
+  return 0.0f;
 	if (!m_scalarfield)
 		throw std::exception_ptr();
 
@@ -103,7 +104,7 @@ float FastTFGenerator::CalculateLaplacian(int x, int y, int z)
 				float pglx;
 				float pgly;
 				float pglz;
-				m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
+				//m_derivativeMask.GetLaplacian(i - xinit, j - yinit, k - zinit, &pglx, &pgly, &pglz);
 				lx += pglx * v;
 				ly += pgly * v;
 				lz += pglz * v;

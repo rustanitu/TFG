@@ -1,6 +1,9 @@
 #ifndef ATFG_CELL_H
 #define ATFG_CELL_H
 
+#include <float.h>
+#include <math/MUtils.h>
+
 class Cell
 {
 public:
@@ -28,13 +31,21 @@ public:
     return m_active;
   }
 
-  int GetIthVertexIndex(const int& i);
-  int GetAdjcentCellIndex(const int& face);
-  float GetValue(const int& step);
+  int GetIthVertexIndex(const int& i) const;
+  int GetAdjcentCellIndex(const int& face) const;
+  float GetValue(const int& step) const;
+  glm::vec3 GetCenter() const
+  {
+    return m_center;
+  }
 
   bool SetIthVertexIndex(const int& ith_vertex, const int& index);
   bool SetAdjcentCellIndex(const int& face, const int& index);
   bool SetValue(const int& step, const float& value);
+  void SetCenter(glm::vec3 center)
+  {
+    m_center = center;
+  }
 
 private:
   int m_i;
@@ -43,8 +54,8 @@ private:
   bool m_active;
   int m_vertex_index[8];
   int m_adjcell_index[6];
-  int m_nsteps;
-  float* m_values;
+  float m_value;
+  glm::vec3 m_center;
 };
 
 #endif

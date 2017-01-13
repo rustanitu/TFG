@@ -26,11 +26,24 @@ namespace vr
 		if ( extension.compare("vol") == 0 )
 		{
 			Volume* vol = ReadVolFile(filepath);
+
+      int width = vol->GetWidth();
+      int height = vol->GetHeight();
+      int depth = vol->GetDepth();
+      int size = width*height*depth;
+      
+      float* values = new float[size];
+      if (!values)
+        return NULL;
+
+      memcpy(values, vol->GetValues(), size*sizeof(float));
+      delete vol;
+      vol = NULL;
+
 			Tank* tank = new Tank();
-			if ( tank->ReadFromVolume(vol->GetWidth(), vol->GetHeight(), vol->GetDepth(), vol->GetValues()) )
+			if ( tank->ReadFromVolume(width, height, depth, values) )
 			{
-				delete vol;
-				vol = NULL;
+        delete[] values;
 				ret = tank;
 			}
 			else
@@ -47,21 +60,33 @@ namespace vr
 			ret = ReadNodeFile(filepath);
 		else if ( extension.compare("raw") == 0 )
 		{
-			Volume* vol = ReadRawFile(filepath);
-			Tank* tank = new Tank();
-			if ( tank->ReadFromVolume(vol->GetWidth(), vol->GetHeight(), vol->GetDepth(), vol->GetValues()) )
-			{
-				delete vol;
-				vol = NULL;
-				ret = tank;
-			}
-			else
-			{
+      Volume* vol = ReadVolFile(filepath);
+
+      int width = vol->GetWidth();
+      int height = vol->GetHeight();
+      int depth = vol->GetDepth();
+      int size = width*height*depth;
+
+      float* values = new float[size];
+      if (!values)
+        return NULL;
+
+      memcpy(values, vol->GetValues(), size);
+      delete vol;
+      vol = NULL;
+
+      Tank* tank = new Tank();
+      if (tank->ReadFromVolume(width, height, depth, values))
+      {
+        delete[] values;
+        ret = tank;
+      }
+      else {
         printf("Não foi possível converter volume em tank.");
-				delete tank;
-				tank = NULL;
-				ret = vol;
-			}
+        delete tank;
+        tank = NULL;
+        ret = vol;
+      }
 		}
 		else if ( extension.compare("med") == 0 )
 			ret = ReadMedFile(filepath);

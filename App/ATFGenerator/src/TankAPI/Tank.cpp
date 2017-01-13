@@ -6,18 +6,14 @@
 
 #define MASK_SIZE 3
 
-//#define BALANCE_WEIGHT // Comportamento ruim
-//#define AVERAGE_INACTIVE // Não muda nada
-#define ONLY_ACTIVE_CELLS
-
 Tank::Tank()
 	: m_cells(NULL)
 	, m_vertices(NULL)
 	, m_current_timestep(0)
 	, m_derivativeMask(MASK_SIZE)
-	, m_scalar_fx(NULL)
-	, m_scalar_fy(NULL)
-	, m_scalar_fz(NULL)
+	//, m_scalar_fx(NULL)
+	//, m_scalar_fy(NULL)
+	//, m_scalar_fz(NULL)
 {
 	printf("Tank criado.\n");
 }
@@ -29,9 +25,9 @@ Tank::~Tank()
 
 	delete[] m_cells;
 	delete[] m_vertices;
-	delete[] m_scalar_fx;
-	delete[] m_scalar_fy;
-	delete[] m_scalar_fz;
+	//delete[] m_scalar_fx;
+	//delete[] m_scalar_fy;
+	//delete[] m_scalar_fz;
 }
 
 bool Tank::Read(const char* filepath)
@@ -58,13 +54,13 @@ bool Tank::Read(const char* filepath)
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
-	m_scalar_fx = new float[m_ncells];
-	m_scalar_fy = new float[m_ncells];
-	m_scalar_fz = new float[m_ncells];
-	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
+	//m_scalar_fx = new float[m_ncells];
+	//m_scalar_fy = new float[m_ncells];
+	//m_scalar_fz = new float[m_ncells];
+	if ( !m_cells )//|| !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
-	m_vertices = new float[m_nvertices * 3];
+  m_vertices = new glm::vec3[m_nvertices];
 	if ( !m_vertices )
 		return false;
 
@@ -89,10 +85,9 @@ bool Tank::Read(const char* filepath)
 		if ( !(file >> x >> y >> z) )
 			return false;
 
-		int baseidx = i * 3;
-		m_vertices[baseidx] = x;
-		m_vertices[baseidx + 1] = y;
-		m_vertices[baseidx + 2] = z;
+		m_vertices[i].x = x;
+		m_vertices[i].y = y;
+		m_vertices[i].z = z;
 	}
 
 	std::vector<int> inactives;
@@ -109,9 +104,9 @@ bool Tank::Read(const char* filepath)
 		Cell* cell = &(m_cells[id]);
 		cell->Init(i, j, k, active, m_nsteps);
 
-		m_scalar_fx[id] = 0.0f;
-		m_scalar_fy[id] = 0.0f;
-		m_scalar_fz[id] = 0.0f;
+		//m_scalar_fx[id] = 0.0f;
+		//m_scalar_fy[id] = 0.0f;
+		//m_scalar_fz[id] = 0.0f;
 
 		// It sets the index of the ith vertex
 		for ( int v = 0; v < 8; ++v )
@@ -123,6 +118,15 @@ bool Tank::Read(const char* filepath)
 			cell->SetIthVertexIndex(v, index);
 		}
 
+    int siblids[6] = {
+      GetId(i + 1, j, k),
+      GetId(i - 1, j, k),
+      GetId(i, j + 1, k),
+      GetId(i, j - 1, k),
+      GetId(i, j, k + 1),
+      GetId(i, j, k - 1),
+    };
+
 		// It sets the index of the adjacent ith cell
 		for ( int a = 0; a < 6; ++a )
 		{
@@ -130,8 +134,31 @@ bool Tank::Read(const char* filepath)
 			if ( !(file >> index) )
 				return false;
 
+      if (index != -1) {
+        bool match = false;
+        for (int b = 0; b < 6; ++b) {
+          if (index == siblids[b]) {
+            match = true;
+            break;
+          }
+        }
+        if (!match)
+        {
+          printf("O mapeamento do volume difere do experado.\n");
+          delete[] m_cells;
+          //delete[] m_scalar_fx;
+          //delete[] m_scalar_fy;
+          //delete[] m_scalar_fz;
+          delete[] m_vertices;
+          return false;
+        }
+      }
+
 			cell->SetAdjcentCellIndex(a, index);
 		}
+
+    glm::vec3 center = GetCellCenter(*cell);
+    cell->SetCenter(center);
 
 		// It sets the cell value of the p timestamp
 		for ( int t = 0; t < m_nsteps; ++t )
@@ -202,10 +229,10 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 
 	m_ncells = m_width * m_height * m_depth;
 	m_cells = new Cell[m_ncells];
-	m_scalar_fx = new float[m_ncells];
-	m_scalar_fy = new float[m_ncells];
-	m_scalar_fz = new float[m_ncells];
-	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
+	//m_scalar_fx = new float[m_ncells];
+	//m_scalar_fy = new float[m_ncells];
+	//m_scalar_fz = new float[m_ncells];
+	if ( !m_cells )//|| !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
 	// It gets all cells
@@ -221,9 +248,9 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 				Cell* cell = &(m_cells[id]);
 				cell->Init(i, j, k, active, m_nsteps);
 
-				m_scalar_fx[id] = 0.0f;
-				m_scalar_fy[id] = 0.0f;
-				m_scalar_fz[id] = 0.0f;
+				//m_scalar_fx[id] = 0.0f;
+				//m_scalar_fy[id] = 0.0f;
+				//m_scalar_fz[id] = 0.0f;
 
 				cell->SetValue(0, values[id]);
 				m_max_value = fmax(m_max_value, values[id]);
@@ -238,7 +265,7 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 	if ( IsOutOfBoundary(x, y, z) )
-		return m_min_value;
+		return -FLT_MAX;
 
 	return GetValue(GetId(x, y, z));
 }
@@ -246,23 +273,198 @@ float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 float Tank::GetValue(const UINT32& id)
 {
 	return m_cells[id].GetValue(m_current_timestep);
-	return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : 0.0f;
+  return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : -FLT_MAX;
 }
 
 float Tank::GetQuadraticGradientNorm(const UINT32& id)
 {
-	const float dfx = m_scalar_fx[id];
-	const float dfy = m_scalar_fy[id];
-	const float dfz = m_scalar_fz[id];
-	return dfx*dfx + dfy*dfy + dfz*dfz;
+  return 0.0f;
+	//const float dfx = m_scalar_fx[id];
+	//const float dfy = m_scalar_fy[id];
+	//const float dfz = m_scalar_fz[id];
+	//return dfx*dfx + dfy*dfy + dfz*dfz;
+}
+
+bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t)
+{
+  double det;
+
+
+  if (((k.x != l.x) || (k.y != l.y)) &&
+    ((m.x != n.x) || (m.y != n.y)))  /* se nao e' paralela ao plano XY*/
+  {
+    det = (n.x - m.x) * (l.y - k.y) - (n.y - m.y) * (l.x - k.x);
+
+    if (det == 0.0)
+      return false;
+
+    *s = ((n.x - m.x) * (m.y - k.y) - (n.y - m.y) * (m.x - k.x)) / det;
+    *t = ((l.x - k.x) * (m.y - k.y) - (l.y - k.y) * (m.x - k.x)) / det;
+
+    return true;
+  }
+
+  if (((k.x != l.x) || (k.z != l.z)) &&
+    ((m.x != n.x) || (m.z != n.z)))  /* se nao e' paralela ao plano XZ*/
+  {
+    det = (n.x - m.x) * (l.z - k.z) - (n.z - m.z) * (l.x - k.x);
+
+    if (det == 0.0)
+      return false;
+
+    *s = ((n.x - m.x) * (m.z - k.z) - (n.z - m.z) * (m.x - k.x)) / det;
+    *t = ((l.x - k.x) * (m.z - k.z) - (l.z - k.z) * (m.x - k.x)) / det;
+
+    return true;
+  }
+
+  if (((k.y != l.y) || (k.z != l.z)) &&
+    ((m.y != n.y) || (m.z != n.z)))  /* se nao e' paralela ao plano YZ*/
+  {
+    det = (n.y - m.y) * (l.z - k.z) - (n.z - m.z) * (l.y - k.y);
+
+    if (det == 0.0)
+      return false;
+
+    *s = ((n.y - m.y) * (m.z - k.z) - (n.z - m.z) * (m.y - k.y)) / det;
+    *t = ((l.y - k.y) * (m.z - k.z) - (l.z - k.z) * (m.y - k.y)) / det;
+
+    return true;
+  }
+
+  return true;
+}
+
+glm::vec3 Tank::GetCellCenter(const Cell& cell)
+{
+  //midle edge definition
+  //
+  //         6____ub____7
+  //        /|         /
+  //      ul |       ur|
+  //      /  lb      / rb
+  //    2/___|uf____/3 |
+  //    |   4|___db|___|5
+  //    |   /      |   /
+  //    lf dl      rf dr
+  //    | /        | /
+  //    |/____df___|/
+  //    0          1
+  //
+  glm::vec3 uf = (m_vertices[cell.GetIthVertexIndex(2)] + m_vertices[cell.GetIthVertexIndex(3)]) / 2.0f;
+  glm::vec3 df = (m_vertices[cell.GetIthVertexIndex(0)] + m_vertices[cell.GetIthVertexIndex(1)]) / 2.0f;
+  glm::vec3 rf = (m_vertices[cell.GetIthVertexIndex(1)] + m_vertices[cell.GetIthVertexIndex(3)]) / 2.0f;
+  glm::vec3 lf = (m_vertices[cell.GetIthVertexIndex(0)] + m_vertices[cell.GetIthVertexIndex(2)]) / 2.0f;
+
+  glm::vec3 ul = (m_vertices[cell.GetIthVertexIndex(2)] + m_vertices[cell.GetIthVertexIndex(6)]) / 2.0f;
+  glm::vec3 ur = (m_vertices[cell.GetIthVertexIndex(3)] + m_vertices[cell.GetIthVertexIndex(7)]) / 2.0f;
+  glm::vec3 dr = (m_vertices[cell.GetIthVertexIndex(1)] + m_vertices[cell.GetIthVertexIndex(5)]) / 2.0f;
+  glm::vec3 dl = (m_vertices[cell.GetIthVertexIndex(0)] + m_vertices[cell.GetIthVertexIndex(4)]) / 2.0f;
+
+  glm::vec3 ub = (m_vertices[cell.GetIthVertexIndex(6)] + m_vertices[cell.GetIthVertexIndex(7)]) / 2.0f;
+  glm::vec3 db = (m_vertices[cell.GetIthVertexIndex(4)] + m_vertices[cell.GetIthVertexIndex(5)]) / 2.0f;
+  glm::vec3 rb = (m_vertices[cell.GetIthVertexIndex(5)] + m_vertices[cell.GetIthVertexIndex(7)]) / 2.0f;
+  glm::vec3 lb = (m_vertices[cell.GetIthVertexIndex(4)] + m_vertices[cell.GetIthVertexIndex(6)]) / 2.0f;
+  
+  // Center face definition
+  float psega = -1;
+  float psegb = -1;
+
+  // Front face center
+  glm::vec3 ffc(0);
+  if (GetSegmentIntersection(uf, df, rf, lf, &psega, &psegb))
+    ffc = uf + psega * (df - uf);
+
+  // Back face center
+  glm::vec3 bfc(0);
+  if (GetSegmentIntersection(ub, db, rb, lb, &psega, &psegb))
+    bfc = ub + psega * (db - ub);
+
+  // Up face center
+  glm::vec3 ufc(0);
+  if (GetSegmentIntersection(uf, ub, ul, ur, &psega, &psegb))
+    ufc = uf + psega * (ub - uf);
+
+  // Down face center
+  glm::vec3 dfc(0);
+  if (GetSegmentIntersection(df, db, dl, dr, &psega, &psegb))
+    dfc = df + psega * (db - df);
+
+  // Redudant Code
+  /*
+  // Right face center
+  glm::vec3 rfc(0);
+  if (GetSegmentIntersection(rf, rb, ur, dr, &psega, &psegb))
+    rfc = rf + psega * (rb - rf);
+
+  // Left face center
+  glm::vec3 lfc(0);
+  if (GetSegmentIntersection(lf, lb, ul, dl, &psega, &psegb))
+    lfc = lf + psega * (lb - lf);
+
+  // Vertical-Horizontal Intersection
+  glm::vec3 vhi(0);
+  if (GetSegmentIntersection(ufc, dfc, lfc, rfc, &psega, &psegb))
+    vhi = ufc + psega * (dfc - ufc);
+
+  // Depth-Horizontal Intersection
+  glm::vec3 dhi(0);
+  if (GetSegmentIntersection(ffc, bfc, lfc, rfc, &psega, &psegb))
+    dhi = ffc + psega * (bfc - ffc);
+   
+   //*/
+
+  // Vertical-Depth Intersection
+  glm::vec3 vdi(-FLT_MAX);
+  if (GetSegmentIntersection(ufc, dfc, ffc, bfc, &psega, &psegb))
+    vdi = ufc + psega * (dfc - ufc);
+
+  return vdi;
+}
+
+glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
+{
+  return glm::mat3(1,0,0,0,1,0,0,0,1);
+  int id = GetId(cell.GetI(), cell.GetJ(), cell.GetK());
+  
+  int idxp = cell.GetAdjcentCellIndex(2);
+  if (idxp == -1)
+    idxp = id;
+  
+  int idxn = cell.GetAdjcentCellIndex(3);
+  if (idxn == -1)
+    idxn = id;
+
+  int idyp = cell.GetAdjcentCellIndex(5);
+  if (idyp == -1)
+    idyp = id;
+
+  int idyn = cell.GetAdjcentCellIndex(4);
+  if (idyn == -1)
+    idyn = id;
+
+  int idzp = cell.GetAdjcentCellIndex(0);
+  if (idzp == -1)
+    idzp = id;
+
+  int idzn = cell.GetAdjcentCellIndex(1);
+  if (idzn == -1)
+    idzn = id;
+
+  glm::vec3 x = (m_cells[idxp].GetCenter() - m_cells[idxn].GetCenter()) / 2.0f;
+  glm::vec3 y = (m_cells[idyp].GetCenter() - m_cells[idyn].GetCenter()) / 2.0f;
+  glm::vec3 z = (m_cells[idzp].GetCenter() - m_cells[idzn].GetCenter()) / 2.0f;
+
+  glm::mat3 jacob = glm::inverse(glm::mat3(x, y, z));
+  return jacob;
 }
 
 float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 	float g = 0.0f;
-	float dfx = 0.0f;
-	float dfy = 0.0f;
-	float dfz = 0.0f;
+	float fdx = 0.0f;
+	float fdy = 0.0f;
+	float fdz = 0.0f;
 
 	float pdx = 0.0f;
 	float pdy = 0.0f;
@@ -278,53 +480,39 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				float dx;
-				float dy;
-				float dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+				float dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+				float dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+				float dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
 
 				float v = GetValue(i, j, k);
-#ifdef ONLY_ACTIVE_CELLS
 				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
-#else
-				if ( IsOutOfBoundary(i, j, k) )
-#endif
 				{
 					v = GetValue(x, y, z);
+				}
 
-#ifdef BALANCE_WEIGHT
-					continue;
-				}
-				else
-				{
-					pdx += abs(dx);
-					pdy += abs(dy);
-					pdz += abs(dz);
-				}
-#else
-				}
-				pdx += abs(dx);
-				pdy += abs(dy);
-				pdz += abs(dz);
-#endif
+				fdx += dx * v;
+				fdy += dy * v;
+				fdz += dz * v;
 
-				dfx += dx * v;
-				dfy += dy * v;
-				dfz += dz * v;
+        pdx += abs(dx);
+        pdy += abs(dy);
+        pdz += abs(dz);
 			}
 		}
 	}
 
-	dfx /= pdx;
-	dfy /= pdy;
-	dfz /= pdz;
-
 	int id = GetId(x, y, z);
-	m_scalar_fx[id] = dfx;
-	m_scalar_fy[id] = dfy;
-	m_scalar_fz[id] = dfz;
 
-	g = sqrt(GetQuadraticGradientNorm(id));
+  glm::vec3 parametric_grad(fdx / pdx, fdy / pdy, fdz / pdz);
+  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
+  glm::vec3 grad = jacob_inv * parametric_grad;
+
+  //m_scalar_fx[id] = grad.x;
+	//m_scalar_fy[id] = grad.y;
+	//m_scalar_fz[id] = grad.z;
+
+	//g = sqrt(GetQuadraticGradientNorm(id));
+  g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, g);
 
 	return g;
@@ -332,21 +520,27 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 
 float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
+  float fdx = 0.0f;
+  float fdy = 0.0f;
+  float fdz = 0.0f;
+
+  float pdx = 0.0f;
+  float pdy = 0.0f;
+  float pdz = 0.0f;
+
 	float fdxdx = 0.0f;
 	float fdxdy = 0.0f;
 	float fdxdz = 0.0f;
-
-	float fdydx = 0.0f;
 	float fdydy = 0.0f;
 	float fdydz = 0.0f;
-
-	float fdzdx = 0.0f;
-	float fdzdy = 0.0f;
 	float fdzdz = 0.0f;
 
-	float pdx = 0.0f;
-	float pdy = 0.0f;
-	float pdz = 0.0f;
+  float pdxdx = 0.0f;
+  float pdxdy = 0.0f;
+  float pdxdz = 0.0f;
+  float pdydy = 0.0f;
+  float pdydz = 0.0f;
+  float pdzdz = 0.0f;
 
 	int h = MASK_SIZE / 2;
 	int xinit = x - h;
@@ -358,76 +552,91 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				float dx, dy, dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+        ///////////////////////////////////
+        float dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+        float dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+        float dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
+        ///////////////////////////////////
 
-				int id = GetId(i, j, k);
-				float dfx = m_scalar_fx[id];
-				float dfy = m_scalar_fy[id];
-				float dfz = m_scalar_fz[id];
+        float dxdx = m_derivativeMask.GetDxdxAt(i - xinit, j - yinit, k - zinit);
+        float dxdy = m_derivativeMask.GetDxdyAt(i - xinit, j - yinit, k - zinit);
+        float dxdz = m_derivativeMask.GetDxdzAt(i - xinit, j - yinit, k - zinit);
+        float dydy = m_derivativeMask.GetDydyAt(i - xinit, j - yinit, k - zinit);
+        float dydz = m_derivativeMask.GetDydzAt(i - xinit, j - yinit, k - zinit);
+        float dzdz = m_derivativeMask.GetDzdzAt(i - xinit, j - yinit, k - zinit);
 
-#ifdef ONLY_ACTIVE_CELLS
+        float v = GetValue(i, j, k);
 				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
-#else
-				if (IsOutOfBoundary(i, j, k))
-#endif
 				{
-					id = GetId(x, y, z);
-
-					dfx = m_scalar_fx[id];
-					dfy = m_scalar_fy[id];
-					dfz = m_scalar_fz[id];
-
-#ifdef BALANCE_WEIGHT
-					continue;
+          v = GetValue(x, y, z);
 				}
-				else
-				{
-					pdx += abs(dx);
-					pdy += abs(dy);
-					pdz += abs(dz);
-				}
-#else
-				}
-				pdx += abs(dx);
-				pdy += abs(dy);
-				pdz += abs(dz);
-#endif
+				
+				fdxdx += dxdx * v;
+				fdxdy += dxdy * v;
+				fdxdz += dxdz * v;
 
-				fdxdx += dx * dfx;
-				fdxdy += dx * dfy;
-				fdxdz += dx * dfz;
+				fdydy += dydy * v;
+				fdydz += dydz * v;
 
-				fdydx += dy * dfx;
-				fdydy += dy * dfy;
-				fdydz += dy * dfz;
+				fdzdz += dzdz * v;
 
-				fdzdx += dz * dfx;
-				fdzdy += dz * dfy;
-				fdzdz += dz * dfz;
+        pdxdx += abs(dxdx);
+        pdxdy += abs(dxdy);
+        pdxdz += abs(dxdz);
+        pdydy += abs(dydy);
+        pdydz += abs(dydz);
+        pdzdz += abs(dzdz);
+
+        ///////////////////////////////////
+        fdx += dx * v;
+        fdy += dy * v;
+        fdz += dz * v;
+
+        pdx += abs(dx);
+        pdy += abs(dy);
+        pdz += abs(dz);
+        ///////////////////////////////////
 			}
 		}
 	}
 
-	fdxdx /= pdx;
-	fdxdy /= pdy;
-	fdxdz /= pdz;
+	fdxdx /= pdxdx;
+	fdxdy /= pdxdy;
+	fdxdz /= pdxdz;
 
-	fdydx /= pdx;
-	fdydy /= pdy;
-	fdydz /= pdz;
+	fdydy /= pdydy;
+	fdydz /= pdydz;
 
-	fdzdx /= pdx;
-	fdzdy /= pdy;
-	fdzdz /= pdz;
+	fdzdz /= pdzdz;
+  
+  glm::vec3 parametric_dx_grad(fdxdx, fdxdy, fdxdz);
+  glm::vec3 parametric_dy_grad(fdxdy, fdydy, fdydz);
+  glm::vec3 parametric_dz_grad(fdxdz, fdydz, fdzdz);
 
 	int id = GetId(x, y, z);
-	float dfx = m_scalar_fx[id];
-	float dfy = m_scalar_fy[id];
-	float dfz = m_scalar_fz[id];
-	float hess_x_gradient[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
+  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
 
-	float sec_deriv = (hess_x_gradient[0] * dfx + hess_x_gradient[1] * dfy + hess_x_gradient[2] * dfz) / GetQuadraticGradientNorm(id);
+  ///////////////////////////////////
+  glm::vec3 parametric_grad(fdx / pdx, fdy / pdy, fdz / pdz);
+  glm::vec3 grad = jacob_inv * parametric_grad;
+  ///////////////////////////////////
+
+  glm::vec3 dx_grad = jacob_inv * parametric_dx_grad;
+  glm::vec3 dy_grad = jacob_inv * parametric_dy_grad;
+  glm::vec3 dz_grad = jacob_inv * parametric_dz_grad;
+
+  glm::mat3 hess(
+    glm::vec3(dx_grad.x, dy_grad.x, dz_grad.x),
+    glm::vec3(dx_grad.y, dy_grad.y, dz_grad.y),
+    glm::vec3(dx_grad.z, dy_grad.z, dz_grad.z)
+  );
+
+	//float dfx = m_scalar_fx[id];
+	//float dfy = m_scalar_fy[id];
+	//float dfz = m_scalar_fz[id];
+  //glm::vec3 grad(dfx, dfy, dfz);
+
+  float sec_deriv = glm::dot(grad, (hess * grad)) / sqrt(glm::dot(grad, grad));// GetQuadraticGradientNorm(id);
 
 	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);

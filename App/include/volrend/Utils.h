@@ -15,6 +15,14 @@ namespace vr
                                      int last_y = 0,
                                      int last_z = 0);
 
+  gl::GLTexture3D* GenerateR8UITexture(ScalarField* vol,
+    int init_x = 0,
+    int init_y = 0,
+    int init_z = 0,
+    int last_x = 0,
+    int last_y = 0,
+    int last_z = 0);
+
   gl::GLTexture3D* GenerateRGBATexture (ScalarField* vol, TransferFunction* TF1D);
 
   gl::GLTexture3D* GenerateGradientTexture (ScalarField* vol, 

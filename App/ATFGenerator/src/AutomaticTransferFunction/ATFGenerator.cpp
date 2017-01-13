@@ -19,8 +19,16 @@
 
 #define ATFG_GAMA_CORRECTION 0.33f
 //#define PLOT_STYLE "LINE"
-#define PLOT_STYLE "MARK"
+#ifndef PLOT_STYLE
+  #define PLOT_STYLE "MARK"
+#endif
+
 //#define EXTREMA_POINTS
+
+//#define ALPHA
+#ifndef ALPHA
+#define PEAKS
+#endif
 
 /// <summary>
 /// Initializes a new instance of the 
@@ -218,7 +226,10 @@ bool ATFGenerator::ExtractTransferFunction()
 
 	GenerateDataChart();
 
-	//m_transfer_function->SetAlphaValues(indexes, values, size);
+#ifdef ALPHA
+	m_transfer_function->SetAlphaValues(indexes, values, size);
+  return true;
+#endif
 
 	float max_grad = 0.0f;
 	for (int i = 0; i < size; ++i)
@@ -226,6 +237,7 @@ bool ATFGenerator::ExtractTransferFunction()
 		max_grad = fmax(max_grad, m_average_gradient[indexes[i]]);
 	}
 
+#ifdef PEAKS
 #if 0
 	float* aux_values = new float[size];
 	int* aux_indexes = new int[size];
@@ -281,6 +293,7 @@ bool ATFGenerator::ExtractTransferFunction()
 
 		++match;
 	}
+#endif
 #endif
 
 	float* peaks_vals = new float[match];
@@ -822,18 +835,18 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 		}
 	}
 
-	for ( UINT32 x = 0; x < m_width; ++x )
-	{
-		for ( UINT32 y = 0; y < m_height; ++y )
-		{
-			for ( UINT32 z = 0; z < m_depth; ++z )
-			{
-				UINT32 id = m_scalarfield->GetId(x, y, z);
-				if ( m_scalar_laplacian[id] == -FLT_MAX )
-					m_scalar_laplacian[id] = m_scalarfield->GetMinLaplacian();
-			}
-		}
-	}
+	//for ( UINT32 x = 0; x < m_width; ++x )
+	//{
+	//	for ( UINT32 y = 0; y < m_height; ++y )
+	//	{
+	//		for ( UINT32 z = 0; z < m_depth; ++z )
+	//		{
+	//			UINT32 id = m_scalarfield->GetId(x, y, z);
+	//			if ( m_scalar_laplacian[id] == -FLT_MAX )
+	//				m_scalar_laplacian[id] = m_scalarfield->GetMinLaplacian();
+	//		}
+	//	}
+	//}
 
 	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
 	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());

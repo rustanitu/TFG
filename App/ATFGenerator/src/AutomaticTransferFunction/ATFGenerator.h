@@ -14,8 +14,8 @@
 /*************************/
 
 #define SQRT_E 1.6487212707
-#define ATFG_V_MAX 255
-#define ATFG_V_RANGE ATFG_V_MAX + 1
+#define ATFG_V_RANGE 256
+#define ATFG_V_MAX (ATFG_V_RANGE - 1)
 
 class TransferFunction;
 

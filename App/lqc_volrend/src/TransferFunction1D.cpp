@@ -396,7 +396,7 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "REDRAW", "YES");
 
 		IupPlotEnd(m_bx_plot);
-		IupSetAttribute(m_bx_plot, "DS_MODE", "MARK");
+		IupSetAttribute(m_bx_plot, "DS_MODE", "LINE");
 		IupSetAttribute(m_bx_plot, "DS_MARKSTYLE", "CIRCLE");
 		IupSetAttribute(m_bx_plot, "DS_MARKSIZE", "3");
 		IupSetAttribute(m_bx_plot, "DS_NAME", "p(v)");
@@ -429,14 +429,16 @@ namespace vr
 		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
 		IupPlotBegin(m_bx_plot, 0);
 
-		float amax = 1.0f;
-		float base = m_thickness;
+		float amax = 0.0f;
+    for (int i = 0; i < m_values_size; ++i) {
+      amax = fmax(amax, m_values[i]);
+    }
 
 		// Assign opacity to transfer function
 		for (int i = 0; i < m_values_size; ++i)
 		{
 			int value = m_indexes[i];
-			float a = m_values[i];
+			float a = m_values[i] / amax;
 			AddAlphaControlPoint(TransferControlPoint(a, value));
 			IupPlotAdd(m_tf_plot, value, a);
 			printf("TF: value: %d,\talpha: %.2f.\n", value, a);

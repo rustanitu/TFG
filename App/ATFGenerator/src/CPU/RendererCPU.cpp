@@ -221,7 +221,7 @@ void RendererCPU::PrintPixelsDifference(float pixels[], int pwidth, int pheight)
 void RendererCPU::Display()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glDrawPixels(Viewer::Instance()->m_CurrentWidth, Viewer::Instance()->m_CurrentHeight, GL_RGBA, GL_FLOAT, m_pixels);
+  //glDrawPixels(Viewer::Instance()->m_CurrentWidth, Viewer::Instance()->m_CurrentHeight, GL_RGBA, GL_FLOAT, m_pixels);
 }
 
 void RendererCPU::RayTracer(int rtwidth, int rtheight)

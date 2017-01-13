@@ -7,8 +7,7 @@ Cell::Cell()
 , m_j(-1)
 , m_k(-1)
 , m_active(false)
-, m_nsteps(-1)
-, m_values(NULL)
+, m_center(-FLT_MAX)
 {
 }
 
@@ -18,29 +17,28 @@ void Cell::Init(const int& i, const int& j, const int& k, const bool& active, co
   m_j = j;
   m_k = k;
   m_active = active;
-  m_nsteps = nsteps;
-  m_values = new float[nsteps];
 }
 
-int Cell::GetIthVertexIndex(const int& i)
+int Cell::GetIthVertexIndex(const int& i) const
 {
   if (i < 0 || i > 7)
     return -1;
   return m_vertex_index[i];
 }
 
-int Cell::GetAdjcentCellIndex(const int& face)
+int Cell::GetAdjcentCellIndex(const int& face) const
 {
   if (face < 0 || face > 5)
     return -1;
   return m_adjcell_index[face];
 }
 
-float Cell::GetValue(const int& step)
+float Cell::GetValue(const int& step) const
 {
-  if (step < 0 || step > m_nsteps - 1)
-    return -1;
-  return m_values[step];
+  //if (step < 0 || step > m_nsteps - 1)
+  //  return -1;
+  //return m_values[step];
+  return m_value;
 }
 
 bool Cell::SetIthVertexIndex(const int& ith_vertex, const int& index)
@@ -63,9 +61,10 @@ bool Cell::SetAdjcentCellIndex(const int& face, const int& index)
 
 bool Cell::SetValue(const int& step, const float& value)
 {
-  if (step < 0 || step > m_nsteps - 1)
-    return false;
-
-  m_values[step] = value;
+  //if (step < 0 || step > m_nsteps - 1)
+  //  return false;
+  //
+  //m_values[step] = value;
+  m_value = value;
   return true;
 }

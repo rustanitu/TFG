@@ -13,16 +13,15 @@ uniform int ScreenSizeH;
 
 uniform sampler2D ExitPoints;
 uniform sampler3D VolumeTex;
-uniform usamplerBuffer ActiveTex;
+uniform sampler3D ActiveTex;
 uniform sampler1D TransferFunc;  
 
 uniform int VolWidth;
 uniform int VolHeight;
 uniform int VolDepth;
 
-uniform int VisibleSet;
-
 uniform vec3 tex_scale;
+
 //////////////////////
 //*VARIÁVEIS COMUNS*//
 //////////////////////
@@ -42,9 +41,9 @@ vec4 GetFromTransferFunction (float p_d)
 {
 	vec3 voxel = (real_minpos + p_d * real_normalized_step) * tex_scale;
 	float voxel_value = texture(VolumeTex, voxel).r;
-	uint active_cell = texelFetch(ActiveTex, int(voxel.x + (VolWidth * voxel.y) + (voxel.z * VolWidth * VolHeight))).r;
-	if (active_cell == 1)
-		return texture(TransferFunc, voxel_value);
+  float active_cell = texture(ActiveTex, voxel).r;
+	if (active_cell > 0.0f)
+    return texture(TransferFunc, voxel_value);
 	return vec4(0);
 }
 

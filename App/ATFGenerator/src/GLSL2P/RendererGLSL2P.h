@@ -108,8 +108,7 @@ public:
 	/*! Store the texture of the current transfer function.*/
 	gl::GLTexture1D* m_glsl_transfer_function;
 
-	gl::GLTexture3D* m_glsl_settex;
-	gl::GLTexture1D* m_glsl_setqtdtex;
+	gl::GLTexture3D* m_glsl_activetex;
 
 private:
 	/*! First pass of Rendering algorithm.
@@ -153,8 +152,6 @@ private:
 	gl::GLBufferObject* m_svbo;
 	/*! second pass ibo.*/
 	gl::GLBufferObject* m_sibo;
-
-	GLuint m_bo, m_to;
 
 	/*! shader variables for the first pass.*/
 	gl::GLShader* m_shader_firstpass;

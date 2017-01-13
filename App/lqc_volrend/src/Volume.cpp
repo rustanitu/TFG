@@ -14,16 +14,12 @@ namespace vr
 {
 
 	Volume::Volume() : ScalarField()
-		, m_nsets(0)
+    , m_scalar_values(NULL)
 	{
-		m_scalar_values = NULL;
-		m_visited = NULL;
-		m_set_values = NULL;
-		m_set_qtd = NULL;
 	}
 
 	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth)
-		: ScalarField(width, height, depth), m_nsets(0)
+		: ScalarField(width, height, depth)
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new float[size];
@@ -31,13 +27,10 @@ namespace vr
 		{
 			m_scalar_values[i] = 0.0f;
 		}
-		m_visited = NULL;
-		m_set_values = NULL;
-		m_set_qtd = NULL;
 	}
 
 	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars)
-		: ScalarField(width, height, depth), m_nsets(0)
+		: ScalarField(width, height, depth)
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new float[size];
@@ -48,18 +41,12 @@ namespace vr
 			m_max_value = fmax(m_max_value, v);
 			m_min_value = fmin(m_min_value, v);
 		}
-		m_visited = NULL;
-		m_set_values = NULL;
-		m_set_qtd = NULL;
 	}
 
 	Volume::~Volume()
 	{
 		printf("\n--Volume destruído--\n");
 		delete[] m_scalar_values;
-		delete[] m_visited;
-		delete[] m_set_qtd;
-		delete[] m_set_values;
 	}
 
 	lqc::Vector3f Volume::GetAnchorMin()

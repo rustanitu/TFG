@@ -55,21 +55,6 @@ namespace vr
 			return m_scalar_values != NULL;
 		}
 
-		int* GetVoxelSet()
-		{
-			return m_set_values;
-		}
-
-		int* GetSetQtd()
-		{
-			return m_set_qtd;
-		}
-
-		int GetSetQtdSize()
-		{
-			return m_nsets;
-		}
-
 		float* GetValues()
 		{
 			return m_scalar_values;
@@ -90,10 +75,6 @@ namespace vr
 		lqc::Vector3f m_pmax;
 
 		float* m_scalar_values;
-		int m_nsets;
-		bool* m_visited;
-		int* m_set_values;
-		int* m_set_qtd;
 		std::stack<Voxel> m_stack;
 	};
 }

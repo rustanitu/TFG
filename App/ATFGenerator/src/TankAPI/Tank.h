@@ -42,6 +42,10 @@ public:
 private:
 	float GetQuadraticGradientNorm(const UINT32& id);
 
+  glm::vec3 GetCellCenter(const Cell& cell);
+  bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
+  glm::mat3 GetCellJacobianInverse(const Cell& cell);
+
 	struct TankComp
 	{
 		Cell* m_cells;
@@ -68,15 +72,15 @@ private:
 	int m_ncells;
 	int m_nsteps;
 	int m_nvertices;
-	float* m_vertices;
+  glm::vec3* m_vertices;
 	Cell* m_cells;
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
 	DerivativeMask m_derivativeMask;
 
-	float* m_scalar_fx;
-	float* m_scalar_fy;
-	float* m_scalar_fz;
+	//float* m_scalar_fx;
+	//float* m_scalar_fy;
+	//float* m_scalar_fz;
 };
 
 #endif

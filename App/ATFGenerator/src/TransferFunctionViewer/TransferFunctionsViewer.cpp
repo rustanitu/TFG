@@ -127,7 +127,7 @@ void TransferFunctionsViewer::Redraw ()
   }
   
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glDrawPixels (258, 50, GL_RGBA, GL_FLOAT, m_pixels);
+  //glDrawPixels (258, 50, GL_RGBA, GL_FLOAT, m_pixels);
   
   id = (id + 1) % 4;
 
