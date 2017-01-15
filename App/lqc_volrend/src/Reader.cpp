@@ -25,6 +25,8 @@ namespace vr
 		printf("------------Reading Volume Model------------\n");
 		if ( extension.compare("vol") == 0 )
 		{
+			ret = ReadVolFile(filepath);
+			/*
 			Volume* vol = ReadVolFile(filepath);
 
       int width = vol->GetWidth();
@@ -53,6 +55,7 @@ namespace vr
 				tank = NULL;
 				ret = vol;
 			}
+			//*/
 		}
 		else if ( extension.compare("ele") == 0 || extension.compare("txt") == 0 )
 			ret = ReadEleFile(filepath);
@@ -60,6 +63,8 @@ namespace vr
 			ret = ReadNodeFile(filepath);
 		else if ( extension.compare("raw") == 0 )
 		{
+			ret = ReadVolFile(filepath);
+			/*
       Volume* vol = ReadVolFile(filepath);
 
       int width = vol->GetWidth();
@@ -87,6 +92,7 @@ namespace vr
         tank = NULL;
         ret = vol;
       }
+			//*/
 		}
 		else if ( extension.compare("med") == 0 )
 			ret = ReadMedFile(filepath);

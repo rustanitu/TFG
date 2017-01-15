@@ -18,12 +18,13 @@
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
-//#define PLOT_STYLE "LINE"
+#define PLOT_STYLE "LINE"
 #ifndef PLOT_STYLE
   #define PLOT_STYLE "MARK"
 #endif
 
 //#define EXTREMA_POINTS
+#define SMOOTH_CURVES
 
 //#define ALPHA
 #ifndef ALPHA
@@ -89,10 +90,37 @@ bool ATFGenerator::Init()
 	if ( !GenerateHistogram() )
 		return false;
 
+#ifdef SMOOTH_CURVES
+	SmoothCurves();
+#endif
+
 	m_initialized = true;
 	printf("ATFGenerator Inicializado.\n");
 	printf("--------------------------------------------------\n");
 	return true;
+}
+
+void ATFGenerator::SmoothCurves()
+{
+	const int times = 10;
+	int size;
+	float* values;
+	int* indexes;
+
+	float* curves[6] = {m_average_gradient, m_min_gradient, m_max_gradient, m_average_laplacian, m_min_laplacian, m_max_laplacian};
+	for ( int k = 0; k < 6; ++k )
+	{
+		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
+		SmoothCurveWithGaussian(values, size, times);
+
+		for ( int i = 0; i < size; ++i )
+			curves[k][indexes[i]] = values[i];
+
+		delete[] values;
+		values = NULL;
+		delete[] indexes;
+		indexes = NULL;
+	}
 }
 
 void ATFGenerator::SetDefaultColor()
@@ -125,41 +153,6 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 	m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
 	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
 	SetDefaultColor();
-
-	const int times = 10;
-	int size;
-	float* values;
-	int* indexes;
-
-	float* curves[6] = {m_average_gradient, m_min_gradient, m_max_gradient, m_average_laplacian, m_min_laplacian, m_max_laplacian};
-	for ( int k = 0; k < 6; ++k )
-	{
-		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
-		SmoothCurveWithGaussian(values, size, times);
-
-		for ( int i = 0; i < size; ++i )
-			curves[k][indexes[i]] = values[i];
-
-		delete[] values;
-		values = NULL;
-		delete[] indexes;
-		indexes = NULL;
-	}
-
-	m_inflct_size = 0;
-	delete[] m_inflct_indexes;
-	m_inflct_indexes = NULL;
-	GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
-	m_inflct_size = GetInflectionPoints(values, indexes, size, m_inflct_indexes);
-
-	delete[] values;
-	delete[] indexes;
-
-	m_max_size = 0;
-	delete[] m_max_indexes;
-	m_max_indexes = NULL;
-	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
-	m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes);
 
 	GenerateDataChart();
 
@@ -805,6 +798,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 		return false;
 	}
 
+	/*
 	for ( UINT32 x = 0; x < m_width; ++x )
 	{
 		for ( UINT32 y = 0; y < m_height; ++y )
@@ -834,19 +828,21 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			}
 		}
 	}
+	//*/
 
-	//for ( UINT32 x = 0; x < m_width; ++x )
-	//{
-	//	for ( UINT32 y = 0; y < m_height; ++y )
-	//	{
-	//		for ( UINT32 z = 0; z < m_depth; ++z )
-	//		{
-	//			UINT32 id = m_scalarfield->GetId(x, y, z);
-	//			if ( m_scalar_laplacian[id] == -FLT_MAX )
-	//				m_scalar_laplacian[id] = m_scalarfield->GetMinLaplacian();
-	//		}
-	//	}
-	//}
+	//*
+	for ( UINT32 x = 0; x < m_width; ++x )
+	{
+		for ( UINT32 y = 0; y < m_height; ++y )
+		{
+			for ( UINT32 z = 0; z < m_depth; ++z )
+			{
+				UINT32 id = m_scalarfield->GetId(x, y, z);
+				m_scalarfield->CalculateDerivatives(x, y, z, &m_scalar_gradient[id], &m_scalar_laplacian[id]);
+			}
+		}
+	}
+	//*/
 
 	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
 	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());
@@ -1008,10 +1004,12 @@ void ATFGenerator::SmoothCurveWithGaussian(float* v, const int& n, const int& ti
 	int t = 0;
 	while ( t < times )
 	{
+		v[0] = (2 * v[0] + v[1]) / 3.0f;
 		for ( int i = 1; i < n - 1; ++i )
 		{
 			v[i] = (v[i - 1] + 2 * v[i] + v[i + 1]) / 4.0f;
 		}
+		v[n-1] = (2 * v[n-1] + v[n-2]) / 3.0f;
 		++t;
 	}
 }

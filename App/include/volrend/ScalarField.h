@@ -6,6 +6,10 @@
 #include <string>
 #include <math/MUtils.h>
 
+#include "../../ATFGenerator/src/AutomaticTransferFunction/DerivativeMask.h"
+
+#define MASK_SIZE 3
+
 namespace vr
 {
 
@@ -14,6 +18,7 @@ namespace vr
 	public:
 		ScalarField() : m_width(0), m_height(0), m_depth(0), 
 			m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
+			, m_derivativeMask(MASK_SIZE)
 		{
 			printf("ScalarField criado.\n");
 		}
@@ -21,6 +26,7 @@ namespace vr
 		ScalarField(const UINT32& width, const UINT32& height, const UINT32& depth)
 			: m_width(width), m_height(height), m_depth(depth)
 			, m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
+			, m_derivativeMask(MASK_SIZE)
 		{
 			printf("ScalarField criado.\n");
 		}
@@ -142,6 +148,7 @@ namespace vr
 
 		virtual float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
 		virtual float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
+		virtual void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l) = 0;
 
 		virtual bool Validate() = 0;
 
@@ -153,6 +160,7 @@ namespace vr
 		float m_min_laplacian;
 		float m_max_laplacian;
 		std::string m_name;
+		DerivativeMask m_derivativeMask;
 	};
 }
 

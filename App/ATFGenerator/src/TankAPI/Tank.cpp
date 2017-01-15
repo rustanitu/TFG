@@ -4,16 +4,13 @@
 #include <fstream>
 #include <vector>
 
-#define MASK_SIZE 3
-
 Tank::Tank()
 	: m_cells(NULL)
 	, m_vertices(NULL)
 	, m_current_timestep(0)
-	, m_derivativeMask(MASK_SIZE)
-	//, m_scalar_fx(NULL)
-	//, m_scalar_fy(NULL)
-	//, m_scalar_fz(NULL)
+	, m_scalar_fx(NULL)
+	, m_scalar_fy(NULL)
+	, m_scalar_fz(NULL)
 {
 	printf("Tank criado.\n");
 }
@@ -25,9 +22,9 @@ Tank::~Tank()
 
 	delete[] m_cells;
 	delete[] m_vertices;
-	//delete[] m_scalar_fx;
-	//delete[] m_scalar_fy;
-	//delete[] m_scalar_fz;
+	delete[] m_scalar_fx;
+	delete[] m_scalar_fy;
+	delete[] m_scalar_fz;
 }
 
 bool Tank::Read(const char* filepath)
@@ -54,10 +51,10 @@ bool Tank::Read(const char* filepath)
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
-	//m_scalar_fx = new float[m_ncells];
-	//m_scalar_fy = new float[m_ncells];
-	//m_scalar_fz = new float[m_ncells];
-	if ( !m_cells )//|| !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
+	m_scalar_fx = new float[m_ncells];
+	m_scalar_fy = new float[m_ncells];
+	m_scalar_fz = new float[m_ncells];
+	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
   m_vertices = new glm::vec3[m_nvertices];
@@ -104,9 +101,9 @@ bool Tank::Read(const char* filepath)
 		Cell* cell = &(m_cells[id]);
 		cell->Init(i, j, k, active, m_nsteps);
 
-		//m_scalar_fx[id] = 0.0f;
-		//m_scalar_fy[id] = 0.0f;
-		//m_scalar_fz[id] = 0.0f;
+		m_scalar_fx[id] = 0.0f;
+		m_scalar_fy[id] = 0.0f;
+		m_scalar_fz[id] = 0.0f;
 
 		// It sets the index of the ith vertex
 		for ( int v = 0; v < 8; ++v )
@@ -146,9 +143,9 @@ bool Tank::Read(const char* filepath)
         {
           printf("O mapeamento do volume difere do experado.\n");
           delete[] m_cells;
-          //delete[] m_scalar_fx;
-          //delete[] m_scalar_fy;
-          //delete[] m_scalar_fz;
+          delete[] m_scalar_fx;
+          delete[] m_scalar_fy;
+          delete[] m_scalar_fz;
           delete[] m_vertices;
           return false;
         }
@@ -180,33 +177,6 @@ bool Tank::Read(const char* filepath)
 		}
 	}
 
-#ifdef AVERAGE_INACTIVE
-	TankComp tc;
-	tc.m_cells = m_cells;
-	std::sort(inactives.begin(), inactives.end(), tc);
-
-	while (inactives.size() > 0) {
-		int id = inactives.back();
-		inactives.pop_back();
-
-		Cell* cell = &m_cells[id];
-
-		for (int t = 0; t < m_nsteps; ++t) {
-			int actives = 0;
-			float values = 0.0f;
-			for (int i = 0; i < 6; ++i) {
-				int idx = cell->GetAdjcentCellIndex(i);
-				if (idx > -1 && m_cells[idx].IsActive()) {
-					actives++;
-					values += m_cells[idx].GetValue(t);
-				}
-			}
-
-			cell->SetValue(t, values / actives);
-		}
-	}
-#endif
-
 	printf("Fim da leitura do tank.\n");
 
 	return true;
@@ -229,10 +199,10 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 
 	m_ncells = m_width * m_height * m_depth;
 	m_cells = new Cell[m_ncells];
-	//m_scalar_fx = new float[m_ncells];
-	//m_scalar_fy = new float[m_ncells];
-	//m_scalar_fz = new float[m_ncells];
-	if ( !m_cells )//|| !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
+	m_scalar_fx = new float[m_ncells];
+	m_scalar_fy = new float[m_ncells];
+	m_scalar_fz = new float[m_ncells];
+	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
 	// It gets all cells
@@ -248,9 +218,9 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 				Cell* cell = &(m_cells[id]);
 				cell->Init(i, j, k, active, m_nsteps);
 
-				//m_scalar_fx[id] = 0.0f;
-				//m_scalar_fy[id] = 0.0f;
-				//m_scalar_fz[id] = 0.0f;
+				m_scalar_fx[id] = 0.0f;
+				m_scalar_fy[id] = 0.0f;
+				m_scalar_fz[id] = 0.0f;
 
 				cell->SetValue(0, values[id]);
 				m_max_value = fmax(m_max_value, values[id]);
@@ -278,11 +248,10 @@ float Tank::GetValue(const UINT32& id)
 
 float Tank::GetQuadraticGradientNorm(const UINT32& id)
 {
-  return 0.0f;
-	//const float dfx = m_scalar_fx[id];
-	//const float dfy = m_scalar_fy[id];
-	//const float dfz = m_scalar_fz[id];
-	//return dfx*dfx + dfy*dfy + dfz*dfz;
+	const float dfx = m_scalar_fx[id];
+	const float dfy = m_scalar_fy[id];
+	const float dfz = m_scalar_fz[id];
+	return dfx*dfx + dfy*dfy + dfz*dfz;
 }
 
 bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t)
@@ -462,9 +431,9 @@ glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
 float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 	float g = 0.0f;
-	float fdx = 0.0f;
-	float fdy = 0.0f;
-	float fdz = 0.0f;
+	float dfx = 0.0f;
+	float dfy = 0.0f;
+	float dfz = 0.0f;
 
 	float pdx = 0.0f;
 	float pdy = 0.0f;
@@ -480,45 +449,132 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				float dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
-				float dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
-				float dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
+				float dx;
+				float dy;
+				float dz;
+				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
 				float v = GetValue(i, j, k);
-				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
 				{
 					v = GetValue(x, y, z);
 				}
+				pdx += abs(dx);
+				pdy += abs(dy);
+				pdz += abs(dz);
 
-				fdx += dx * v;
-				fdy += dy * v;
-				fdz += dz * v;
-
-        pdx += abs(dx);
-        pdy += abs(dy);
-        pdz += abs(dz);
-			}
+				dfx += dx * v;
+				dfy += dy * v;
+				dfz += dz * v;
 		}
 	}
+}
+
+	dfx /= pdx;
+	dfy /= pdy;
+	dfz /= pdz;
 
 	int id = GetId(x, y, z);
+	m_scalar_fx[id] = dfx;
+	m_scalar_fy[id] = dfy;
+	m_scalar_fz[id] = dfz;
 
-  glm::vec3 parametric_grad(fdx / pdx, fdy / pdy, fdz / pdz);
-  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
-  glm::vec3 grad = jacob_inv * parametric_grad;
-
-  //m_scalar_fx[id] = grad.x;
-	//m_scalar_fy[id] = grad.y;
-	//m_scalar_fz[id] = grad.z;
-
-	//g = sqrt(GetQuadraticGradientNorm(id));
-  g = glm::length(grad);
+	g = sqrt(GetQuadraticGradientNorm(id));
 	m_max_gradient = fmax(m_max_gradient, g);
 
 	return g;
 }
 
 float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
+{
+	float fdxdx = 0.0f;
+	float fdxdy = 0.0f;
+	float fdxdz = 0.0f;
+
+	float fdydx = 0.0f;
+	float fdydy = 0.0f;
+	float fdydz = 0.0f;
+
+	float fdzdx = 0.0f;
+	float fdzdy = 0.0f;
+	float fdzdz = 0.0f;
+
+	float pdx = 0.0f;
+	float pdy = 0.0f;
+	float pdz = 0.0f;
+
+	int h = MASK_SIZE / 2;
+	int xinit = x - h;
+	int yinit = y - h;
+	int zinit = z - h;
+	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
+	{
+		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
+		{
+			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
+			{
+				float dx, dy, dz;
+				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+
+				int id = GetId(i, j, k);
+				float dfx = m_scalar_fx[id];
+				float dfy = m_scalar_fy[id];
+				float dfz = m_scalar_fz[id];
+
+				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
+				{
+					id = GetId(x, y, z);
+
+					dfx = m_scalar_fx[id];
+					dfy = m_scalar_fy[id];
+					dfz = m_scalar_fz[id];
+				}
+
+				pdx += abs(dx);
+				pdy += abs(dy);
+				pdz += abs(dz);
+
+				fdxdx += dx * dfx;
+				fdxdy += dx * dfy;
+				fdxdz += dx * dfz;
+
+				fdydx += dy * dfx;
+				fdydy += dy * dfy;
+				fdydz += dy * dfz;
+
+				fdzdx += dz * dfx;
+				fdzdy += dz * dfy;
+				fdzdz += dz * dfz;
+		}
+	}
+}
+
+	fdxdx /= pdx;
+	fdxdy /= pdy;
+	fdxdz /= pdz;
+
+	fdydx /= pdx;
+	fdydy /= pdy;
+	fdydz /= pdz;
+
+	fdzdx /= pdx;
+	fdzdy /= pdy;
+	fdzdz /= pdz;
+
+	int id = GetId(x, y, z);
+	float dfx = m_scalar_fx[id];
+	float dfy = m_scalar_fy[id];
+	float dfz = m_scalar_fz[id];
+	float hess_x_gradient[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
+
+	float sec_deriv = (hess_x_gradient[0] * dfx + hess_x_gradient[1] * dfy + hess_x_gradient[2] * dfz) / GetQuadraticGradientNorm(id);
+
+	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
+	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
+	return sec_deriv;
+}
+
+void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l)
 {
   float fdx = 0.0f;
   float fdy = 0.0f;
@@ -552,11 +608,9 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-        ///////////////////////////////////
         float dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
         float dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
         float dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
-        ///////////////////////////////////
 
         float dxdx = m_derivativeMask.GetDxdxAt(i - xinit, j - yinit, k - zinit);
         float dxdy = m_derivativeMask.GetDxdyAt(i - xinit, j - yinit, k - zinit);
@@ -587,7 +641,6 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
         pdydz += abs(dydz);
         pdzdz += abs(dzdz);
 
-        ///////////////////////////////////
         fdx += dx * v;
         fdy += dy * v;
         fdz += dz * v;
@@ -595,31 +648,30 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
         pdx += abs(dx);
         pdy += abs(dy);
         pdz += abs(dz);
-        ///////////////////////////////////
 			}
 		}
 	}
 
+	//Returning gradient
+	int id = GetId(x, y, z);
+	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
+
+	glm::vec3 parametric_grad(fdx / pdx, fdy / pdy, fdz / pdz);
+	glm::vec3 grad = jacob_inv * parametric_grad;
+	*g = glm::length(grad);
+	m_max_gradient = fmax(m_max_gradient, *g);
+
+	//Returning laplacian
 	fdxdx /= pdxdx;
 	fdxdy /= pdxdy;
 	fdxdz /= pdxdz;
-
 	fdydy /= pdydy;
 	fdydz /= pdydz;
-
 	fdzdz /= pdzdz;
   
   glm::vec3 parametric_dx_grad(fdxdx, fdxdy, fdxdz);
   glm::vec3 parametric_dy_grad(fdxdy, fdydy, fdydz);
   glm::vec3 parametric_dz_grad(fdxdz, fdydz, fdzdz);
-
-	int id = GetId(x, y, z);
-  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
-
-  ///////////////////////////////////
-  glm::vec3 parametric_grad(fdx / pdx, fdy / pdy, fdz / pdz);
-  glm::vec3 grad = jacob_inv * parametric_grad;
-  ///////////////////////////////////
 
   glm::vec3 dx_grad = jacob_inv * parametric_dx_grad;
   glm::vec3 dy_grad = jacob_inv * parametric_dy_grad;
@@ -631,14 +683,9 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
     glm::vec3(dx_grad.z, dy_grad.z, dz_grad.z)
   );
 
-	//float dfx = m_scalar_fx[id];
-	//float dfy = m_scalar_fy[id];
-	//float dfz = m_scalar_fz[id];
-  //glm::vec3 grad(dfx, dfy, dfz);
+  *l = glm::dot(grad, (hess * grad)) / *g;
 
-  float sec_deriv = glm::dot(grad, (hess * grad)) / sqrt(glm::dot(grad, grad));// GetQuadraticGradientNorm(id);
-
-	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
-	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
-	return sec_deriv;
+	m_min_laplacian = fmin(m_min_laplacian, *l);
+	m_max_laplacian = fmax(m_max_laplacian, *l);
 }
+//*/

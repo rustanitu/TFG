@@ -34,7 +34,6 @@ namespace vr
 		void SetAnchors(lqc::Vector3f pmin, lqc::Vector3f pmax);
 
 		float GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
-		float GetValue(float x, float y, float z);
 		float GetValue(const UINT32& id)
 		{
 			return m_scalar_values[id];
@@ -42,6 +41,7 @@ namespace vr
 
 		float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 		float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+		void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l);
 
 		float InterpolatedValue(float x, float y, float z);
 		float InterpolatedValue(lqc::Vector3f pos);

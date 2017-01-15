@@ -220,6 +220,8 @@ private:
 	/// to all 256 values, ordered by value.</returns>
 	void GetBoundaryDistancies(float* x, int *v, UINT32 *n);
 
+	void SmoothCurves();
+
 	void SmoothCurveWithGaussian(float* v, const int& n, const int& times);
 
 	template<typename T>

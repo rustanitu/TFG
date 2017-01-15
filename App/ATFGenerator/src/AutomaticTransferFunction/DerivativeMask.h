@@ -6,8 +6,8 @@ static class DerivativeMask
 public:
 	DerivativeMask(const int& n);
 
-	//void GetGradient(const int& x, const int& y, const int& z, float* gx, float* gy, float* gz);
-	//void GetLaplacian(const int& x, const int& y, const int& z, float* lx, float* ly, float* lz);
+	void GetGradient(const int& x, const int& y, const int& z, float* gx, float* gy, float* gz);
+	void GetLaplacian(const int& x, const int& y, const int& z, float* lx, float* ly, float* lz);
 
   float GetDxAt(const int& x, const int& y, const int& z) const;
   float GetDyAt(const int& x, const int& y, const int& z) const;
@@ -25,11 +25,15 @@ public:
 private:
 	unsigned int GetId(const int& x, const int& y, const int& z) const;
 	void GenerateMasks();
+	void GenerateGradientMask();
+	void GenerateLaplacianMask();
 private:
 	int m_n;
 	float* m_h;   // Normal or gaussian kernel
 	float* m_hl;  // First derivative kernel
   float* m_hll; // Second derivative kernel
+	float* m_gradient_mask;
+	float* m_laplacian_mask;
   
   //
   float* m_dx_mask;

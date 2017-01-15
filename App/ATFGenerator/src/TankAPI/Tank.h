@@ -1,7 +1,6 @@
 #ifndef ATFG_TANK_H
 #define ATFG_TANK_H
 
-#include "../AutomaticTransferFunction/DerivativeMask.h"
 #include "Cell.h"
 
 #include <basetsd.h>
@@ -23,6 +22,7 @@ public:
 
 	float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 	float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+	void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l);
 
 	void SetCurrentTimeStep(const UINT32& step)
 	{
@@ -76,11 +76,10 @@ private:
 	Cell* m_cells;
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
-	DerivativeMask m_derivativeMask;
 
-	//float* m_scalar_fx;
-	//float* m_scalar_fy;
-	//float* m_scalar_fz;
+	float* m_scalar_fx;
+	float* m_scalar_fy;
+	float* m_scalar_fz;
 };
 
 #endif
