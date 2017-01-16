@@ -42,7 +42,7 @@ public:
 private:
 	float GetQuadraticGradientNorm(const UINT32& id);
 
-  glm::vec3 GetCellCenter(const Cell& cell);
+  void FillCellAdjCenter(Cell& cell);
   bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
   glm::mat3 GetCellJacobianInverse(const Cell& cell);
 

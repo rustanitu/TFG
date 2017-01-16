@@ -181,7 +181,7 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 			m_atfg->SetTransferFunctionPlot(Viewer::Instance()->m_gui.m_tf_plot);
 			m_atfg->SetBoundaryDistancePlot(Viewer::Instance()->m_gui.m_dist_plot);
 			if (m_atfg->Init()) {
-				//m_atfg->GenerateVolumeSlices();
+				m_atfg->GenerateVolumeSlices();
 				//m_atfg->GenerateGradientSlices();
 				//m_atfg->GenerateLaplacianSlices();
 				//m_atfg->GenerateHistogramSlices();

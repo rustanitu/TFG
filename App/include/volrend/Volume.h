@@ -75,7 +75,6 @@ namespace vr
 		lqc::Vector3f m_pmax;
 
 		float* m_scalar_values;
-		std::stack<Voxel> m_stack;
 	};
 }
 

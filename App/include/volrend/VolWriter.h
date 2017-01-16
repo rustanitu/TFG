@@ -27,6 +27,7 @@ public:
   /// <param name="width">The volume width.</param>
   /// <param name="height">The volume height.</param>
   VolWriter(const char* path, unsigned int width, unsigned int height, unsigned int depth);
+  VolWriter(const char* path, unsigned int size);
   
   /// <summary>
   /// Finalizes an instance of the <see cref="VolWriter"/> class.
@@ -39,6 +40,9 @@ public:
   /// <returns>Returns true if the file was successfully openned.
   /// Otherwise it returns false.</returns>
   bool Open();
+
+  void WriteSphere();
+  void WriteQuads();
 
   void Write(int x, int y, int z, float value);
 	void Write(const float& value);

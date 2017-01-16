@@ -39,12 +39,22 @@ public:
     return m_center;
   }
 
+  glm::vec3 GetFaceCenter(const int& face) const
+  {
+    return m_adjface[face];
+  }
+
   bool SetIthVertexIndex(const int& ith_vertex, const int& index);
   bool SetAdjcentCellIndex(const int& face, const int& index);
   bool SetValue(const int& step, const float& value);
   void SetCenter(glm::vec3 center)
   {
     m_center = center;
+  }
+
+  void SetFaceCenter(const int& face, glm::vec3 center)
+  {
+    m_adjface[face] = center;
   }
 
 private:
@@ -56,6 +66,7 @@ private:
   int m_adjcell_index[6];
   float m_value;
   glm::vec3 m_center;
+  glm::vec3 m_adjface[6];
 };
 
 #endif

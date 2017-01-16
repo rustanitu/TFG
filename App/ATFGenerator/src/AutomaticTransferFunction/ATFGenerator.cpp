@@ -182,25 +182,11 @@ bool ATFGenerator::ExtractTransferFunction()
 	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
 	SetDefaultColor();
 
-	const int times = 10;
+	GenerateDataChart();
+
 	int size;
 	float* values;
 	int* indexes;
-
-	float* curves[6] = {m_average_gradient, m_min_gradient, m_max_gradient, m_average_laplacian, m_min_laplacian, m_max_laplacian};
-	for ( int k = 0; k < 6; ++k )
-	{
-		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
-		SmoothCurveWithGaussian(values, size, times);
-
-		for ( int i = 0; i < size; ++i )
-			curves[k][indexes[i]] = values[i];
-
-		delete[] values;
-		values = NULL;
-		delete[] indexes;
-		indexes = NULL;
-	}
 
 	m_inflct_size = 0;
 	delete[] m_inflct_indexes;
@@ -216,8 +202,6 @@ bool ATFGenerator::ExtractTransferFunction()
 	m_max_indexes = NULL;
 	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
 	m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes); 
-
-	GenerateDataChart();
 
 #ifdef ALPHA
 	m_transfer_function->SetAlphaValues(indexes, values, size);
@@ -1094,7 +1078,6 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 		}
 		else
 		{
-			printf("Sigma(%d): %.2f\n", i, sigma);
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}
 

@@ -27,6 +27,18 @@ VolWriter::VolWriter(const char* path, unsigned int width, unsigned int height, 
 	m_path.append(VOL_EXT);
 }
 
+VolWriter::VolWriter(const char* path, unsigned int size)
+  : m_width(size)
+  , m_height(size)
+  , m_depth(size)
+  , m_file(NULL)
+{
+  if (!path)
+    throw std::exception_ptr();
+
+  m_path = path;
+  m_path.append(VOL_EXT);
+}
 
 /// <summary>
 /// Finalizes an instance of the <see cref="VolWriter"/> class.
@@ -62,35 +74,53 @@ bool VolWriter::Open()
 	fprintf_s(m_file, "%s\n", name.c_str());
 	fprintf_s(m_file, "0\n");
 	fprintf_s(m_file, "%d %d %d\n", m_width, m_height, m_depth);
-
-	double c = m_width / 2.0f;
-	double q = m_width / 4.0f;
-	for (int z = 0; z < m_depth; z++) {
-		for (int y = 0; y < m_height; y++) {
-			for (int x = 0; x < m_width; x++) {
-				double dist = sqrt((c - x) * (c - x) + (c - y) * (c - y) + (c - z) * (c - z));
-				if ( dist > c )
-				{
-					Write(0);
-					continue;
-				}
-
-				double p = c - dist;
-				float f = 0.0f;
-				if ( p > q )
-				{
-					p -= q;
-					f = 127.0f;
-				}
-				p = p / q;
-				p = p * 4.0f;
-				p -= 2.0f;
-				f += 127.0f * (1 + erf(p)) * 0.5f;
-				Write(f);
-			}
-		}
-	}
 	return true;
+}
+
+void VolWriter::WriteSphere()
+{
+  double c = m_width / 2.0f;
+  double q = m_width / 4.0f;
+  for (int z = 0; z < m_depth; z++) {
+    for (int y = 0; y < m_height; y++) {
+      for (int x = 0; x < m_width; x++) {
+        double dist = sqrt((c - x) * (c - x) + (c - y) * (c - y) + (c - z) * (c - z));
+        if (dist > c) {
+          Write(0);
+          continue;
+        }
+
+        double p = c - dist;
+        float f = 0.0f;
+        if (p > q) {
+          p -= q;
+          f = 127.0f;
+        }
+        p = p / q;
+        p = p * 4.0f;
+        p -= 2.0f;
+        f += 127.0f * (1 + erf(p)) * 0.5f;
+        Write(f);
+      }
+    }
+  }
+}
+
+void VolWriter::WriteQuads()
+{
+  float d = 4.0f;
+  float vmin = 0.0f;
+  float vmax = 255.0f;
+  int restart_point = m_depth / 4;
+  for (int z = 0; z < m_depth; z++) {
+    float p = (d * z / (float)(m_depth - 1)) - (d * 0.5f);
+    float f = vmin + (vmax - vmin) * (1 + erf(p)) * 0.5f;
+    for (int y = 0; y < m_height; y++) {
+      for (int x = 0; x < m_width; x++) {
+        Write(f);
+      }
+    }
+  }
 }
 
 /// <summary>

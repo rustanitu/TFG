@@ -63,7 +63,7 @@ namespace vr
 			ret = ReadNodeFile(filepath);
 		else if ( extension.compare("raw") == 0 )
 		{
-			ret = ReadVolFile(filepath);
+			ret = ReadRawFile(filepath);
 			/*
       Volume* vol = ReadVolFile(filepath);
 

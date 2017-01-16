@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 
+#define HESSIAN
+
 Tank::Tank()
 	: m_cells(NULL)
 	, m_vertices(NULL)
@@ -154,8 +156,7 @@ bool Tank::Read(const char* filepath)
 			cell->SetAdjcentCellIndex(a, index);
 		}
 
-    glm::vec3 center = GetCellCenter(*cell);
-    cell->SetCenter(center);
+    FillCellAdjCenter(*cell);
 
 		// It sets the cell value of the p timestamp
 		for ( int t = 0; t < m_nsteps; ++t )
@@ -304,7 +305,7 @@ bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const 
   return true;
 }
 
-glm::vec3 Tank::GetCellCenter(const Cell& cell)
+void Tank::FillCellAdjCenter(Cell& cell)
 {
   //midle edge definition
   //
@@ -387,44 +388,69 @@ glm::vec3 Tank::GetCellCenter(const Cell& cell)
   glm::vec3 vdi(-FLT_MAX);
   if (GetSegmentIntersection(ufc, dfc, ffc, bfc, &psega, &psegb))
     vdi = ufc + psega * (dfc - ufc);
+  cell.SetCenter(vdi);
 
-  return vdi;
+  // Right Face Intersection
+  glm::vec3 rfi(-FLT_MAX);
+  if (GetSegmentIntersection(rf, rb, dr, ur, &psega, &psegb))
+    rfi = rf + psega * (rb - rf);
+  cell.SetFaceCenter(2, rfi);
+
+  // Left Face Intersection
+  glm::vec3 lfi(-FLT_MAX);
+  if (GetSegmentIntersection(lf, lb, dl, ul, &psega, &psegb))
+    lfi = lf + psega * (lb - lf);
+  cell.SetFaceCenter(3, lfi);
+
+  // Front Face Intersection
+  glm::vec3 ffi(-FLT_MAX);
+  if (GetSegmentIntersection(uf, df, rf, lf, &psega, &psegb))
+    ffi = uf + psega * (df - uf);
+  cell.SetFaceCenter(0, ffi);
+
+  // Back Face Intersection
+  glm::vec3 bfi(-FLT_MAX);
+  if (GetSegmentIntersection(ub, db, rb, lb, &psega, &psegb))
+    bfi = ub + psega * (db - ub);
+  cell.SetFaceCenter(1, bfi);
+
+  // Up Face Intersection
+  glm::vec3 ufi(-FLT_MAX);
+  if (GetSegmentIntersection(uf, ub, ur, ul, &psega, &psegb))
+    ufi = uf + psega * (ub - uf);
+  cell.SetFaceCenter(5, ufi);
+
+  // Up Face Intersection
+  glm::vec3 dfi(-FLT_MAX);
+  if (GetSegmentIntersection(df, db, dr, dl, &psega, &psegb))
+    dfi = df + psega * (db - df);
+  cell.SetFaceCenter(4, dfi);
 }
 
 glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
 {
-  return glm::mat3(1,0,0,0,1,0,0,0,1);
+  //return glm::mat3(1,0,0,0,1,0,0,0,1);
   int id = GetId(cell.GetI(), cell.GetJ(), cell.GetK());
   
+  glm::vec3 x = cell.GetFaceCenter(2) - cell.GetFaceCenter(3);
   int idxp = cell.GetAdjcentCellIndex(2);
-  if (idxp == -1)
-    idxp = id;
-  
   int idxn = cell.GetAdjcentCellIndex(3);
-  if (idxn == -1)
-    idxn = id;
+  if (idxp != -1 && idxn != -1)
+    x = (m_cells[idxp].GetCenter() - m_cells[idxn].GetCenter()) / 2.0f;
 
+  glm::vec3 y = cell.GetFaceCenter(5) - cell.GetFaceCenter(4);
   int idyp = cell.GetAdjcentCellIndex(5);
-  if (idyp == -1)
-    idyp = id;
-
   int idyn = cell.GetAdjcentCellIndex(4);
-  if (idyn == -1)
-    idyn = id;
+  if (idyp != -1 && idyn != -1)
+    y = (m_cells[idyp].GetCenter() - m_cells[idyn].GetCenter()) / 2.0f;
 
+  glm::vec3 z = cell.GetFaceCenter(0) - cell.GetFaceCenter(1);
   int idzp = cell.GetAdjcentCellIndex(0);
-  if (idzp == -1)
-    idzp = id;
-
   int idzn = cell.GetAdjcentCellIndex(1);
-  if (idzn == -1)
-    idzn = id;
+  if (idzp != -1 && idzn != -1)
+    z = (m_cells[idzp].GetCenter() - m_cells[idzn].GetCenter()) / 2.0f;
 
-  glm::vec3 x = (m_cells[idxp].GetCenter() - m_cells[idxn].GetCenter()) / 2.0f;
-  glm::vec3 y = (m_cells[idyp].GetCenter() - m_cells[idyn].GetCenter()) / 2.0f;
-  glm::vec3 z = (m_cells[idzp].GetCenter() - m_cells[idzn].GetCenter()) / 2.0f;
-
-  glm::mat3 jacob = glm::inverse(glm::mat3(x, y, z));
+  glm::mat3 jacob = glm::inverse(glm::transpose(glm::mat3(glm::normalize(x), glm::normalize(y), glm::normalize(z))));
   return jacob;
 }
 
@@ -475,11 +501,16 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 	dfz /= pdz;
 
 	int id = GetId(x, y, z);
-	m_scalar_fx[id] = dfx;
-	m_scalar_fy[id] = dfy;
-	m_scalar_fz[id] = dfz;
+	
+  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
+  glm::vec3 parametric_grad(dfx, dfy, dfz);
+  glm::vec3 grad = jacob_inv * parametric_grad;
 
-	g = sqrt(GetQuadraticGradientNorm(id));
+  m_scalar_fx[id] = grad.x;
+  m_scalar_fy[id] = grad.y;
+  m_scalar_fz[id] = grad.z;
+
+	g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, g);
 
 	return g;
@@ -487,6 +518,67 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 
 float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
+#ifndef HESSIAN
+  float g = 0.0f;
+  float dfx = 0.0f;
+  float dfy = 0.0f;
+  float dfz = 0.0f;
+
+  float pdx = 0.0f;
+  float pdy = 0.0f;
+  float pdz = 0.0f;
+
+  int h = MASK_SIZE / 2;
+  int xinit = x - h;
+  int yinit = y - h;
+  int zinit = z - h;
+  for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
+    for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
+      for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
+        float dx;
+        float dy;
+        float dz;
+        m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+
+        int gid = GetId(i, j, k);
+        if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive()) {
+          gid = GetId(x, y, z);
+        }
+
+        float dgx = m_scalar_fx[gid];
+        float dgy = m_scalar_fy[gid];
+        float dgz = m_scalar_fz[gid];
+        glm::vec3 ggrad(dgx, dgy, dgz);
+        float gv = glm::length(ggrad);
+
+        pdx += abs(dx);
+        pdy += abs(dy);
+        pdz += abs(dz);
+
+        dfx += dx * gv;
+        dfy += dy * gv;
+        dfz += dz * gv;
+      }
+    }
+  }
+
+  dfx /= pdx;
+  dfy /= pdy;
+  dfz /= pdz;
+
+  int id = GetId(x, y, z);
+
+  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
+  glm::vec3 parametric_grad(dfx, dfy, dfz);
+  glm::vec3 grad = jacob_inv * parametric_grad;
+  glm::vec3 fgrad(m_scalar_fx[id], m_scalar_fy[id], m_scalar_fz[id]);
+  
+  g = glm::dot(grad, fgrad) / glm::length(fgrad);
+  m_max_laplacian = fmax(m_max_laplacian, g);
+  m_min_laplacian = fmin(m_min_laplacian, g);
+
+  return g;
+#else
 	float fdxdx = 0.0f;
 	float fdxdy = 0.0f;
 	float fdxdz = 0.0f;
@@ -517,34 +609,34 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
 				int id = GetId(i, j, k);
-				float dfx = m_scalar_fx[id];
-				float dfy = m_scalar_fy[id];
-				float dfz = m_scalar_fz[id];
+				float fdx = m_scalar_fx[id];
+				float fdy = m_scalar_fy[id];
+				float fdz = m_scalar_fz[id];
 
 				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
 				{
 					id = GetId(x, y, z);
 
-					dfx = m_scalar_fx[id];
-					dfy = m_scalar_fy[id];
-					dfz = m_scalar_fz[id];
+          fdx = m_scalar_fx[id];
+          fdy = m_scalar_fy[id];
+          fdz = m_scalar_fz[id];
 				}
 
 				pdx += abs(dx);
 				pdy += abs(dy);
 				pdz += abs(dz);
 
-				fdxdx += dx * dfx;
-				fdxdy += dx * dfy;
-				fdxdz += dx * dfz;
+				fdxdx += fdx * dx;
+				fdxdy += fdx * dy;
+				fdxdz += fdx * dz;
 
-				fdydx += dy * dfx;
-				fdydy += dy * dfy;
-				fdydz += dy * dfz;
+				fdydx += fdy * dx;
+				fdydy += fdy * dy;
+				fdydz += fdy * dz;
 
-				fdzdx += dz * dfx;
-				fdzdy += dz * dfy;
-				fdzdz += dz * dfz;
+				fdzdx += fdz * dx;
+				fdzdy += fdz * dy;
+				fdzdz += fdz * dz;
 		}
 	}
 }
@@ -565,13 +657,27 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 	float dfx = m_scalar_fx[id];
 	float dfy = m_scalar_fy[id];
 	float dfz = m_scalar_fz[id];
-	float hess_x_gradient[3] = {fdxdx*dfx + fdydx*dfy + fdzdx*dfz, fdxdy*dfx + fdydy*dfy + fdzdy*dfz, fdxdz*dfx + fdydz*dfy + fdzdz*dfz};
 
-	float sec_deriv = (hess_x_gradient[0] * dfx + hess_x_gradient[1] * dfy + hess_x_gradient[2] * dfz) / GetQuadraticGradientNorm(id);
+  glm::vec3 parametric_dx_grad(fdxdx, fdxdy, fdxdz);
+  glm::vec3 parametric_dy_grad(fdydx, fdydy, fdydz);
+  glm::vec3 parametric_dz_grad(fdzdx, fdzdy, fdzdz);
+
+  glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
+  glm::vec3 dx_grad = jacob_inv * parametric_dx_grad;
+  glm::vec3 dy_grad = jacob_inv * parametric_dy_grad;
+  glm::vec3 dz_grad = jacob_inv * parametric_dz_grad;
+
+  glm::mat3 hess(dx_grad, dy_grad, dz_grad);
+
+  glm::vec3 grad(dfx, dfy, dfz);
+
+  float length = glm::length(grad);
+  float sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
 
 	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
 	return sec_deriv;
+#endif
 }
 
 void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l)
@@ -677,15 +783,13 @@ void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& 
   glm::vec3 dy_grad = jacob_inv * parametric_dy_grad;
   glm::vec3 dz_grad = jacob_inv * parametric_dz_grad;
 
-  glm::mat3 hess(
-    glm::vec3(dx_grad.x, dy_grad.x, dz_grad.x),
-    glm::vec3(dx_grad.y, dy_grad.y, dz_grad.y),
-    glm::vec3(dx_grad.z, dy_grad.z, dz_grad.z)
-  );
+  glm::mat3 hess(dx_grad, dy_grad, dz_grad);
 
-  *l = glm::dot(grad, (hess * grad)) / *g;
+  float length = glm::length(grad);
+  float sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
 
-	m_min_laplacian = fmin(m_min_laplacian, *l);
-	m_max_laplacian = fmax(m_max_laplacian, *l);
+	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
+	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
+
+  *l = sec_deriv;
 }
-//*/

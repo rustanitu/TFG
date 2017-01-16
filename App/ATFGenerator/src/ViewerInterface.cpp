@@ -504,11 +504,11 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetCallback (m_iup_menu_file_loadstate, "ACTION", (Icallback)ViewerInterface::btn_LoadState_cb);
 
 	m_iup_menu_file_savecampos = IupItem ("Salvar estado da câmera", NULL);
-	IupSetAttribute (m_iup_menu_file_savecampos, "ACTIVE", "NO");
+	IupSetAttribute (m_iup_menu_file_savecampos, "ACTIVE", "YES");
 	IupSetCallback (m_iup_menu_file_savecampos, "ACTION", (Icallback)ViewerInterface::btn_SaveCamState_cb);
 	
 	m_iup_menu_file_loadcampos = IupItem ("Carregar estado da câmera", NULL);
-	IupSetAttribute (m_iup_menu_file_loadcampos, "ACTIVE", "NO");
+	IupSetAttribute (m_iup_menu_file_loadcampos, "ACTIVE", "YES");
 	IupSetCallback (m_iup_menu_file_loadcampos, "ACTION", (Icallback)ViewerInterface::btn_LoadCamState_cb);
 
 	m_iup_menu_file_item_exit = IupItem ("Fechar", NULL);

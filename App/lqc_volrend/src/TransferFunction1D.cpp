@@ -84,6 +84,7 @@ namespace vr
 
 	void TransferFunction1D::Build (TFInterpolationType type)
 	{
+    PrintControlPoints();
 		if (m_transferfunction)
 			delete[] m_transferfunction;
 		m_transferfunction = new lqc::Vector4d[256];
@@ -366,19 +367,17 @@ namespace vr
 				{
 					++b;
 					finished = false;
-					if ( b == m_boundary && value - 1 >= 0 )
+					if ( b == m_boundary && i - 1 >= 0 )
 					{
-						AddAlphaControlPoint(TransferControlPoint(0.0f, value - 1));
+            AddAlphaControlPoint(TransferControlPoint(0.0f, m_indexes[i - 1]));
 						IupPlotAdd(m_tf_plot, value - 1, 0.0f);
-						printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value - 1, 0, 0.0f);
 					}
 				}
 				if ( a <= 0.1f )
 				{
 					finished = true;
-					AddAlphaControlPoint(TransferControlPoint(0.0f, value - 1));
-					IupPlotAdd(m_tf_plot, value - 1, 0.0f);
-					printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value - 1, 0, 0.0f);
+					AddAlphaControlPoint(TransferControlPoint(0.0f, value));
+					IupPlotAdd(m_tf_plot, value, 0.0f);
 				}
 				last_a = a;
 				if ( b != m_boundary || finished )
@@ -387,7 +386,6 @@ namespace vr
 
 			AddAlphaControlPoint(TransferControlPoint(a, value));
 			IupPlotAdd(m_tf_plot, value, a);
-			printf("TF: value: %d,\tdist: %f,\talpha: %.2f.\n", value, x, a);
 		}
 
 		IupPlotEnd(m_tf_plot);
@@ -434,14 +432,38 @@ namespace vr
       amax = fmax(amax, m_values[i]);
     }
 
+    double last_a = 0.0f;
+    int b = 0;
+    bool finished = true;
+    float base = m_thickness;
+
 		// Assign opacity to transfer function
 		for (int i = 0; i < m_values_size; ++i)
 		{
-			int value = m_indexes[i];
-			float a = m_values[i] / amax;
-			AddAlphaControlPoint(TransferControlPoint(a, value));
-			IupPlotAdd(m_tf_plot, value, a);
-			printf("TF: value: %d,\talpha: %.2f.\n", value, a);
+      int value = m_indexes[i];
+      double a = fmin(m_values[i] * m_thickness / amax, 1.0f);
+
+      if (m_boundary != 0) {
+        if (last_a <= 0.1f && a > 0.1f) {
+          ++b;
+          finished = false;
+          if (b == m_boundary && i - 1 >= 0) {
+            AddAlphaControlPoint(TransferControlPoint(0.0f, m_indexes[i - 1]));
+            IupPlotAdd(m_tf_plot, m_indexes[i - 1], 0.0f);
+          }
+        }
+        if (a <= 0.1f) {
+          finished = true;
+          AddAlphaControlPoint(TransferControlPoint(0.0f, value));
+          IupPlotAdd(m_tf_plot, value, 0.0f);
+        }
+        last_a = a;
+        if (b != m_boundary || finished)
+          continue;
+      }
+
+      AddAlphaControlPoint(TransferControlPoint(a, value));
+      IupPlotAdd(m_tf_plot, value, a);
 		}
 
 		IupPlotEnd(m_tf_plot);
