@@ -1064,7 +1064,8 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 		return;
 	}
 
-	float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
+	//float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
+  float sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
 	UINT32 c = 0;
