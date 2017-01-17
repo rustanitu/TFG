@@ -27,6 +27,7 @@ namespace vr
 		Volume();
 		Volume(const UINT32& width, const UINT32& height, const UINT32& depth);
 		Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars);
+    Volume(const UINT32& width, const UINT32& height, const UINT32& depth, unsigned char* scalars);
 		~Volume();
 		
 		lqc::Vector3f GetAnchorMin();
@@ -75,6 +76,9 @@ namespace vr
 		lqc::Vector3f m_pmax;
 
 		float* m_scalar_values;
+    float* m_scalar_fx;
+    float* m_scalar_fy;
+    float* m_scalar_fz;
 	};
 }
 

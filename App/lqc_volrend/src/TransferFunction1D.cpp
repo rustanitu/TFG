@@ -352,6 +352,8 @@ namespace vr
 		int b = 0;
 		bool finished = true;
 
+    IupPlotAdd(m_tf_plot, 0, 1.0f);
+
 		// Assign opacity to transfer function
 		for ( int i = 0; i < m_values_size; ++i )
 		{
@@ -387,6 +389,8 @@ namespace vr
 			AddAlphaControlPoint(TransferControlPoint(a, value));
 			IupPlotAdd(m_tf_plot, value, a);
 		}
+
+    IupPlotAdd(m_tf_plot, 255, 1.0f);
 
 		IupPlotEnd(m_tf_plot);
 		IupSetAttribute(m_tf_plot, "DS_NAME", "Transfer Function");

@@ -13,6 +13,7 @@ namespace vr
   ScalarField* ReadFromVolMod(std::string filepath);
 
   Volume* ReadVolFile(std::string filepath);
+  Volume* ReadDenFile(std::string filepath);
 
 	float* ReadErnTXT(std::string volfilename, int w, int h, int d);
 	float* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d);

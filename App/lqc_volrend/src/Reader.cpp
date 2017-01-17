@@ -24,76 +24,15 @@ namespace vr
 
 		printf("------------Reading Volume Model------------\n");
 		if ( extension.compare("vol") == 0 )
-		{
 			ret = ReadVolFile(filepath);
-			/*
-			Volume* vol = ReadVolFile(filepath);
-
-      int width = vol->GetWidth();
-      int height = vol->GetHeight();
-      int depth = vol->GetDepth();
-      int size = width*height*depth;
-      
-      float* values = new float[size];
-      if (!values)
-        return NULL;
-
-      memcpy(values, vol->GetValues(), size*sizeof(float));
-      delete vol;
-      vol = NULL;
-
-			Tank* tank = new Tank();
-			if ( tank->ReadFromVolume(width, height, depth, values) )
-			{
-        delete[] values;
-				ret = tank;
-			}
-			else
-			{
-        printf("Não foi possível converter volume em tank.");
-				delete tank;
-				tank = NULL;
-				ret = vol;
-			}
-			//*/
-		}
+    else if (extension.compare("den") == 0)
+      ret = ReadDenFile(filepath);
 		else if ( extension.compare("ele") == 0 || extension.compare("txt") == 0 )
 			ret = ReadEleFile(filepath);
 		else if ( extension.compare("node") == 0 )
 			ret = ReadNodeFile(filepath);
 		else if ( extension.compare("raw") == 0 )
-		{
 			ret = ReadRawFile(filepath);
-			/*
-      Volume* vol = ReadVolFile(filepath);
-
-      int width = vol->GetWidth();
-      int height = vol->GetHeight();
-      int depth = vol->GetDepth();
-      int size = width*height*depth;
-
-      float* values = new float[size];
-      if (!values)
-        return NULL;
-
-      memcpy(values, vol->GetValues(), size);
-      delete vol;
-      vol = NULL;
-
-      Tank* tank = new Tank();
-      if (tank->ReadFromVolume(width, height, depth, values))
-      {
-        delete[] values;
-        ret = tank;
-      }
-      else {
-        printf("Não foi possível converter volume em tank.");
-        delete tank;
-        tank = NULL;
-        ret = vol;
-      }
-			//*/
-		}
 		else if ( extension.compare("med") == 0 )
 			ret = ReadMedFile(filepath);
 		else if ( extension.compare("gmdl") == 0 )
@@ -167,6 +106,92 @@ namespace vr
 
 		return ret;
 	}
+
+  void swap_buffer(short* buff, int size)
+  {
+    int c = size / 8;
+    int n = size - c * 8;
+    char tmp0, tmp1, tmp2, tmp3;
+    char *buf = (char *)buff;
+
+    for (; c > 0; c--) {
+      tmp0 = buf[0]; buf[0] = buf[1]; buf[1] = tmp0;
+      tmp1 = buf[2]; buf[2] = buf[3]; buf[3] = tmp1;
+      tmp2 = buf[4]; buf[4] = buf[5]; buf[5] = tmp2;
+      tmp3 = buf[6]; buf[6] = buf[7]; buf[7] = tmp3;
+      buf += 8;
+    }
+    for (; n > 0; n -= 2) {
+      tmp0 = buf[0]; buf[0] = buf[1]; buf[1] = tmp0;
+      buf += 2;
+    }
+  }
+
+  void swap_buffer(int* buff, int size)
+  {
+    int c = size / 8;
+    int n = size - c * 8;
+    char tmp0, tmp1, tmp2, tmp3;
+    char *buf = (char *)buff;
+
+    for (; c > 0; c--) {
+      tmp0 = buf[0]; buf[0] = buf[3]; buf[3] = tmp0;
+      tmp1 = buf[1]; buf[1] = buf[2]; buf[2] = tmp1;
+      tmp2 = buf[4]; buf[4] = buf[7]; buf[7] = tmp2;
+      tmp3 = buf[5]; buf[5] = buf[6]; buf[6] = tmp3;
+      buf += 8;
+    }
+    for (; n > 0; n -= 4) {
+      tmp0 = buf[0]; buf[0] = buf[3]; buf[3] = tmp0;
+      tmp1 = buf[1]; buf[1] = buf[2]; buf[2] = tmp1;
+      buf += 4;
+    }
+  }
+
+  Volume* ReadDenFile(std::string filename)
+  {
+    Volume* ret = NULL;
+
+    printf("Started  -> Read Volume From .den File\n");
+    printf("  - File .den Path: %s\n", filename.c_str());
+
+    FILE* file = NULL;
+    if (fopen_s(&file, filename.c_str(), "r") == 0) {
+      short map_version;
+      fread_s(&map_version, sizeof(short), sizeof(short), 1, file);
+      swap_buffer(&map_version, sizeof(short));
+
+      short trash[24];
+      fread_s(trash, 24 * sizeof(short), sizeof(short), 24, file);
+      swap_buffer(trash, 24 * sizeof(short));
+
+      short dimensions[3];
+      fread_s(dimensions, 3 * sizeof(short), sizeof(short), 3, file);
+      swap_buffer(dimensions, 3 * sizeof(short));
+
+      short warps;
+      fread_s(&warps, sizeof(short), sizeof(short), 1, file);
+      swap_buffer(&warps, sizeof(short));
+
+      int size;
+      fread_s(&size, sizeof(int), sizeof(int), 1, file);
+      swap_buffer(&size, sizeof(int));
+
+      unsigned char* data = new unsigned char[size];
+      fread_s(data, size * sizeof(unsigned char), sizeof(unsigned char), size, file);
+
+      fclose(file);
+
+      ret = new Volume(dimensions[0], dimensions[1], dimensions[2], data);
+      ret->SetName(filename.c_str());
+
+      printf("lqc: Finished -> Read Volume From .den File\n");
+    }
+    else
+      printf("lqc: Finished -> Error on opening .den file\n");
+
+    return ret;
+  }
 
 	float* ReadErnTXT(std::string volfilename, int w, int h, int d)
 	{

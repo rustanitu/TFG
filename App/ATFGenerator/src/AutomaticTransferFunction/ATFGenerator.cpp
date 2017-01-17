@@ -102,7 +102,7 @@ bool ATFGenerator::Init()
 
 void ATFGenerator::SmoothCurves()
 {
-	const int times = 10;
+	const int times = 5;
 	int size;
 	float* values;
 	int* indexes;
@@ -939,9 +939,9 @@ bool ATFGenerator::GenerateHistogram()
 					if ( (float) k > m_max_laplacian[i] )
 						m_max_laplacian[i] = k;
 
-					g += j * m_scalar_histogram[i][j][k];
-					h += k * m_scalar_histogram[i][j][k];
-					w += m_scalar_histogram[i][j][k];
+					g += j;// * m_scalar_histogram[i][j][k];
+					h += k;// * m_scalar_histogram[i][j][k];
+          w++;// = m_scalar_histogram[i][j][k];
 				}
 			}
 		}

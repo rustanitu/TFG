@@ -181,10 +181,11 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 			m_atfg->SetTransferFunctionPlot(Viewer::Instance()->m_gui.m_tf_plot);
 			m_atfg->SetBoundaryDistancePlot(Viewer::Instance()->m_gui.m_dist_plot);
 			if (m_atfg->Init()) {
-				m_atfg->GenerateVolumeSlices();
+				//m_atfg->GenerateVolumeSlices();
 				//m_atfg->GenerateGradientSlices();
 				//m_atfg->GenerateLaplacianSlices();
 				//m_atfg->GenerateHistogramSlices();
+        m_atfg->GenerateHistogramSlice(200);
 				m_atfg->GenerateGradientSummedHistogram();
 				m_atfg->GenerateLaplacianSummedHistogram();
 				Viewer::Instance()->m_gtresh = m_atfg->GetMinGradient() * 100 / m_atfg->GetMaxGradient();
@@ -458,7 +459,7 @@ bool Viewer::FileDlg_VolumeModel()
 	IupSetAttribute(dlg, "DIRECTORY", "../../Modelos/VolumeModels");
 	IupSetAttribute(dlg, "DIALOGTYPE", "OPEN");
 	IupSetAttribute(dlg, "TITLE", "Load ScalarField Model");
-	IupSetAttributes(dlg, "FILTER = \"*.vol;*.ele;*.node;*.raw;*.med;*.gmdl\", FILTERINFO = \"ScalarField Files [.vol, .ele, .node, .raw, .med]\"");
+	IupSetAttributes(dlg, "FILTER = \"*.vol;*.den;*.ele;*.node;*.raw;*.med;*.gmdl\", FILTERINFO = \"ScalarField Files [.vol, .den, .ele, .node, .raw, .med]\"");
 
 	IupPopup(dlg, IUP_CURRENT, IUP_CURRENT);
 

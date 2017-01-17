@@ -4,7 +4,7 @@
 #include <fstream>
 #include <vector>
 
-#define HESSIAN
+//#define HESSIAN
 
 Tank::Tank()
 	: m_cells(NULL)
@@ -429,18 +429,17 @@ void Tank::FillCellAdjCenter(Cell& cell)
 
 glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
 {
-  //return glm::mat3(1,0,0,0,1,0,0,0,1);
   int id = GetId(cell.GetI(), cell.GetJ(), cell.GetK());
   
-  glm::vec3 x = cell.GetFaceCenter(2) - cell.GetFaceCenter(3);
-  int idxp = cell.GetAdjcentCellIndex(2);
-  int idxn = cell.GetAdjcentCellIndex(3);
+  glm::vec3 x = cell.GetFaceCenter(3) - cell.GetFaceCenter(2);
+  int idxp = cell.GetAdjcentCellIndex(3);
+  int idxn = cell.GetAdjcentCellIndex(2);
   if (idxp != -1 && idxn != -1)
     x = (m_cells[idxp].GetCenter() - m_cells[idxn].GetCenter()) / 2.0f;
 
-  glm::vec3 y = cell.GetFaceCenter(5) - cell.GetFaceCenter(4);
-  int idyp = cell.GetAdjcentCellIndex(5);
-  int idyn = cell.GetAdjcentCellIndex(4);
+  glm::vec3 y = cell.GetFaceCenter(4) - cell.GetFaceCenter(5);
+  int idyp = cell.GetAdjcentCellIndex(4);
+  int idyn = cell.GetAdjcentCellIndex(5);
   if (idyp != -1 && idyn != -1)
     y = (m_cells[idyp].GetCenter() - m_cells[idyn].GetCenter()) / 2.0f;
 
