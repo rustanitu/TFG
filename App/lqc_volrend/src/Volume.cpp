@@ -61,28 +61,22 @@ namespace vr
 	}
 
   Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, unsigned char* scalars)
-    : ScalarField(156, 209, 110)
+    : ScalarField(width, height, depth)
   {
-    int size = 156 * 209 * 110;
+    int size = m_width * m_height * m_depth;
     m_scalar_values = new float[size];
     m_scalar_fx = new float[size];
     m_scalar_fy = new float[size];
     m_scalar_fz = new float[size];
-    //for (int i = 0; i < size; i++) {
-    for (int x = 56; x <= 211; ++x) {
-      for (int y = 16; y <= 224; ++y) {
-        for (int z = 0; z < m_depth; ++z) {
-          int id = (x + (y * width) + (z * width * height));
-          float v = scalars[id];
-          int i = GetId(x - 56, y - 16, z);
-          m_scalar_values[i] = v;
-          m_max_value = fmax(m_max_value, v);
-          m_min_value = fmin(m_min_value, v);
-          m_scalar_fx[i] = 0.0f;
-          m_scalar_fy[i] = 0.0f;
-          m_scalar_fz[i] = 0.0f;
-        }
-      }
+    for (int i = 0; i < size; i++)
+    {
+      float v = scalars[i];
+      m_scalar_values[i] = v;
+      m_max_value = fmax(m_max_value, v);
+      m_min_value = fmin(m_min_value, v);
+      m_scalar_fx[i] = 0.0f;
+      m_scalar_fy[i] = 0.0f;
+      m_scalar_fz[i] = 0.0f;
     }
   }
 
