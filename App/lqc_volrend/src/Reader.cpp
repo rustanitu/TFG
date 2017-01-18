@@ -159,23 +159,30 @@ namespace vr
     if (fopen_s(&file, filename.c_str(), "r") == 0) {
       short map_version;
       fread_s(&map_version, sizeof(short), sizeof(short), 1, file);
-      swap_buffer(&map_version, sizeof(short));
+
+      bool need_swap = false;
+      if (map_version == 256)
+        need_swap = true;
 
       short trash[24];
       fread_s(trash, 24 * sizeof(short), sizeof(short), 24, file);
-      swap_buffer(trash, 24 * sizeof(short));
+      if (need_swap)
+        swap_buffer(trash, 24 * sizeof(short));
 
       short dimensions[3];
       fread_s(dimensions, 3 * sizeof(short), sizeof(short), 3, file);
-      swap_buffer(dimensions, 3 * sizeof(short));
+      if (need_swap)
+        swap_buffer(dimensions, 3 * sizeof(short));
 
       short warps;
       fread_s(&warps, sizeof(short), sizeof(short), 1, file);
-      swap_buffer(&warps, sizeof(short));
+      if (need_swap)
+        swap_buffer(&warps, sizeof(short));
 
       int size;
       fread_s(&size, sizeof(int), sizeof(int), 1, file);
-      swap_buffer(&size, sizeof(int));
+      if (need_swap)
+        swap_buffer(&size, sizeof(int));
 
       unsigned char* data = new unsigned char[size];
       fread_s(data, size * sizeof(unsigned char), sizeof(unsigned char), size, file);
