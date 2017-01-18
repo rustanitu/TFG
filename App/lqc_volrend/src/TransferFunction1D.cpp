@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <iup_plot.h>
 
+#define PI 3.1415926535897932384626433832795
+
 namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
@@ -322,6 +324,15 @@ namespace vr
 		return a;
 	}
 
+  float TransferFunction1D::CenteredGaussianFunction(float max, float sigma, float u, const int& v)
+  {
+    float two_sigma_quad = 2 * PI * sigma * sigma;
+    float hill = 1 / sqrt(PI * two_sigma_quad);
+    float x = m_values[v];
+    float e = exp(-(x - u)*(x - u) / two_sigma_quad);
+    return hill * e;
+  }
+
 	/// <summary>
 	/// Generates a transfer function file at a given path.
 	/// If a file with the same path already exists, it'll
@@ -361,7 +372,8 @@ namespace vr
 			float x = m_values[value];
 
 			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
-			double a = CenteredTriangleFunction(amax, base, value);
+			//double a = CenteredTriangleFunction(amax, base, value);
+      double a = CenteredGaussianFunction(amax, 0.25f, 0, value);
 
 			if ( m_boundary != 0 )
 			{

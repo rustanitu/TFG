@@ -97,6 +97,7 @@ namespace vr
 
 	private:
 		float CenteredTriangleFunction(float max, float base, const int& v);
+    float CenteredGaussianFunction(float max, float sigma, float u, const int& v);
 
 	private:
 		/// <summary>

@@ -32,8 +32,6 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
         m_renderer.ReloadTransferFunction (Viewer::Instance ()->m_transfer_function);
       }
 
-      m_renderer.ReloadVisibleSet(Viewer::Instance()->m_visible_set);
-
       UpdateIupUserInterface ();
       m_outdated = false;
     }
