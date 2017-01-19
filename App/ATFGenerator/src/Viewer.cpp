@@ -185,10 +185,9 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 				//m_atfg->GenerateGradientSlices();
 				//m_atfg->GenerateLaplacianSlices();
 				//m_atfg->GenerateHistogramSlices();
-        m_atfg->GenerateHistogramSlice(200);
 				m_atfg->GenerateGradientSummedHistogram();
 				m_atfg->GenerateLaplacianSummedHistogram();
-				Viewer::Instance()->m_gtresh = m_atfg->GetMinGradient() * 100 / m_atfg->GetMaxGradient();
+        Viewer::Instance()->m_gtresh = (double)m_atfg->GetMinAverageGradient() / (double)m_atfg->GetMaxAverageGradient() * 100.0f;
 				Viewer::Instance()->m_gui.UpdateGTreshLabel(Viewer::Instance()->m_gtresh);
 				ExtractATFG();
 				return;
@@ -238,7 +237,7 @@ int Viewer::SetGTresh(Ihandle* ih)
 #ifdef ATFG
 	char *val = IupGetAttribute(ih, "VALUE");
 	std::string::size_type size;
-	float scale = std::stof(val, &size);
+	double scale = std::stod(val, &size);
 	Viewer::Instance()->m_gtresh = scale;
 	Viewer::Instance()->m_gui.UpdateGTreshLabel(scale);
 	Viewer::Instance()->m_extract_atfg = true;

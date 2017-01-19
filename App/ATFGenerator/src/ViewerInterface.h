@@ -80,7 +80,7 @@ public:
 	void ShowTransferFunctionViewer ();
 
 	void UpdateBThickLabel(int bthick);
-	void UpdateGTreshLabel(float gtresh);
+	void UpdateGTreshLabel(double gtresh);
 
 	Ihandle* m_iup_main_dialog;
 

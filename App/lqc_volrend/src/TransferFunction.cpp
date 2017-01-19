@@ -295,6 +295,15 @@ namespace vr
     return false;
   }*/
 
+TransferControlPoint::TransferControlPoint(unsigned int r, unsigned int g, unsigned int b, int isovalue)
+{
+  m_color.x = r / 255.0f;
+  m_color.y = g / 255.0f;
+  m_color.z = b / 255.0f;
+  m_color.w = 1.0f;
+  m_isoValue = isovalue;
+}
+
 TransferControlPoint::TransferControlPoint (double r, double g, double b, int isovalue)
   {
     m_color.x = r;

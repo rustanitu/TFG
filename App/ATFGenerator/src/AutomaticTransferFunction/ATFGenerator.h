@@ -156,9 +156,9 @@ public:
 	/// <returns>Returns a pointer to the transfer function generated automatically.</returns>
 	vr::TransferFunction* GetTransferFunction();
 
-	void SetGTresh(float gt)
+	void SetGTresh(double gt)
 	{
-		m_gtresh = gt * m_scalarfield->GetMaxGradient() * 0.01f;
+    m_gtresh = gt * GetMaxAverageGradient() * 0.01f;
 	}
 
 	void SetMinimumHistogramValue(UINT32 min)
@@ -182,12 +182,12 @@ public:
 		m_dist_plot = ih;
 	}
 
-	float GetMinGradient()
+  float GetMinAverageGradient()
 	{
 		return m_min_average_gradient;
 	}
 
-	float GetMaxGradient()
+	float GetMaxAverageGradient()
 	{
 		return m_max_average_gradient;
 	}

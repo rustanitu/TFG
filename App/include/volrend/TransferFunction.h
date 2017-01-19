@@ -25,7 +25,8 @@ namespace vr
 	class TransferControlPoint
 	{
 	public:
-		TransferControlPoint (double r, double g, double b, int isovalue);
+    TransferControlPoint(unsigned int r, unsigned int g, unsigned int b, int isovalue);
+    TransferControlPoint (double r, double g, double b, int isovalue);
 		TransferControlPoint (double alpha, int isovalue);
 
 		lqc::Vector3d operator -(const TransferControlPoint& v)  

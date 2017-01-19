@@ -167,7 +167,7 @@ private:
 
   int m_boundary;
   int m_boundary_thickness;
-  float m_gtresh;
+  double m_gtresh;
   float m_min_hist;
   bool m_extract_atfg;
   bool m_generate_atfg;

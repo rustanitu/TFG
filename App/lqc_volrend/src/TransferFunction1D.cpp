@@ -86,7 +86,6 @@ namespace vr
 
 	void TransferFunction1D::Build (TFInterpolationType type)
 	{
-		PrintControlPoints();
 		if (m_transferfunction)
 			delete[] m_transferfunction;
 		m_transferfunction = new lqc::Vector4d[256];

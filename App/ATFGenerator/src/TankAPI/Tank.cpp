@@ -429,6 +429,7 @@ void Tank::FillCellAdjCenter(Cell& cell)
 
 glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
 {
+  //return glm::mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
   int id = GetId(cell.GetI(), cell.GetJ(), cell.GetK());
   
   glm::vec3 x = cell.GetFaceCenter(3) - cell.GetFaceCenter(2);

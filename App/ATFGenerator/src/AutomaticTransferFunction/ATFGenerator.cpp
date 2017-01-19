@@ -125,15 +125,25 @@ void ATFGenerator::SmoothCurves()
 
 void ATFGenerator::SetDefaultColor()
 {
-	//m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 255 / 255.0, 255 / 255.0, 0));
-	m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255 / 255.0, 0 / 255.0, 0 / 255.0, 0));//32));
-	m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 255 / 255.0, 0 / 255.0, 127));//64));
-	m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 255 / 255.0, 255));//96));
-	//m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 127 / 255.0, 0 / 255.0, 128));
-	//m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(127 / 255.0, 0 / 255.0, 127 / 255.0, 160));
-	//m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 127 / 255.0, 127 / 255.0, 192));
-	//m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(84 / 255.0, 84 / 255.0, 85 / 255.0, 224));
-	//m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(0 / 255.0, 0 / 255.0, 0 / 255.0, 255));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(  2u,  96u, 203u, 0));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(  0u, 127u, 206u, 14));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(  0u, 152u, 193u, 28));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint( 11u, 171u, 152u, 42));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint( 83u, 175u,  30u, 57));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(129u, 178u,   0u, 71));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(165u, 181u,  15u, 85));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(195u, 183u, 160u, 99));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(216u, 184u,  22u, 113));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(236u, 184u,   0u, 127));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 182u,   0u, 142));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 164u,   0u, 156));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 149u,   0u, 170));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 133u,   0u, 184));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 112u,   0u, 198));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,  90u,   0u, 212));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,  66u,  11u, 227));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,  40u,  40u, 240));
+  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,   0u,   0u, 255));
 }
 
 /// <summary>
@@ -954,7 +964,7 @@ bool ATFGenerator::GenerateHistogram()
 			}
 		}
 
-		if (w > 0)//= average_hit)
+		if (w > 0)
 		{
 			g /= w;
 			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
@@ -1064,14 +1074,6 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 {
 	assert(m_scalar_histogram && x);
 
-	if (m_max_average_laplacian == 0.0f)
-	{
-		x = NULL;
-		v = NULL;
-		*n = 0;
-		return;
-	}
-
 	//float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
 	float sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
@@ -1087,7 +1089,8 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 		}
 		else
 		{
-			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
+      //x[i] = fmin(-sigma * sigma * ((l+m_gtresh) / fmax(g, 0.000001)), -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)));
+      x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 		}
 
 		v[c] = i;

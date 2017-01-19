@@ -726,7 +726,7 @@ void ViewerInterface::UpdateBThickLabel(int bthick)
 	IupSetAttribute(m_bthick_label, "TITLE", val);
 }
 
-void ViewerInterface::UpdateGTreshLabel(float gtresh)
+void ViewerInterface::UpdateGTreshLabel(double gtresh)
 {
 	char *val = new char[15];
 	sprintf(val, "%.2f ", gtresh);
