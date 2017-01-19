@@ -328,8 +328,8 @@ namespace vr
 	{
 		float two_sigma_quad = 2 * sigma * sigma;
 		float x = m_values[v];
-		float g = exp(-(x - u)*(x - u) / two_sigma_quad) * max;// / sqrt(PI * two_sigma_quad);
-		return g;
+		float g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
+		return fmin(g, 1.0f);
 	}
 
 	/// <summary>

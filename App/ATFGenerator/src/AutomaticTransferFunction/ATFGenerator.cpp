@@ -647,6 +647,14 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 0");
 
 	IupPlotBegin(m_deriv_plot, 0);
+	IupPlotAdd(m_deriv_plot, 0, m_gtresh);
+	IupPlotAdd(m_deriv_plot, 255, m_gtresh);
+	IupPlotEnd(m_deriv_plot);
+	IupSetAttribute(m_deriv_plot, "DS_MODE", "LINE");
+	IupSetAttribute(m_deriv_plot, "DS_NAME", "Gtreh");
+	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 0");
+
+	IupPlotBegin(m_deriv_plot, 0);
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
 		if ( m_average_gradient[i] != -FLT_MAX )
 			IupPlotAdd(m_deriv_plot, i, m_average_gradient[i]);
