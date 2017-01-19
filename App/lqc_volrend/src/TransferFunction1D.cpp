@@ -86,7 +86,7 @@ namespace vr
 
 	void TransferFunction1D::Build (TFInterpolationType type)
 	{
-    PrintControlPoints();
+		PrintControlPoints();
 		if (m_transferfunction)
 			delete[] m_transferfunction;
 		m_transferfunction = new lqc::Vector4d[256];
@@ -324,14 +324,13 @@ namespace vr
 		return a;
 	}
 
-  float TransferFunction1D::CenteredGaussianFunction(float max, float sigma, float u, const int& v)
-  {
-    float two_sigma_quad = 2 * PI * sigma * sigma;
-    float hill = 1 / sqrt(PI * two_sigma_quad);
-    float x = m_values[v];
-    float e = exp(-(x - u)*(x - u) / two_sigma_quad);
-    return hill * e;
-  }
+	float TransferFunction1D::CenteredGaussianFunction(float max, float sigma, float u, const int& v)
+	{
+		float two_sigma_quad = 2 * sigma * sigma;
+		float x = m_values[v];
+		float g = exp(-(x - u)*(x - u) / two_sigma_quad) * max;// / sqrt(PI * two_sigma_quad);
+		return g;
+	}
 
 	/// <summary>
 	/// Generates a transfer function file at a given path.
@@ -363,7 +362,7 @@ namespace vr
 		int b = 0;
 		bool finished = true;
 
-    IupPlotAdd(m_tf_plot, 0, 1.0f);
+		IupPlotAdd(m_tf_plot, 0, 1.0f);
 
 		// Assign opacity to transfer function
 		for ( int i = 0; i < m_values_size; ++i )
@@ -373,7 +372,7 @@ namespace vr
 
 			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
 			//double a = CenteredTriangleFunction(amax, base, value);
-      double a = CenteredGaussianFunction(amax, 0.25f, 0, value);
+			double a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, value);
 
 			if ( m_boundary != 0 )
 			{
@@ -383,7 +382,7 @@ namespace vr
 					finished = false;
 					if ( b == m_boundary && i - 1 >= 0 )
 					{
-            AddAlphaControlPoint(TransferControlPoint(0.0f, m_indexes[i - 1]));
+						AddAlphaControlPoint(TransferControlPoint(0.0f, m_indexes[i - 1]));
 						IupPlotAdd(m_tf_plot, value - 1, 0.0f);
 					}
 				}
@@ -402,7 +401,7 @@ namespace vr
 			IupPlotAdd(m_tf_plot, value, a);
 		}
 
-    IupPlotAdd(m_tf_plot, 255, 1.0f);
+		IupPlotAdd(m_tf_plot, 255, 1.0f);
 
 		IupPlotEnd(m_tf_plot);
 		IupSetAttribute(m_tf_plot, "DS_NAME", "Transfer Function");
@@ -444,42 +443,42 @@ namespace vr
 		IupPlotBegin(m_bx_plot, 0);
 
 		float amax = 0.0f;
-    for (int i = 0; i < m_values_size; ++i) {
-      amax = fmax(amax, m_values[i]);
-    }
+		for (int i = 0; i < m_values_size; ++i) {
+			amax = fmax(amax, m_values[i]);
+		}
 
-    double last_a = 0.0f;
-    int b = 0;
-    bool finished = true;
-    float base = m_thickness;
+		double last_a = 0.0f;
+		int b = 0;
+		bool finished = true;
+		float base = m_thickness;
 
 		// Assign opacity to transfer function
 		for (int i = 0; i < m_values_size; ++i)
 		{
-      int value = m_indexes[i];
-      double a = fmin(m_values[i] * m_thickness / amax, 1.0f);
+			int value = m_indexes[i];
+			double a = fmin(m_values[i] * m_thickness / amax, 1.0f);
 
-      if (m_boundary != 0) {
-        if (last_a <= 0.1f && a > 0.1f) {
-          ++b;
-          finished = false;
-          if (b == m_boundary && i - 1 >= 0) {
-            AddAlphaControlPoint(TransferControlPoint(0.0f, m_indexes[i - 1]));
-            IupPlotAdd(m_tf_plot, m_indexes[i - 1], 0.0f);
-          }
-        }
-        if (a <= 0.1f) {
-          finished = true;
-          AddAlphaControlPoint(TransferControlPoint(0.0f, value));
-          IupPlotAdd(m_tf_plot, value, 0.0f);
-        }
-        last_a = a;
-        if (b != m_boundary || finished)
-          continue;
-      }
+			if (m_boundary != 0) {
+				if (last_a <= 0.1f && a > 0.1f) {
+					++b;
+					finished = false;
+					if (b == m_boundary && i - 1 >= 0) {
+						AddAlphaControlPoint(TransferControlPoint(0.0f, m_indexes[i - 1]));
+						IupPlotAdd(m_tf_plot, m_indexes[i - 1], 0.0f);
+					}
+				}
+				if (a <= 0.1f) {
+					finished = true;
+					AddAlphaControlPoint(TransferControlPoint(0.0f, value));
+					IupPlotAdd(m_tf_plot, value, 0.0f);
+				}
+				last_a = a;
+				if (b != m_boundary || finished)
+					continue;
+			}
 
-      AddAlphaControlPoint(TransferControlPoint(a, value));
-      IupPlotAdd(m_tf_plot, value, a);
+			AddAlphaControlPoint(TransferControlPoint(a, value));
+			IupPlotAdd(m_tf_plot, value, a);
 		}
 
 		IupPlotEnd(m_tf_plot);

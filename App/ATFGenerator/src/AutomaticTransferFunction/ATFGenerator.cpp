@@ -20,7 +20,7 @@
 #define ATFG_GAMA_CORRECTION 0.33f
 #define PLOT_STYLE "LINE"
 #ifndef PLOT_STYLE
-  #define PLOT_STYLE "MARK"
+	#define PLOT_STYLE "MARK"
 #endif
 
 //#define EXTREMA_POINTS
@@ -205,7 +205,7 @@ bool ATFGenerator::ExtractTransferFunction()
 
 #ifdef ALPHA
 	m_transfer_function->SetAlphaValues(indexes, values, size);
-  return true;
+	return true;
 #endif
 
 	float max_grad = 0.0f;
@@ -941,7 +941,7 @@ bool ATFGenerator::GenerateHistogram()
 
 					g += j;// * m_scalar_histogram[i][j][k];
 					h += k;// * m_scalar_histogram[i][j][k];
-          w++;// = m_scalar_histogram[i][j][k];
+					w++;// = m_scalar_histogram[i][j][k];
 				}
 			}
 		}
@@ -1065,7 +1065,7 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 	}
 
 	//float sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
-  float sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
+	float sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
 	UINT32 c = 0;

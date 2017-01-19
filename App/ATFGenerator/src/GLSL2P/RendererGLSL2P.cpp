@@ -235,9 +235,9 @@ void RendererGLSL2P::Destroy ()
 		delete m_glsl_volume;
 	m_glsl_volume = NULL;
 
-  if (m_glsl_activetex)
-    delete m_glsl_activetex;
-  m_glsl_activetex = NULL;
+	if (m_glsl_activetex)
+		delete m_glsl_activetex;
+	m_glsl_activetex = NULL;
 
 	if (m_glsl_transfer_function)
 		delete m_glsl_transfer_function;
@@ -375,7 +375,7 @@ void RendererGLSL2P::CreateSecondPass ()
 	m_shader_secondpass->SetUniformTexture2D ("ExitPoints", m_glfbo->m_backtexture, 0);
 	if (m_glsl_volume) m_shader_secondpass->SetUniformTexture3D ("VolumeTex", m_glsl_volume->GetTextureID (), 1);
 	if (m_glsl_transfer_function) m_shader_secondpass->SetUniformTexture1D ("TransferFunc", m_glsl_transfer_function->GetTextureID (), 2);
-  if (m_glsl_activetex) m_shader_secondpass->SetUniformTexture3D("ActiveTex", m_glsl_activetex->GetTextureID(), 3);
+	if (m_glsl_activetex) m_shader_secondpass->SetUniformTexture3D("ActiveTex", m_glsl_activetex->GetTextureID(), 3);
 	
 	m_shader_secondpass->SetUniformInt ("ScreenSizeW", m_sdr_width);
 	m_shader_secondpass->SetUniformInt ("ScreenSizeH", m_sdr_height);
@@ -449,8 +449,8 @@ void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes
 	delete m_glsl_volume;
 	m_glsl_volume = NULL;
 
-  delete m_glsl_activetex;
-  m_glsl_activetex = NULL;
+	delete m_glsl_activetex;
+	m_glsl_activetex = NULL;
 
 	if (resetslicesizes)
 	{
@@ -463,15 +463,15 @@ void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes
 
 	if (m_glsl_volume)
 	{
-    m_glsl_activetex = vr::GenerateR8UITexture(volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
+		m_glsl_activetex = vr::GenerateR8UITexture(volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
 
 		m_shader_secondpass->Bind ();
 
-    if (m_glsl_activetex)
-    {
-      m_shader_secondpass->SetUniformTexture3D("ActiveTex", m_glsl_activetex->GetTextureID(), 3);
-      m_shader_secondpass->BindUniform("ActiveTex");
-    }
+		if (m_glsl_activetex)
+		{
+			m_shader_secondpass->SetUniformTexture3D("ActiveTex", m_glsl_activetex->GetTextureID(), 3);
+			m_shader_secondpass->BindUniform("ActiveTex");
+		}
 
 		m_shader_secondpass->SetUniformTexture3D ("VolumeTex", m_glsl_volume->GetTextureID(), 1);
 		m_shader_secondpass->BindUniform ("VolumeTex");
