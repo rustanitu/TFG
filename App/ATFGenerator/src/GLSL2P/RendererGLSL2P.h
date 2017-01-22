@@ -65,6 +65,10 @@ public:
 	float GetXRotation ();
 	void SetYRotation (float radius);
 	float GetYRotation ();
+	void SetXTranslation(float dist);
+	float GetXTranslation();
+	void SetYTranslation(float dist);
+	float GetYTranslation();
 
 	void ReloadShaders ();
 	void ResetShaders (std::string shadername);
@@ -169,6 +173,10 @@ private:
 	float m_x_rotation;
 	/*! volume rotation at y axis.*/
 	float m_y_rotation;
+	/*! volume translation at x axis.*/
+	float m_x_translation;
+	/*! volume translation at y axis.*/
+	float m_y_translation;
 
 	unsigned m_FrameCount;
 	clock_t m_LastTime;

@@ -17,6 +17,8 @@ RendererGLSL2P::RendererGLSL2P ()
 m_LastTime (0),
 m_x_rotation (0.0f),
 m_y_rotation (0.0f),
+m_x_translation (0.0f),
+m_y_translation (0.0f),
 m_glfbo (NULL),
 m_iterate (false),
 m_glsl_volume (NULL),
@@ -90,6 +92,7 @@ bool RendererGLSL2P::Render (int Width, int Height)
 	lqc::ScaleMatrix(&m_ModelMatrix, m_scale, m_scale, m_scale);
 	lqc::RotateAboutX (&m_ModelMatrix, m_x_rotation * (float)PI / 180.0f);
 	lqc::RotateAboutY (&m_ModelMatrix, m_y_rotation * (float)PI / 180.0f);
+	lqc::TranslateMatrix(&m_ModelMatrix, m_x_translation * 0.0001f, m_y_translation * 0.0001f, 0.0f);
 
 	m_glfbo->Bind ();
 
@@ -561,6 +564,26 @@ void RendererGLSL2P::SetYRotation (float radius)
 float RendererGLSL2P::GetYRotation ()
 {
 	return m_y_rotation;
+}
+
+void RendererGLSL2P::SetXTranslation(float dist)
+{
+	m_x_translation = dist;
+}
+
+float RendererGLSL2P::GetXTranslation()
+{
+	return m_x_translation;
+}
+
+void RendererGLSL2P::SetYTranslation(float dist)
+{
+	m_y_translation = dist;
+}
+
+float RendererGLSL2P::GetYTranslation()
+{
+	return m_y_translation;
 }
 
 void RendererGLSL2P::ReloadShaders ()
