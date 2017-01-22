@@ -41,9 +41,9 @@ vec4 GetFromTransferFunction (float p_d)
 {
 	vec3 voxel = (real_minpos + p_d * real_normalized_step) * tex_scale;
 	float voxel_value = texture(VolumeTex, voxel).r;
-  float active_cell = texture(ActiveTex, voxel).r;
+	float active_cell = texture(ActiveTex, voxel).r;
 	if (active_cell > 0.0f)
-    return texture(TransferFunc, voxel_value);
+		return texture(TransferFunc, voxel_value);
 	return vec4(0);
 }
 

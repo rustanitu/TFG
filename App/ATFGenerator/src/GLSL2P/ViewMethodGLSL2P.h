@@ -25,6 +25,7 @@ public:
   virtual int Keyboard_CB (Ihandle *ih, int c, int press);
   virtual int Button_CB (Ihandle* ih, int button, int pressed, int x, int y, char* status);
   virtual int Motion_CB (Ihandle *ih, int x, int y, char *status);
+	virtual int Wheel_CB(Ihandle *ih, float delta, int x, int y, char *status);
   virtual int Resize_CB (Ihandle *ih, int width, int height);
   virtual void CreateIupUserInterface ();
   virtual void UpdateIupUserInterface ();
@@ -106,6 +107,8 @@ private:
 
   bool m_mousepressed;
   int m_motion_x, m_motion_y;
+
+	float m_scale;
 
   RendererGLSL2P m_renderer;
   UserInterfaceGLSL2P m_gui;

@@ -2,6 +2,7 @@
 
 ViewMethodGLSL2P::ViewMethodGLSL2P ()
   : GLSLViewMethod(VRVIEWS::GLSL2P)
+	, m_scale(1.0f)
 {
   m_volumename = "";
   m_trasnferfunctionname = "";
@@ -136,6 +137,16 @@ int ViewMethodGLSL2P::Motion_CB (Ihandle *ih, int x, int y, char *status)
     }
   }
   return IUP_DEFAULT;
+}
+
+int ViewMethodGLSL2P::Wheel_CB(Ihandle *ih, float delta, int x, int y, char *status)
+{
+	if ( delta < 0 )
+		m_scale -= 0.1f;
+	else
+		m_scale += 0.1f;
+	m_renderer.SetScale(m_scale);
+	return IUP_DEFAULT;
 }
 
 int ViewMethodGLSL2P::Resize_CB (Ihandle *ih, int width, int height)

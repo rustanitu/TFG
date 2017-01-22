@@ -88,6 +88,8 @@ public:
 	void AutoModeling (vr::ScalarField* volume);
 	void ApplyModeling (float xw, float yh, float zd);
 
+	void SetScale(float s);
+
 	void SetCubeWidth (float w);
 	void SetCubeHeight (float h);
 	void SetCubeDepth (float z);
@@ -138,6 +140,8 @@ private:
 		float Position[3];
 		float Color[3];
 	} Vertex;
+
+	float m_scale;
 
 	/*! first pass vao.*/
 	gl::GLArrayObject* m_fvao;

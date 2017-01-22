@@ -18,6 +18,7 @@ public:
 	static int Keyboard_CB (Ihandle *ih, int c, int press);
 	static int Button_CB (Ihandle* ih, int button, int pressed, int x, int y, char* status);
 	static int Motion_CB (Ihandle *ih, int x, int y, char *status);
+	static int Wheel_CB (Ihandle *ih, float delta, int x, int y, char *status);
 	static int Renderer_CB (Ihandle* handle);
 	static int Resize_CB (Ihandle *ih, int width, int height);
 	

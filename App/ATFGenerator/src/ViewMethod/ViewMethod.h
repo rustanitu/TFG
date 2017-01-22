@@ -77,6 +77,8 @@ public:
   */
   virtual int Motion_CB (Ihandle *ih, int x, int y, char *status) = 0;
 
+	virtual int Wheel_CB(Ihandle *ih, float delta, int x, int y, char *status) { return IUP_DEFAULT; }
+
   /*! Generated when the canvas is resized.
   \param ih identifies the elemente that activated the event (iup documentation).
   \param width width param.

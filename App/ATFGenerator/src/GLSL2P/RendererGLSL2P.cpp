@@ -23,7 +23,8 @@ m_glsl_volume (NULL),
 m_glsl_transfer_function (NULL),
 m_glsl_activetex(NULL),
 m_shader_firstpass(NULL),
-m_shader_secondpass(NULL)
+m_shader_secondpass(NULL),
+m_scale(1.0f)
 {
 	m_fvao = NULL; m_fvbo = NULL; m_fibo = NULL;
 	m_svao = NULL; m_svbo = NULL; m_sibo = NULL;
@@ -77,10 +78,16 @@ void RendererGLSL2P::CreateScene (int CurrentWidth, int CurrentHeight, vr::Scala
 	BindShaderUniforms ();
 }
 
+void RendererGLSL2P::SetScale (float s)
+{
+	m_scale = s;
+}
+
 bool RendererGLSL2P::Render (int Width, int Height)
 {
 	m_ModelMatrix = lqc::IDENTITY_MATRIX;
 	lqc::TranslateMatrix (&m_ModelMatrix, -(m_cube_width / 2.0f), -(m_cube_height / 2.0f), -(m_cube_depth / 2.0f));
+	lqc::ScaleMatrix(&m_ModelMatrix, m_scale, m_scale, m_scale);
 	lqc::RotateAboutX (&m_ModelMatrix, m_x_rotation * (float)PI / 180.0f);
 	lqc::RotateAboutY (&m_ModelMatrix, m_y_rotation * (float)PI / 180.0f);
 
@@ -102,9 +109,9 @@ void RendererGLSL2P::Resize (int Width, int Height)
 	glViewport (0, 0, Width, Height);
 	m_ProjectionMatrix =
 		lqc::CreateProjectionMatrix (
-		30,
+		45,
 		(float)Width / (float)Height,
-		1.0f,
+		0.10f,
 		100.0f
 		);
 

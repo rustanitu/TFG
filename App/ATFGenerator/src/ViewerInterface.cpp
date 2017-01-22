@@ -28,6 +28,11 @@ int ViewerInterface::Motion_CB (Ihandle *ih, int x, int y, char *status)
 	return Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->Motion_CB (ih, x, y, status);
 }
 
+int ViewerInterface::Wheel_CB(Ihandle *ih, float delta, int x, int y, char *status)
+{
+	return Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->Wheel_CB(ih, delta, x, y, status);
+}
+
 int ViewerInterface::Renderer_CB (Ihandle* handle)
 {
 	return Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->Idle_Action_CB (Viewer::Instance ()->GetCanvasRenderer ());
@@ -382,6 +387,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetCallback (m_iup_canvas_renderer, "KEYPRESS_CB", (Icallback)ViewerInterface::Keyboard_CB);
 	IupSetCallback (m_iup_canvas_renderer, "BUTTON_CB", (Icallback)ViewerInterface::Button_CB);
 	IupSetCallback (m_iup_canvas_renderer, "MOTION_CB", (Icallback)ViewerInterface::Motion_CB);
+	IupSetCallback(m_iup_canvas_renderer, "WHEEL_CB", (Icallback) ViewerInterface::Wheel_CB);
 	IupSetCallback (m_iup_canvas_renderer, "RESIZE_CB", (Icallback)ViewerInterface::Resize_CB);
 	//IupSetCallback (m_iup_canvas_renderer, "ACTION", (Icallback)ViewerInterface::Renderer_CB);
 	IupSetAttribute (m_iup_canvas_renderer, IUP_RASTERSIZE, "600x400");
@@ -420,7 +426,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	Ihandle* sgima_bar = IupVal("VERTICAL");
 	IupSetAttribute(sgima_bar, "ACTIVE", "YES");
 	IupSetAttribute(sgima_bar, "SHOWTICKS", "48");
-	IupSetAttribute(sgima_bar, "MAX", "50");
+	IupSetAttribute(sgima_bar, "MAX", "150");
 	IupSetAttribute(sgima_bar, "MIN", "1");
 	IupSetAttribute(sgima_bar, "VALUE", "1");
 	IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
