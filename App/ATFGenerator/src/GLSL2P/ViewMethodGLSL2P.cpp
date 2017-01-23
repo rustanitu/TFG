@@ -86,6 +86,9 @@ int ViewMethodGLSL2P::Keyboard_CB (Ihandle *ih, int c, int press)
 			case K_m:
 				m_renderer.SetYRotation (0.0f);
 				m_renderer.SetXRotation (0.0f);
+        m_renderer.SetYTranslation (0.0f);
+        m_renderer.SetXTranslation (0.0f);
+        m_renderer.SetScale (1.0f);
 				m_redisplay = true;
 				break;
 			case K_SP:
@@ -114,8 +117,6 @@ int ViewMethodGLSL2P::Button_CB (Ihandle* ih, int button, int pressed, int x, in
 	{
 		m_motion_x = x;
 		m_motion_y = y;
-		m_position_x = x;
-		m_position_y = y;
 		m_button = button;
 	}
 	return IUP_DEFAULT;
@@ -129,7 +130,7 @@ int ViewMethodGLSL2P::Motion_CB (Ihandle *ih, int x, int y, char *status)
 		int xdiff = m_motion_x - x;
 		if ( m_button == 49 )
 		{
-			if ( ydiff != 0 && abs(ydiff) > abs(xdiff) )
+			if ( ydiff != 0 )//&& abs(ydiff) > abs(xdiff) )
 			{
 				if ( m_renderer.GetYRotation() >= 135 && m_renderer.GetYRotation() <= 225 )
 					ydiff = -ydiff;
@@ -137,7 +138,7 @@ int ViewMethodGLSL2P::Motion_CB (Ihandle *ih, int x, int y, char *status)
 				m_motion_y = y;
 				m_redisplay = true;
 			}
-			else if ( xdiff != 0)
+			if ( xdiff != 0)
 			{
 				m_renderer.SetYRotation(m_renderer.GetYRotation() - xdiff);
 				m_motion_x = x;
@@ -148,14 +149,14 @@ int ViewMethodGLSL2P::Motion_CB (Ihandle *ih, int x, int y, char *status)
 		{
 			if ( ydiff != 0 && abs(ydiff) > abs(xdiff) )
 			{
-				m_renderer.SetYTranslation(m_renderer.GetYTranslation() + ydiff);
-				m_position_y = y;
+				m_renderer.SetYTranslation(m_renderer.GetYTranslation() + ydiff / (float) m_renderer.GetScreenHeight());
+        m_motion_y = y;
 				m_redisplay = true;
 			}
 			else if ( xdiff != 0 )
 			{
-				m_renderer.SetXTranslation(m_renderer.GetXTranslation() - xdiff);
-				m_position_x = x;
+        m_renderer.SetXTranslation(m_renderer.GetXTranslation() - xdiff / (float) m_renderer.GetScreenWidth());
+        m_motion_x = x;
 				m_redisplay = true;
 			}
 		}

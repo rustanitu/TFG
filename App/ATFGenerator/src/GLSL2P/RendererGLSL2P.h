@@ -101,6 +101,16 @@ public:
 	float GetCubeHeight ();
 	float GetCubeDepth ();
 
+  int GetScreenWidth()
+  {
+    return m_sdr_width;
+  }
+
+  int GetScreenHeight()
+  {
+    return m_sdr_height;
+  }
+
 	void SaveInitCameraState (std::string filename);
 	void LoadInitCameraState (std::string filename);
 

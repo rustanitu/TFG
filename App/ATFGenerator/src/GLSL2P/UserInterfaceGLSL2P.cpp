@@ -159,6 +159,7 @@ void UserInterfaceGLSL2P::CreateIupInterface ()
   m_iup_label_volumesizes = IupLabel ("Geometria:");
   m_iup_button_volumesizes = IupButton ("Redimensionar Geometria", NULL);
   IupSetCallback (m_iup_button_volumesizes, "ACTION", (Icallback)UserInterfaceGLSL2P::ButtonCB_AutoModeling);
+  IupSetAttribute(m_iup_button_volumesizes, "EXPAND", "HORIZONTAL");
   //m_iup_hbox_volumesizes = IupHbox (m_iup_label_volumesizes, m_iup_button_volumesizes, NULL);
   
   m_iup_text_volumesizes = IupText (NULL);

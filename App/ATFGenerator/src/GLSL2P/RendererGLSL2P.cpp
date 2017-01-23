@@ -92,7 +92,7 @@ bool RendererGLSL2P::Render (int Width, int Height)
 	lqc::ScaleMatrix(&m_ModelMatrix, m_scale, m_scale, m_scale);
 	lqc::RotateAboutX (&m_ModelMatrix, m_x_rotation * (float)PI / 180.0f);
 	lqc::RotateAboutY (&m_ModelMatrix, m_y_rotation * (float)PI / 180.0f);
-	lqc::TranslateMatrix(&m_ModelMatrix, m_x_translation * 0.0001f, m_y_translation * 0.0001f, 0.0f);
+	lqc::TranslateMatrix(&m_ModelMatrix, m_x_translation, m_y_translation, 0.0f);
 
 	m_glfbo->Bind ();
 
@@ -426,7 +426,7 @@ void RendererGLSL2P::CreateSecondPass ()
 	}
 	else
 	{
-		m_shader_secondpass->SetUniformFloat ("step_size", .1f);
+		m_shader_secondpass->SetUniformFloat ("step_size", .5f);
 	}
 	
 	gl::ExitOnGLError ("ERROR: Could not get shader uniform locations");

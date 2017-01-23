@@ -470,6 +470,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	//Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, atfg_set_label, spinbox_set, m_bthick_label, m_gtresh_label, NULL);
 	Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, atfg_set_label, spinbox_boundary, m_bthick_label, m_gtresh_label, NULL);
 	Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
+  IupSetAttribute(hbox_atfg, "EXPAND", "HORIZONTAL");
 
 	Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
 	IupSetAttribute (selected_int_label, "EXPAND", "HORIZONTAL");
@@ -478,6 +479,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	m_iup_frame_adinterface = Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->GetIupUserInterface ();
 	m_iup_vbox_GUI = IupVbox(common_int_label, m_iup_vbox_commoninterface, vbox_sep, atfg_label, hbox_atfg, selected_int_label, m_iup_frame_adinterface, m_iup_vbox_atf, NULL);
 	//IupSetAttribute (m_iup_vbox_GUI, "NGAP", "20");
+  IupSetAttribute(m_iup_vbox_GUI, "EXPAND", "NO");
 	IupSetAttribute (m_iup_vbox_GUI, "NMARGIN", "1x1");
 	m_iup_hbox_dialog = 
 		//IupVbox (
@@ -679,7 +681,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
 	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
-	IupSetAttribute(m_tf_plot_dialog, "SIZE", "QUARTERxHALF");
+	IupSetAttribute(m_tf_plot_dialog, "SIZE", "HALFxFULL");
 	
 	m_deriv_plot = IupPlot();
 	IupSetAttribute(m_deriv_plot, "SYNCVIEW", "YES");
@@ -689,7 +691,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 	m_deriv_plot_dialog = IupDialog(IupVbox(m_deriv_plot, NULL));
 	IupSetAttribute(m_deriv_plot_dialog, "TITLE", "Derivative Functions");
-	IupSetAttribute(m_deriv_plot_dialog, "SIZE", "QUARTERxHALF");
+	IupSetAttribute(m_deriv_plot_dialog, "SIZE", "HALFxFULL");
 
 	m_dist_plot = IupPlot();
 	IupSetAttribute(m_dist_plot, "SYNCVIEW", "YES");
@@ -699,7 +701,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 	m_dist_plot_dialog = IupDialog(IupVbox(m_dist_plot, NULL));
 	IupSetAttribute(m_dist_plot_dialog, "TITLE", "Boundary Distance Function");
-	IupSetAttribute(m_dist_plot_dialog, "SIZE", "QUARTERxHALF");
+	IupSetAttribute(m_dist_plot_dialog, "SIZE", "HALFxFULL");
 
 	Ihandle* m_show_plots = IupItem("Exibir Gráficos", NULL);
 	IupSetAttribute(m_show_plots, "ACTIVE", "YES");
@@ -719,9 +721,9 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 int ViewerInterface::ShowPlots()
 {
-	IupShow(Viewer::Instance()->m_gui.m_deriv_plot_dialog);
-	IupShow(Viewer::Instance()->m_gui.m_dist_plot_dialog);
-	IupShow(Viewer::Instance()->m_gui.m_tf_plot_dialog);
+  IupShowXY(Viewer::Instance()->m_gui.m_deriv_plot_dialog, IUP_LEFT, IUP_TOP);
+	//IupShow(Viewer::Instance()->m_gui.m_dist_plot_dialog);
+  IupShowXY(Viewer::Instance()->m_gui.m_tf_plot_dialog, IUP_RIGHT, IUP_TOP);
 	return IUP_DEFAULT;
 }
 

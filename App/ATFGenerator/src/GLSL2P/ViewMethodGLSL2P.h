@@ -107,7 +107,6 @@ private:
 
 	bool m_mousepressed;
 	int m_motion_x, m_motion_y;
-	float m_position_x, m_position_y;
 	int m_button;
 
 	float m_scale;
