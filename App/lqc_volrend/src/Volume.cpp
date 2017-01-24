@@ -28,15 +28,15 @@ namespace vr
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new float[size];
-		m_scalar_fx = new float[size];
-		m_scalar_fy = new float[size];
-		m_scalar_fz = new float[size];
+		//m_scalar_fx = new float[size];
+		//m_scalar_fy = new float[size];
+		//m_scalar_fz = new float[size];
 		for ( int i = 0; i < size; i++ )
 		{
 			m_scalar_values[i] = 0.0f;
-			m_scalar_fx[i] = 0.0f;
-			m_scalar_fy[i] = 0.0f;
-			m_scalar_fz[i] = 0.0f;
+			//m_scalar_fx[i] = 0.0f;
+			//m_scalar_fy[i] = 0.0f;
+			//m_scalar_fz[i] = 0.0f;
 		}
 	}
 
@@ -45,18 +45,18 @@ namespace vr
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new float[size];
-		m_scalar_fx = new float[size];
-		m_scalar_fy = new float[size];
-		m_scalar_fz = new float[size];
+		//m_scalar_fx = new float[size];
+		//m_scalar_fy = new float[size];
+		//m_scalar_fz = new float[size];
 		for ( int i = 0; i < size; i++ )
 		{
 			float v = scalars[i];
 			m_scalar_values[i] = v;
 			m_max_value = fmax(m_max_value, v);
 			m_min_value = fmin(m_min_value, v);
-			m_scalar_fx[i] = 0.0f;
-			m_scalar_fy[i] = 0.0f;
-			m_scalar_fz[i] = 0.0f;
+			//m_scalar_fx[i] = 0.0f;
+			//m_scalar_fy[i] = 0.0f;
+			//m_scalar_fz[i] = 0.0f;
 		}
 	}
 
@@ -65,18 +65,18 @@ namespace vr
 	{
 		int size = m_width * m_height * m_depth;
 		m_scalar_values = new float[size];
-		m_scalar_fx = new float[size];
-		m_scalar_fy = new float[size];
-		m_scalar_fz = new float[size];
+		//m_scalar_fx = new float[size];
+		//m_scalar_fy = new float[size];
+		//m_scalar_fz = new float[size];
 		for (int i = 0; i < size; i++)
 		{
 			float v = scalars[i];
 			m_scalar_values[i] = v;
 			m_max_value = fmax(m_max_value, v);
 			m_min_value = fmin(m_min_value, v);
-			m_scalar_fx[i] = 0.0f;
-			m_scalar_fy[i] = 0.0f;
-			m_scalar_fz[i] = 0.0f;
+			//m_scalar_fx[i] = 0.0f;
+			//m_scalar_fy[i] = 0.0f;
+			//m_scalar_fz[i] = 0.0f;
 		}
 	}
 
@@ -157,9 +157,9 @@ namespace vr
 
 		glm::vec3 grad(dfx, dfy, dfz);
 
-		m_scalar_fx[id] = grad.x;
-		m_scalar_fy[id] = grad.y;
-		m_scalar_fz[id] = grad.z;
+		//m_scalar_fx[id] = grad.x;
+		//m_scalar_fy[id] = grad.y;
+		//m_scalar_fz[id] = grad.z;
 
 		g = glm::length(grad);
 		m_max_gradient = fmax(m_max_gradient, g);

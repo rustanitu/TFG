@@ -53,9 +53,9 @@ bool Tank::Read(const char* filepath)
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
-	m_scalar_fx = new float[m_ncells];
-	m_scalar_fy = new float[m_ncells];
-	m_scalar_fz = new float[m_ncells];
+	//m_scalar_fx = new float[m_ncells];
+	//m_scalar_fy = new float[m_ncells];
+	//m_scalar_fz = new float[m_ncells];
 	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
@@ -103,9 +103,9 @@ bool Tank::Read(const char* filepath)
 		Cell* cell = &(m_cells[id]);
 		cell->Init(i, j, k, active, m_nsteps);
 
-		m_scalar_fx[id] = 0.0f;
-		m_scalar_fy[id] = 0.0f;
-		m_scalar_fz[id] = 0.0f;
+		//m_scalar_fx[id] = 0.0f;
+		//m_scalar_fy[id] = 0.0f;
+		//m_scalar_fz[id] = 0.0f;
 
 		// It sets the index of the ith vertex
 		for ( int v = 0; v < 8; ++v )
@@ -200,9 +200,9 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 
 	m_ncells = m_width * m_height * m_depth;
 	m_cells = new Cell[m_ncells];
-	m_scalar_fx = new float[m_ncells];
-	m_scalar_fy = new float[m_ncells];
-	m_scalar_fz = new float[m_ncells];
+	//m_scalar_fx = new float[m_ncells];
+	//m_scalar_fy = new float[m_ncells];
+	//m_scalar_fz = new float[m_ncells];
 	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
@@ -219,9 +219,9 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 				Cell* cell = &(m_cells[id]);
 				cell->Init(i, j, k, active, m_nsteps);
 
-				m_scalar_fx[id] = 0.0f;
-				m_scalar_fy[id] = 0.0f;
-				m_scalar_fz[id] = 0.0f;
+				//m_scalar_fx[id] = 0.0f;
+				//m_scalar_fy[id] = 0.0f;
+				//m_scalar_fz[id] = 0.0f;
 
 				cell->SetValue(0, values[id]);
 				m_max_value = fmax(m_max_value, values[id]);
@@ -506,9 +506,9 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
   glm::vec3 parametric_grad(dfx, dfy, dfz);
   glm::vec3 grad = jacob_inv * parametric_grad;
 
-  m_scalar_fx[id] = grad.x;
-  m_scalar_fy[id] = grad.y;
-  m_scalar_fz[id] = grad.z;
+  //m_scalar_fx[id] = grad.x;
+  //m_scalar_fy[id] = grad.y;
+  //m_scalar_fz[id] = grad.z;
 
 	g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, g);
