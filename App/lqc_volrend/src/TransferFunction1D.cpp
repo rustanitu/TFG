@@ -10,7 +10,8 @@ namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_indexes(NULL), m_values(NULL), m_boundary(0), m_thickness(1), m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false)
+    , m_indexes(NULL), m_values(NULL), m_center(NULL), m_boundary(0), m_thickness(1)
+    , m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false), m_gaussian_bx(true)
 	{
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
@@ -29,6 +30,7 @@ namespace vr
 
 		delete[] m_indexes;
 		delete[] m_values;
+    delete[] m_center;
 	}
 
 	const char* TransferFunction1D::GetNameClass ()
@@ -293,42 +295,47 @@ namespace vr
 	return false;
 	}*/
 
-	float TransferFunction1D::CenteredTriangleFunction(float max, float base, const int& v)
+	float TransferFunction1D::CenteredTriangleFunction(float max, float base, float center, const int& v)
 	{
 		//  boundary center
 		//         .
 		//        / \       |
 		//       / | \      |
 		//      /  |  \     |
-		//     /   |   \    | max
+		//     /   |   \    | top
 		//    /    |    \   |
 		//   /     |     \  |
 		//  /      |      \ |
-		//  ------ 0 ++++++ 
+		//  ---- center ++++ 
 		// |-------|-------|
 		//       base
 
+    float top = 1.0f / sqrt(PI * 2 * base * base);
 		float a = 0.0f;
 		float x = m_values[v];
 		if (x >= -base && x <= base)
 		{
-			if (x >= 0.0)
-				a = -(max * x) / base;
-			else
-				a = (max * x) / base;
-
-			a += max;
+      if (x >= center && center < base)
+      {
+        a = -(top * x) / (base - center);
+        a += (top * base) / (base - center);
+      }
+      else
+      {
+        a = (top * x) / (base + center);
+        a += (top * base) / (base + center);
+      }
 		}
 
-		return a;
+    return fmin(a, max);
 	}
 
 	float TransferFunction1D::CenteredGaussianFunction(float max, float sigma, float u, const int& v)
 	{
 		float two_sigma_quad = 2 * sigma * sigma;
 		float x = m_values[v];
-		float g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
-		return fmin(g, 1.0f);
+    float g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
+    return fmin(g, max);
 	}
 
 	/// <summary>
@@ -355,7 +362,6 @@ namespace vr
 		IupPlotBegin(m_bx_plot, 0);
 
 		float amax = 1.0f;
-		float base = m_thickness;
 
 		double last_a = 0.0f;
 		int b = 0;
@@ -370,8 +376,11 @@ namespace vr
 			float x = m_values[value];
 
 			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
-			//double a = CenteredTriangleFunction(amax, base, value);
-			double a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, value);
+      double a = 0.0f;
+      if (m_gaussian_bx)
+			  a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_center[value], value);
+      else
+        a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_center[value], value);
 
 			if ( m_boundary != 0 )
 			{
@@ -498,7 +507,7 @@ namespace vr
 	/// <param name="distances">The distances to the closest boundaries.</param>
 	/// <param name="sigmas">The sigmas of the boundaries.</param>
 	/// <param name="n">The input arrays' size.</param>
-	void TransferFunction1D::SetClosestBoundaryDistances(int* values, float* distances, const int& n)
+	void TransferFunction1D::SetClosestBoundaryDistances(int* values, float* distances, float* h, const int& n)
 	{
 		if (n < 2 || n > MAX_V)
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
@@ -511,12 +520,16 @@ namespace vr
 
 		delete[] m_indexes;
 		delete[] m_values;
+    delete[] m_center;
 
 		if (values)
 			m_indexes = values;
 
 		if (distances)
 			m_values = distances;
+
+    if (h)
+      m_center = h;
 	}
 
 	void TransferFunction1D::SetAlphaValues(int* values, float* alphas, const int& n)

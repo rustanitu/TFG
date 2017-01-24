@@ -143,11 +143,11 @@ public:
 	static int SetBoundaryThickness(Ihandle* ih);
 	static int SetGTresh(Ihandle* ih);
 	static int SetBoundary(Ihandle* ih, int boundary);
-	static int SetVisibleSet(Ihandle* ih, int set);
+	static int SetBxFunction(int set);
 	static int MarkOutdated();
 	
 	ViewerInterface m_gui;
-	int m_visible_set;
+  int m_bx_func;
 
 	void UpdateATFG();
 

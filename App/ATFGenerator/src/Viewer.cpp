@@ -141,6 +141,11 @@ void Viewer::GenerateATFG()
 	vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
 	tf->SetBoundaryThickness(m_boundary_thickness);
 	tf->SetBoundary(m_boundary);
+  if (Viewer::Instance()->m_bx_func)
+    tf->SetGaussianFunction();
+  else
+    tf->SetTriangularFunction();
+
 #ifdef GORDON
 	if (tf->GenerateGordonBased()) {
 #else
@@ -255,10 +260,11 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
 	return IUP_DEFAULT;
 }
 
-int Viewer::SetVisibleSet(Ihandle* ih, int set)
+int Viewer::SetBxFunction(int set)
 {
 #ifdef ATFG
-	Viewer::Instance()->m_visible_set = set;
+	Viewer::Instance()->m_bx_func = set;
+  Viewer::Instance()->m_extract_atfg = true;
 	Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
 #endif
 	return IUP_DEFAULT;
@@ -587,7 +593,6 @@ Viewer::Viewer()
 	m_fast_tfg = NULL;
 	m_extract_atfg = false;
 	m_generate_atfg = false;
-	m_visible_set = 0;
 }
 
 Viewer::~Viewer()

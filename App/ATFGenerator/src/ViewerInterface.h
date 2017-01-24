@@ -67,7 +67,9 @@ public:
 	static int BlendOption_GL_DST_COLOR_GL_SRC_COLOR (Ihandle* ih);
 	static int BlendOption_GL_DST_COLOR_GL_SRC_ALPHA (Ihandle* ih);
 
-	static int tgl_SetAutomaticTransferFunction_CB (Ihandle* ih);
+	static int tgl_SetGaussianFunction_CB (Ihandle* ih, int state);
+  static int tgl_SetTriangularFunction_CB(Ihandle* ih, int state);
+
 
 public:
 	ViewerInterface ();

@@ -363,9 +363,16 @@ int ViewerInterface::BlendOption_GL_DST_COLOR_GL_SRC_ALPHA (Ihandle* ih)
 	return IUP_DEFAULT;
 }
 
-int ViewerInterface::tgl_SetAutomaticTransferFunction_CB(Ihandle* ih)
+int ViewerInterface::tgl_SetGaussianFunction_CB(Ihandle* ih, int state)
 {
-	return 0;
+  Viewer::Instance()->SetBxFunction(state);
+  return IUP_DEFAULT;
+}
+
+int ViewerInterface::tgl_SetTriangularFunction_CB(Ihandle* ih, int state)
+{
+  Viewer::Instance()->SetBxFunction(1 - state);
+  return IUP_DEFAULT;
 }
 
 ////////////////////
@@ -455,20 +462,17 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(spinbox_boundary, "SPIN", "YES");
 	IupSetCallback(spinbox_boundary, "SPIN_CB", (Icallback)Viewer::SetBoundary);
 
-	Ihandle* atfg_set_label = IupLabel("Set");
-	IupSetAttribute(atfg_set_label, "ALIGNMENT", "ACENTER");
-
-	//Ihandle* spinbox_set = IupText("0");
-	//IupSetAttribute(spinbox_set, "ALIGNMENT", "ACENTER");
-	//IupSetAttribute(spinbox_set, "SPIN", "YES");
-	//IupSetAttribute(spinbox_set, "SPINMAX", "999999999");
-	//IupSetCallback(spinbox_set, "SPIN_CB", (Icallback)Viewer::SetVisibleSet);
+  Ihandle* gaussian_bx = IupToggle("Gaussian", NULL);
+  IupSetCallback(gaussian_bx, "ACTION", (Icallback)tgl_SetGaussianFunction_CB);
+  Ihandle* triangle_bx = IupToggle("Triangular", NULL);
+  IupSetCallback(triangle_bx, "ACTION", (Icallback)tgl_SetTriangularFunction_CB);
+  Ihandle* radius = IupRadio(IupVbox(gaussian_bx, triangle_bx, NULL));
 
 	m_bthick_label = IupLabel("BThick: 1   ");
 	m_gtresh_label = IupLabel("GTresh: 0.0f");
 
-	//Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, atfg_set_label, spinbox_set, m_bthick_label, m_gtresh_label, NULL);
-	Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, atfg_set_label, spinbox_boundary, m_bthick_label, m_gtresh_label, NULL);
+  Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, radius, NULL);
+  IupSetAttribute(vbox_atfg, "EXPAND", "VERTICAL");
 	Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
   IupSetAttribute(hbox_atfg, "EXPAND", "HORIZONTAL");
 

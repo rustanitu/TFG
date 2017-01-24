@@ -18,7 +18,7 @@
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
-#define PLOT_STYLE "LINE"
+//#define PLOT_STYLE "LINE"
 #ifndef PLOT_STYLE
 	#define PLOT_STYLE "MARK"
 #endif
@@ -168,15 +168,16 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 
 	// Gordon Transfer Function
 	float* x = new float[ATFG_V_RANGE];
+  float* h = new float[ATFG_V_RANGE];
 	int* v = new int[ATFG_V_RANGE];
-	if ( !x || !v )
+	if ( !x || !v || !h)
 	{
 		printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
 		return false;
 	}
 	UINT32 n_v;
-	GetBoundaryDistancies(x, v, &n_v);
-	m_transfer_function->SetClosestBoundaryDistances(v, x, n_v);
+	GetBoundaryDistancies(x, h, v, &n_v);
+	m_transfer_function->SetClosestBoundaryDistances(v, x, h, n_v);
 	return true;
 }
 
@@ -948,14 +949,10 @@ bool ATFGenerator::GenerateHistogram()
 			{
 				if ( m_scalar_histogram[i][j][k] > 0)
 				{
-					if ( (float) j < m_min_gradient[i] )
-						m_min_gradient[i] = j;
-					if ( (float) k < m_min_laplacian[i] )
-						m_min_laplacian[i] = k;
-					if ( (float) j > m_max_gradient[i] )
-						m_max_gradient[i] = j;
-					if ( (float) k > m_max_laplacian[i] )
-						m_max_laplacian[i] = k;
+          m_min_gradient[i] = fmin(m_min_gradient[i], j);
+          m_min_laplacian[i] = fmin(m_min_laplacian[i], k);
+          m_max_gradient[i] = fmax(m_max_gradient[i], j);
+          m_max_laplacian[i] = fmax(m_max_laplacian[i], k);
 
 					g += j;// * m_scalar_histogram[i][j][k];
 					h += k;// * m_scalar_histogram[i][j][k];
@@ -1070,7 +1067,7 @@ void ATFGenerator::GetValidValuesAndIndexes(float* vin, const int& nin, float*& 
 /// </summary>
 /// <returns>Returns a float array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
+void ATFGenerator::GetBoundaryDistancies(float * x, float* h, int *v, UINT32 *n)
 {
 	assert(m_scalar_histogram && x);
 
@@ -1091,6 +1088,13 @@ void ATFGenerator::GetBoundaryDistancies(float * x, int *v, UINT32 *n)
 		{
       //x[i] = fmin(-sigma * sigma * ((l+m_gtresh) / fmax(g, 0.000001)), -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)));
       x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
+      h[i] = 0.0f;
+      if (i > 0 && i < ATFG_V_MAX) {
+        h[i] = x[i];
+        h[i] -= -sigma * sigma * (((m_average_gradient[i + 1] - m_average_gradient[i - 1]) / 2.0f) / fmax(g - m_gtresh, 0.000001));
+        h[i] /= 2.0f;
+        h[i] = 0.0f;
+      }
 		}
 
 		v[c] = i;
