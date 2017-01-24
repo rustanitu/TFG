@@ -53,10 +53,10 @@ bool Tank::Read(const char* filepath)
 
 	m_ncells = ni * nj * nk;
 	m_cells = new Cell[m_ncells];
-	//m_scalar_fx = new float[m_ncells];
-	//m_scalar_fy = new float[m_ncells];
-	//m_scalar_fz = new float[m_ncells];
-	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
+	//m_scalar_fx = new double[m_ncells];
+	//m_scalar_fy = new double[m_ncells];
+	//m_scalar_fz = new double[m_ncells];
+	if ( !m_cells )//|| !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
   m_vertices = new glm::vec3[m_nvertices];
@@ -161,7 +161,7 @@ bool Tank::Read(const char* filepath)
 		// It sets the cell value of the p timestamp
 		for ( int t = 0; t < m_nsteps; ++t )
 		{
-			float value;
+			double value;
 			if ( !(file >> value) )
 				return false;
 
@@ -183,7 +183,7 @@ bool Tank::Read(const char* filepath)
 	return true;
 }
 
-bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT32& depth, float* values)
+bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT32& depth, double* values)
 {
 	m_nvertices = 0;
 	m_vertices = NULL;
@@ -200,9 +200,9 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 
 	m_ncells = m_width * m_height * m_depth;
 	m_cells = new Cell[m_ncells];
-	//m_scalar_fx = new float[m_ncells];
-	//m_scalar_fy = new float[m_ncells];
-	//m_scalar_fz = new float[m_ncells];
+	//m_scalar_fx = new double[m_ncells];
+	//m_scalar_fy = new double[m_ncells];
+	//m_scalar_fz = new double[m_ncells];
 	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
@@ -233,25 +233,25 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 	printf("Fim da leitura do tank.\n");
 }
 
-float Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
+double Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 	if ( IsOutOfBoundary(x, y, z) )
-		return -FLT_MAX;
+		return -DBL_MAX;
 
 	return GetValue(GetId(x, y, z));
 }
 
-float Tank::GetValue(const UINT32& id)
+double Tank::GetValue(const UINT32& id)
 {
 	return m_cells[id].GetValue(m_current_timestep);
-  return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : -FLT_MAX;
+  return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : -DBL_MAX;
 }
 
-float Tank::GetQuadraticGradientNorm(const UINT32& id)
+double Tank::GetQuadraticGradientNorm(const UINT32& id)
 {
-	const float dfx = m_scalar_fx[id];
-	const float dfy = m_scalar_fy[id];
-	const float dfz = m_scalar_fz[id];
+	const double dfx = m_scalar_fx[id];
+	const double dfy = m_scalar_fy[id];
+	const double dfz = m_scalar_fz[id];
 	return dfx*dfx + dfy*dfy + dfz*dfz;
 }
 
@@ -454,16 +454,16 @@ glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
   return jacob;
 }
 
-float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
+double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-	float g = 0.0f;
-	float dfx = 0.0f;
-	float dfy = 0.0f;
-	float dfz = 0.0f;
+	double g = 0.0f;
+	double dfx = 0.0f;
+	double dfy = 0.0f;
+	double dfz = 0.0f;
 
-	float pdx = 0.0f;
-	float pdy = 0.0f;
-	float pdz = 0.0f;
+	double pdx = 0.0f;
+	double pdy = 0.0f;
+	double pdz = 0.0f;
 
 	int h = MASK_SIZE / 2;
 	int xinit = x - h;
@@ -475,12 +475,12 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				float dx;
-				float dy;
-				float dz;
+				double dx;
+				double dy;
+				double dz;
 				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
-				float v = GetValue(i, j, k);
+				double v = GetValue(i, j, k);
 				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
 				{
 					v = GetValue(x, y, z);
@@ -516,17 +516,17 @@ float Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 	return g;
 }
 
-float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
+double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
 #ifndef HESSIAN
-  float g = 0.0f;
-  float dfx = 0.0f;
-  float dfy = 0.0f;
-  float dfz = 0.0f;
+  double g = 0.0f;
+  double dfx = 0.0f;
+  double dfy = 0.0f;
+  double dfz = 0.0f;
 
-  float pdx = 0.0f;
-  float pdy = 0.0f;
-  float pdz = 0.0f;
+  double pdx = 0.0f;
+  double pdy = 0.0f;
+  double pdz = 0.0f;
 
   int h = MASK_SIZE / 2;
   int xinit = x - h;
@@ -535,9 +535,9 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
   for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
     for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
       for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-        float dx;
-        float dy;
-        float dz;
+        double dx;
+        double dy;
+        double dz;
         m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
         int gid = GetId(i, j, k);
@@ -545,11 +545,11 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
           gid = GetId(x, y, z);
         }
 
-        float dgx = m_scalar_fx[gid];
-        float dgy = m_scalar_fy[gid];
-        float dgz = m_scalar_fz[gid];
+        double dgx = m_scalar_fx[gid];
+        double dgy = m_scalar_fy[gid];
+        double dgz = m_scalar_fz[gid];
         glm::vec3 ggrad(dgx, dgy, dgz);
-        float gv = glm::length(ggrad);
+        double gv = glm::length(ggrad);
 
         pdx += abs(dx);
         pdy += abs(dy);
@@ -579,21 +579,21 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 
   return g;
 #else
-	float fdxdx = 0.0f;
-	float fdxdy = 0.0f;
-	float fdxdz = 0.0f;
+	double fdxdx = 0.0f;
+	double fdxdy = 0.0f;
+	double fdxdz = 0.0f;
 
-	float fdydx = 0.0f;
-	float fdydy = 0.0f;
-	float fdydz = 0.0f;
+	double fdydx = 0.0f;
+	double fdydy = 0.0f;
+	double fdydz = 0.0f;
 
-	float fdzdx = 0.0f;
-	float fdzdy = 0.0f;
-	float fdzdz = 0.0f;
+	double fdzdx = 0.0f;
+	double fdzdy = 0.0f;
+	double fdzdz = 0.0f;
 
-	float pdx = 0.0f;
-	float pdy = 0.0f;
-	float pdz = 0.0f;
+	double pdx = 0.0f;
+	double pdy = 0.0f;
+	double pdz = 0.0f;
 
 	int h = MASK_SIZE / 2;
 	int xinit = x - h;
@@ -605,13 +605,13 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				float dx, dy, dz;
+				double dx, dy, dz;
 				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
 				int id = GetId(i, j, k);
-				float fdx = m_scalar_fx[id];
-				float fdy = m_scalar_fy[id];
-				float fdz = m_scalar_fz[id];
+				double fdx = m_scalar_fx[id];
+				double fdy = m_scalar_fy[id];
+				double fdz = m_scalar_fz[id];
 
 				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
 				{
@@ -654,9 +654,9 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 	fdzdz /= pdz;
 
 	int id = GetId(x, y, z);
-	float dfx = m_scalar_fx[id];
-	float dfy = m_scalar_fy[id];
-	float dfz = m_scalar_fz[id];
+	double dfx = m_scalar_fx[id];
+	double dfy = m_scalar_fy[id];
+	double dfz = m_scalar_fz[id];
 
   glm::vec3 parametric_dx_grad(fdxdx, fdxdy, fdxdz);
   glm::vec3 parametric_dy_grad(fdydx, fdydy, fdydz);
@@ -671,8 +671,8 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 
   glm::vec3 grad(dfx, dfy, dfz);
 
-  float length = glm::length(grad);
-  float sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
+  double length = glm::length(grad);
+  double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
 
 	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
@@ -680,29 +680,29 @@ float Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z
 #endif
 }
 
-void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l)
+void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l)
 {
-  float fdx = 0.0f;
-  float fdy = 0.0f;
-  float fdz = 0.0f;
+  double fdx = 0.0f;
+  double fdy = 0.0f;
+  double fdz = 0.0f;
 
-  float pdx = 0.0f;
-  float pdy = 0.0f;
-  float pdz = 0.0f;
+  double pdx = 0.0f;
+  double pdy = 0.0f;
+  double pdz = 0.0f;
 
-	float fdxdx = 0.0f;
-	float fdxdy = 0.0f;
-	float fdxdz = 0.0f;
-	float fdydy = 0.0f;
-	float fdydz = 0.0f;
-	float fdzdz = 0.0f;
+	double fdxdx = 0.0f;
+	double fdxdy = 0.0f;
+	double fdxdz = 0.0f;
+	double fdydy = 0.0f;
+	double fdydz = 0.0f;
+	double fdzdz = 0.0f;
 
-  float pdxdx = 0.0f;
-  float pdxdy = 0.0f;
-  float pdxdz = 0.0f;
-  float pdydy = 0.0f;
-  float pdydz = 0.0f;
-  float pdzdz = 0.0f;
+  double pdxdx = 0.0f;
+  double pdxdy = 0.0f;
+  double pdxdz = 0.0f;
+  double pdydy = 0.0f;
+  double pdydz = 0.0f;
+  double pdzdz = 0.0f;
 
 	int h = MASK_SIZE / 2;
 	int xinit = x - h;
@@ -714,18 +714,18 @@ void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& 
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-        float dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
-        float dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
-        float dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
+        double dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+        double dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+        double dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
 
-        float dxdx = m_derivativeMask.GetDxdxAt(i - xinit, j - yinit, k - zinit);
-        float dxdy = m_derivativeMask.GetDxdyAt(i - xinit, j - yinit, k - zinit);
-        float dxdz = m_derivativeMask.GetDxdzAt(i - xinit, j - yinit, k - zinit);
-        float dydy = m_derivativeMask.GetDydyAt(i - xinit, j - yinit, k - zinit);
-        float dydz = m_derivativeMask.GetDydzAt(i - xinit, j - yinit, k - zinit);
-        float dzdz = m_derivativeMask.GetDzdzAt(i - xinit, j - yinit, k - zinit);
+        double dxdx = m_derivativeMask.GetDxdxAt(i - xinit, j - yinit, k - zinit);
+        double dxdy = m_derivativeMask.GetDxdyAt(i - xinit, j - yinit, k - zinit);
+        double dxdz = m_derivativeMask.GetDxdzAt(i - xinit, j - yinit, k - zinit);
+        double dydy = m_derivativeMask.GetDydyAt(i - xinit, j - yinit, k - zinit);
+        double dydz = m_derivativeMask.GetDydzAt(i - xinit, j - yinit, k - zinit);
+        double dzdz = m_derivativeMask.GetDzdzAt(i - xinit, j - yinit, k - zinit);
 
-        float v = GetValue(i, j, k);
+        double v = GetValue(i, j, k);
 				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
 				{
           v = GetValue(x, y, z);
@@ -785,8 +785,8 @@ void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& 
 
   glm::mat3 hess(dx_grad, dy_grad, dz_grad);
 
-  float length = glm::length(grad);
-  float sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
+  double length = glm::length(grad);
+  double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
 
 	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);

@@ -2,7 +2,6 @@
 #define SCALAR_FIELD
 
 #include <basetsd.h>
-#include <float.h>
 #include <string>
 #include <math/MUtils.h>
 
@@ -17,7 +16,7 @@ namespace vr
 	{
 	public:
 		ScalarField() : m_width(0), m_height(0), m_depth(0), 
-			m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
+			m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
 			, m_derivativeMask(MASK_SIZE)
 		{
 			printf("ScalarField criado.\n");
@@ -25,7 +24,7 @@ namespace vr
 
 		ScalarField(const UINT32& width, const UINT32& height, const UINT32& depth)
 			: m_width(width), m_height(height), m_depth(depth)
-			, m_max_value(-FLT_MAX), m_min_value(FLT_MAX), m_max_gradient(-FLT_MAX), m_min_laplacian(FLT_MAX), m_max_laplacian(-FLT_MAX)
+			, m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
 			, m_derivativeMask(MASK_SIZE)
 		{
 			printf("ScalarField criado.\n");
@@ -56,27 +55,27 @@ namespace vr
 			return m_depth;
 		}
 
-		float GetMinValue() const
+		double GetMinValue() const
 		{
 			return m_min_value;
 		}
 
-		float GetMaxValue() const
+		double GetMaxValue() const
 		{
 			return m_max_value;
 		}
 
-		float GetMaxGradient() const
+		double GetMaxGradient() const
 		{
 			return m_max_gradient;
 		}
 
-		float GetMinLaplacian() const
+		double GetMinLaplacian() const
 		{
 			return m_min_laplacian;
 		}
 
-		float GetMaxLaplacian() const
+		double GetMaxLaplacian() const
 		{
 			return m_max_laplacian;
 		}
@@ -100,7 +99,7 @@ namespace vr
 
 		int GetScalarValue(const UINT32& id, const int& max_histo_value)
 		{
-			float value = GetValue(id);
+			double value = GetValue(id);
 			return ((value - m_min_value) / (m_max_value - m_min_value)) * max_histo_value;
 		}
 
@@ -109,32 +108,32 @@ namespace vr
 			return GetScalarValue(GetId(x, y, z), max_histo_value);
 		}
 
-		int GetScalarGradient(const float& value, const int& max_histo_value)
+		int GetScalarGradient(const double& value, const int& max_histo_value)
 		{
 			return (value / m_max_gradient) * max_histo_value;
 		}
 
-		int GetScalarLaplacian(const float& value, const int& max_histo_value)
+		int GetScalarLaplacian(const double& value, const int& max_histo_value)
 		{
 			return ((value - m_min_laplacian) / (m_max_laplacian - m_min_laplacian)) * max_histo_value;
 		}
 
-		float ConvertScalarToValue(const int& histo_value, const int& max_histo_value)
+		double ConvertScalarToValue(const int& histo_value, const int& max_histo_value)
 		{
-			float p = histo_value / float(max_histo_value);
+			double p = histo_value / double(max_histo_value);
 			return m_max_value* p;
 		}
 
-		float ConvertScalarToGradient(const int& histo_value, const int& max_histo_value)
+		double ConvertScalarToGradient(const int& histo_value, const int& max_histo_value)
 		{
-			float p = histo_value / float(max_histo_value);
+			double p = histo_value / double(max_histo_value);
 			return m_max_gradient * p;
 		}
 
-		float ConvertScalarToLaplacian(const int& histo_value, const int& max_histo_value)
+		double ConvertScalarToLaplacian(const int& histo_value, const int& max_histo_value)
 		{
-			float p = histo_value / float(max_histo_value);
-			float h = p * (m_max_laplacian - m_min_laplacian);
+			double p = histo_value / double(max_histo_value);
+			double h = p * (m_max_laplacian - m_min_laplacian);
 			return h + m_min_laplacian;
 		}
 
@@ -143,22 +142,22 @@ namespace vr
 			return true;
 		}
 
-		virtual float GetValue(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
-		virtual float GetValue(const UINT32& id) = 0;
+		virtual double GetValue(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
+		virtual double GetValue(const UINT32& id) = 0;
 
-		virtual float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
-		virtual float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
-		virtual void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l) = 0;
+		virtual double CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
+		virtual double CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z) = 0;
+		virtual void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l) = 0;
 
 		virtual bool Validate() = 0;
 
 	protected:
 		unsigned int m_width, m_height, m_depth;
-		float m_max_value;
-		float m_min_value;
-		float m_max_gradient;
-		float m_min_laplacian;
-		float m_max_laplacian;
+		double m_max_value;
+		double m_min_value;
+		double m_max_gradient;
+		double m_min_laplacian;
+		double m_max_laplacian;
 		std::string m_name;
 		DerivativeMask m_derivativeMask;
 	};

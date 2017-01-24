@@ -15,9 +15,9 @@ namespace vr
   Volume* ReadVolFile(std::string filepath);
   Volume* ReadDenFile(std::string filepath);
 
-	float* ReadErnTXT(std::string volfilename, int w, int h, int d);
-	float* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d);
-  float* ReadVolvisRaw (std::string volfilename, size_t size, int w, int h, int d);
+	double* ReadErnTXT(std::string volfilename, int w, int h, int d);
+	double* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d);
+  double* ReadVolvisRaw (std::string volfilename, size_t size, int w, int h, int d);
 
   Volume* ReadEleFile(std::string filepath);
 

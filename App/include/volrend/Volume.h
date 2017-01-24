@@ -26,7 +26,7 @@ namespace vr
 	public:
 		Volume();
 		Volume(const UINT32& width, const UINT32& height, const UINT32& depth);
-		Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars);
+		Volume(const UINT32& width, const UINT32& height, const UINT32& depth, double* scalars);
     Volume(const UINT32& width, const UINT32& height, const UINT32& depth, unsigned char* scalars);
 		~Volume();
 		
@@ -34,20 +34,20 @@ namespace vr
 		lqc::Vector3f GetAnchorMax();
 		void SetAnchors(lqc::Vector3f pmin, lqc::Vector3f pmax);
 
-		float GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
-		float GetValue(const UINT32& id)
+		double GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+		double GetValue(const UINT32& id)
 		{
 			return m_scalar_values[id];
 		}
 
-		float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
-		float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
-		void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l);
+		double CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
+		double CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+		void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l);
 
-		float InterpolatedValue(float x, float y, float z);
-		float InterpolatedValue(lqc::Vector3f pos);
+		double InterpolatedValue(double x, double y, double z);
+		double InterpolatedValue(lqc::Vector3f pos);
 
-		float TrilinearScalarFunction(lqc::Vector3f pos, lqc::Vector3f rayeye, lqc::Vector3f raydirection);
+		double TrilinearScalarFunction(lqc::Vector3f pos, lqc::Vector3f rayeye, lqc::Vector3f raydirection);
 
 		bool IsOutOfBoundary(int x, int y, int z);
 
@@ -56,7 +56,7 @@ namespace vr
 			return m_scalar_values != NULL;
 		}
 
-		float* GetValues()
+		double* GetValues()
 		{
 			return m_scalar_values;
 		}
@@ -75,10 +75,10 @@ namespace vr
 		lqc::Vector3f m_pmin;
 		lqc::Vector3f m_pmax;
 
-		float* m_scalar_values;
-    float* m_scalar_fx;
-    float* m_scalar_fy;
-    float* m_scalar_fz;
+		double* m_scalar_values;
+    double* m_scalar_fx;
+    double* m_scalar_fy;
+    double* m_scalar_fz;
 	};
 }
 

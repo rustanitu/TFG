@@ -88,7 +88,7 @@ namespace vr
 			filevol.append(fname);
 			std::cout << "  - File Volume Path: " << filevol << std::endl;
 
-			float* scalar_values = NULL;
+			double* scalar_values = NULL;
 			if ( folder.compare("volvis_raw") == 0 )
 				scalar_values = ReadVolvisRaw(filevol, size, width, height, depth);
 			else if ( folder.compare("ern_txt") == 0 )
@@ -200,10 +200,10 @@ namespace vr
     return ret;
   }
 
-	float* ReadErnTXT(std::string volfilename, int w, int h, int d)
+	double* ReadErnTXT(std::string volfilename, int w, int h, int d)
 	{
-		float* scalar_values = NULL;
-		scalar_values = new float[w*h*d];
+		double* scalar_values = NULL;
+		scalar_values = new double[w*h*d];
 
 		for ( int i = 0; i < w*h*d; i++ )
 			scalar_values[i] = 0.0f;
@@ -213,21 +213,21 @@ namespace vr
 		{
 			double x, y, z = 0, value;
 			while ( file >> x >> y >> z >> value )
-				scalar_values[(int) x + ((int) y * w) + ((int) z * w * h)] = (float) value;
+				scalar_values[(int) x + ((int) y * w) + ((int) z * w * h)] = (double) value;
 			file.close();
 		}
 		return scalar_values;
 	}
 
-	float* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d)
+	double* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d)
 	{
-		float* scalar_values = NULL;
+		double* scalar_values = NULL;
 		FILE* file = NULL;
 		int stderror = fopen_s(&file, volfilename.c_str(), "rb");
 		if ( stderror == 0 )
 		{
 			int size = w*h*d;
-			scalar_values = new float[size];
+			scalar_values = new double[size];
 
 			char trash[100];
 			fscanf_s(file, "%s", trash, sizeof(trash));
@@ -237,7 +237,7 @@ namespace vr
 			fscanf_s(file, "%s", trash, sizeof(trash));
 			fscanf_s(file, "%s", trash, sizeof(trash));
 
-			float value;
+			double value;
 			for ( int i = 0; i < size; ++i )
 			{
 				fscanf_s(file, "%f", &value);
@@ -247,31 +247,31 @@ namespace vr
 		return scalar_values;
 	}
 
-	float* ReadVolvisRaw(std::string volfilename, size_t bytes_per_value, int w, int h, int d)
+  double* ReadVolvisRaw(std::string volfilename, size_t bytes_per_value, int w, int h, int d)
 	{
-		float* scalar_values = NULL;
+    double* scalar_values = NULL;
 		lqc::IRAWLoader rawLoader = lqc::IRAWLoader(volfilename, bytes_per_value, w*h*d, bytes_per_value);
 
 		//GLushort
 		if ( bytes_per_value == sizeof(unsigned short) )
 		{
-			scalar_values = new float[w*h*d];
+      scalar_values = new double[w*h*d];
 			unsigned short *b = new unsigned short[w*h*d];
 			memcpy(b, rawLoader.GetData(), sizeof(unsigned short)*w*h*d);
 
 			for ( int i = 0; i < (int) (w*h*d); i++ )
-				scalar_values[i] = (float) b[i];
+        scalar_values[i] = (double)b[i];
 			delete[] b;
 		}
 		//GLubyte
 		else if ( bytes_per_value == sizeof(unsigned char) )
 		{
-			scalar_values = new float[w*h*d];
+      scalar_values = new double[w*h*d];
 			unsigned char *b = new unsigned char[w*h*d];
 			memcpy(b, rawLoader.GetData(), sizeof(unsigned char)*w*h*d);
 
 			for ( int i = 0; i < (int) (w*h*d); i++ )
-				scalar_values[i] = (float) b[i];
+        scalar_values[i] = (double)b[i];
 			delete[] b;
 		}
 
@@ -293,8 +293,8 @@ namespace vr
 		if ( file_ele.is_open() )
 		{
 			file_ele >> w >> h;
-			float* scalar_values = NULL;
-			scalar_values = new float[w*h*d];
+			double* scalar_values = NULL;
+      scalar_values = new double[w*h*d];
 
 			for ( int i = 0; i < w*h*d; i++ )
 				scalar_values[i] = 0.0f;
@@ -303,7 +303,7 @@ namespace vr
 			while ( file_ele >> x >> y >> value )
 			{
 				int i = (int) (x) +((int) (y) * w) + ((int) z * w * h);
-				scalar_values[i] = (float) value;
+        scalar_values[i] = (double)value;
 			}
 
 			ret = new Volume(w, h, d, scalar_values);
@@ -401,7 +401,7 @@ namespace vr
 			// Byte Size
 			bytesize = atoi(t_filebytesize.c_str());
 
-			float* scalar_values = ReadVolvisRaw(filepath, (size_t) bytesize, fw, fh, fd);
+      double* scalar_values = ReadVolvisRaw(filepath, (size_t)bytesize, fw, fh, fd);
 			ret = new Volume(fw, fh, fd, scalar_values);
 			ret->SetName(filepath);
 
@@ -447,7 +447,7 @@ namespace vr
 			printf("  - Volume Entries  : %d\n", fsize);
 			printf("  - Volume Size     : [%d, %d]\n", frows, fcolumns);
 
-			float* scalar_values = new float[frows * fcolumns];
+      double* scalar_values = new double[frows * fcolumns];
 			for ( int t = 0; t < frows * fcolumns; t++ )
 				scalar_values[t] = 0;
 

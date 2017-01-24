@@ -15,14 +15,14 @@ public:
 
 	bool Read(const char* file);
 
-	bool ReadFromVolume(const UINT32& width, const UINT32& height, const UINT32& depth, float* values);
+	bool ReadFromVolume(const UINT32& width, const UINT32& height, const UINT32& depth, double* values);
 
-	float GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
-	float GetValue(const UINT32& id);
+	double GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
+	double GetValue(const UINT32& id);
 
-	float CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
-	float CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
-	void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l);
+	double CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
+	double CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+	void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l);
 
 	void SetCurrentTimeStep(const UINT32& step)
 	{
@@ -40,7 +40,7 @@ public:
 	}
 
 private:
-	float GetQuadraticGradientNorm(const UINT32& id);
+	double GetQuadraticGradientNorm(const UINT32& id);
 
   void FillCellAdjCenter(Cell& cell);
   bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
@@ -77,9 +77,9 @@ private:
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
 
-	float* m_scalar_fx;
-	float* m_scalar_fy;
-	float* m_scalar_fz;
+	double* m_scalar_fx;
+	double* m_scalar_fy;
+	double* m_scalar_fz;
 };
 
 #endif

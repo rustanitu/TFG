@@ -27,10 +27,10 @@ namespace vr
 		: ScalarField(width, height, depth)
 	{
 		int size = m_width*m_height*m_depth;
-		m_scalar_values = new float[size];
-		//m_scalar_fx = new float[size];
-		//m_scalar_fy = new float[size];
-		//m_scalar_fz = new float[size];
+		m_scalar_values = new double[size];
+		//m_scalar_fx = new double[size];
+		//m_scalar_fy = new double[size];
+		//m_scalar_fz = new double[size];
 		for ( int i = 0; i < size; i++ )
 		{
 			m_scalar_values[i] = 0.0f;
@@ -40,17 +40,17 @@ namespace vr
 		}
 	}
 
-	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, float* scalars)
+	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, double* scalars)
 		: ScalarField(width, height, depth)
 	{
 		int size = m_width*m_height*m_depth;
-		m_scalar_values = new float[size];
-		//m_scalar_fx = new float[size];
-		//m_scalar_fy = new float[size];
-		//m_scalar_fz = new float[size];
+		m_scalar_values = new double[size];
+		//m_scalar_fx = new double[size];
+		//m_scalar_fy = new double[size];
+		//m_scalar_fz = new double[size];
 		for ( int i = 0; i < size; i++ )
 		{
-			float v = scalars[i];
+			double v = scalars[i];
 			m_scalar_values[i] = v;
 			m_max_value = fmax(m_max_value, v);
 			m_min_value = fmin(m_min_value, v);
@@ -64,13 +64,13 @@ namespace vr
 		: ScalarField(width, height, depth)
 	{
 		int size = m_width * m_height * m_depth;
-		m_scalar_values = new float[size];
-		//m_scalar_fx = new float[size];
-		//m_scalar_fy = new float[size];
-		//m_scalar_fz = new float[size];
+		m_scalar_values = new double[size];
+		//m_scalar_fx = new double[size];
+		//m_scalar_fy = new double[size];
+		//m_scalar_fz = new double[size];
 		for (int i = 0; i < size; i++)
 		{
-			float v = scalars[i];
+			double v = scalars[i];
 			m_scalar_values[i] = v;
 			m_max_value = fmax(m_max_value, v);
 			m_min_value = fmin(m_min_value, v);
@@ -102,7 +102,7 @@ namespace vr
 		m_pmax = pmax;
 	}
 
-	float Volume::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
+	double Volume::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 	{
 		UINT32 xt = std::min(x, m_width - 1);
 		UINT32 yt = std::min(y, m_height - 1);
@@ -111,16 +111,16 @@ namespace vr
 		return m_scalar_values[GetId(xt, yt, zt)];
 	}
 
-	float Volume::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
+	double Volume::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
 	{
-		float g = 0.0f;
-		float dfx = 0.0f;
-		float dfy = 0.0f;
-		float dfz = 0.0f;
+		double g = 0.0f;
+		double dfx = 0.0f;
+		double dfy = 0.0f;
+		double dfz = 0.0f;
 
-		float pdx = 0.0f;
-		float pdy = 0.0f;
-		float pdz = 0.0f;
+		double pdx = 0.0f;
+		double pdy = 0.0f;
+		double pdz = 0.0f;
 
 		int h = MASK_SIZE / 2;
 		int xinit = x - h;
@@ -129,12 +129,12 @@ namespace vr
 		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
 			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
 				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					float dx;
-					float dy;
-					float dz;
+					double dx;
+					double dy;
+					double dz;
 					m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
-					float v = GetValue(i, j, k);
+					double v = GetValue(i, j, k);
 					if (IsOutOfBoundary(i, j, k)) {
 						v = GetValue(x, y, z);
 					}
@@ -167,17 +167,17 @@ namespace vr
 		return g;
 	}
 
-	float Volume::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
+	double Volume::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 	{
 #ifndef HESSIAN
-		float g = 0.0f;
-		float dfx = 0.0f;
-		float dfy = 0.0f;
-		float dfz = 0.0f;
+		double g = 0.0f;
+		double dfx = 0.0f;
+		double dfy = 0.0f;
+		double dfz = 0.0f;
 
-		float pdx = 0.0f;
-		float pdy = 0.0f;
-		float pdz = 0.0f;
+		double pdx = 0.0f;
+		double pdy = 0.0f;
+		double pdz = 0.0f;
 
 		int h = MASK_SIZE / 2;
 		int xinit = x - h;
@@ -186,9 +186,9 @@ namespace vr
 		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
 			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
 				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					float dx;
-					float dy;
-					float dz;
+					double dx;
+					double dy;
+					double dz;
 					m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
 					int gid = GetId(i, j, k);
@@ -196,11 +196,11 @@ namespace vr
 						gid = GetId(x, y, z);
 					}
 
-					float dgx = m_scalar_fx[gid];
-					float dgy = m_scalar_fy[gid];
-					float dgz = m_scalar_fz[gid];
+					double dgx = m_scalar_fx[gid];
+					double dgy = m_scalar_fy[gid];
+					double dgz = m_scalar_fz[gid];
 					glm::vec3 ggrad(dgx, dgy, dgz);
-					float gv = glm::length(ggrad);
+					double gv = glm::length(ggrad);
 
 					pdx += abs(dx);
 					pdy += abs(dy);
@@ -228,21 +228,21 @@ namespace vr
 
 		return g;
 #else
-		float fdxdx = 0.0f;
-		float fdxdy = 0.0f;
-		float fdxdz = 0.0f;
+		double fdxdx = 0.0f;
+		double fdxdy = 0.0f;
+		double fdxdz = 0.0f;
 
-		float fdydx = 0.0f;
-		float fdydy = 0.0f;
-		float fdydz = 0.0f;
+		double fdydx = 0.0f;
+		double fdydy = 0.0f;
+		double fdydz = 0.0f;
 
-		float fdzdx = 0.0f;
-		float fdzdy = 0.0f;
-		float fdzdz = 0.0f;
+		double fdzdx = 0.0f;
+		double fdzdy = 0.0f;
+		double fdzdz = 0.0f;
 
-		float pdx = 0.0f;
-		float pdy = 0.0f;
-		float pdz = 0.0f;
+		double pdx = 0.0f;
+		double pdy = 0.0f;
+		double pdz = 0.0f;
 
 		int h = MASK_SIZE / 2;
 		int xinit = x - h;
@@ -251,13 +251,13 @@ namespace vr
 		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
 			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
 				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					float dx, dy, dz;
+					double dx, dy, dz;
 					m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
 					int id = GetId(i, j, k);
-					float fdx = m_scalar_fx[id];
-					float fdy = m_scalar_fy[id];
-					float fdz = m_scalar_fz[id];
+					double fdx = m_scalar_fx[id];
+					double fdy = m_scalar_fy[id];
+					double fdz = m_scalar_fz[id];
 
 					if (IsOutOfBoundary(i, j, k)) {
 						id = GetId(x, y, z);
@@ -299,9 +299,9 @@ namespace vr
 		fdzdz /= pdz;
 
 		int id = GetId(x, y, z);
-		float dfx = m_scalar_fx[id];
-		float dfy = m_scalar_fy[id];
-		float dfz = m_scalar_fz[id];
+		double dfx = m_scalar_fx[id];
+		double dfy = m_scalar_fy[id];
+		double dfz = m_scalar_fz[id];
 
 		glm::vec3 dx_grad(fdxdx, fdxdy, fdxdz);
 		glm::vec3 dy_grad(fdydx, fdydy, fdydz);
@@ -311,8 +311,8 @@ namespace vr
 
 		glm::vec3 grad(dfx, dfy, dfz);
 
-		float length = glm::length(grad);
-		float sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
+		double length = glm::length(grad);
+		double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
 
 		m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 		m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
@@ -320,29 +320,29 @@ namespace vr
 #endif
 	}
 
-	void Volume::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, float* g, float* l)
+	void Volume::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l)
 	{
-		float fdx = 0.0f;
-		float fdy = 0.0f;
-		float fdz = 0.0f;
+		double fdx = 0.0f;
+		double fdy = 0.0f;
+		double fdz = 0.0f;
 
-		float pdx = 0.0f;
-		float pdy = 0.0f;
-		float pdz = 0.0f;
+		double pdx = 0.0f;
+		double pdy = 0.0f;
+		double pdz = 0.0f;
 
-		float fdxdx = 0.0f;
-		float fdxdy = 0.0f;
-		float fdxdz = 0.0f;
-		float fdydy = 0.0f;
-		float fdydz = 0.0f;
-		float fdzdz = 0.0f;
+		double fdxdx = 0.0f;
+		double fdxdy = 0.0f;
+		double fdxdz = 0.0f;
+		double fdydy = 0.0f;
+		double fdydz = 0.0f;
+		double fdzdz = 0.0f;
 
-		float pdxdx = 0.0f;
-		float pdxdy = 0.0f;
-		float pdxdz = 0.0f;
-		float pdydy = 0.0f;
-		float pdydz = 0.0f;
-		float pdzdz = 0.0f;
+		double pdxdx = 0.0f;
+		double pdxdy = 0.0f;
+		double pdxdz = 0.0f;
+		double pdydy = 0.0f;
+		double pdydz = 0.0f;
+		double pdzdz = 0.0f;
 
 		int h = MASK_SIZE / 2;
 		int xinit = x - h;
@@ -351,18 +351,18 @@ namespace vr
 		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
 			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
 				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					float dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
-					float dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
-					float dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
+					double dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+					double dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+					double dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
 
-					float dxdx = m_derivativeMask.GetDxdxAt(i - xinit, j - yinit, k - zinit);
-					float dxdy = m_derivativeMask.GetDxdyAt(i - xinit, j - yinit, k - zinit);
-					float dxdz = m_derivativeMask.GetDxdzAt(i - xinit, j - yinit, k - zinit);
-					float dydy = m_derivativeMask.GetDydyAt(i - xinit, j - yinit, k - zinit);
-					float dydz = m_derivativeMask.GetDydzAt(i - xinit, j - yinit, k - zinit);
-					float dzdz = m_derivativeMask.GetDzdzAt(i - xinit, j - yinit, k - zinit);
+					double dxdx = m_derivativeMask.GetDxdxAt(i - xinit, j - yinit, k - zinit);
+					double dxdy = m_derivativeMask.GetDxdyAt(i - xinit, j - yinit, k - zinit);
+					double dxdz = m_derivativeMask.GetDxdzAt(i - xinit, j - yinit, k - zinit);
+					double dydy = m_derivativeMask.GetDydyAt(i - xinit, j - yinit, k - zinit);
+					double dydz = m_derivativeMask.GetDydzAt(i - xinit, j - yinit, k - zinit);
+					double dzdz = m_derivativeMask.GetDzdzAt(i - xinit, j - yinit, k - zinit);
 
-					float v = GetValue(i, j, k);
+					double v = GetValue(i, j, k);
 					if (IsOutOfBoundary(i, j, k)) {
 						v = GetValue(x, y, z);
 					}
@@ -414,8 +414,8 @@ namespace vr
 
 		glm::mat3 hess(dx_grad, dy_grad, dz_grad);
 
-		float length = glm::length(grad);
-		float sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
+		double length = glm::length(grad);
+		double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
 
 		m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 		m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
@@ -423,67 +423,67 @@ namespace vr
 		*l = sec_deriv;
 	}
 
-	float Volume::InterpolatedValue(float px, float py, float pz)
+	double Volume::InterpolatedValue(double px, double py, double pz)
 	{
-		float x = ((px - m_pmin.x) / (m_pmax.x - m_pmin.x)) * (float) (m_width - 1);
-		float y = ((py - m_pmin.y) / (m_pmax.y - m_pmin.y)) * (float) (m_height - 1);
-		float z = ((pz - m_pmin.z) / (m_pmax.z - m_pmin.z)) * (float) (m_depth - 1);
+		double x = ((px - m_pmin.x) / (m_pmax.x - m_pmin.x)) * (double) (m_width - 1);
+		double y = ((py - m_pmin.y) / (m_pmax.y - m_pmin.y)) * (double) (m_height - 1);
+		double z = ((pz - m_pmin.z) / (m_pmax.z - m_pmin.z)) * (double) (m_depth - 1);
 
 		UINT32 x0 = (int) x; UINT32 x1 = x0 + 1;
 		UINT32 y0 = (int) y; UINT32 y1 = y0 + 1;
 		UINT32 z0 = (int) z; UINT32 z1 = z0 + 1;
 
-		if ( x0 == (float) (m_width - 1) )
+		if ( x0 == (double) (m_width - 1) )
 		{
 			x1 = (int) x0;
 			x0 = x1 - 1;
 		}
 
-		if ( y0 == (float) (m_height - 1) )
+		if ( y0 == (double) (m_height - 1) )
 		{
 			y1 = (int) y0;
 			y0 = y1 - 1;
 		}
 
-		if ( z0 == (float) (m_depth - 1) )
+		if ( z0 == (double) (m_depth - 1) )
 		{
 			z1 = (int) z0;
 			z0 = z1 - 1;
 		}
 
-		float xd = (x - (float) x0) / (float) (x1 - x0);
-		float yd = (y - (float) y0) / (float) (y1 - y0);
-		float zd = (z - (float) z0) / (float) (z1 - z0);
+		double xd = (x - (double) x0) / (double) (x1 - x0);
+		double yd = (y - (double) y0) / (double) (y1 - y0);
+		double zd = (z - (double) z0) / (double) (z1 - z0);
 
 		// X interpolation
-		float c00 = GetValue(x0, y0, z0)*(1.0f - xd)
+		double c00 = GetValue(x0, y0, z0)*(1.0f - xd)
 			+ GetValue(x1, y0, z0)*xd;
 
-		float c10 = GetValue(x0, y1, z0)*(1.0f - xd)
+		double c10 = GetValue(x0, y1, z0)*(1.0f - xd)
 			+ GetValue(x1, y1, z0)*xd;
 
-		float c01 = GetValue(x0, y0, z1)*(1.0f - xd)
+		double c01 = GetValue(x0, y0, z1)*(1.0f - xd)
 			+ GetValue(x1, y0, z1)*xd;
 
-		float c11 = GetValue(x0, y1, z1)*(1.0f - xd)
+		double c11 = GetValue(x0, y1, z1)*(1.0f - xd)
 			+ GetValue(x1, y1, z1)*xd;
 
 		// Y interpolation
-		float c0 = c00*(1.0f - yd) + c10*yd;
-		float c1 = c01*(1.0f - yd) + c11*yd;
+		double c0 = c00*(1.0f - yd) + c10*yd;
+		double c1 = c01*(1.0f - yd) + c11*yd;
 
 		// Z interpolation
-		float c = c0*(1.0f - zd) + c1*zd;
+		double c = c0*(1.0f - zd) + c1*zd;
 
 		return c;
 	}
 
-	float Volume::InterpolatedValue(lqc::Vector3f pos)
+	double Volume::InterpolatedValue(lqc::Vector3f pos)
 	{
 		return InterpolatedValue(pos.x, pos.y, pos.z);
 	}
 
-	float Volume::TrilinearScalarFunction(lqc::Vector3f pos, lqc::Vector3f rayeye, lqc::Vector3f raydirection)
+	double Volume::TrilinearScalarFunction(lqc::Vector3f pos, lqc::Vector3f rayeye, lqc::Vector3f raydirection)
 	{
 		float fx = pos.x, fy = pos.y, fz = pos.z;
 

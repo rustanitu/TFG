@@ -295,7 +295,7 @@ namespace vr
 	return false;
 	}*/
 
-	float TransferFunction1D::CenteredTriangleFunction(float max, float base, float center, const int& v)
+	double TransferFunction1D::CenteredTriangleFunction(double max, double base, double center, const int& v)
 	{
 		//  boundary center
 		//         .
@@ -310,9 +310,9 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-    float top = 1.0f / sqrt(PI * 2 * base * base);
-		float a = 0.0f;
-		float x = m_values[v];
+    double top = 1.0f / sqrt(PI * 2 * base * base);
+		double a = 0.0f;
+		double x = m_values[v];
 		if (x >= -base && x <= base)
 		{
       if (x >= center && center < base)
@@ -330,11 +330,11 @@ namespace vr
     return fmin(a, max);
 	}
 
-	float TransferFunction1D::CenteredGaussianFunction(float max, float sigma, float u, const int& v)
+	double TransferFunction1D::CenteredGaussianFunction(double max, double sigma, double u, const int& v)
 	{
-		float two_sigma_quad = 2 * sigma * sigma;
-		float x = m_values[v];
-    float g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
+		double two_sigma_quad = 2 * sigma * sigma;
+		double x = m_values[v];
+    double g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
     return fmin(g, max);
 	}
 
@@ -361,7 +361,7 @@ namespace vr
 		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
 		IupPlotBegin(m_bx_plot, 0);
 
-		float amax = 1.0f;
+		double amax = 1.0f;
 
 		double last_a = 0.0f;
 		int b = 0;
@@ -373,7 +373,7 @@ namespace vr
 		for ( int i = 0; i < m_values_size; ++i )
 		{
 			int value = m_indexes[i];
-			float x = m_values[value];
+			double x = m_values[value];
 
 			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
       double a = 0.0f;
@@ -450,7 +450,7 @@ namespace vr
 		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
 		IupPlotBegin(m_bx_plot, 0);
 
-		float amax = 0.0f;
+		double amax = 0.0f;
 		for (int i = 0; i < m_values_size; ++i) {
 			amax = fmax(amax, m_values[i]);
 		}
@@ -458,7 +458,7 @@ namespace vr
 		double last_a = 0.0f;
 		int b = 0;
 		bool finished = true;
-		float base = m_thickness;
+		double base = m_thickness;
 
 		// Assign opacity to transfer function
 		for (int i = 0; i < m_values_size; ++i)
@@ -507,7 +507,7 @@ namespace vr
 	/// <param name="distances">The distances to the closest boundaries.</param>
 	/// <param name="sigmas">The sigmas of the boundaries.</param>
 	/// <param name="n">The input arrays' size.</param>
-	void TransferFunction1D::SetClosestBoundaryDistances(int* values, float* distances, float* h, const int& n)
+	void TransferFunction1D::SetClosestBoundaryDistances(int* values, double* distances, double* h, const int& n)
 	{
 		if (n < 2 || n > MAX_V)
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
@@ -532,7 +532,7 @@ namespace vr
       m_center = h;
 	}
 
-	void TransferFunction1D::SetAlphaValues(int* values, float* alphas, const int& n)
+	void TransferFunction1D::SetAlphaValues(int* values, double* alphas, const int& n)
 	{
 		if ( n < 2 || n > MAX_V )
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
@@ -553,7 +553,7 @@ namespace vr
 			m_values = alphas;
 	}
 
-	void TransferFunction1D::SetPeakPoints(int* peaks, float* values, const int& n)
+	void TransferFunction1D::SetPeakPoints(int* peaks, double* values, const int& n)
 	{
 		if (n < 2 || n > MAX_V)
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");

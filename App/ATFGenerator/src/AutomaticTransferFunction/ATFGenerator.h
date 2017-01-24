@@ -72,8 +72,8 @@ public:
 	/// <param name="x">The voxel's x component.</param>
 	/// <param name="y">The voxel's y component.</param>
 	/// <param name="z">The voxel's z component.</param>
-	/// <returns>Returns the float aproximated gradient.</returns>
-	float GetValue(int x, int y, int z);
+	/// <returns>Returns the double aproximated gradient.</returns>
+	double GetValue(int x, int y, int z);
 
 	/// <summary>
 	/// Gets an aproximation of the voxel's gradient, using 
@@ -82,8 +82,8 @@ public:
 	/// <param name="x">The voxel's x component.</param>
 	/// <param name="y">The voxel's y component.</param>
 	/// <param name="z">The voxel's z component.</param>
-	/// <returns>Returns the float aproximated gradient.</returns>
-	float GetGradient(const UINT32& x, const UINT32& y, const UINT32& z);
+	/// <returns>Returns the double aproximated gradient.</returns>
+	double GetGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 
 	/// <summary>
 	/// Gets an aproximation of the voxel's laplacian, using 
@@ -92,8 +92,8 @@ public:
 	/// <param name="x">The voxel's x component.</param>
 	/// <param name="y">The voxel's y component.</param>
 	/// <param name="z">The voxel's z component.</param>
-	/// <returns>Returns the float aproximated laplacian.</returns>
-	float GetLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
+	/// <returns>Returns the double aproximated laplacian.</returns>
+	double GetLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
 
 	/// <summary>
 	/// Generates a PGM image file with a scalarfield slice.
@@ -182,12 +182,12 @@ public:
 		m_dist_plot = ih;
 	}
 
-  float GetMinAverageGradient()
+  double GetMinAverageGradient()
 	{
 		return m_min_average_gradient;
 	}
 
-	float GetMaxAverageGradient()
+	double GetMaxAverageGradient()
 	{
 		return m_max_average_gradient;
 	}
@@ -216,47 +216,47 @@ private:
 	/// boundary associated to it. This information is 
 	/// extracted from the summed voxel histogram.
 	/// </summary>
-	/// <returns>Returns a float array with the distances associated 
+	/// <returns>Returns a double array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
-	void GetBoundaryDistancies(float* x, float* h, int *v, UINT32 *n);
+	void GetBoundaryDistancies(double* x, double* h, int *v, UINT32 *n);
 
 	void SmoothCurves();
 
-	void SmoothCurveWithGaussian(float* v, const int& n, const int& times);
+	void SmoothCurveWithGaussian(double* v, const int& n, const int& times);
 
 	template<typename T>
 	T* SmoothCurveWithMidpoints(T* v, const int& n, const int& times);
 
-	void GetValidValuesAndIndexes(float* vin, const int& nin, float*& vout, int*& indexes, int& nout);
+	void GetValidValuesAndIndexes(double* vin, const int& nin, double*& vout, int*& indexes, int& nout);
 
 	void SetDefaultColor();
 
-	int GetMaxPoints(const float* curve, const int* indexes, const int& curve_size, int*& max_indexes);
-	int GetInflectionPoints(const float* curve, const int* indexes, const int& curve_size, int*& inflct_indexes);
+	int GetMaxPoints(const double* curve, const int* indexes, const int& curve_size, int*& max_indexes);
+	int GetInflectionPoints(const double* curve, const int* indexes, const int& curve_size, int*& inflct_indexes);
 
 private:
-	float m_max_average_gradient;
-	float m_min_average_gradient;
-	float m_max_average_laplacian;
-	float m_min_average_laplacian;
+	double m_max_average_gradient;
+	double m_min_average_gradient;
+	double m_max_average_laplacian;
+	double m_min_average_laplacian;
 
 	/// <summary>
 	/// The gradient of each scalarfield voxel.
 	/// </summary>
-	float* m_scalar_gradient;
+	double* m_scalar_gradient;
 
 	/// <summary>
 	/// The laplacian of each scalarfield voxel.
 	/// </summary>
-	float* m_scalar_laplacian;
+	double* m_scalar_laplacian;
 
-	float m_average_gradient[ATFG_V_RANGE];
-	float m_average_laplacian[ATFG_V_RANGE];
+	double m_average_gradient[ATFG_V_RANGE];
+	double m_average_laplacian[ATFG_V_RANGE];
 
-	float m_min_gradient[ATFG_V_RANGE];
-	float m_min_laplacian[ATFG_V_RANGE];
-	float m_max_gradient[ATFG_V_RANGE];
-	float m_max_laplacian[ATFG_V_RANGE];
+	double m_min_gradient[ATFG_V_RANGE];
+	double m_min_laplacian[ATFG_V_RANGE];
+	double m_max_gradient[ATFG_V_RANGE];
+	double m_max_laplacian[ATFG_V_RANGE];
 
 	int m_max_size;
 	int* m_max_indexes;
@@ -279,7 +279,7 @@ private:
 	/// </summary>
 	bool m_initialized;
 
-	float m_gtresh;
+	double m_gtresh;
 	UINT32 m_min_hist;
 
 	Ihandle* m_deriv_plot;

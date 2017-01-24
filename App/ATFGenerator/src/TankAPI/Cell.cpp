@@ -33,7 +33,7 @@ int Cell::GetAdjcentCellIndex(const int& face) const
   return m_adjcell_index[face];
 }
 
-float Cell::GetValue(const int& step) const
+double Cell::GetValue(const int& step) const
 {
   //if (step < 0 || step > m_nsteps - 1)
   //  return -1;
@@ -59,7 +59,7 @@ bool Cell::SetAdjcentCellIndex(const int& face, const int& index)
   return true;
 }
 
-bool Cell::SetValue(const int& step, const float& value)
+bool Cell::SetValue(const int& step, const double& value)
 {
   //if (step < 0 || step > m_nsteps - 1)
   //  return false;
