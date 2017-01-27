@@ -4,8 +4,13 @@
 #include <iostream>
 #include <math/Vector3.h>
 #include <math/Vector4.h>
-#include <glutils/GLTexture1d.h>
 #include <vector>
+#include <iup.h>
+#include <glutils/GLTexture1D.h>
+
+#define MAX_V 256
+#define PI 3.1415926535897932384626433832795
+#define GAUSS_PERC_AT_SIGMA 0.60653065971
 
 namespace vr
 {
@@ -25,9 +30,14 @@ namespace vr
 	class TransferControlPoint
 	{
 	public:
-    TransferControlPoint(unsigned int r, unsigned int g, unsigned int b, int isovalue);
+    TransferControlPoint (unsigned int r, unsigned int g, unsigned int b, int isovalue);
     TransferControlPoint (double r, double g, double b, int isovalue);
 		TransferControlPoint (double alpha, int isovalue);
+    TransferControlPoint()
+    {
+      m_color = lqc::Vector4d::Zero();
+      m_isoValue = 0;
+    }
 
 		lqc::Vector3d operator -(const TransferControlPoint& v)  
 		{  
@@ -71,24 +81,25 @@ namespace vr
 	class TransferFunction
 	{
 	public:
-		TransferFunction () {}// m_vol = NULL; }
+		TransferFunction () {}
 		~TransferFunction () {}
 
 		virtual const char* GetNameClass () = 0;
 		virtual lqc::Vector4d Get (double value) = 0;
 
-		virtual gl::GLTexture1D* GenerateTexture_1D_RGBA () { return NULL; }
+		virtual gl::GLTexture* GenerateTexture_RGBA () { return NULL; }
 		
 		std::string GetName () { return m_name; }
 		void SetName (std::string name) { m_name = name; }
 
-		void SetVolume(vr::ScalarField* vol);
-		vr::ScalarField* GetVolume() const;
+    void SetTransferFunctionPlot(Ihandle * ih)
+    {
+      m_tf_plot = ih;
+    }
 		
 	protected:
 		std::string m_name;
-	private:
-		//vr::ScalarField* m_vol;
+    Ihandle * m_tf_plot;
 	};
 
 	/*class TransferFunction1D : public TransferFunction
@@ -100,7 +111,7 @@ namespace vr
 		virtual const char* GetNameClass ();
 		virtual lqc::Vector4d Get (double value);
 
-		virtual GLTexture1D* GenerateTexture_1D_RGBA ();
+		virtual GLTexture1D* GenerateTexture_RGBA ();
 
 		void AddRGBControlPoint (TransferControlPoint rgb);
 		void AddAlphaControlPoint (TransferControlPoint alpha);

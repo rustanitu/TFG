@@ -7,7 +7,6 @@
 #include <glutils/GLUtils.h>
 #include <math/MUtils.h>
 #include <lqc/lqcdefines.h>
-
 #include <volrend/Utils.h>
 
 #include <fstream>
@@ -373,9 +372,11 @@ void RendererGLSL2P::CreateSecondPass ()
 	};
 
 	m_shader_secondpass = new gl::GLShader ("shader/StructuredDataset/raycasting.vert",
-		"shader/StructuredDataset/RiemannSummation/raycasting.frag"
-		//"shader/StructuredDataset/Composition/fronttoback.frag"
-		//"shader/StructuredDataset/Composition/backtofront.frag"
+#ifdef TF2D
+		"shader/StructuredDataset/RiemannSummation/raycasting2D.frag"
+#else
+    "shader/StructuredDataset/RiemannSummation/raycasting.frag"
+#endif
 	);
 
 	m_shader_secondpass->SetUniformMatrix4f ("ModelMatrix", lqc::IDENTITY_MATRIX);
@@ -384,8 +385,15 @@ void RendererGLSL2P::CreateSecondPass ()
 	
 	m_shader_secondpass->SetUniformTexture2D ("ExitPoints", m_glfbo->m_backtexture, 0);
 	if (m_glsl_volume) m_shader_secondpass->SetUniformTexture3D ("VolumeTex", m_glsl_volume->GetTextureID (), 1);
-	if (m_glsl_transfer_function) m_shader_secondpass->SetUniformTexture1D ("TransferFunc", m_glsl_transfer_function->GetTextureID (), 2);
 	if (m_glsl_activetex) m_shader_secondpass->SetUniformTexture3D("ActiveTex", m_glsl_activetex->GetTextureID(), 3);
+  if (m_glsl_transfer_function)
+  {
+#ifdef TF2D
+    m_shader_secondpass->SetUniformTexture2D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+#else
+    m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+#endif
+  }
 	
 	m_shader_secondpass->SetUniformInt ("ScreenSizeW", m_sdr_width);
 	m_shader_secondpass->SetUniformInt ("ScreenSizeH", m_sdr_height);
@@ -451,7 +459,7 @@ void RendererGLSL2P::CreateSecondPass ()
 	gl::GLArrayObject::Unbind ();
 }
 
-void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes)
+void RendererGLSL2P::ReloadVolume(ATFGenerator* atfg, bool resetslicesizes)
 {
 	printf("--------------------------------------------------\n");
 	printf("RendererGLSL2P: Reload volume.\n");
@@ -462,6 +470,8 @@ void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes
 	delete m_glsl_activetex;
 	m_glsl_activetex = NULL;
 
+  vr::ScalarField* volume = atfg->GetScalarField();
+
 	if (resetslicesizes)
 	{
 		m_init_slice_x = 0; m_last_slice_x = volume->GetWidth ();
@@ -469,13 +479,17 @@ void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes
 		m_init_slice_z = 0; m_last_slice_z = volume->GetDepth ();
 	}
 
+#ifdef TF2D
+  m_glsl_volume = vr::GenerateRGTexture(atfg, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
+#else
 	m_glsl_volume = vr::GenerateRTexture (volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
+#endif
 
 	if (m_glsl_volume)
 	{
 		m_glsl_activetex = vr::GenerateR8UITexture(volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
 
-		m_shader_secondpass->Bind ();
+    m_shader_secondpass->Bind ();
 
 		if (m_glsl_activetex)
 		{
@@ -512,24 +526,26 @@ void RendererGLSL2P::ReloadVolume (vr::ScalarField* volume, bool resetslicesizes
 	}
 }
 
-void RendererGLSL2P::ReloadTransferFunction (vr::TransferFunction* tfunction)
+void RendererGLSL2P::ReloadTransferFunction(vr::TransferFunction* tfunction)
 {
 	printf("--------------------------------------------------\n");
 	printf("RendererGLSL2P: Reload TF.\n");
 
 	delete m_glsl_transfer_function;
 	m_glsl_transfer_function = NULL;
-	
 	if ( tfunction )
 	{
-		m_glsl_transfer_function = tfunction->GenerateTexture_1D_RGBA();
+		m_glsl_transfer_function = tfunction->GenerateTexture_RGBA();
 
-		if ( m_glsl_transfer_function )
-		{
-			m_shader_secondpass->Bind();
+    if (m_glsl_transfer_function) {
+      m_shader_secondpass->Bind();
 
-			m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
-			m_shader_secondpass->BindUniform("TransferFunc");
+#ifdef TF2D
+      m_shader_secondpass->SetUniformTexture2D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+#else
+      m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+#endif
+      m_shader_secondpass->BindUniform("TransferFunc");
 
 			m_shader_secondpass->Unbind();
 			printf("RendererGLSL2P: TF reloaded.\n");

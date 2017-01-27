@@ -26,7 +26,7 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
 			if (!m_renderer.m_glsl_volume || Viewer::Instance()->m_volumename.compare(m_volumename) != 0)
 			{
 				m_volumename = Viewer::Instance ()->m_volumename;
-				m_renderer.ReloadVolume (Viewer::Instance ()->m_volume);
+				m_renderer.ReloadVolume (Viewer::Instance ()->m_atfg);
 			}
 			if (!m_renderer.m_glsl_transfer_function || Viewer::Instance ()->m_tf_name.compare (m_trasnferfunctionname) != 0)
 			{
@@ -277,7 +277,7 @@ void ViewMethodGLSL2P::ResetShaders (std::string shadername)
 
 void ViewMethodGLSL2P::ApplyInputSliceSizes ()
 {
-	m_renderer.ReloadVolume (Viewer::Instance()->m_volume, false);
+	m_renderer.ReloadVolume (Viewer::Instance()->m_atfg, false);
 }
 
 void ViewMethodGLSL2P::SetSliceSizes (int ix, int lx, int iy, int ly, int iz, int lz)

@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+#ifdef TF2D
+#include <iup_mglplot.h>
+#endif
+
 //////////////////////
 // Public Callbacks //
 //////////////////////
@@ -21,6 +25,22 @@ int ViewerInterface::Keyboard_CB (Ihandle *ih, int c, int press)
 int ViewerInterface::Button_CB (Ihandle* ih, int button, int pressed, int x, int y, char* status)
 {
 	return Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->Button_CB (ih, button, pressed, x, y, status);
+}
+
+int ViewerInterface::Slider_Button_CB (Ihandle* ih, double val)
+{
+  Viewer::MarkOutdated();
+  return IUP_DEFAULT;
+}
+
+int ViewerInterface::PREDRAW_CB(Ihandle* ih)
+{
+  return IUP_DEFAULT;
+}
+
+int ViewerInterface::POSTDRAW_CB(Ihandle* ih)
+{
+  return IUP_DEFAULT;
 }
 
 int ViewerInterface::Motion_CB (Ihandle *ih, int x, int y, char *status)
@@ -439,8 +459,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
 	IupSetAttribute(sgima_bar, "ALIGNMENT", "ACENTER");
 	IupSetAttribute(sgima_bar, "RASTERSIZE", "0x200");
-	IupSetCallback(sgima_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetBoundaryThickness);
-	IupSetCallback(sgima_bar, "LEAVEWINDOW_CB", (Icallback)Viewer::MarkOutdated);
+  IupSetCallback(sgima_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetBoundaryThickness);
+  IupSetCallback(sgima_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
 
 	m_gtresh_bar = IupVal("VERTICAL");
 	IupSetAttribute(m_gtresh_bar, "ACTIVE", "YES");
@@ -450,8 +470,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(m_gtresh_bar, "EXPAND", "HORIZONTAL");
 	IupSetAttribute(m_gtresh_bar, "ALIGNMENT", "ACENTER");
 	IupSetAttribute(m_gtresh_bar, "RASTERSIZE", "0x200");
-	IupSetCallback(m_gtresh_bar, "VALUECHANGED_CB", (Icallback)Viewer::SetGTresh);
-	IupSetCallback(m_gtresh_bar, "LEAVEWINDOW_CB", (Icallback)Viewer::MarkOutdated);
+  IupSetCallback(m_gtresh_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetGTresh);
+  IupSetCallback(m_gtresh_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
 
 	Ihandle* atfg_label = IupLabel("BThick    GTresh");
 	Ihandle* atfg_boundary_label = IupLabel("Boundary");
@@ -677,11 +697,18 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute (m_iup_main_dialog, "MENU", "ViewerInterfaceIupMenu");
 	IupSetAttribute (m_iup_main_dialog, "TITLE", "Volume Visualization");
 	
+#ifdef TF2D
+  m_tf_plot = IupMglPlot();
+#else
 	m_tf_plot = IupPlot();
-	IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
-	IupSetAttribute(m_tf_plot, "LEGEND", "YES");
-	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
-	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
+#endif
+
+  IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
+  IupSetAttribute(m_tf_plot, "LEGEND", "YES");
+  IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
+  IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
+  IupSetCallback(m_tf_plot, "PREDRAW_CB", PREDRAW_CB);
+  IupSetCallback(m_tf_plot, "POSTDRAW_CB", POSTDRAW_CB);
 
 	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
 	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");

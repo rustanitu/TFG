@@ -40,7 +40,7 @@ public:
   ~ERNRenderer ();
 
   /*! Initialize the Renderer objects.*/
-  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices = true);
+  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture* tf, bool resetslices = true);
 
   /*! Render a frame of the scene.*/
   bool Render (int Width, int Height);
@@ -116,7 +116,7 @@ public:
   /*! Store the gradient texture of the current volume.*/
   gl::GLTexture3D* m_glsl_gradient;
   /*! Store the texture of the current transfer function.*/
-  gl::GLTexture1D* m_glsl_transfer_function;
+  gl::GLTexture* m_glsl_transfer_function;
 
 private:
   /*! First pass of Rendering algorithm.

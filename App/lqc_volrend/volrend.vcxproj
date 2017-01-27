@@ -11,11 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\glutils\GLTexture.h" />
     <ClInclude Include="..\include\volrend\RAWFile.h" />
     <ClInclude Include="..\include\volrend\Reader.h" />
     <ClInclude Include="..\include\volrend\ScalarField.h" />
     <ClInclude Include="..\include\volrend\TransferFunction.h" />
     <ClInclude Include="..\include\volrend\TransferFunction1D.h" />
+    <ClInclude Include="..\include\volrend\TransferFunction2D.h" />
     <ClInclude Include="..\include\volrend\TransferFunctionGersa.h" />
     <ClInclude Include="..\include\volrend\TransferFunctionGroups.h" />
     <ClInclude Include="..\include\volrend\TransferFunctions_tf.h" />
@@ -29,6 +31,7 @@
     <ClCompile Include="src\Reader.cpp" />
     <ClCompile Include="src\TransferFunction.cpp" />
     <ClCompile Include="src\TransferFunction1D.cpp" />
+    <ClCompile Include="src\TransferFunction2D.cpp" />
     <ClCompile Include="src\TransferFunctionGersa.cpp" />
     <ClCompile Include="src\TransferFunctionGroups.cpp" />
     <ClCompile Include="src\Utils.cpp" />

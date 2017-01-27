@@ -47,6 +47,12 @@
     <ClInclude Include="..\include\volrend\VolWriter.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\volrend\TransferFunction2D.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\glutils\GLTexture.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TransferFunction1D.cpp">
@@ -74,6 +80,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\VolWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransferFunction2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

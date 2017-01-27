@@ -41,7 +41,7 @@ void RendererEquidistant::Destroy ()
   m_glfbo = NULL;
 }
 
-void RendererEquidistant::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
+void RendererEquidistant::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture* tf, bool resetslices)
 {
   canvas_width = CurrentWidth;
   canvas_height = CurrentHeight;
@@ -201,7 +201,7 @@ void RendererEquidistant::ReloadTransferFunction (vr::TransferFunction* tfunctio
   if (m_glsl_transfer_function) delete m_glsl_transfer_function;
   m_glsl_transfer_function = NULL;
 
-  m_glsl_transfer_function = tfunction->GenerateTexture_1D_RGBA ();
+  m_glsl_transfer_function = tfunction->GenerateTexture_RGBA ();
 
   if (m_glsl_transfer_function)
   {

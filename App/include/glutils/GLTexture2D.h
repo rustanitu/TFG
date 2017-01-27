@@ -2,10 +2,11 @@
 #define LQC_GL_TEXTURE2D_H
 
 #include <glutils/GLUtils.h>
+#include <glutils/GLTexture.h>
 
 namespace gl
 {
-  class GLTexture2D
+  class GLTexture2D : public GLTexture
   {
   public:
     GLTexture2D (unsigned int width, unsigned int height);

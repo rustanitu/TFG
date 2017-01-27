@@ -2,7 +2,6 @@
 #define VOLREND_TRANSFERFUNCTION_GROUPS_H
 
 #include <volrend/TransferFunction.h>
-
 #include <vector>
 #include <iostream>
 
@@ -28,7 +27,7 @@ namespace vr
     virtual const char* GetNameClass ();
     virtual lqc::Vector4d Get (double value);
 
-    virtual gl::GLTexture1D* GenerateTexture_1D_RGBA ();
+    virtual gl::GLTexture1D* GenerateTexture_RGBA ();
 
     bool AddGroup (int value, lqc::Vector4d color);
 

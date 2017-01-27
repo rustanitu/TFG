@@ -140,8 +140,8 @@ public:
 
 	bool SaveSnapshot (char* filename);
 
-	static int SetBoundaryThickness(Ihandle* ih);
-	static int SetGTresh(Ihandle* ih);
+  static int SetBoundaryThickness(Ihandle* ih, double val);
+	static int SetGTresh(Ihandle* ih, double val);
 	static int SetBoundary(Ihandle* ih, int boundary);
 	static int SetBxFunction(int set);
 	static int MarkOutdated();

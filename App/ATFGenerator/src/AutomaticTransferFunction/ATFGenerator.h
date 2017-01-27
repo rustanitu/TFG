@@ -7,6 +7,7 @@
 
 #include "IATFGenerator.h"
 #include <volrend\TransferFunction1D.h>
+#include <volrend\TransferFunction2D.h>
 #include <iup.h>
 
 /*************************/
@@ -16,6 +17,8 @@
 #define SQRT_E 1.6487212707
 #define ATFG_V_RANGE 256
 #define ATFG_V_MAX (ATFG_V_RANGE - 1)
+
+#define TF2D
 
 class TransferFunction;
 
@@ -219,6 +222,7 @@ private:
 	/// <returns>Returns a double array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
 	void GetBoundaryDistancies(double* x, double* h, int *v, UINT32 *n);
+  void GetBoundaryDistancies2D(double** x);
 
 	void SmoothCurves();
 
@@ -252,6 +256,7 @@ private:
 
 	double m_average_gradient[ATFG_V_RANGE];
 	double m_average_laplacian[ATFG_V_RANGE];
+  double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
 
 	double m_min_gradient[ATFG_V_RANGE];
 	double m_min_laplacian[ATFG_V_RANGE];
@@ -271,7 +276,7 @@ private:
 	/// <summary>
 	/// The transfer function generated automatically.
 	/// </summary>
-	vr::TransferFunction1D* m_transfer_function;
+	vr::TransferFunction* m_transfer_function;
 
 	/// <summary>
 	/// Inidicates if the instance has already been

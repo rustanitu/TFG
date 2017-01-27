@@ -65,7 +65,7 @@ namespace vr
       return lqc::Vector4d (0.0);
     }
 
-    virtual gl::GLTexture1D* GenerateTexture_1D_RGBA ()
+    virtual gl::GLTexture1D* GenerateTexture_RGBA ()
     {
       gl::GLTexture1D* ret = NULL;
       if (m_ctl_points.size () > 0)

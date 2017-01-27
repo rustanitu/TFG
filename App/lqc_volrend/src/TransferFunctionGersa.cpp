@@ -44,7 +44,7 @@ namespace vr
     m_cpt_alpha.clear ();
   }
 
-  gl::GLTexture1D* TransferFunctionGersa::GenerateTexture_1D_RGBA ()
+  gl::GLTexture1D* TransferFunctionGersa::GenerateTexture_RGBA ()
   {
     if (!m_built)
       Build (m_interpolation_type);

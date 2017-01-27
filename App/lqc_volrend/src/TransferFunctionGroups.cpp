@@ -37,7 +37,7 @@ namespace vr
     return vf;
   }
 
-  gl::GLTexture1D* TransferFunctionGroups::GenerateTexture_1D_RGBA ()
+  gl::GLTexture1D* TransferFunctionGroups::GenerateTexture_RGBA ()
   {
     return NULL;
   }

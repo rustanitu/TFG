@@ -37,7 +37,7 @@ ERN2DRenderer::~ERN2DRenderer ()
   Destroy ();
 }
 
-void ERN2DRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
+void ERN2DRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture* tf, bool resetslices)
 {
   canvas_width = CurrentWidth;
   canvas_height = CurrentHeight;

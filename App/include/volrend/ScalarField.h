@@ -16,7 +16,7 @@ namespace vr
 	{
 	public:
 		ScalarField() : m_width(0), m_height(0), m_depth(0), 
-			m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
+      m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_gradient(DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
 			, m_derivativeMask(MASK_SIZE)
 		{
 			printf("ScalarField criado.\n");
@@ -24,7 +24,7 @@ namespace vr
 
 		ScalarField(const UINT32& width, const UINT32& height, const UINT32& depth)
 			: m_width(width), m_height(height), m_depth(depth)
-			, m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
+      , m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_gradient(DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
 			, m_derivativeMask(MASK_SIZE)
 		{
 			printf("ScalarField criado.\n");
@@ -69,6 +69,11 @@ namespace vr
 		{
 			return m_max_gradient;
 		}
+
+    double GetMinGradient() const
+    {
+      return m_min_gradient;
+    }
 
 		double GetMinLaplacian() const
 		{
@@ -156,6 +161,7 @@ namespace vr
 		double m_max_value;
 		double m_min_value;
 		double m_max_gradient;
+    double m_min_gradient;
 		double m_min_laplacian;
 		double m_max_laplacian;
 		std::string m_name;

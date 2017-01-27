@@ -2,12 +2,10 @@
 #define VOLREND_TRANSFERFUNCTION1D_H
 
 #include <volrend/TransferFunction.h>
-
+#include <glutils/GLTexture1D.h>
 #include <vector>
 #include <iostream>
 #include <iup.h>
-
-#define MAX_V 256
 
 namespace vr
 {
@@ -20,7 +18,7 @@ namespace vr
 		virtual const char* GetNameClass ();
 		virtual lqc::Vector4d Get (double value);
 
-		virtual gl::GLTexture1D* GenerateTexture_1D_RGBA ();
+		virtual gl::GLTexture1D* GenerateTexture_RGBA ();
 
 		void AddRGBControlPoint (TransferControlPoint rgb);
 		void AddAlphaControlPoint (TransferControlPoint alpha);
@@ -68,16 +66,6 @@ namespace vr
 		void SetBoundary(int boundary)
 		{
 			m_boundary = boundary;
-		}
-
-		void SetTransferFunctionPlot(Ihandle * ih)
-		{
-			m_tf_plot = ih;
-		}
-
-		void SetBoundaryFunctionPlot(Ihandle * ih)
-		{
-			m_bx_plot = ih;
 		}
 
 		/// <summary>
@@ -128,8 +116,6 @@ namespace vr
 		int m_boundary;
 		int m_values_size;
     int m_gaussian_bx;
-		Ihandle * m_tf_plot;
-		Ihandle * m_bx_plot;
 	};
 
 }

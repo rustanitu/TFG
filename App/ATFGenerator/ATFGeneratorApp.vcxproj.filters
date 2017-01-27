@@ -538,5 +538,8 @@
     <None Include="shader\StructuredDataset\EquidistantEvaluation\riemann.frag">
       <Filter>Shader Files\StructuredDataset\3. Equidistant Evaluation</Filter>
     </None>
+    <None Include="shader\StructuredDataset\RiemannSummation\raycasting2D.frag">
+      <Filter>Shader Files\StructuredDataset\1. RiemannSummation</Filter>
+    </None>
   </ItemGroup>
 </Project>

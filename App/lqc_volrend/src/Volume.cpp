@@ -163,6 +163,7 @@ namespace vr
 
 		g = glm::length(grad);
 		m_max_gradient = fmax(m_max_gradient, g);
+    m_min_gradient = fmin(m_min_gradient, g);
 
 		return g;
 	}
@@ -399,6 +400,7 @@ namespace vr
 		glm::vec3 grad(fdx / pdx, fdy / pdy, fdz / pdz);
 		*g = glm::length(grad);
 		m_max_gradient = fmax(m_max_gradient, *g);
+    m_min_gradient = fmin(m_min_gradient, *g);
 
 		//Returning laplacian
 		fdxdx /= pdxdx;

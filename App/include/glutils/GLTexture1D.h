@@ -2,10 +2,11 @@
 #define LQC_GL_TEXTURE1D_H
 
 #include <glutils/GLUtils.h>
+#include <glutils/GLTexture.h>
 
 namespace gl
 {
-  class GLTexture1D
+  class GLTexture1D : public GLTexture
   {
   public:
     GLTexture1D (unsigned int length);

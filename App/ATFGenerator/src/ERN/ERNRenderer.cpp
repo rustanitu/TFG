@@ -47,7 +47,7 @@ ERNRenderer::~ERNRenderer ()
   Destroy ();
 }
 
-void ERNRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices)
+void ERNRenderer::CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture* tf, bool resetslices)
 {
   m_sdr_width = CurrentWidth;
   m_sdr_height = CurrentHeight;
@@ -460,7 +460,7 @@ void ERNRenderer::ReloadTransferFunction (vr::TransferFunction* tfunction)
   if (m_glsl_transfer_function) delete m_glsl_transfer_function;
   m_glsl_transfer_function = NULL;
 
-  m_glsl_transfer_function = tfunction->GenerateTexture_1D_RGBA ();
+  m_glsl_transfer_function = tfunction->GenerateTexture_RGBA ();
 
   if (m_glsl_transfer_function)
   {

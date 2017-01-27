@@ -121,7 +121,7 @@ void ERN2DViewMethod::BuildViewer ()
     m_renderer.CreateScene (Viewer::Instance ()->m_CurrentWidth,
       Viewer::Instance ()->m_CurrentHeight,
       Viewer::Instance ()->m_volume,
-      Viewer::Instance ()->m_transfer_function->GenerateTexture_1D_RGBA ());
+      Viewer::Instance ()->m_transfer_function->GenerateTexture_RGBA ());
     MarkOutdated ();
 
     printf ("ERN2DViewMethod Built\n");
@@ -160,7 +160,7 @@ void ERN2DViewMethod::ResetShaders (std::string shadername)
     Viewer::Instance ()->m_CurrentWidth,
     Viewer::Instance ()->m_CurrentHeight,
     Viewer::Instance ()->m_volume,
-    Viewer::Instance ()->m_transfer_function->GenerateTexture_1D_RGBA (),
+    Viewer::Instance ()->m_transfer_function->GenerateTexture_RGBA (),
     false);
   MarkOutdated ();
 }

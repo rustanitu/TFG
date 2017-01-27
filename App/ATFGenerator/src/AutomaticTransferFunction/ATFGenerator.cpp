@@ -125,25 +125,51 @@ void ATFGenerator::SmoothCurves()
 
 void ATFGenerator::SetDefaultColor()
 {
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(  2u,  96u, 203u, 0));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(  0u, 127u, 206u, 14));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(  0u, 152u, 193u, 28));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint( 11u, 171u, 152u, 42));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint( 83u, 175u,  30u, 57));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(129u, 178u,   0u, 71));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(165u, 181u,  15u, 85));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(195u, 183u, 160u, 99));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(216u, 184u,  22u, 113));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(236u, 184u,   0u, 127));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 182u,   0u, 142));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 164u,   0u, 156));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 149u,   0u, 170));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 133u,   0u, 184));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u, 112u,   0u, 198));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,  90u,   0u, 212));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,  66u,  11u, 227));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,  40u,  40u, 240));
-  m_transfer_function->AddRGBControlPoint(vr::TransferControlPoint(255u,   0u,   0u, 255));
+#ifdef TF2D
+  vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_transfer_function;
+  for (int i = 0; i < ATFG_V_RANGE; ++i) {
+    tf->AddRGBControlPoint(lqc::Vector3f(2u, 96u, 203u) / 255.0f, 0, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(0u, 127u, 206u) / 255.0f, 14, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(0u, 152u, 193u) / 255.0f, 28, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(11u, 171u, 152u) / 255.0f, 42, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(83u, 175u, 30u) / 255.0f, 57, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(129u, 178u, 0u) / 255.0f, 71, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(165u, 181u, 15u) / 255.0f, 85, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(195u, 183u, 160u) / 255.0f, 99, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(216u, 184u, 22u) / 255.0f, 113, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(236u, 184u, 0u) / 255.0f, 127, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 182u, 0u) / 255.0f, 142, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 164u, 0u) / 255.0f, 156, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 149u, 0u) / 255.0f, 170, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 133u, 0u) / 255.0f, 184, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 112u, 0u) / 255.0f, 198, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 90u, 0u) / 255.0f, 212, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 66u, 11u) / 255.0f, 227, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 40u, 40u) / 255.0f, 240, i);
+    tf->AddRGBControlPoint(lqc::Vector3f(255u, 0u, 0u) / 255.0f, 255, i);
+  }
+#else
+  vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_transfer_function;
+  tf->AddRGBControlPoint(vr::TransferControlPoint(  2u,  96u, 203u, 0));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(  0u, 127u, 206u, 14));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(  0u, 152u, 193u, 28));
+  tf->AddRGBControlPoint(vr::TransferControlPoint( 11u, 171u, 152u, 42));
+  tf->AddRGBControlPoint(vr::TransferControlPoint( 83u, 175u,  30u, 57));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(129u, 178u,   0u, 71));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(165u, 181u,  15u, 85));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(195u, 183u, 160u, 99));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(216u, 184u,  22u, 113));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(236u, 184u,   0u, 127));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 182u,   0u, 142));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 164u,   0u, 156));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 149u,   0u, 170));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 133u,   0u, 184));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 112u,   0u, 198));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u,  90u,   0u, 212));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u,  66u,  11u, 227));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u,  40u,  40u, 240));
+  tf->AddRGBControlPoint(vr::TransferControlPoint(255u,   0u,   0u, 255));
+#endif;
 }
 
 /// <summary>
@@ -157,15 +183,21 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 	if ( !m_initialized )
 		throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
-	delete m_transfer_function;
-	m_transfer_function = new vr::TransferFunction1D();
-	m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
-	m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
-	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
-	SetDefaultColor();
+  if (!m_transfer_function)
+  {
+#ifdef TF2D
+    m_transfer_function = new vr::TransferFunction2D();
+#else
+    m_transfer_function = new vr::TransferFunction1D();
+#endif
+    m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
+    m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
+    SetDefaultColor();
+  }
 
 	GenerateDataChart();
 
+#ifndef TF2D
 	// Gordon Transfer Function
 	double* x = new double[ATFG_V_RANGE];
   double* h = new double[ATFG_V_RANGE];
@@ -177,7 +209,27 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 	}
 	UINT32 n_v;
 	GetBoundaryDistancies(x, h, v, &n_v);
-	m_transfer_function->SetClosestBoundaryDistances(v, x, h, n_v);
+  ((vr::TransferFunction1D*)m_transfer_function)->SetClosestBoundaryDistances(v, x, h, n_v);
+#else
+  double** x = new double*[ATFG_V_RANGE];
+  if (!x)
+  {
+    printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+    return false;
+  }
+  
+  for (int i = 0; i < ATFG_V_RANGE; ++i)
+  {
+    x[i] = new double[ATFG_V_RANGE];
+    if (!x[i]) {
+      printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+      return false;
+    }
+  }
+
+  GetBoundaryDistancies2D(x);
+  ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(x);
+#endif
 	return true;
 }
 
@@ -190,7 +242,6 @@ bool ATFGenerator::ExtractTransferFunction()
 	m_transfer_function = new vr::TransferFunction1D();
 	m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
 	m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
-	m_transfer_function->SetBoundaryFunctionPlot(m_dist_plot);
 	SetDefaultColor();
 
 	GenerateDataChart();
@@ -293,7 +344,7 @@ bool ATFGenerator::ExtractTransferFunction()
 	delete[] aux_values;
 	delete[] aux_indexes;
 
-	m_transfer_function->SetPeakPoints(peaks_ids, peaks_vals, match);
+	((vr::TransferFunction1D*)m_transfer_function)->SetPeakPoints(peaks_ids, peaks_vals, match);
 
 	return true;
 }
@@ -945,6 +996,11 @@ bool ATFGenerator::GenerateHistogram()
 		double h = 0.0f;
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
 		{
+#ifdef TF2D
+      m_average_h[i][j] = -DBL_MAX;
+      UINT32 hvg_sum = 0;
+      double hvg = 0.0f;
+#endif
 			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
 			{
 				if ( m_scalar_histogram[i][j][k] > 0)
@@ -957,8 +1013,24 @@ bool ATFGenerator::GenerateHistogram()
 					g += j;// * m_scalar_histogram[i][j][k];
 					h += k;// * m_scalar_histogram[i][j][k];
 					w++;// = m_scalar_histogram[i][j][k];
+#ifdef TF2D
+          hvg_sum++;
+          hvg += k;
+#endif
 				}
 			}
+
+#ifdef TF2D
+      if (hvg_sum > 0)
+      {
+        hvg /= hvg_sum;
+        hvg = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * hvg / ATFG_V_MAX;
+        hvg += m_scalarfield->GetMinLaplacian();
+        m_average_h[i][j] = hvg;
+        m_max_average_laplacian = fmax(m_max_average_laplacian, hvg);
+        m_min_average_laplacian = fmin(m_min_average_laplacian, hvg);
+      }
+#endif
 		}
 
 		if (w > 0)
@@ -1102,6 +1174,29 @@ void ATFGenerator::GetBoundaryDistancies(double * x, double* h, int *v, UINT32 *
 	}
 
 	*n = c;
+}
+
+void ATFGenerator::GetBoundaryDistancies2D(double** x)
+{
+  assert(m_scalar_histogram && x);
+
+  double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
+  printf("Sigma: %.2f\n", sigma);
+
+  for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
+    for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
+      double g = m_average_gradient[i];
+      double l = m_average_h[i][j];
+      
+      if (l == -DBL_MAX)
+        l = m_average_laplacian[i];
+
+      if (g == -DBL_MAX || l == -DBL_MAX)
+        x[i][j] = -DBL_MAX;
+      else
+        x[i][j] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
+    }
+  }
 }
 
 int ATFGenerator::GetMaxPoints(const double* curve, const int* indexes, const int& curve_size, int*& max_indexes)

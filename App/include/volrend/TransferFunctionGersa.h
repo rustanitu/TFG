@@ -2,7 +2,6 @@
 #define VOLREND_TRANSFERFUNCTIONGERSA_H
 
 #include <volrend/TransferFunction.h>
-
 #include <vector>
 #include <iostream>
 
@@ -17,7 +16,7 @@ namespace vr
     virtual const char* GetNameClass ();
     virtual lqc::Vector4d Get (double value);
 
-    virtual gl::GLTexture1D* GenerateTexture_1D_RGBA ();
+    virtual gl::GLTexture1D* GenerateTexture_RGBA ();
 
     void AddRGBControlPoint (TransferControlPoint rgb);
     void AddAlphaControlPoint (TransferControlPoint alpha);

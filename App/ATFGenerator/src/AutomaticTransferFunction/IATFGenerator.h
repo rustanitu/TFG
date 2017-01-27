@@ -38,6 +38,11 @@ public:
   /// <returns>Returns a Transfer Function.</returns>
   virtual vr::TransferFunction* GetTransferFunction() = 0;
 
+  vr::ScalarField* GetScalarField()
+  {
+    return m_scalarfield;
+  }
+
 protected:
   /// <summary>
   /// The width of the scalarfield.

@@ -512,6 +512,7 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
 
 	g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, g);
+  m_min_gradient = fmin(m_min_gradient, g);
 
 	return g;
 }
@@ -766,6 +767,7 @@ void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& 
 	glm::vec3 grad = jacob_inv * parametric_grad;
 	*g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, *g);
+  m_min_gradient = fmin(m_min_gradient, *g);
 
 	//Returning laplacian
 	fdxdx /= pdxdx;

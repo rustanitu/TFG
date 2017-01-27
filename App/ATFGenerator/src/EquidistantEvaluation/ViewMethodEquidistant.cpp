@@ -162,7 +162,7 @@ void ViewMethodEquidistant::BuildViewer ()
     m_renderer.CreateScene (Viewer::Instance ()->m_CurrentWidth,
       Viewer::Instance ()->m_CurrentHeight,
       Viewer::Instance ()->m_volume,
-      Viewer::Instance ()->m_transfer_function->GenerateTexture_1D_RGBA ());
+      Viewer::Instance ()->m_transfer_function->GenerateTexture_RGBA ());
     MarkOutdated ();
     
     printf ("GLSL - Equidistante Built\n");
@@ -203,7 +203,7 @@ void ViewMethodEquidistant::ResetShaders (std::string shadername)
     Viewer::Instance ()->m_CurrentWidth,
     Viewer::Instance ()->m_CurrentHeight,
     Viewer::Instance ()->m_volume,
-    Viewer::Instance ()->m_transfer_function->GenerateTexture_1D_RGBA (),
+    Viewer::Instance ()->m_transfer_function->GenerateTexture_RGBA (),
     false);
   MarkOutdated ();
 }

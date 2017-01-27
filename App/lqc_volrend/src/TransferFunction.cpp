@@ -60,7 +60,7 @@ namespace vr
     m_cpt_alpha.clear();
   }
 
-  GLTexture1D* TransferFunction1D::GenerateTexture_1D_RGBA ()
+  GLTexture1D* TransferFunction1D::GenerateTexture_RGBA ()
   {
     if (!m_built)
       Build (TFInterpolationType::LINEAR);

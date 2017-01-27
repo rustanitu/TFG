@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <iup_plot.h>
 
-#define PI 3.1415926535897932384626433832795
-
 namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
@@ -60,9 +58,9 @@ namespace vr
 		m_built = false;
 	}
 
-	gl::GLTexture1D* TransferFunction1D::GenerateTexture_1D_RGBA ()
+	gl::GLTexture1D* TransferFunction1D::GenerateTexture_RGBA ()
 	{
-		printf("TransferFunction1D: GenerateTexture_1D_RGBA.\n");
+		printf("TransferFunction1D: GenerateTexture_RGBA.\n");
 
 		if (!m_built)
 			Build (m_interpolation_type);
@@ -310,7 +308,7 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-    double top = 1.0f / sqrt(PI * 2 * base * base);
+    double top = 1.0f;// / sqrt(PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_values[v];
 		if (x >= -base && x <= base)
@@ -330,11 +328,12 @@ namespace vr
     return fmin(a, max);
 	}
 
-	double TransferFunction1D::CenteredGaussianFunction(double max, double sigma, double u, const int& v)
+	double TransferFunction1D::CenteredGaussianFunction(double max, double base, double u, const int& v)
 	{
+    double sigma = base / 3.0f;
 		double two_sigma_quad = 2 * sigma * sigma;
 		double x = m_values[v];
-    double g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
+    double g = exp(-(x - u)*(x - u) / two_sigma_quad);// / sqrt(PI * two_sigma_quad);
     return fmin(g, max);
 	}
 
@@ -358,8 +357,6 @@ namespace vr
 		ClearAlphaControlPoints();
 		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
 		IupPlotBegin(m_tf_plot, 0);
-		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
-		IupPlotBegin(m_bx_plot, 0);
 
 		double amax = 1.0f;
 
@@ -375,7 +372,6 @@ namespace vr
 			int value = m_indexes[i];
 			double x = m_values[value];
 
-			IupPlotAdd(m_bx_plot, value, fmax(fmin(x, m_thickness), -m_thickness));
       double a = 0.0f;
       if (m_gaussian_bx)
 			  a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_center[value], value);
@@ -416,21 +412,6 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "DS_COLOR", "128 128 128");
 		IupSetAttribute(m_tf_plot, "REDRAW", "YES");
 
-		IupPlotEnd(m_bx_plot);
-		IupSetAttribute(m_bx_plot, "DS_MODE", "LINE");
-		IupSetAttribute(m_bx_plot, "DS_MARKSTYLE", "CIRCLE");
-		IupSetAttribute(m_bx_plot, "DS_MARKSIZE", "3");
-		IupSetAttribute(m_bx_plot, "DS_NAME", "p(v)");
-
-		IupPlotBegin(m_bx_plot, 0);
-		IupPlotAdd(m_bx_plot, 0, 0);
-		IupPlotAdd(m_bx_plot, 255, 0);
-		IupPlotEnd(m_bx_plot);
-		IupSetAttribute(m_bx_plot, "DS_NAME", "0");
-		IupSetAttribute(m_bx_plot, "DS_COLOR", "0 0 0");
-
-		IupSetAttribute(m_bx_plot, "REDRAW", "YES");
-
 		return true;
 	}
 
@@ -447,8 +428,6 @@ namespace vr
 		ClearAlphaControlPoints();
 		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
 		IupPlotBegin(m_tf_plot, 0);
-		IupSetAttribute(m_bx_plot, "CLEAR", "YES");
-		IupPlotBegin(m_bx_plot, 0);
 
 		double amax = 0.0f;
 		for (int i = 0; i < m_values_size; ++i) {

@@ -25,7 +25,7 @@ class RendererEquidistant
 {
 public:
   gl::GLTexture3D* m_glsl_volume;
-  gl::GLTexture1D* m_glsl_transfer_function;
+  gl::GLTexture* m_glsl_transfer_function;
 
 public:
   /*! Constructor*/
@@ -37,7 +37,7 @@ public:
   void Destroy ();
 
   /*! Initialize the Renderer objects.*/
-  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices = true);
+  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture* tf, bool resetslices = true);
  
   /*! Render a frame of the scene.*/
   bool Render (int Width, int Height);

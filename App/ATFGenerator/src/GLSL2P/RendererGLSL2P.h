@@ -10,6 +10,8 @@
 #include <GL/glew.h>
 #include <ctime>
 
+#include <glutils/GLTexture1D.h>
+#include <glutils/GLTexture2D.h>
 #include <glutils/GLTexture3D.h>
 #include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
@@ -21,6 +23,8 @@
 #include <glutils/GLCamera.h>
 #include <glutils/GLArrayObject.h>
 #include <glutils/GLBufferObject.h>
+
+#include "../AutomaticTransferFunction/ATFGenerator.h"
 
 #include <iup.h>
 #include <iupgl.h>
@@ -54,11 +58,11 @@ public:
 	/*! Generate the textures from volume.
 	\param volume ScalarField pointer used to generate the 3D textures.
 	*/
-	void ReloadVolume (vr::ScalarField* volume, bool resetslicesizes = true);
+	void ReloadVolume (ATFGenerator* atfg, bool resetslicesizes = true);
 	/*! Generate the texture from transfer function.
 	\param tfunction Transfer Function pointer used to generate the 1D texture.
 	*/
-	void ReloadTransferFunction (vr::TransferFunction* tfunction);
+  void ReloadTransferFunction(vr::TransferFunction* tfunction);
 	void ReloadVisibleSet(int set);
 
 	void SetXRotation (float radius);
@@ -122,7 +126,7 @@ public:
 	/*! Store the texture of the current volume.*/
 	gl::GLTexture3D* m_glsl_volume;
 	/*! Store the texture of the current transfer function.*/
-	gl::GLTexture1D* m_glsl_transfer_function;
+	gl::GLTexture* m_glsl_transfer_function;
 
 	gl::GLTexture3D* m_glsl_activetex;
 

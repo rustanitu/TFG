@@ -12,6 +12,7 @@
 #include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 #include <glutils/GLUtils.h>
+#include <glutils/GLTexture1D.h>
 #include <math/MUtils.h>
 #include <lqc/lqcdefines.h>
 
@@ -25,7 +26,7 @@ class RendererAdaptive
 {
 public:
   gl::GLTexture3D* m_glsl_volume;
-  gl::GLTexture1D* m_glsl_transfer_function;
+  gl::GLTexture* m_glsl_transfer_function;
 
 public:
   /*! Constructor*/
@@ -37,7 +38,7 @@ public:
   void Destroy ();
 
   /*! Initialize the Renderer objects.*/
-  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture1D* tf, bool resetslices = true);
+  void CreateScene (int CurrentWidth, int CurrentHeight, vr::ScalarField* volume, gl::GLTexture* tf, bool resetslices = true);
 
   /*! Render a frame of the scene.*/
   bool Render (int Width, int Height);
@@ -46,7 +47,7 @@ public:
   void MouseMotionCb (int x, int y, char *status);
   
   void ReloadVolume (vr::ScalarField* volume);
-  void ReloadTransferFunction (vr::TransferFunction* tfunction);
+  void ReloadTransferFunction(vr::TransferFunction* tfunction);
   void ResetModelMatrix ();
   void AutoResizeGeometry (vr::ScalarField* volume, int Width, int Height, bool stop_bef_shad_operations = false);
 

@@ -248,6 +248,7 @@
     <None Include="shader\StructuredDataset\IterativeAdaptiveSimpson\f_decoupled.frag" />
     <None Include="shader\StructuredDataset\raycasting.vert" />
     <None Include="shader\StructuredDataset\RiemannSummation\raycasting.frag" />
+    <None Include="shader\StructuredDataset\RiemannSummation\raycasting2D.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

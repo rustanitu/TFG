@@ -475,7 +475,7 @@ namespace vr
 
 	TransferFunction* ReadTransferFunction(std::string file)
 	{
-		TransferFunction* ret = NULL;
+    TransferFunction* ret = NULL;
 
 		int found = file.find_last_of('.');
 		std::string extension = file.substr(found + 1);
@@ -496,7 +496,7 @@ namespace vr
 		return ret;
 	}
 
-	TransferFunction* ReadTransferFunction_tf1d(std::string file)
+  TransferFunction* ReadTransferFunction_tf1d(std::string file)
 	{
 		std::ifstream myfile(file);
 		if ( myfile.is_open() )
@@ -550,7 +550,7 @@ namespace vr
 		return NULL;
 	}
 
-	TransferFunction* ReadTransferFunction_tf(std::string file)
+  TransferFunction* ReadTransferFunction_tf(std::string file)
 	{
 		TransferFunction_tf* transfer_functions = new TransferFunction_tf();
 
@@ -624,7 +624,7 @@ namespace vr
 		return transfer_functions;
 	}
 
-	TransferFunction* ReadTransferFunction_tfg1d(std::string file)
+  TransferFunction* ReadTransferFunction_tfg1d(std::string file)
 	{
 		std::ifstream myfile(file);
 		if ( myfile.is_open() )
@@ -661,7 +661,7 @@ namespace vr
 		return NULL;
 	}
 
-	TransferFunction* ReadTransferFunction_tfgersa(std::string file)
+  TransferFunction* ReadTransferFunction_tfgersa(std::string file)
 	{
 		std::ifstream myfile(file);
 		if ( myfile.is_open() )
