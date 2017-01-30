@@ -175,11 +175,6 @@ public:
 		m_deriv_plot = ih;
 	}
 
-	void SetTransferFunctionPlot(Ihandle * ih)
-	{
-		m_tf_plot = ih;
-	}
-
 	void SetBoundaryDistancePlot(Ihandle * ih)
 	{
 		m_dist_plot = ih;
@@ -288,7 +283,6 @@ private:
 	UINT32 m_min_hist;
 
 	Ihandle* m_deriv_plot;
-	Ihandle* m_tf_plot;
 	Ihandle* m_dist_plot;
 };
 

@@ -33,14 +33,43 @@ int ViewerInterface::Slider_Button_CB (Ihandle* ih, double val)
 	return IUP_DEFAULT;
 }
 
-int ViewerInterface::PREDRAW_CB(Ihandle* ih)
+int ViewerInterface::CLOSE_CB_TransferFunction(Ihandle* ih)
 {
+	Viewer::Instance()->m_gui.m_show_tf_dialog = false;
 	return IUP_DEFAULT;
 }
 
-int ViewerInterface::POSTDRAW_CB(Ihandle* ih)
+int ViewerInterface::CLOSE_CB_Derivatives(Ihandle* ih)
 {
+	Viewer::Instance()->m_gui.m_show_derivative_dialog = false;
 	return IUP_DEFAULT;
+}
+
+void ViewerInterface::CleanPlot()
+{
+	char* rotation = IupGetAttribute(m_tf_plot, "ROTATE");
+	char* zoom = IupGetAttribute(m_tf_plot, "ZOOM");
+	IupHide(m_tf_plot_dialog);
+
+	IupSetAttribute(m_tf_plot, "CLEAR", NULL);
+	//delete m_tf_plot;
+	//delete m_tf_plot_dialog;
+
+	m_tf_plot = IupMglPlot();
+
+	IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
+	IupSetAttribute(m_tf_plot, "LEGEND", "YES");
+	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
+	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
+	IupSetAttribute(m_tf_plot, "ZOOM", zoom);
+	IupSetAttribute(m_tf_plot, "ROTATE", rotation);
+	//free(rotation);
+	//free(zoom);
+
+	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
+	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
+	IupSetAttribute(m_tf_plot_dialog, "SIZE", "HALFxFULL");
+	IupSetCallback(m_tf_plot_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
 }
 
 int ViewerInterface::Motion_CB (Ihandle *ih, int x, int y, char *status)
@@ -707,12 +736,11 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(m_tf_plot, "LEGEND", "YES");
 	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
 	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
-	IupSetCallback(m_tf_plot, "PREDRAW_CB", PREDRAW_CB);
-	IupSetCallback(m_tf_plot, "POSTDRAW_CB", POSTDRAW_CB);
 
 	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
 	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
 	IupSetAttribute(m_tf_plot_dialog, "SIZE", "HALFxFULL");
+	IupSetCallback(m_tf_plot_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
 	
 	m_deriv_plot = IupPlot();
 	IupSetAttribute(m_deriv_plot, "SYNCVIEW", "YES");
@@ -723,6 +751,10 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	m_deriv_plot_dialog = IupDialog(IupVbox(m_deriv_plot, NULL));
 	IupSetAttribute(m_deriv_plot_dialog, "TITLE", "Derivative Functions");
 	IupSetAttribute(m_deriv_plot_dialog, "SIZE", "HALFxFULL");
+	IupSetCallback(m_deriv_plot_dialog, "CLOSE_CB", CLOSE_CB_Derivatives);
+
+	m_show_tf_dialog = false;
+	m_show_derivative_dialog = false;
 
 	m_dist_plot = IupPlot();
 	IupSetAttribute(m_dist_plot, "SYNCVIEW", "YES");
@@ -752,9 +784,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 int ViewerInterface::ShowPlots()
 {
-	IupShowXY(Viewer::Instance()->m_gui.m_deriv_plot_dialog, IUP_LEFT, IUP_TOP);
-	//IupShow(Viewer::Instance()->m_gui.m_dist_plot_dialog);
-	IupShowXY(Viewer::Instance()->m_gui.m_tf_plot_dialog, IUP_RIGHT, IUP_TOP);
+	Viewer::Instance()->m_gui.m_show_tf_dialog = true;
+	Viewer::Instance()->m_gui.m_show_derivative_dialog = true;
 	return IUP_DEFAULT;
 }
 

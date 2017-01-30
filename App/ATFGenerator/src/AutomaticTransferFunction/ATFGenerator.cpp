@@ -45,7 +45,6 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_gtresh(0.0f)
 , m_min_hist(0)
 , m_deriv_plot(NULL)
-, m_tf_plot(NULL)
 , m_dist_plot(NULL)
 , m_max_average_gradient(-DBL_MAX)
 , m_min_average_gradient(DBL_MAX)
@@ -191,7 +190,6 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 		m_transfer_function = new vr::TransferFunction1D();
 #endif
 		m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
-		m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
 		SetDefaultColor();
 	}
 
@@ -241,7 +239,6 @@ bool ATFGenerator::ExtractTransferFunction()
 	delete m_transfer_function;
 	m_transfer_function = new vr::TransferFunction1D();
 	m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
-	m_transfer_function->SetTransferFunctionPlot(m_tf_plot);
 	SetDefaultColor();
 
 	GenerateDataChart();

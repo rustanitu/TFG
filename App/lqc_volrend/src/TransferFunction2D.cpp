@@ -364,7 +364,8 @@ namespace vr
 
 		IupSetAttribute(m_tf_plot, "DS_MODE", "PLANAR_SURFACE");
 		IupSetAttribute(m_tf_plot, "DS_LEGEND", "Transfer Function");
-		//IupSetAttribute(m_tf_plot, "OPENGL", "YES");
+		IupSetAttribute(m_tf_plot, "OPENGL", "YES");
+		IupSetAttribute(m_tf_plot, "LIGHT", "NO");
 		IupSetAttribute(m_tf_plot, "REDRAW", NULL);
 
 		delete[] data;

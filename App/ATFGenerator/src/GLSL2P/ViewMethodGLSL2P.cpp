@@ -42,6 +42,16 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
 		{
 			m_renderer.Render (Viewer::Instance ()->m_CurrentWidth, Viewer::Instance ()->m_CurrentHeight);
 			IupGLSwapBuffers (cnv_renderer);
+			
+			char* ans = IupGetAttribute(Viewer::Instance()->m_gui.GetTFPlotDialog(), "VISIBLE");
+			if ( Viewer::Instance()->m_gui.IsTransferFunctionDialogShown() && strcmp(ans, "NO") == 0 )
+				IupShowXY(Viewer::Instance()->m_gui.GetTFPlotDialog(), IUP_RIGHT, IUP_TOP);
+			//free(ans);
+
+			ans = IupGetAttribute(Viewer::Instance()->m_gui.GetDerivPlotDialog(), "VISIBLE");
+			if ( Viewer::Instance()->m_gui.IsDerivativeDialogShown() && strcmp(ans, "NO") == 0 )
+				IupShowXY(Viewer::Instance()->m_gui.GetDerivPlotDialog(), IUP_LEFT, IUP_TOP);
+			//free(ans);
 		}
 		m_redisplay = false;
 	}

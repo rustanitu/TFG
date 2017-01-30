@@ -23,9 +23,10 @@ public:
 	static int Renderer_CB (Ihandle* handle);
 	static int Resize_CB (Ihandle *ih, int width, int height);
 	
-	static int PREDRAW_CB(Ihandle* ih);
-	static int POSTDRAW_CB(Ihandle* ih);
-	
+	static int CLOSE_CB_TransferFunction(Ihandle* ih);
+	static int CLOSE_CB_Derivatives(Ihandle* ih);
+	void CleanPlot();
+
 	static int Close_CB (Ihandle *ih);
 
 	static int CPUVisualizationChange_CB (Ihandle* ih, char *text, int item, int state);
@@ -158,6 +159,26 @@ public:
 	//glBlendFunc (GL_DST_COLOR, GL_SRC_COLOR);
 	//glBlendFunc (GL_DST_COLOR, GL_SRC_ALPHA);
 
+	Ihandle* GetTFPlotDialog()
+	{
+		return m_tf_plot_dialog;
+	}
+
+	Ihandle* GetDerivPlotDialog()
+	{
+		return m_deriv_plot_dialog;
+	}
+
+	bool IsTransferFunctionDialogShown()
+	{
+		return m_show_tf_dialog;
+	}
+
+	bool IsDerivativeDialogShown()
+	{
+		return m_show_derivative_dialog;
+	}
+
 protected:
 private:
 	static int ShowPlots();
@@ -169,6 +190,8 @@ private:
 	Ihandle* m_tf_plot_dialog;
 	Ihandle* m_gtresh_bar;
 
+	bool m_show_tf_dialog;
+	bool m_show_derivative_dialog;
 };
 
 #endif

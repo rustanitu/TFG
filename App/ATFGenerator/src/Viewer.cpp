@@ -145,6 +145,8 @@ void Viewer::GenerateATFG()
 	tf->SetBoundary(m_boundary);
 #else
 	vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
+	m_gui.CleanPlot();
+	tf->SetTransferFunctionPlot(m_gui.m_tf_plot);
 #endif
 	tf->SetBoundaryThickness(m_boundary_thickness);
 	if (Viewer::Instance()->m_bx_func)
@@ -153,7 +155,8 @@ void Viewer::GenerateATFG()
 		tf->SetTriangularFunction();
 
 #ifdef GORDON
-	if (tf->GenerateGordonBased()) {
+	if (tf->GenerateGordonBased())
+	{
 #else
 	if ( tf->Generate() )
 	{
@@ -189,7 +192,6 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 		try {
 			m_atfg = new ATFGenerator(m_volume);
 			m_atfg->SetDerivativePlot(Viewer::Instance()->m_gui.m_deriv_plot);
-			m_atfg->SetTransferFunctionPlot(Viewer::Instance()->m_gui.m_tf_plot);
 			m_atfg->SetBoundaryDistancePlot(Viewer::Instance()->m_gui.m_dist_plot);
 			if (m_atfg->Init()) {
 				//m_atfg->GenerateVolumeSlices();
