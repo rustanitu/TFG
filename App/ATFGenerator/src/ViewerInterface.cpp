@@ -29,18 +29,18 @@ int ViewerInterface::Button_CB (Ihandle* ih, int button, int pressed, int x, int
 
 int ViewerInterface::Slider_Button_CB (Ihandle* ih, double val)
 {
-  Viewer::MarkOutdated();
-  return IUP_DEFAULT;
+	Viewer::MarkOutdated();
+	return IUP_DEFAULT;
 }
 
 int ViewerInterface::PREDRAW_CB(Ihandle* ih)
 {
-  return IUP_DEFAULT;
+	return IUP_DEFAULT;
 }
 
 int ViewerInterface::POSTDRAW_CB(Ihandle* ih)
 {
-  return IUP_DEFAULT;
+	return IUP_DEFAULT;
 }
 
 int ViewerInterface::Motion_CB (Ihandle *ih, int x, int y, char *status)
@@ -385,14 +385,14 @@ int ViewerInterface::BlendOption_GL_DST_COLOR_GL_SRC_ALPHA (Ihandle* ih)
 
 int ViewerInterface::tgl_SetGaussianFunction_CB(Ihandle* ih, int state)
 {
-  Viewer::Instance()->SetBxFunction(state);
-  return IUP_DEFAULT;
+	Viewer::Instance()->SetBxFunction(state);
+	return IUP_DEFAULT;
 }
 
 int ViewerInterface::tgl_SetTriangularFunction_CB(Ihandle* ih, int state)
 {
-  Viewer::Instance()->SetBxFunction(1 - state);
-  return IUP_DEFAULT;
+	Viewer::Instance()->SetBxFunction(1 - state);
+	return IUP_DEFAULT;
 }
 
 ////////////////////
@@ -459,8 +459,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
 	IupSetAttribute(sgima_bar, "ALIGNMENT", "ACENTER");
 	IupSetAttribute(sgima_bar, "RASTERSIZE", "0x200");
-  IupSetCallback(sgima_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetBoundaryThickness);
-  IupSetCallback(sgima_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
+	IupSetCallback(sgima_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetBoundaryThickness);
+	IupSetCallback(sgima_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
 
 	m_gtresh_bar = IupVal("VERTICAL");
 	IupSetAttribute(m_gtresh_bar, "ACTIVE", "YES");
@@ -470,8 +470,8 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(m_gtresh_bar, "EXPAND", "HORIZONTAL");
 	IupSetAttribute(m_gtresh_bar, "ALIGNMENT", "ACENTER");
 	IupSetAttribute(m_gtresh_bar, "RASTERSIZE", "0x200");
-  IupSetCallback(m_gtresh_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetGTresh);
-  IupSetCallback(m_gtresh_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
+	IupSetCallback(m_gtresh_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetGTresh);
+	IupSetCallback(m_gtresh_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
 
 	Ihandle* atfg_label = IupLabel("BThick    GTresh");
 	Ihandle* atfg_boundary_label = IupLabel("Boundary");
@@ -482,19 +482,19 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute(spinbox_boundary, "SPIN", "YES");
 	IupSetCallback(spinbox_boundary, "SPIN_CB", (Icallback)Viewer::SetBoundary);
 
-  Ihandle* gaussian_bx = IupToggle("Gaussian", NULL);
-  IupSetCallback(gaussian_bx, "ACTION", (Icallback)tgl_SetGaussianFunction_CB);
-  Ihandle* triangle_bx = IupToggle("Triangular", NULL);
-  IupSetCallback(triangle_bx, "ACTION", (Icallback)tgl_SetTriangularFunction_CB);
-  Ihandle* radius = IupRadio(IupVbox(gaussian_bx, triangle_bx, NULL));
+	Ihandle* gaussian_bx = IupToggle("Gaussian", NULL);
+	IupSetCallback(gaussian_bx, "ACTION", (Icallback)tgl_SetGaussianFunction_CB);
+	Ihandle* triangle_bx = IupToggle("Triangular", NULL);
+	IupSetCallback(triangle_bx, "ACTION", (Icallback)tgl_SetTriangularFunction_CB);
+	Ihandle* radius = IupRadio(IupVbox(gaussian_bx, triangle_bx, NULL));
 
 	m_bthick_label = IupLabel("BThick: 1   ");
 	m_gtresh_label = IupLabel("GTresh: 0.0f");
 
-  Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, radius, NULL);
-  IupSetAttribute(vbox_atfg, "EXPAND", "VERTICAL");
+	Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, radius, NULL);
+	IupSetAttribute(vbox_atfg, "EXPAND", "VERTICAL");
 	Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
-  IupSetAttribute(hbox_atfg, "EXPAND", "HORIZONTAL");
+	IupSetAttribute(hbox_atfg, "EXPAND", "HORIZONTAL");
 
 	Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
 	IupSetAttribute (selected_int_label, "EXPAND", "HORIZONTAL");
@@ -503,7 +503,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	m_iup_frame_adinterface = Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->GetIupUserInterface ();
 	m_iup_vbox_GUI = IupVbox(common_int_label, m_iup_vbox_commoninterface, vbox_sep, atfg_label, hbox_atfg, selected_int_label, m_iup_frame_adinterface, m_iup_vbox_atf, NULL);
 	//IupSetAttribute (m_iup_vbox_GUI, "NGAP", "20");
-  IupSetAttribute(m_iup_vbox_GUI, "EXPAND", "NO");
+	IupSetAttribute(m_iup_vbox_GUI, "EXPAND", "NO");
 	IupSetAttribute (m_iup_vbox_GUI, "NMARGIN", "1x1");
 	m_iup_hbox_dialog = 
 		//IupVbox (
@@ -698,17 +698,17 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetAttribute (m_iup_main_dialog, "TITLE", "Volume Visualization");
 	
 #ifdef TF2D
-  m_tf_plot = IupMglPlot();
+	m_tf_plot = IupMglPlot();
 #else
 	m_tf_plot = IupPlot();
 #endif
 
-  IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
-  IupSetAttribute(m_tf_plot, "LEGEND", "YES");
-  IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
-  IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
-  IupSetCallback(m_tf_plot, "PREDRAW_CB", PREDRAW_CB);
-  IupSetCallback(m_tf_plot, "POSTDRAW_CB", POSTDRAW_CB);
+	IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
+	IupSetAttribute(m_tf_plot, "LEGEND", "YES");
+	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
+	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
+	IupSetCallback(m_tf_plot, "PREDRAW_CB", PREDRAW_CB);
+	IupSetCallback(m_tf_plot, "POSTDRAW_CB", POSTDRAW_CB);
 
 	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
 	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
@@ -752,9 +752,9 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 int ViewerInterface::ShowPlots()
 {
-  IupShowXY(Viewer::Instance()->m_gui.m_deriv_plot_dialog, IUP_LEFT, IUP_TOP);
+	IupShowXY(Viewer::Instance()->m_gui.m_deriv_plot_dialog, IUP_LEFT, IUP_TOP);
 	//IupShow(Viewer::Instance()->m_gui.m_dist_plot_dialog);
-  IupShowXY(Viewer::Instance()->m_gui.m_tf_plot_dialog, IUP_RIGHT, IUP_TOP);
+	IupShowXY(Viewer::Instance()->m_gui.m_tf_plot_dialog, IUP_RIGHT, IUP_TOP);
 	return IUP_DEFAULT;
 }
 

@@ -30,14 +30,14 @@ namespace vr
 	class TransferControlPoint
 	{
 	public:
-    TransferControlPoint (unsigned int r, unsigned int g, unsigned int b, int isovalue);
-    TransferControlPoint (double r, double g, double b, int isovalue);
+		TransferControlPoint (unsigned int r, unsigned int g, unsigned int b, int isovalue);
+		TransferControlPoint (double r, double g, double b, int isovalue);
 		TransferControlPoint (double alpha, int isovalue);
-    TransferControlPoint()
-    {
-      m_color = lqc::Vector4d::Zero();
-      m_isoValue = 0;
-    }
+		TransferControlPoint()
+		{
+			m_color = lqc::Vector4d::Zero();
+			m_isoValue = 0;
+		}
 
 		lqc::Vector3d operator -(const TransferControlPoint& v)  
 		{  
@@ -92,14 +92,14 @@ namespace vr
 		std::string GetName () { return m_name; }
 		void SetName (std::string name) { m_name = name; }
 
-    void SetTransferFunctionPlot(Ihandle * ih)
-    {
-      m_tf_plot = ih;
-    }
+		void SetTransferFunctionPlot(Ihandle * ih)
+		{
+			m_tf_plot = ih;
+		}
 		
 	protected:
 		std::string m_name;
-    Ihandle * m_tf_plot;
+		Ihandle * m_tf_plot;
 	};
 
 	/*class TransferFunction1D : public TransferFunction

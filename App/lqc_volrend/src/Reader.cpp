@@ -25,8 +25,8 @@ namespace vr
 		printf("------------Reading Volume Model------------\n");
 		if ( extension.compare("vol") == 0 )
 			ret = ReadVolFile(filepath);
-    else if (extension.compare("den") == 0)
-      ret = ReadDenFile(filepath);
+		else if (extension.compare("den") == 0)
+			ret = ReadDenFile(filepath);
 		else if ( extension.compare("ele") == 0 || extension.compare("txt") == 0 )
 			ret = ReadEleFile(filepath);
 		else if ( extension.compare("node") == 0 )
@@ -107,98 +107,98 @@ namespace vr
 		return ret;
 	}
 
-  void swap_buffer(short* buff, int size)
-  {
-    int c = size / 8;
-    int n = size - c * 8;
-    char tmp0, tmp1, tmp2, tmp3;
-    char *buf = (char *)buff;
+	void swap_buffer(short* buff, int size)
+	{
+		int c = size / 8;
+		int n = size - c * 8;
+		char tmp0, tmp1, tmp2, tmp3;
+		char *buf = (char *)buff;
 
-    for (; c > 0; c--) {
-      tmp0 = buf[0]; buf[0] = buf[1]; buf[1] = tmp0;
-      tmp1 = buf[2]; buf[2] = buf[3]; buf[3] = tmp1;
-      tmp2 = buf[4]; buf[4] = buf[5]; buf[5] = tmp2;
-      tmp3 = buf[6]; buf[6] = buf[7]; buf[7] = tmp3;
-      buf += 8;
-    }
-    for (; n > 0; n -= 2) {
-      tmp0 = buf[0]; buf[0] = buf[1]; buf[1] = tmp0;
-      buf += 2;
-    }
-  }
+		for (; c > 0; c--) {
+			tmp0 = buf[0]; buf[0] = buf[1]; buf[1] = tmp0;
+			tmp1 = buf[2]; buf[2] = buf[3]; buf[3] = tmp1;
+			tmp2 = buf[4]; buf[4] = buf[5]; buf[5] = tmp2;
+			tmp3 = buf[6]; buf[6] = buf[7]; buf[7] = tmp3;
+			buf += 8;
+		}
+		for (; n > 0; n -= 2) {
+			tmp0 = buf[0]; buf[0] = buf[1]; buf[1] = tmp0;
+			buf += 2;
+		}
+	}
 
-  void swap_buffer(int* buff, int size)
-  {
-    int c = size / 8;
-    int n = size - c * 8;
-    char tmp0, tmp1, tmp2, tmp3;
-    char *buf = (char *)buff;
+	void swap_buffer(int* buff, int size)
+	{
+		int c = size / 8;
+		int n = size - c * 8;
+		char tmp0, tmp1, tmp2, tmp3;
+		char *buf = (char *)buff;
 
-    for (; c > 0; c--) {
-      tmp0 = buf[0]; buf[0] = buf[3]; buf[3] = tmp0;
-      tmp1 = buf[1]; buf[1] = buf[2]; buf[2] = tmp1;
-      tmp2 = buf[4]; buf[4] = buf[7]; buf[7] = tmp2;
-      tmp3 = buf[5]; buf[5] = buf[6]; buf[6] = tmp3;
-      buf += 8;
-    }
-    for (; n > 0; n -= 4) {
-      tmp0 = buf[0]; buf[0] = buf[3]; buf[3] = tmp0;
-      tmp1 = buf[1]; buf[1] = buf[2]; buf[2] = tmp1;
-      buf += 4;
-    }
-  }
+		for (; c > 0; c--) {
+			tmp0 = buf[0]; buf[0] = buf[3]; buf[3] = tmp0;
+			tmp1 = buf[1]; buf[1] = buf[2]; buf[2] = tmp1;
+			tmp2 = buf[4]; buf[4] = buf[7]; buf[7] = tmp2;
+			tmp3 = buf[5]; buf[5] = buf[6]; buf[6] = tmp3;
+			buf += 8;
+		}
+		for (; n > 0; n -= 4) {
+			tmp0 = buf[0]; buf[0] = buf[3]; buf[3] = tmp0;
+			tmp1 = buf[1]; buf[1] = buf[2]; buf[2] = tmp1;
+			buf += 4;
+		}
+	}
 
-  Volume* ReadDenFile(std::string filename)
-  {
-    Volume* ret = NULL;
+	Volume* ReadDenFile(std::string filename)
+	{
+		Volume* ret = NULL;
 
-    printf("Started  -> Read Volume From .den File\n");
-    printf("  - File .den Path: %s\n", filename.c_str());
+		printf("Started  -> Read Volume From .den File\n");
+		printf("  - File .den Path: %s\n", filename.c_str());
 
-    FILE* file = NULL;
-    if (fopen_s(&file, filename.c_str(), "r") == 0) {
-      short map_version;
-      fread_s(&map_version, sizeof(short), sizeof(short), 1, file);
+		FILE* file = NULL;
+		if (fopen_s(&file, filename.c_str(), "r") == 0) {
+			short map_version;
+			fread_s(&map_version, sizeof(short), sizeof(short), 1, file);
 
-      bool need_swap = false;
-      if (map_version == 256)
-        need_swap = true;
+			bool need_swap = false;
+			if (map_version == 256)
+				need_swap = true;
 
-      short trash[24];
-      fread_s(trash, 24 * sizeof(short), sizeof(short), 24, file);
-      if (need_swap)
-        swap_buffer(trash, 24 * sizeof(short));
+			short trash[24];
+			fread_s(trash, 24 * sizeof(short), sizeof(short), 24, file);
+			if (need_swap)
+				swap_buffer(trash, 24 * sizeof(short));
 
-      short dimensions[3];
-      fread_s(dimensions, 3 * sizeof(short), sizeof(short), 3, file);
-      if (need_swap)
-        swap_buffer(dimensions, 3 * sizeof(short));
+			short dimensions[3];
+			fread_s(dimensions, 3 * sizeof(short), sizeof(short), 3, file);
+			if (need_swap)
+				swap_buffer(dimensions, 3 * sizeof(short));
 
-      short warps;
-      fread_s(&warps, sizeof(short), sizeof(short), 1, file);
-      if (need_swap)
-        swap_buffer(&warps, sizeof(short));
+			short warps;
+			fread_s(&warps, sizeof(short), sizeof(short), 1, file);
+			if (need_swap)
+				swap_buffer(&warps, sizeof(short));
 
-      int size;
-      fread_s(&size, sizeof(int), sizeof(int), 1, file);
-      if (need_swap)
-        swap_buffer(&size, sizeof(int));
+			int size;
+			fread_s(&size, sizeof(int), sizeof(int), 1, file);
+			if (need_swap)
+				swap_buffer(&size, sizeof(int));
 
-      unsigned char* data = new unsigned char[size];
-      fread_s(data, size * sizeof(unsigned char), sizeof(unsigned char), size, file);
+			unsigned char* data = new unsigned char[size];
+			fread_s(data, size * sizeof(unsigned char), sizeof(unsigned char), size, file);
 
-      fclose(file);
+			fclose(file);
 
-      ret = new Volume(dimensions[0], dimensions[1], dimensions[2], data);
-      ret->SetName(filename.c_str());
+			ret = new Volume(dimensions[0], dimensions[1], dimensions[2], data);
+			ret->SetName(filename.c_str());
 
-      printf("lqc: Finished -> Read Volume From .den File\n");
-    }
-    else
-      printf("lqc: Finished -> Error on opening .den file\n");
+			printf("lqc: Finished -> Read Volume From .den File\n");
+		}
+		else
+			printf("lqc: Finished -> Error on opening .den file\n");
 
-    return ret;
-  }
+		return ret;
+	}
 
 	double* ReadErnTXT(std::string volfilename, int w, int h, int d)
 	{
@@ -247,31 +247,31 @@ namespace vr
 		return scalar_values;
 	}
 
-  double* ReadVolvisRaw(std::string volfilename, size_t bytes_per_value, int w, int h, int d)
+	double* ReadVolvisRaw(std::string volfilename, size_t bytes_per_value, int w, int h, int d)
 	{
-    double* scalar_values = NULL;
+		double* scalar_values = NULL;
 		lqc::IRAWLoader rawLoader = lqc::IRAWLoader(volfilename, bytes_per_value, w*h*d, bytes_per_value);
 
 		//GLushort
 		if ( bytes_per_value == sizeof(unsigned short) )
 		{
-      scalar_values = new double[w*h*d];
+			scalar_values = new double[w*h*d];
 			unsigned short *b = new unsigned short[w*h*d];
 			memcpy(b, rawLoader.GetData(), sizeof(unsigned short)*w*h*d);
 
 			for ( int i = 0; i < (int) (w*h*d); i++ )
-        scalar_values[i] = (double)b[i];
+				scalar_values[i] = (double)b[i];
 			delete[] b;
 		}
 		//GLubyte
 		else if ( bytes_per_value == sizeof(unsigned char) )
 		{
-      scalar_values = new double[w*h*d];
+			scalar_values = new double[w*h*d];
 			unsigned char *b = new unsigned char[w*h*d];
 			memcpy(b, rawLoader.GetData(), sizeof(unsigned char)*w*h*d);
 
 			for ( int i = 0; i < (int) (w*h*d); i++ )
-        scalar_values[i] = (double)b[i];
+				scalar_values[i] = (double)b[i];
 			delete[] b;
 		}
 
@@ -294,7 +294,7 @@ namespace vr
 		{
 			file_ele >> w >> h;
 			double* scalar_values = NULL;
-      scalar_values = new double[w*h*d];
+			scalar_values = new double[w*h*d];
 
 			for ( int i = 0; i < w*h*d; i++ )
 				scalar_values[i] = 0.0f;
@@ -303,7 +303,7 @@ namespace vr
 			while ( file_ele >> x >> y >> value )
 			{
 				int i = (int) (x) +((int) (y) * w) + ((int) z * w * h);
-        scalar_values[i] = (double)value;
+				scalar_values[i] = (double)value;
 			}
 
 			ret = new Volume(w, h, d, scalar_values);
@@ -401,7 +401,7 @@ namespace vr
 			// Byte Size
 			bytesize = atoi(t_filebytesize.c_str());
 
-      double* scalar_values = ReadVolvisRaw(filepath, (size_t)bytesize, fw, fh, fd);
+			double* scalar_values = ReadVolvisRaw(filepath, (size_t)bytesize, fw, fh, fd);
 			ret = new Volume(fw, fh, fd, scalar_values);
 			ret->SetName(filepath);
 
@@ -447,7 +447,7 @@ namespace vr
 			printf("  - Volume Entries  : %d\n", fsize);
 			printf("  - Volume Size     : [%d, %d]\n", frows, fcolumns);
 
-      double* scalar_values = new double[frows * fcolumns];
+			double* scalar_values = new double[frows * fcolumns];
 			for ( int t = 0; t < frows * fcolumns; t++ )
 				scalar_values[t] = 0;
 
@@ -475,7 +475,7 @@ namespace vr
 
 	TransferFunction* ReadTransferFunction(std::string file)
 	{
-    TransferFunction* ret = NULL;
+		TransferFunction* ret = NULL;
 
 		int found = file.find_last_of('.');
 		std::string extension = file.substr(found + 1);
@@ -496,7 +496,7 @@ namespace vr
 		return ret;
 	}
 
-  TransferFunction* ReadTransferFunction_tf1d(std::string file)
+	TransferFunction* ReadTransferFunction_tf1d(std::string file)
 	{
 		std::ifstream myfile(file);
 		if ( myfile.is_open() )
@@ -550,7 +550,7 @@ namespace vr
 		return NULL;
 	}
 
-  TransferFunction* ReadTransferFunction_tf(std::string file)
+	TransferFunction* ReadTransferFunction_tf(std::string file)
 	{
 		TransferFunction_tf* transfer_functions = new TransferFunction_tf();
 
@@ -624,7 +624,7 @@ namespace vr
 		return transfer_functions;
 	}
 
-  TransferFunction* ReadTransferFunction_tfg1d(std::string file)
+	TransferFunction* ReadTransferFunction_tfg1d(std::string file)
 	{
 		std::ifstream myfile(file);
 		if ( myfile.is_open() )
@@ -661,7 +661,7 @@ namespace vr
 		return NULL;
 	}
 
-  TransferFunction* ReadTransferFunction_tfgersa(std::string file)
+	TransferFunction* ReadTransferFunction_tfgersa(std::string file)
 	{
 		std::ifstream myfile(file);
 		if ( myfile.is_open() )

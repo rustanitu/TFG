@@ -8,8 +8,8 @@ namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-    , m_indexes(NULL), m_values(NULL), m_center(NULL), m_boundary(0), m_thickness(1)
-    , m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false), m_gaussian_bx(true)
+		, m_indexes(NULL), m_values(NULL), m_center(NULL), m_boundary(0), m_thickness(1)
+		, m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false), m_gaussian_bx(true)
 	{
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
@@ -28,7 +28,7 @@ namespace vr
 
 		delete[] m_indexes;
 		delete[] m_values;
-    delete[] m_center;
+		delete[] m_center;
 	}
 
 	const char* TransferFunction1D::GetNameClass ()
@@ -308,33 +308,33 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-    double top = 1.0f;// / sqrt(PI * 2 * base * base / 9);
+		double top = 1.0f;// / sqrt(PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_values[v];
 		if (x >= -base && x <= base)
 		{
-      if (x >= center && center < base)
-      {
-        a = -(top * x) / (base - center);
-        a += (top * base) / (base - center);
-      }
-      else
-      {
-        a = (top * x) / (base + center);
-        a += (top * base) / (base + center);
-      }
+			if (x >= center && center < base)
+			{
+				a = -(top * x) / (base - center);
+				a += (top * base) / (base - center);
+			}
+			else
+			{
+				a = (top * x) / (base + center);
+				a += (top * base) / (base + center);
+			}
 		}
 
-    return fmin(a, max);
+		return fmin(a, max);
 	}
 
 	double TransferFunction1D::CenteredGaussianFunction(double max, double base, double u, const int& v)
 	{
-    double sigma = base / 3.0f;
+		double sigma = base / 3.0f;
 		double two_sigma_quad = 2 * sigma * sigma;
 		double x = m_values[v];
-    double g = exp(-(x - u)*(x - u) / two_sigma_quad);// / sqrt(PI * two_sigma_quad);
-    return fmin(g, max);
+		double g = exp(-(x - u)*(x - u) / two_sigma_quad);// / sqrt(PI * two_sigma_quad);
+		return fmin(g, max);
 	}
 
 	/// <summary>
@@ -372,11 +372,11 @@ namespace vr
 			int value = m_indexes[i];
 			double x = m_values[value];
 
-      double a = 0.0f;
-      if (m_gaussian_bx)
-			  a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_center[value], value);
-      else
-        a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_center[value], value);
+			double a = 0.0f;
+			if (m_gaussian_bx)
+				a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_center[value], value);
+			else
+				a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_center[value], value);
 
 			if ( m_boundary != 0 )
 			{
@@ -499,7 +499,7 @@ namespace vr
 
 		delete[] m_indexes;
 		delete[] m_values;
-    delete[] m_center;
+		delete[] m_center;
 
 		if (values)
 			m_indexes = values;
@@ -507,8 +507,8 @@ namespace vr
 		if (distances)
 			m_values = distances;
 
-    if (h)
-      m_center = h;
+		if (h)
+			m_center = h;
 	}
 
 	void TransferFunction1D::SetAlphaValues(int* values, double* alphas, const int& n)

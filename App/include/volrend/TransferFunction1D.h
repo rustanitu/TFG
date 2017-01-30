@@ -77,24 +77,24 @@ namespace vr
 		/// <param name="values">The values array.</param>
 		/// <param name="distances">The distances to the closest boundaries.</param>
 		/// <param name="n">The input arrays' size.</param>
-    void SetClosestBoundaryDistances(int* values, double* distances, double* h, const int& n);
+		void SetClosestBoundaryDistances(int* values, double* distances, double* h, const int& n);
 
 		void SetAlphaValues(int* values, double* alphas, const int& n);
 		
 		void SetPeakPoints(int* peaks, double* values, const int& n);
 
-    void SetGaussianFunction()
-    {
-      m_gaussian_bx = true;
-    }
+		void SetGaussianFunction()
+		{
+			m_gaussian_bx = true;
+		}
 
-    void SetTriangularFunction()
-    {
-      m_gaussian_bx = false;
-    }
+		void SetTriangularFunction()
+		{
+			m_gaussian_bx = false;
+		}
 
 	private:
-    double CenteredTriangleFunction(double max, double base, double center, const int& v);
+		double CenteredTriangleFunction(double max, double base, double center, const int& v);
 		double CenteredGaussianFunction(double max, double sigma, double u, const int& v);
 
 	private:
@@ -108,14 +108,14 @@ namespace vr
 		/// SetClosestBoundaryDistances.
 		/// </summary>
 		double* m_values;
-    double* m_center;
+		double* m_center;
 		bool m_direct_tf;
 		bool m_peakbased_tf;
 		bool m_gordon_tf;
 		int m_thickness;
 		int m_boundary;
 		int m_values_size;
-    int m_gaussian_bx;
+		int m_gaussian_bx;
 	};
 
 }

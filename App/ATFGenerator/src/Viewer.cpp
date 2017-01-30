@@ -144,13 +144,13 @@ void Viewer::GenerateATFG()
 	vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
 	tf->SetBoundary(m_boundary);
 #else
-  vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
+	vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
 #endif
 	tf->SetBoundaryThickness(m_boundary_thickness);
-  if (Viewer::Instance()->m_bx_func)
-    tf->SetGaussianFunction();
-  else
-    tf->SetTriangularFunction();
+	if (Viewer::Instance()->m_bx_func)
+		tf->SetGaussianFunction();
+	else
+		tf->SetTriangularFunction();
 
 #ifdef GORDON
 	if (tf->GenerateGordonBased()) {
@@ -231,9 +231,9 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 int Viewer::SetBoundaryThickness(Ihandle* ih, double val)
 {
 #ifdef ATFG
-  if (val != Viewer::Instance()->m_boundary_thickness) {
-    Viewer::Instance()->m_boundary_thickness = val;
-    Viewer::Instance()->m_gui.UpdateBThickLabel(val);
+	if (val != Viewer::Instance()->m_boundary_thickness) {
+		Viewer::Instance()->m_boundary_thickness = val;
+		Viewer::Instance()->m_gui.UpdateBThickLabel(val);
 		Viewer::Instance()->m_generate_atfg = true;
 	}
 #endif
@@ -243,11 +243,11 @@ int Viewer::SetBoundaryThickness(Ihandle* ih, double val)
 int Viewer::SetGTresh(Ihandle* ih, double val)
 {
 #ifdef ATFG
-  if (val != Viewer::Instance()->m_gtresh) {
-    Viewer::Instance()->m_gtresh = val;
-    Viewer::Instance()->m_gui.UpdateGTreshLabel(val);
-    Viewer::Instance()->m_extract_atfg = true;
-  }
+	if (val != Viewer::Instance()->m_gtresh) {
+		Viewer::Instance()->m_gtresh = val;
+		Viewer::Instance()->m_gui.UpdateGTreshLabel(val);
+		Viewer::Instance()->m_extract_atfg = true;
+	}
 #endif
 	return IUP_DEFAULT;
 }
@@ -257,7 +257,7 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
 #ifdef ATFG
 	Viewer::Instance()->m_boundary = boundary;
 	Viewer::Instance()->m_generate_atfg = true;
-  Viewer::MarkOutdated();
+	Viewer::MarkOutdated();
 #endif
 	return IUP_DEFAULT;
 }
@@ -266,8 +266,8 @@ int Viewer::SetBxFunction(int set)
 {
 #ifdef ATFG
 	Viewer::Instance()->m_bx_func = set;
-  Viewer::Instance()->m_extract_atfg = true;
-  Viewer::MarkOutdated();
+	Viewer::Instance()->m_extract_atfg = true;
+	Viewer::MarkOutdated();
 #endif
 	return IUP_DEFAULT;
 }
@@ -613,7 +613,7 @@ void Viewer::InitIup(int argc, char *argv[])
 {
 	IupOpen(&argc, &argv);
 	IupPlotOpen();
-  IupMglPlotOpen();
+	IupMglPlotOpen();
 	IupGLCanvasOpen();
 
 	m_gui.BuildInterface(argc, argv);

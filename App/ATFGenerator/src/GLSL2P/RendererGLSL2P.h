@@ -62,7 +62,7 @@ public:
 	/*! Generate the texture from transfer function.
 	\param tfunction Transfer Function pointer used to generate the 1D texture.
 	*/
-  void ReloadTransferFunction(vr::TransferFunction* tfunction);
+	void ReloadTransferFunction(vr::TransferFunction* tfunction);
 	void ReloadVisibleSet(int set);
 
 	void SetXRotation (float radius);
@@ -105,15 +105,15 @@ public:
 	float GetCubeHeight ();
 	float GetCubeDepth ();
 
-  int GetScreenWidth()
-  {
-    return m_sdr_width;
-  }
+	int GetScreenWidth()
+	{
+		return m_sdr_width;
+	}
 
-  int GetScreenHeight()
-  {
-    return m_sdr_height;
-  }
+	int GetScreenHeight()
+	{
+		return m_sdr_height;
+	}
 
 	void SaveInitCameraState (std::string filename);
 	void LoadInitCameraState (std::string filename);

@@ -10,28 +10,28 @@
 
 namespace vr
 {
-  ScalarField* ReadFromVolMod(std::string filepath);
+	ScalarField* ReadFromVolMod(std::string filepath);
 
-  Volume* ReadVolFile(std::string filepath);
-  Volume* ReadDenFile(std::string filepath);
+	Volume* ReadVolFile(std::string filepath);
+	Volume* ReadDenFile(std::string filepath);
 
 	double* ReadErnTXT(std::string volfilename, int w, int h, int d);
 	double* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d);
-  double* ReadVolvisRaw (std::string volfilename, size_t size, int w, int h, int d);
+	double* ReadVolvisRaw (std::string volfilename, size_t size, int w, int h, int d);
 
-  Volume* ReadEleFile(std::string filepath);
+	Volume* ReadEleFile(std::string filepath);
 
-  Volume* ReadNodeFile(std::string filepath);
+	Volume* ReadNodeFile(std::string filepath);
 
-  Volume* ReadRawFile(std::string filepath);
+	Volume* ReadRawFile(std::string filepath);
 
-  Volume* ReadMedFile(std::string filepath);
+	Volume* ReadMedFile(std::string filepath);
 
-  TransferFunction* ReadTransferFunction (std::string file);
-  TransferFunction* ReadTransferFunction_tf1d (std::string file);
-  TransferFunction* ReadTransferFunction_tf (std::string file);
-  TransferFunction* ReadTransferFunction_tfg1d (std::string file);
-  TransferFunction* ReadTransferFunction_tfgersa (std::string file);
+	TransferFunction* ReadTransferFunction (std::string file);
+	TransferFunction* ReadTransferFunction_tf1d (std::string file);
+	TransferFunction* ReadTransferFunction_tf (std::string file);
+	TransferFunction* ReadTransferFunction_tfg1d (std::string file);
+	TransferFunction* ReadTransferFunction_tfgersa (std::string file);
 }
 
 #endif

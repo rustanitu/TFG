@@ -42,9 +42,9 @@ public:
 private:
 	double GetQuadraticGradientNorm(const UINT32& id);
 
-  void FillCellAdjCenter(Cell& cell);
-  bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
-  glm::mat3 GetCellJacobianInverse(const Cell& cell);
+	void FillCellAdjCenter(Cell& cell);
+	bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
+	glm::mat3 GetCellJacobianInverse(const Cell& cell);
 
 	struct TankComp
 	{
@@ -72,7 +72,7 @@ private:
 	int m_ncells;
 	int m_nsteps;
 	int m_nvertices;
-  glm::vec3* m_vertices;
+	glm::vec3* m_vertices;
 	Cell* m_cells;
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;

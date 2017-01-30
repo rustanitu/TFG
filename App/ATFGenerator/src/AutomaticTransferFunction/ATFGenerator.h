@@ -161,7 +161,7 @@ public:
 
 	void SetGTresh(double gt)
 	{
-    m_gtresh = gt * GetMaxAverageGradient() * 0.01f;
+		m_gtresh = gt * GetMaxAverageGradient() * 0.01f;
 	}
 
 	void SetMinimumHistogramValue(UINT32 min)
@@ -185,7 +185,7 @@ public:
 		m_dist_plot = ih;
 	}
 
-  double GetMinAverageGradient()
+	double GetMinAverageGradient()
 	{
 		return m_min_average_gradient;
 	}
@@ -222,7 +222,7 @@ private:
 	/// <returns>Returns a double array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
 	void GetBoundaryDistancies(double* x, double* h, int *v, UINT32 *n);
-  void GetBoundaryDistancies2D(double** x);
+	void GetBoundaryDistancies2D(double** x);
 
 	void SmoothCurves();
 
@@ -256,7 +256,7 @@ private:
 
 	double m_average_gradient[ATFG_V_RANGE];
 	double m_average_laplacian[ATFG_V_RANGE];
-  double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
+	double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
 
 	double m_min_gradient[ATFG_V_RANGE];
 	double m_min_laplacian[ATFG_V_RANGE];

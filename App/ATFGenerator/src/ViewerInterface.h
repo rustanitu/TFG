@@ -17,14 +17,14 @@ class ViewerInterface
 public:
 	static int Keyboard_CB (Ihandle *ih, int c, int press);
 	static int Button_CB (Ihandle* ih, int button, int pressed, int x, int y, char* status);
-  static int Slider_Button_CB (Ihandle* ih, double val);
+	static int Slider_Button_CB (Ihandle* ih, double val);
 	static int Motion_CB (Ihandle *ih, int x, int y, char *status);
 	static int Wheel_CB (Ihandle *ih, float delta, int x, int y, char *status);
 	static int Renderer_CB (Ihandle* handle);
 	static int Resize_CB (Ihandle *ih, int width, int height);
-  
-  static int PREDRAW_CB(Ihandle* ih);
-  static int POSTDRAW_CB(Ihandle* ih);
+	
+	static int PREDRAW_CB(Ihandle* ih);
+	static int POSTDRAW_CB(Ihandle* ih);
 	
 	static int Close_CB (Ihandle *ih);
 
@@ -72,7 +72,7 @@ public:
 	static int BlendOption_GL_DST_COLOR_GL_SRC_ALPHA (Ihandle* ih);
 
 	static int tgl_SetGaussianFunction_CB (Ihandle* ih, int state);
-  static int tgl_SetTriangularFunction_CB(Ihandle* ih, int state);
+	static int tgl_SetTriangularFunction_CB(Ihandle* ih, int state);
 
 
 public:
