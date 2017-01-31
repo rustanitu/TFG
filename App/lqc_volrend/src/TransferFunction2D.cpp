@@ -363,9 +363,17 @@ namespace vr
 		IupMglPlotSetData(m_tf_plot, index, data, MAX_V, MAX_V, 1);
 
 		IupSetAttribute(m_tf_plot, "DS_MODE", "PLANAR_SURFACE");
-		IupSetAttribute(m_tf_plot, "DS_LEGEND", "Transfer Function");
-		IupSetAttribute(m_tf_plot, "OPENGL", "YES");
+		IupSetAttribute(m_tf_plot, "LEGEND", "NO");
+		//IupSetAttribute(m_tf_plot, "OPENGL", "YES");
 		IupSetAttribute(m_tf_plot, "LIGHT", "NO");
+		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMIN", "NO");
+		IupSetAttribute(m_tf_plot, "AXS_ZMIN", "-0.001");
+		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMAX", "NO");
+		IupSetAttribute(m_tf_plot, "AXS_ZMAX", "1.001");
+		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Gradient");
+		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Scalar Value");
+		IupSetAttribute(m_tf_plot, "AXS_ZLABEL", "Alpha");
+		IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
 		IupSetAttribute(m_tf_plot, "REDRAW", NULL);
 
 		delete[] data;
