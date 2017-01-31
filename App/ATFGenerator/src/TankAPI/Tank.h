@@ -40,8 +40,6 @@ public:
 	}
 
 private:
-	double GetQuadraticGradientNorm(const UINT32& id);
-
 	void FillCellAdjCenter(Cell& cell);
 	bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
 	glm::mat3 GetCellJacobianInverse(const Cell& cell);
@@ -77,9 +75,9 @@ private:
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
 
-	double* m_scalar_fx;
-	double* m_scalar_fy;
-	double* m_scalar_fz;
+	//double* m_scalar_fx;
+	//double* m_scalar_fy;
+	//double* m_scalar_fz;
 };
 
 #endif

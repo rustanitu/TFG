@@ -74,6 +74,8 @@ public:
 
 	static int tgl_SetGaussianFunction_CB (Ihandle* ih, int state);
 	static int tgl_SetTriangularFunction_CB(Ihandle* ih, int state);
+  static int tgl_Set1D_CB(Ihandle* ih, int state);
+  static int tgl_Set2D_CB(Ihandle* ih, int state);
 
 
 public:
@@ -94,7 +96,8 @@ public:
 
 	Ihandle* m_deriv_plot;
 	Ihandle* m_dist_plot;
-	Ihandle* m_tf_plot;
+	Ihandle* m_tf_plot1d;
+  Ihandle* m_tf_plot2d;
 
 	Ihandle* m_iup_hbox_dialog;
 
@@ -159,10 +162,15 @@ public:
 	//glBlendFunc (GL_DST_COLOR, GL_SRC_COLOR);
 	//glBlendFunc (GL_DST_COLOR, GL_SRC_ALPHA);
 
-	Ihandle* GetTFPlotDialog()
+	Ihandle* Get1DTFPlotDialog()
 	{
-		return m_tf_plot_dialog;
+		return m_tf_plot1d_dialog;
 	}
+
+  Ihandle* Get2DTFPlotDialog()
+  {
+    return m_tf_plot2d_dialog;
+  }
 
 	Ihandle* GetDerivPlotDialog()
 	{
@@ -187,7 +195,8 @@ private:
 	Ihandle* m_gtresh_label;
 	Ihandle* m_deriv_plot_dialog;
 	Ihandle* m_dist_plot_dialog;
-	Ihandle* m_tf_plot_dialog;
+	Ihandle* m_tf_plot1d_dialog;
+  Ihandle* m_tf_plot2d_dialog;
 	Ihandle* m_gtresh_bar;
 
 	bool m_show_tf_dialog;

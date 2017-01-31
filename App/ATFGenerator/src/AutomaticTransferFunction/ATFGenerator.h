@@ -18,8 +18,6 @@
 #define ATFG_V_RANGE 256
 #define ATFG_V_MAX (ATFG_V_RANGE - 1)
 
-#define TF2D
-
 class TransferFunction;
 
 /// <summary>
@@ -190,6 +188,18 @@ public:
 		return m_max_average_gradient;
 	}
 
+  void SetTF1D()
+  {
+    m_tf1d = true;
+    m_tfmode_changed = true;
+  }
+
+  void SetTF2D()
+  {
+    m_tf1d = false;
+    m_tfmode_changed = true;
+  }
+
 private:
 	/// <summary>
 	/// Iterates over the scalarfield, calculating the gradient 
@@ -208,6 +218,8 @@ private:
 	/// <returns>Returns true if the histogram could be generated. 
 	/// False, otherwise.</returns>
 	bool GenerateHistogram();
+
+  bool EstimateAverageValues();
 
 	/// <summary>
 	/// Gets, for each value, the distance to the closest 
@@ -234,7 +246,10 @@ private:
 	int GetInflectionPoints(const double* curve, const int* indexes, const int& curve_size, int*& inflct_indexes);
 
 private:
-	double m_max_average_gradient;
+  bool m_tf1d;
+  bool m_tfmode_changed;
+
+  double m_max_average_gradient;
 	double m_min_average_gradient;
 	double m_max_average_laplacian;
 	double m_min_average_laplacian;
@@ -252,11 +267,6 @@ private:
 	double m_average_gradient[ATFG_V_RANGE];
 	double m_average_laplacian[ATFG_V_RANGE];
 	double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
-
-	double m_min_gradient[ATFG_V_RANGE];
-	double m_min_laplacian[ATFG_V_RANGE];
-	double m_max_gradient[ATFG_V_RANGE];
-	double m_max_laplacian[ATFG_V_RANGE];
 
 	int m_max_size;
 	int* m_max_indexes;

@@ -103,6 +103,8 @@ private:
 	std::string m_volumename;
 	std::string m_trasnferfunctionname;
 
+  bool m_tf1d;
+
 	bool m_redisplay;
 
 	bool m_mousepressed;

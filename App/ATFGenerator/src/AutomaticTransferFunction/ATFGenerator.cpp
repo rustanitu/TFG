@@ -23,7 +23,6 @@
 	#define PLOT_STYLE "MARK"
 #endif
 
-//#define EXTREMA_POINTS
 #define SMOOTH_CURVES
 
 //#define ALPHA
@@ -54,6 +53,8 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_max_indexes(NULL)
 , m_inflct_size(0)
 , m_inflct_indexes(NULL)
+, m_tf1d(true)
+, m_tfmode_changed(false)
 {
 	printf("ATFGenerator criado.\n");
 }
@@ -89,6 +90,9 @@ bool ATFGenerator::Init()
 	if ( !GenerateHistogram() )
 		return false;
 
+  if (!EstimateAverageValues())
+    return false;
+
 #ifdef SMOOTH_CURVES
 	SmoothCurves();
 #endif
@@ -106,8 +110,8 @@ void ATFGenerator::SmoothCurves()
 	double* values;
 	int* indexes;
 
-	double* curves[6] = {m_average_gradient, m_min_gradient, m_max_gradient, m_average_laplacian, m_min_laplacian, m_max_laplacian};
-	for ( int k = 0; k < 6; ++k )
+	double* curves[2] = {m_average_gradient, m_average_laplacian};
+	for ( int k = 0; k < 2; ++k )
 	{
 		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
 		SmoothCurveWithGaussian(values, size, times);
@@ -124,51 +128,54 @@ void ATFGenerator::SmoothCurves()
 
 void ATFGenerator::SetDefaultColor()
 {
-#ifdef TF2D
-	vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_transfer_function;
-	for (int i = 0; i < ATFG_V_RANGE; ++i) {
-		tf->AddRGBControlPoint(lqc::Vector3f(2u, 96u, 203u) / 255.0f, 0, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(0u, 127u, 206u) / 255.0f, 14, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(0u, 152u, 193u) / 255.0f, 28, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(11u, 171u, 152u) / 255.0f, 42, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(83u, 175u, 30u) / 255.0f, 57, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(129u, 178u, 0u) / 255.0f, 71, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(165u, 181u, 15u) / 255.0f, 85, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(195u, 183u, 160u) / 255.0f, 99, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(216u, 184u, 22u) / 255.0f, 113, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(236u, 184u, 0u) / 255.0f, 127, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 182u, 0u) / 255.0f, 142, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 164u, 0u) / 255.0f, 156, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 149u, 0u) / 255.0f, 170, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 133u, 0u) / 255.0f, 184, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 112u, 0u) / 255.0f, 198, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 90u, 0u) / 255.0f, 212, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 66u, 11u) / 255.0f, 227, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 40u, 40u) / 255.0f, 240, i);
-		tf->AddRGBControlPoint(lqc::Vector3f(255u, 0u, 0u) / 255.0f, 255, i);
-	}
-#else
-	vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_transfer_function;
-	tf->AddRGBControlPoint(vr::TransferControlPoint(  2u,  96u, 203u, 0));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(  0u, 127u, 206u, 14));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(  0u, 152u, 193u, 28));
-	tf->AddRGBControlPoint(vr::TransferControlPoint( 11u, 171u, 152u, 42));
-	tf->AddRGBControlPoint(vr::TransferControlPoint( 83u, 175u,  30u, 57));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(129u, 178u,   0u, 71));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(165u, 181u,  15u, 85));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(195u, 183u, 160u, 99));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(216u, 184u,  22u, 113));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(236u, 184u,   0u, 127));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 182u,   0u, 142));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 164u,   0u, 156));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 149u,   0u, 170));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 133u,   0u, 184));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 112u,   0u, 198));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u,  90u,   0u, 212));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u,  66u,  11u, 227));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u,  40u,  40u, 240));
-	tf->AddRGBControlPoint(vr::TransferControlPoint(255u,   0u,   0u, 255));
-#endif;
+  if (!m_tf1d)
+  {
+    vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_transfer_function;
+    for (int i = 0; i < ATFG_V_RANGE; ++i) {
+      tf->AddRGBControlPoint(lqc::Vector3f(2u, 96u, 203u) / 255.0f, 0, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(0u, 127u, 206u) / 255.0f, 14, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(0u, 152u, 193u) / 255.0f, 28, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(11u, 171u, 152u) / 255.0f, 42, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(83u, 175u, 30u) / 255.0f, 57, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(129u, 178u, 0u) / 255.0f, 71, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(165u, 181u, 15u) / 255.0f, 85, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(195u, 183u, 160u) / 255.0f, 99, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(216u, 184u, 22u) / 255.0f, 113, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(236u, 184u, 0u) / 255.0f, 127, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 182u, 0u) / 255.0f, 142, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 164u, 0u) / 255.0f, 156, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 149u, 0u) / 255.0f, 170, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 133u, 0u) / 255.0f, 184, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 112u, 0u) / 255.0f, 198, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 90u, 0u) / 255.0f, 212, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 66u, 11u) / 255.0f, 227, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 40u, 40u) / 255.0f, 240, i);
+      tf->AddRGBControlPoint(lqc::Vector3f(255u, 0u, 0u) / 255.0f, 255, i);
+    }
+  }
+  else
+  {
+    vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_transfer_function;
+    tf->AddRGBControlPoint(vr::TransferControlPoint(2u, 96u, 203u, 0));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(0u, 127u, 206u, 14));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(0u, 152u, 193u, 28));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(11u, 171u, 152u, 42));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(83u, 175u, 30u, 57));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(129u, 178u, 0u, 71));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(165u, 181u, 15u, 85));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(195u, 183u, 160u, 99));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(216u, 184u, 22u, 113));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(236u, 184u, 0u, 127));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 182u, 0u, 142));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 164u, 0u, 156));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 149u, 0u, 170));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 133u, 0u, 184));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 112u, 0u, 198));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 90u, 0u, 212));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 66u, 11u, 227));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 40u, 40u, 240));
+    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 0u, 0u, 255));
+  }
 }
 
 /// <summary>
@@ -182,52 +189,55 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 	if ( !m_initialized )
 		throw std::domain_error("Instance not initialized. Init must be called once!\n");
 
-	if (!m_transfer_function)
+  if (!m_transfer_function || m_tfmode_changed)
 	{
-#ifdef TF2D
-		m_transfer_function = new vr::TransferFunction2D();
-#else
-		m_transfer_function = new vr::TransferFunction1D();
-#endif
+    m_tfmode_changed = false;
+    delete m_transfer_function;
+
+    if (m_tf1d)
+		  m_transfer_function = new vr::TransferFunction1D();
+    else
+		  m_transfer_function = new vr::TransferFunction2D();
+
 		m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
 		SetDefaultColor();
 	}
 
 	GenerateDataChart();
 
-#ifndef TF2D
-	// Gordon Transfer Function
-	double* x = new double[ATFG_V_RANGE];
-	double* h = new double[ATFG_V_RANGE];
-	int* v = new int[ATFG_V_RANGE];
-	if ( !x || !v || !h)
-	{
-		printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-		return false;
-	}
-	UINT32 n_v;
-	GetBoundaryDistancies(x, h, v, &n_v);
-	((vr::TransferFunction1D*)m_transfer_function)->SetClosestBoundaryDistances(v, x, h, n_v);
-#else
-	double** x = new double*[ATFG_V_RANGE];
-	if (!x)
-	{
-		printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-		return false;
-	}
-	
-	for (int i = 0; i < ATFG_V_RANGE; ++i)
-	{
-		x[i] = new double[ATFG_V_RANGE];
-		if (!x[i]) {
-			printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-			return false;
-		}
-	}
+  if (m_tf1d)
+  {
+    // Gordon Transfer Function
+    double* x = new double[ATFG_V_RANGE];
+    double* h = new double[ATFG_V_RANGE];
+    int* v = new int[ATFG_V_RANGE];
+    if (!x || !v || !h) {
+      printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+      return false;
+    }
+    UINT32 n_v;
+    GetBoundaryDistancies(x, h, v, &n_v);
+    ((vr::TransferFunction1D*)m_transfer_function)->SetClosestBoundaryDistances(v, x, h, n_v);
+  }
+  else
+  {
+    double** x = new double*[ATFG_V_RANGE];
+    if (!x) {
+      printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+      return false;
+    }
 
-	GetBoundaryDistancies2D(x);
-	((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(x);
-#endif
+    for (int i = 0; i < ATFG_V_RANGE; ++i) {
+      x[i] = new double[ATFG_V_RANGE];
+      if (!x[i]) {
+        printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
+        return false;
+      }
+    }
+
+    GetBoundaryDistancies2D(x);
+    ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(x);
+  }
 	return true;
 }
 
@@ -735,52 +745,6 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "h(v)");
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 0");
 
-#ifdef EXTREMA_POINTS
-	IupPlotBegin(m_deriv_plot, 0);
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_min_gradient[i] != DBL_MAX )
-			IupPlotAdd(m_deriv_plot, i, m_min_gradient[i]);
-	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
-	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
-	IupSetAttribute(m_deriv_plot, "DS_NAME", "g_min(v)");
-	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 128");
-
-	IupPlotBegin(m_deriv_plot, 0);
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_max_gradient[i] != -DBL_MAX )
-			IupPlotAdd(m_deriv_plot, i, m_max_gradient[i]);
-	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
-	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
-	IupSetAttribute(m_deriv_plot, "DS_NAME", "g_max(v)");
-	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 0 255");
-
-	IupPlotBegin(m_deriv_plot, 0);
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_min_laplacian[i] != DBL_MAX )
-			IupPlotAdd(m_deriv_plot, i, m_min_laplacian[i]);
-	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
-	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
-	IupSetAttribute(m_deriv_plot, "DS_NAME", "h_min(v)");
-	IupSetAttribute(m_deriv_plot, "DS_COLOR", "128 128 0");
-
-	IupPlotBegin(m_deriv_plot, 0);
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; i++ )
-		if ( m_max_laplacian[i] != -DBL_MAX )
-			IupPlotAdd(m_deriv_plot, i, m_max_laplacian[i]);
-	IupPlotEnd(m_deriv_plot);
-	IupSetAttribute(m_deriv_plot, "DS_MODE", PLOT_STYLE);
-	IupSetAttribute(m_deriv_plot, "DS_MARKSTYLE", "CIRCLE");
-	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
-	IupSetAttribute(m_deriv_plot, "DS_NAME", "h_max(v)");
-	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 255 0");
-#endif
-
 	IupPlotBegin(m_deriv_plot, 0);
 	for (UINT32 i = 0; i < m_max_size; i++)
 		IupPlotAdd(m_deriv_plot, m_max_indexes[i], m_average_gradient[m_max_indexes[i]]);
@@ -889,7 +853,13 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			for ( UINT32 z = 0; z < m_depth; ++z )
 			{
 				UINT32 id = m_scalarfield->GetId(x, y, z);
-				m_scalarfield->CalculateDerivatives(x, y, z, &m_scalar_gradient[id], &m_scalar_laplacian[id]);
+        if (m_scalarfield->IsActive(x, y, z))
+				  m_scalarfield->CalculateDerivatives(x, y, z, &m_scalar_gradient[id], &m_scalar_laplacian[id]);
+        else
+        {
+          m_scalar_gradient[id] = -DBL_MAX;
+          m_scalar_laplacian[id] = -DBL_MAX;
+        }
 			}
 		}
 	}
@@ -957,114 +927,75 @@ bool ATFGenerator::GenerateHistogram()
 		}
 	}
 
-	int valid_values = 0;
-	int sum_hits = 0;
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
-	{
-		if ( hits[i] > 0 )
-		{
-			sum_hits += hits[i];
-			valid_values++;
-		}
-	}
-
-	int average_hit = sum_hits / valid_values;
-	average_hit *= 0.5f;
-	printf("Hit Medio: %d\n", average_hit);
-
-	printf("Extraindo derivadas medias, pelo histograma.\n");
-
-	m_max_average_gradient = -DBL_MAX;
-	m_min_average_gradient = DBL_MAX;
-	m_max_average_laplacian = -DBL_MAX;
-	m_min_average_laplacian = DBL_MAX;
-
-	// Calculate average laplacian and gradient
-	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
-	{
-		m_average_gradient[i] = -DBL_MAX;
-		m_average_laplacian[i] = -DBL_MAX;
-		m_min_gradient[i] = DBL_MAX;
-		m_min_laplacian[i] = DBL_MAX;
-		m_max_gradient[i] = -DBL_MAX;
-		m_max_laplacian[i] = -DBL_MAX;
-		UINT32 w = 0;
-		double g = 0.0f;
-		double h = 0.0f;
-		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
-		{
-#ifdef TF2D
-			m_average_h[i][j] = -DBL_MAX;
-			UINT32 hvg_sum = 0;
-			double hvg = 0.0f;
-#endif
-			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
-			{
-				if ( m_scalar_histogram[i][j][k] > 0)
-				{
-					m_min_gradient[i] = fmin(m_min_gradient[i], j);
-					m_min_laplacian[i] = fmin(m_min_laplacian[i], k);
-					m_max_gradient[i] = fmax(m_max_gradient[i], j);
-					m_max_laplacian[i] = fmax(m_max_laplacian[i], k);
-
-					g += j;// * m_scalar_histogram[i][j][k];
-					h += k;// * m_scalar_histogram[i][j][k];
-					w++;// = m_scalar_histogram[i][j][k];
-#ifdef TF2D
-					hvg_sum++;
-					hvg += k;
-#endif
-				}
-			}
-
-#ifdef TF2D
-			if (hvg_sum > 0)
-			{
-				hvg /= hvg_sum;
-				hvg = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * hvg / ATFG_V_MAX;
-				hvg += m_scalarfield->GetMinLaplacian();
-				m_average_h[i][j] = hvg;
-				m_max_average_laplacian = fmax(m_max_average_laplacian, hvg);
-				m_min_average_laplacian = fmin(m_min_average_laplacian, hvg);
-			}
-#endif
-		}
-
-		if (w > 0)
-		{
-			g /= w;
-			g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
-			m_average_gradient[i] = g;
-			m_max_average_gradient = fmax(m_max_average_gradient, g);
-			m_min_average_gradient = fmin(m_min_average_gradient, g);
-
-			h /= w;
-			h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
-			h += m_scalarfield->GetMinLaplacian();
-			m_average_laplacian[i] = h;
-			m_max_average_laplacian = fmax(m_max_average_laplacian, h);
-			m_min_average_laplacian = fmin(m_min_average_laplacian, h);
-
-			m_min_gradient[i] = m_scalarfield->GetMaxGradient() * m_min_gradient[i] / ATFG_V_MAX;
-			m_max_gradient[i] = m_scalarfield->GetMaxGradient() * m_max_gradient[i] / ATFG_V_MAX;
-
-			m_min_laplacian[i] = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * m_min_laplacian[i] / ATFG_V_MAX;
-			m_min_laplacian[i] += m_scalarfield->GetMinLaplacian();
-
-			m_max_laplacian[i] = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * m_max_laplacian[i] / ATFG_V_MAX;
-			m_max_laplacian[i] += m_scalarfield->GetMinLaplacian();
-		}
-
-		printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
-	}
-
-	printf("G(v): %.2f\t-\t%.2f\n", m_min_average_gradient, m_max_average_gradient);
-	printf("H(v): %.2f\t-\t%.2f\n", m_min_average_laplacian, m_max_average_laplacian);
-
 	printf("Histograma gerado.\n");
 	printf("--------------------------------------------------\n");
 
 	return true;
+}
+
+bool ATFGenerator::EstimateAverageValues()
+{
+  printf("Extraindo derivadas medias, pelo histograma.\n");
+
+  m_max_average_gradient = -DBL_MAX;
+  m_min_average_gradient = DBL_MAX;
+  m_max_average_laplacian = -DBL_MAX;
+  m_min_average_laplacian = DBL_MAX;
+
+  // Calculate average laplacian and gradient
+  for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
+    m_average_gradient[i] = -DBL_MAX;
+    m_average_laplacian[i] = -DBL_MAX;
+    UINT32 w = 0;
+    double g = 0.0f;
+    double h = 0.0f;
+    for (UINT32 j = 0; j < ATFG_V_RANGE; ++j)
+    {
+      m_average_h[i][j] = -DBL_MAX;
+      UINT32 hvg_sum = 0;
+      double hvg = 0.0f;
+
+      for (UINT32 k = 0; k < ATFG_V_RANGE; ++k) {
+        if (m_scalar_histogram[i][j][k] > 0) {
+          g += j;// * m_scalar_histogram[i][j][k];
+          h += k;// * m_scalar_histogram[i][j][k];
+          w++;// = m_scalar_histogram[i][j][k];
+          hvg_sum++;
+          hvg += k;
+        }
+      }
+
+      if (hvg_sum > 0) {
+        hvg /= hvg_sum;
+        hvg = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * hvg / ATFG_V_MAX;
+        hvg += m_scalarfield->GetMinLaplacian();
+        m_average_h[i][j] = hvg;
+        m_max_average_laplacian = fmax(m_max_average_laplacian, hvg);
+        m_min_average_laplacian = fmin(m_min_average_laplacian, hvg);
+      }
+    }
+
+    if (w > 0) {
+      g /= w;
+      g = m_scalarfield->GetMaxGradient() * g / ATFG_V_MAX;
+      m_average_gradient[i] = g;
+      m_max_average_gradient = fmax(m_max_average_gradient, g);
+      m_min_average_gradient = fmin(m_min_average_gradient, g);
+
+      h /= w;
+      h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
+      h += m_scalarfield->GetMinLaplacian();
+      m_average_laplacian[i] = h;
+      m_max_average_laplacian = fmax(m_max_average_laplacian, h);
+      m_min_average_laplacian = fmin(m_min_average_laplacian, h);
+    }
+
+    printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
+  }
+
+  printf("G(v): %.2f\t-\t%.2f\n", m_min_average_gradient, m_max_average_gradient);
+  printf("H(v): %.2f\t-\t%.2f\n", m_min_average_laplacian, m_max_average_laplacian);
+  return true;
 }
 
 void ATFGenerator::SmoothCurveWithGaussian(double* v, const int& n, const int& times)

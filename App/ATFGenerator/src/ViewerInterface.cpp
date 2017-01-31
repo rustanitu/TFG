@@ -9,9 +9,7 @@
 #include <string>
 #include <vector>
 
-#ifdef TF2D
 #include <iup_mglplot.h>
-#endif
 
 //////////////////////
 // Public Callbacks //
@@ -47,33 +45,31 @@ int ViewerInterface::CLOSE_CB_Derivatives(Ihandle* ih)
 
 void ViewerInterface::CleanPlot()
 {
-#ifdef TF2D
-	char* rotation = IupGetAttribute(m_tf_plot, "ROTATE");
-	char* zoom = IupGetAttribute(m_tf_plot, "ZOOM");
-	IupHide(m_tf_plot_dialog);
+  char* rotation = IupGetAttribute(m_tf_plot2d, "ROTATE");
+	char* zoom = IupGetAttribute(m_tf_plot2d, "ZOOM");
+	IupHide(m_tf_plot2d_dialog);
 
-	IupSetAttribute(m_tf_plot, "CLEAR", NULL);
+	IupSetAttribute(m_tf_plot2d, "CLEAR", NULL);
   
-	IupDestroy(m_tf_plot);
-	IupDestroy(m_tf_plot_dialog);
+	IupDestroy(m_tf_plot2d);
+  IupDestroy(m_tf_plot2d_dialog);
 
-	m_tf_plot = IupMglPlot();
+	m_tf_plot2d = IupMglPlot();
 
-	IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
-	IupSetAttribute(m_tf_plot, "LEGEND", "YES");
-	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
-	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
-	IupSetAttribute(m_tf_plot, "ZOOM", zoom);
-  //IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
-	IupSetAttribute(m_tf_plot, "ROTATE", rotation);
+	IupSetAttribute(m_tf_plot2d, "SYNCVIEW", "YES");
+	IupSetAttribute(m_tf_plot2d, "LEGEND", "YES");
+	IupSetAttribute(m_tf_plot2d, "LEGENDBOX", "NO");
+	IupSetAttribute(m_tf_plot2d, "VIEWPORTSQUARE", "YES");
+	IupSetAttribute(m_tf_plot2d, "ZOOM", zoom);
+  //IupSetAttribute(m_tf_plot2d, "ROTATE", "0:0:-90");
+	IupSetAttribute(m_tf_plot2d, "ROTATE", rotation);
 	//free(rotation);
 	//free(zoom);
 
-	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
-	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
-	IupSetAttribute(m_tf_plot_dialog, "SIZE", "HALFxFULL");
-	IupSetCallback(m_tf_plot_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
-#endif
+  m_tf_plot2d_dialog = IupDialog(IupVbox(m_tf_plot2d, NULL));
+  IupSetAttribute(m_tf_plot2d_dialog, "TITLE", "Transfer Function");
+  IupSetAttribute(m_tf_plot2d_dialog, "SIZE", "HALFxFULL");
+  IupSetCallback(m_tf_plot2d_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
 }
 
 int ViewerInterface::Motion_CB (Ihandle *ih, int x, int y, char *status)
@@ -428,6 +424,18 @@ int ViewerInterface::tgl_SetTriangularFunction_CB(Ihandle* ih, int state)
 	return IUP_DEFAULT;
 }
 
+int ViewerInterface::tgl_Set1D_CB(Ihandle* ih, int state)
+{
+  Viewer::Instance()->SetTF1D(state);
+  return IUP_DEFAULT;
+}
+
+int ViewerInterface::tgl_Set2D_CB(Ihandle* ih, int state)
+{
+  Viewer::Instance()->SetTF1D(1 - state);
+  return IUP_DEFAULT;
+}
+
 ////////////////////
 // Public Methods //
 ////////////////////
@@ -521,10 +529,16 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetCallback(triangle_bx, "ACTION", (Icallback)tgl_SetTriangularFunction_CB);
 	Ihandle* radius = IupRadio(IupVbox(gaussian_bx, triangle_bx, NULL));
 
+  Ihandle* tf1d = IupToggle("1D", NULL);
+  IupSetCallback(tf1d, "ACTION", (Icallback)tgl_Set1D_CB);
+  Ihandle* tf2d = IupToggle("2D", NULL);
+  IupSetCallback(tf2d, "ACTION", (Icallback)tgl_Set2D_CB);
+  Ihandle* radius_tf = IupRadio(IupVbox(tf1d, tf2d, NULL));
+
 	m_bthick_label = IupLabel("BThick: 1   ");
 	m_gtresh_label = IupLabel("GTresh: 0.0f");
 
-	Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, radius, NULL);
+  Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, radius, radius_tf, NULL);
 	IupSetAttribute(vbox_atfg, "EXPAND", "VERTICAL");
 	Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
 	IupSetAttribute(hbox_atfg, "EXPAND", "HORIZONTAL");
@@ -729,22 +743,27 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	m_iup_main_dialog = IupDialog (m_iup_hbox_dialog);
 	IupSetAttribute (m_iup_main_dialog, "MENU", "ViewerInterfaceIupMenu");
 	IupSetAttribute (m_iup_main_dialog, "TITLE", "Volume Visualization");
-	
-#ifdef TF2D
-	m_tf_plot = IupMglPlot();
-#else
-	m_tf_plot = IupPlot();
-#endif
 
-	IupSetAttribute(m_tf_plot, "SYNCVIEW", "YES");
-	IupSetAttribute(m_tf_plot, "LEGEND", "YES");
-	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
-	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
+  m_tf_plot1d = IupPlot();
+	IupSetAttribute(m_tf_plot1d, "SYNCVIEW", "YES");
+	IupSetAttribute(m_tf_plot1d, "LEGEND", "YES");
+	IupSetAttribute(m_tf_plot1d, "LEGENDBOX", "NO");
+	IupSetAttribute(m_tf_plot1d, "VIEWPORTSQUARE", "YES");
 
-	m_tf_plot_dialog = IupDialog(IupVbox(m_tf_plot, NULL));
-	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
-	IupSetAttribute(m_tf_plot_dialog, "SIZE", "HALFxFULL");
-	IupSetCallback(m_tf_plot_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
+  m_tf_plot1d_dialog = IupDialog(IupVbox(m_tf_plot1d, NULL));
+  IupSetAttribute(m_tf_plot1d_dialog, "TITLE", "Transfer Function");
+  IupSetAttribute(m_tf_plot1d_dialog, "SIZE", "HALFxFULL");
+  IupSetCallback(m_tf_plot1d_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
+
+  m_tf_plot2d = IupMglPlot();
+  IupSetAttribute(m_tf_plot2d, "LEGEND", "NO");
+  IupSetAttribute(m_tf_plot2d, "LEGENDBOX", "NO");
+  IupSetAttribute(m_tf_plot2d, "VIEWPORTSQUARE", "YES");
+
+  m_tf_plot2d_dialog = IupDialog(IupVbox(m_tf_plot2d, NULL));
+  IupSetAttribute(m_tf_plot2d_dialog, "TITLE", "Transfer Function");
+  IupSetAttribute(m_tf_plot2d_dialog, "SIZE", "HALFxFULL");
+  IupSetCallback(m_tf_plot2d_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
 	
 	m_deriv_plot = IupPlot();
 	IupSetAttribute(m_deriv_plot, "SYNCVIEW", "YES");

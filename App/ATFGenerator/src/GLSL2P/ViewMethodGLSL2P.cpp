@@ -1,9 +1,10 @@
 #include "ViewMethodGLSL2P.h"
 
-ViewMethodGLSL2P::ViewMethodGLSL2P ()
-	: GLSLViewMethod(VRVIEWS::GLSL2P)
-	, m_scale(1.0f)
-	, m_button(-1)
+ViewMethodGLSL2P::ViewMethodGLSL2P()
+  : GLSLViewMethod(VRVIEWS::GLSL2P)
+  , m_scale(1.0f)
+  , m_button(-1)
+  , m_tf1d(true)
 {
 	m_volumename = "";
 	m_trasnferfunctionname = "";
@@ -23,6 +24,13 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
 		if (m_outdated)
 		{
 			Viewer::Instance()->UpdateATFG();
+      if (m_tf1d != Viewer::Instance()->IsTF1D()) {
+        m_renderer.Destroy();
+        m_renderer.CreateScene(Viewer::Instance()->m_CurrentWidth,
+          Viewer::Instance()->m_CurrentHeight,
+          Viewer::Instance()->m_volume);
+        m_tf1d = Viewer::Instance()->IsTF1D();
+      }
 			if (!m_renderer.m_glsl_volume || Viewer::Instance()->m_volumename.compare(m_volumename) != 0)
 			{
 				m_volumename = Viewer::Instance ()->m_volumename;
@@ -43,15 +51,22 @@ int ViewMethodGLSL2P::Idle_Action_CB (Ihandle* cnv_renderer)
 			m_renderer.Render (Viewer::Instance ()->m_CurrentWidth, Viewer::Instance ()->m_CurrentHeight);
 			IupGLSwapBuffers (cnv_renderer);
 			
-			char* ans = IupGetAttribute(Viewer::Instance()->m_gui.GetTFPlotDialog(), "VISIBLE");
-			if ( Viewer::Instance()->m_gui.IsTransferFunctionDialogShown() && strcmp(ans, "NO") == 0 )
-				IupShowXY(Viewer::Instance()->m_gui.GetTFPlotDialog(), IUP_RIGHT, IUP_TOP);
-			//free(ans);
+      char* ans = IupGetAttribute(Viewer::Instance()->m_gui.GetDerivPlotDialog(), "VISIBLE");
+      if (Viewer::Instance()->m_gui.IsDerivativeDialogShown() && strcmp(ans, "NO") == 0)
+        IupShowXY(Viewer::Instance()->m_gui.GetDerivPlotDialog(), IUP_LEFT, IUP_TOP);
 
-			ans = IupGetAttribute(Viewer::Instance()->m_gui.GetDerivPlotDialog(), "VISIBLE");
-			if ( Viewer::Instance()->m_gui.IsDerivativeDialogShown() && strcmp(ans, "NO") == 0 )
-				IupShowXY(Viewer::Instance()->m_gui.GetDerivPlotDialog(), IUP_LEFT, IUP_TOP);
-			//free(ans);
+      if (Viewer::Instance()->IsTF1D())
+      {
+        ans = IupGetAttribute(Viewer::Instance()->m_gui.Get1DTFPlotDialog(), "VISIBLE");
+        if (Viewer::Instance()->m_gui.IsTransferFunctionDialogShown() && strcmp(ans, "NO") == 0)
+          IupShowXY(Viewer::Instance()->m_gui.Get1DTFPlotDialog(), IUP_RIGHT, IUP_TOP);
+      }
+      else
+      {
+        ans = IupGetAttribute(Viewer::Instance()->m_gui.Get2DTFPlotDialog(), "VISIBLE");
+        if (Viewer::Instance()->m_gui.IsTransferFunctionDialogShown() && strcmp(ans, "NO") == 0)
+          IupShowXY(Viewer::Instance()->m_gui.Get2DTFPlotDialog(), IUP_RIGHT, IUP_TOP);
+      }
 		}
 		m_redisplay = false;
 	}

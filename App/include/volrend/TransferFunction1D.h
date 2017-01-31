@@ -47,51 +47,20 @@ namespace vr
 
 
 	public:
-		/// <summary>
-		/// Generates a transfer function file at a given path.
-		/// If a file with the same path already exists, it'll
-		/// be replaced.
-		/// </summary>
-		/// <returns>Returns true if the transfer function can
-		/// be generated, false otherwise.</returns>
-		bool GenerateGordonBased();
+		virtual bool GenerateGordonBased();
 
-		bool Generate();
-
-		void SetBoundaryThickness(int thickness)
-		{
-			m_thickness = thickness;
-		}
+		virtual bool Generate();
 
 		void SetBoundary(int boundary)
 		{
 			m_boundary = boundary;
 		}
 
-		/// <summary>
-		/// Specifies the distance between a intensity value
-		/// and its closest boundary. Thus, the input arrays'
-		/// size must range from 2 to 256. Any array content
-		/// whose index is greater than 255, it'll be ignored.
-		/// </summary>
-		/// <param name="values">The values array.</param>
-		/// <param name="distances">The distances to the closest boundaries.</param>
-		/// <param name="n">The input arrays' size.</param>
 		void SetClosestBoundaryDistances(int* values, double* distances, double* h, const int& n);
 
 		void SetAlphaValues(int* values, double* alphas, const int& n);
 		
 		void SetPeakPoints(int* peaks, double* values, const int& n);
-
-		void SetGaussianFunction()
-		{
-			m_gaussian_bx = true;
-		}
-
-		void SetTriangularFunction()
-		{
-			m_gaussian_bx = false;
-		}
 
 	private:
 		double CenteredTriangleFunction(double max, double base, double center, const int& v);
@@ -112,10 +81,8 @@ namespace vr
 		bool m_direct_tf;
 		bool m_peakbased_tf;
 		bool m_gordon_tf;
-		int m_thickness;
 		int m_boundary;
 		int m_values_size;
-		int m_gaussian_bx;
 	};
 
 }

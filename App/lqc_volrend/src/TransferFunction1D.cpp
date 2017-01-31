@@ -8,8 +8,8 @@ namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_indexes(NULL), m_values(NULL), m_center(NULL), m_boundary(0), m_thickness(1)
-		, m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false), m_gaussian_bx(true)
+		, m_indexes(NULL), m_values(NULL), m_center(NULL), m_boundary(0)
+    , m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false)
 	{
 		m_cpt_rgb.clear ();
 		m_cpt_alpha.clear ();
@@ -308,7 +308,7 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-		double top = 1.0f / sqrt(PI * 2 * base * base / 9);
+    double top = 1.0f / sqrt(2 * PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_values[v];
 		if (x >= -base && x <= base)
@@ -333,7 +333,7 @@ namespace vr
 		double sigma = base / 3.0f;
 		double two_sigma_quad = 2 * sigma * sigma;
 		double x = m_values[v];
-		double g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
+		double g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(2 * PI * two_sigma_quad);
 		return fmin(g, max);
 	}
 

@@ -9,6 +9,8 @@
 #include <lqc/lqcdefines.h>
 #include <volrend/Utils.h>
 
+#include "../Viewer.h"
+
 #include <fstream>
 
 RendererGLSL2P::RendererGLSL2P ()
@@ -371,13 +373,18 @@ void RendererGLSL2P::CreateSecondPass ()
 		7, 5, 6, 7, 4, 5
 	};
 
-	m_shader_secondpass = new gl::GLShader ("shader/StructuredDataset/raycasting.vert",
-#ifdef TF2D
-		"shader/StructuredDataset/RiemannSummation/raycasting2D.frag"
-#else
+  if (Viewer::Instance()->IsTF1D())
+  {
+	  m_shader_secondpass = new gl::GLShader ("shader/StructuredDataset/raycasting.vert",
 		"shader/StructuredDataset/RiemannSummation/raycasting.frag"
-#endif
-	);
+    );
+  }
+  else
+  {
+    m_shader_secondpass = new gl::GLShader("shader/StructuredDataset/raycasting.vert",
+		"shader/StructuredDataset/RiemannSummation/raycasting2D.frag"
+    );
+  }
 
 	m_shader_secondpass->SetUniformMatrix4f ("ModelMatrix", lqc::IDENTITY_MATRIX);
 	m_shader_secondpass->SetUniformMatrix4f ("ViewMatrix", lqc::IDENTITY_MATRIX);
@@ -388,11 +395,10 @@ void RendererGLSL2P::CreateSecondPass ()
 	if (m_glsl_activetex) m_shader_secondpass->SetUniformTexture3D("ActiveTex", m_glsl_activetex->GetTextureID(), 3);
 	if (m_glsl_transfer_function)
 	{
-#ifdef TF2D
-		m_shader_secondpass->SetUniformTexture2D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
-#else
-		m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
-#endif
+    if (Viewer::Instance()->IsTF1D())
+		  m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+    else
+		  m_shader_secondpass->SetUniformTexture2D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
 	}
 	
 	m_shader_secondpass->SetUniformInt ("ScreenSizeW", m_sdr_width);
@@ -478,12 +484,10 @@ void RendererGLSL2P::ReloadVolume(ATFGenerator* atfg, bool resetslicesizes)
 		m_init_slice_y = 0; m_last_slice_y = volume->GetHeight ();
 		m_init_slice_z = 0; m_last_slice_z = volume->GetDepth ();
 	}
-
-#ifdef TF2D
-	m_glsl_volume = vr::GenerateRGTexture(atfg, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
-#else
-	m_glsl_volume = vr::GenerateRTexture (volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
-#endif
+  if (Viewer::Instance()->IsTF1D())
+	  m_glsl_volume = vr::GenerateRTexture (volume, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
+  else
+	  m_glsl_volume = vr::GenerateRGTexture(atfg, m_init_slice_x, m_init_slice_y, m_init_slice_z, m_last_slice_x, m_last_slice_y, m_last_slice_z);
 
 	if (m_glsl_volume)
 	{
@@ -540,11 +544,11 @@ void RendererGLSL2P::ReloadTransferFunction(vr::TransferFunction* tfunction)
 		if (m_glsl_transfer_function) {
 			m_shader_secondpass->Bind();
 
-#ifdef TF2D
-			m_shader_secondpass->SetUniformTexture2D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
-#else
-			m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
-#endif
+      if (Viewer::Instance()->IsTF1D())
+        m_shader_secondpass->SetUniformTexture1D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+      else
+        m_shader_secondpass->SetUniformTexture2D("TransferFunc", m_glsl_transfer_function->GetTextureID(), 2);
+
 			m_shader_secondpass->BindUniform("TransferFunc");
 
 			m_shader_secondpass->Unbind();

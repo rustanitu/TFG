@@ -8,7 +8,7 @@ namespace vr
 {
 	TransferFunction2D::TransferFunction2D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_distances(NULL), m_thickness(1), m_gaussian_bx(true)
+		, m_distances(NULL)
 	{
 		printf("TransferFunction2D criado.\n");
 		m_width = m_height = MAX_V;
@@ -293,7 +293,7 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-		double top = 1.0f / sqrt(PI * 2 * base * base / 9);
+    double top = 1.0f / sqrt(2 * PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_distances[v][g];
 		if (x >= -base && x <= base)
@@ -318,7 +318,7 @@ namespace vr
 		double sigma = base / 3.0f;
 		double two_sigma_quad = 2 * sigma * sigma;
 		double x = m_distances[v][g];
-		return fmin(max, exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad));
+    return fmin(max, exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(2 * PI * two_sigma_quad));
 	}
 
 	/// <summary>

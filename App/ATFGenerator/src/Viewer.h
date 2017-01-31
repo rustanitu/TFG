@@ -144,16 +144,23 @@ public:
 	static int SetGTresh(Ihandle* ih, double val);
 	static int SetBoundary(Ihandle* ih, int boundary);
 	static int SetBxFunction(int set);
+  static int SetTF1D(int set);
 	static int MarkOutdated();
 	
 	ViewerInterface m_gui;
-	int m_bx_func;
 
 	void UpdateATFG();
+
+  bool IsTF1D()
+  {
+    return m_tf1d;
+  }
 
 private:
 	void ExtractATFG();
 	void GenerateATFG();
+	int m_bx_func;
+  int m_tf1d;
 
 protected:
 	/*! Constructor.*/

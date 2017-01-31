@@ -81,11 +81,15 @@ namespace vr
 	class TransferFunction
 	{
 	public:
-		TransferFunction () {}
+    TransferFunction () : m_gaussian_bx(true), m_thickness(1) {}
 		~TransferFunction () {}
 
 		virtual const char* GetNameClass () = 0;
 		virtual lqc::Vector4d Get (double value) = 0;
+
+    virtual bool GenerateGordonBased() { return false; }
+
+    virtual bool Generate() { return false; }
 
 		virtual gl::GLTexture* GenerateTexture_RGBA () { return NULL; }
 		
@@ -95,11 +99,28 @@ namespace vr
 		void SetTransferFunctionPlot(Ihandle * ih)
 		{
 			m_tf_plot = ih;
-		}
+    }
+
+    void SetBoundaryThickness(int thickness)
+    {
+      m_thickness = thickness;
+    }
+
+    void SetGaussianFunction()
+    {
+      m_gaussian_bx = true;
+    }
+
+    void SetTriangularFunction()
+    {
+      m_gaussian_bx = false;
+    }
 		
 	protected:
 		std::string m_name;
-		Ihandle * m_tf_plot;
+    Ihandle * m_tf_plot;
+    int m_thickness;
+    int m_gaussian_bx;
 	};
 
 	/*class TransferFunction1D : public TransferFunction

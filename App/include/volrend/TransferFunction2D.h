@@ -42,33 +42,11 @@ namespace vr
 		double m_v0, m_v1;
 
 	public:
-		/// <summary>
-		/// Generates a transfer function file at a given path.
-		/// If a file with the same path already exists, it'll
-		/// be replaced.
-		/// </summary>
-		/// <returns>Returns true if the transfer function can
-		/// be generated, false otherwise.</returns>
-		bool GenerateGordonBased();
+		virtual bool GenerateGordonBased();
 
-		bool Generate();
-
-		void SetBoundaryThickness(int thickness)
-		{
-			m_thickness = thickness;
-		}
+		virtual bool Generate();
 
 		void SetClosestBoundaryDistances(double** distances);
-
-		void SetGaussianFunction()
-		{
-			m_gaussian_bx = true;
-		}
-
-		void SetTriangularFunction()
-		{
-			m_gaussian_bx = false;
-		}
 
 	private:
 		double CenteredTriangleFunction(double max, double base, double center, const int& v, const int& g);
@@ -76,8 +54,6 @@ namespace vr
 
 	private:
 		double** m_distances;
-		int m_thickness;
-		int m_gaussian_bx;
 		int m_width, m_height;
 	};
 

@@ -128,6 +128,10 @@ void Viewer::UpdateATFG()
 void Viewer::ExtractATFG()
 {
 	m_atfg->SetGTresh(m_gtresh);
+  if (m_tf1d)
+    m_atfg->SetTF1D();
+  else
+    m_atfg->SetTF2D();
 #ifdef GORDON
 	if (!m_atfg->ExtractGordonTransferFunction())
 #else
@@ -140,14 +144,19 @@ void Viewer::ExtractATFG()
 
 void Viewer::GenerateATFG()
 {
-#ifndef TF2D
-	vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
-	tf->SetBoundary(m_boundary);
-#else
-	vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
-	m_gui.CleanPlot();
-#endif
-	tf->SetTransferFunctionPlot(m_gui.m_tf_plot);
+  vr::TransferFunction* tf = NULL;
+  if (Viewer::Instance()->IsTF1D())
+  {
+    tf = (vr::TransferFunction1D*)m_atfg->GetTransferFunction();
+    ((vr::TransferFunction1D*)tf)->SetBoundary(m_boundary);
+    tf->SetTransferFunctionPlot(m_gui.m_tf_plot1d);
+  }
+  else
+  {
+    tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
+    m_gui.CleanPlot();
+	  tf->SetTransferFunctionPlot(m_gui.m_tf_plot2d);
+  }
 	tf->SetBoundaryThickness(m_boundary_thickness);
 	if (Viewer::Instance()->m_bx_func)
 		tf->SetGaussianFunction();
@@ -272,6 +281,14 @@ int Viewer::SetBxFunction(int set)
 	Viewer::MarkOutdated();
 #endif
 	return IUP_DEFAULT;
+}
+
+int Viewer::SetTF1D(int tf)
+{
+  Viewer::Instance()->m_tf1d = tf;
+  Viewer::Instance()->m_extract_atfg = true;
+  Viewer::MarkOutdated();
+  return IUP_DEFAULT;
 }
 
 int Viewer::MarkOutdated()

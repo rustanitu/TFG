@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <fstream>
-#include <vector>
 
 //#define HESSIAN
 
@@ -10,9 +9,9 @@ Tank::Tank()
 	: m_cells(NULL)
 	, m_vertices(NULL)
 	, m_current_timestep(0)
-	, m_scalar_fx(NULL)
-	, m_scalar_fy(NULL)
-	, m_scalar_fz(NULL)
+	//, m_scalar_fx(NULL)
+	//, m_scalar_fy(NULL)
+	//, m_scalar_fz(NULL)
 {
 	printf("Tank criado.\n");
 }
@@ -24,9 +23,9 @@ Tank::~Tank()
 
 	delete[] m_cells;
 	delete[] m_vertices;
-	delete[] m_scalar_fx;
-	delete[] m_scalar_fy;
-	delete[] m_scalar_fz;
+	//delete[] m_scalar_fx;
+	//delete[] m_scalar_fy;
+	//delete[] m_scalar_fz;
 }
 
 bool Tank::Read(const char* filepath)
@@ -89,8 +88,6 @@ bool Tank::Read(const char* filepath)
 		m_vertices[i].z = z;
 	}
 
-	std::vector<int> inactives;
-
 	// It gets all cells
 	for ( int c = 0; c < m_ncells; ++c )
 	{
@@ -145,9 +142,9 @@ bool Tank::Read(const char* filepath)
 				{
 					printf("O mapeamento do volume difere do experado.\n");
 					delete[] m_cells;
-					delete[] m_scalar_fx;
-					delete[] m_scalar_fy;
-					delete[] m_scalar_fz;
+					//delete[] m_scalar_fx;
+					//delete[] m_scalar_fy;
+					//delete[] m_scalar_fz;
 					delete[] m_vertices;
 					return false;
 				}
@@ -173,7 +170,6 @@ bool Tank::Read(const char* filepath)
 			}
 			else {
 				cell->SetValue(t, 0.0f);
-				inactives.push_back(id);
 			}
 		}
 	}
@@ -203,7 +199,7 @@ bool Tank::ReadFromVolume(const UINT32& width, const UINT32& height, const UINT3
 	//m_scalar_fx = new double[m_ncells];
 	//m_scalar_fy = new double[m_ncells];
 	//m_scalar_fz = new double[m_ncells];
-	if ( !m_cells || !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
+	if ( !m_cells )//|| !m_scalar_fx || !m_scalar_fy || !m_scalar_fz )
 		return false;
 
 	// It gets all cells
@@ -247,31 +243,25 @@ double Tank::GetValue(const UINT32& id)
 	return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : -DBL_MAX;
 }
 
-double Tank::GetQuadraticGradientNorm(const UINT32& id)
-{
-	const double dfx = m_scalar_fx[id];
-	const double dfy = m_scalar_fy[id];
-	const double dfz = m_scalar_fz[id];
-	return dfx*dfx + dfy*dfy + dfz*dfz;
-}
-
 bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t)
 {
 	double det;
-
+  bool ok = false;
 
 	if (((k.x != l.x) || (k.y != l.y)) &&
 		((m.x != n.x) || (m.y != n.y)))  /* se nao e' paralela ao plano XY*/
 	{
 		det = (n.x - m.x) * (l.y - k.y) - (n.y - m.y) * (l.x - k.x);
 
-		if (det == 0.0)
-			return false;
+    if (det == 0.0)
+      ok = false;
+    else
+      ok = true;
 
 		*s = ((n.x - m.x) * (m.y - k.y) - (n.y - m.y) * (m.x - k.x)) / det;
 		*t = ((l.x - k.x) * (m.y - k.y) - (l.y - k.y) * (m.x - k.x)) / det;
 
-		return true;
+		if (ok) return true;
 	}
 
 	if (((k.x != l.x) || (k.z != l.z)) &&
@@ -279,13 +269,15 @@ bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const 
 	{
 		det = (n.x - m.x) * (l.z - k.z) - (n.z - m.z) * (l.x - k.x);
 
-		if (det == 0.0)
-			return false;
+    if (det == 0.0)
+      ok = false;
+    else
+      ok = true;
 
 		*s = ((n.x - m.x) * (m.z - k.z) - (n.z - m.z) * (m.x - k.x)) / det;
 		*t = ((l.x - k.x) * (m.z - k.z) - (l.z - k.z) * (m.x - k.x)) / det;
 
-		return true;
+    if (ok) return true;
 	}
 
 	if (((k.y != l.y) || (k.z != l.z)) &&
@@ -293,16 +285,18 @@ bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const 
 	{
 		det = (n.y - m.y) * (l.z - k.z) - (n.z - m.z) * (l.y - k.y);
 
-		if (det == 0.0)
-			return false;
+    if (det == 0.0)
+      ok = false;
+    else
+      ok = true;
 
 		*s = ((n.y - m.y) * (m.z - k.z) - (n.z - m.z) * (m.y - k.y)) / det;
 		*t = ((l.y - k.y) * (m.z - k.z) - (l.z - k.z) * (m.y - k.y)) / det;
 
-		return true;
+    if (ok) return true;
 	}
 
-	return true;
+	return ok;
 }
 
 void Tank::FillCellAdjCenter(Cell& cell)
@@ -546,9 +540,9 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 					gid = GetId(x, y, z);
 				}
 
-				double dgx = m_scalar_fx[gid];
-				double dgy = m_scalar_fy[gid];
-				double dgz = m_scalar_fz[gid];
+				double dgx = 0.0f;//m_scalar_fx[gid];
+				double dgy = 0.0f;//m_scalar_fy[gid];
+				double dgz = 0.0f;//m_scalar_fz[gid];
 				glm::vec3 ggrad(dgx, dgy, dgz);
 				double gv = glm::length(ggrad);
 
@@ -572,7 +566,7 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
 	glm::vec3 parametric_grad(dfx, dfy, dfz);
 	glm::vec3 grad = jacob_inv * parametric_grad;
-	glm::vec3 fgrad(m_scalar_fx[id], m_scalar_fy[id], m_scalar_fz[id]);
+  glm::vec3 fgrad(0.0f);// m_scalar_fx[id], m_scalar_fy[id], m_scalar_fz[id]);
 	
 	g = glm::dot(grad, fgrad) / glm::length(fgrad);
 	m_max_laplacian = fmax(m_max_laplacian, g);
