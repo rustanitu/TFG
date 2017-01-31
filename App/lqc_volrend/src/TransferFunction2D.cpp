@@ -49,6 +49,8 @@ namespace vr
 				m_transferfunction[v][g].z = -DBL_MAX;
 			}
 		}
+
+    m_built = false;
 	}
 
 	void TransferFunction2D::ClearAlphaControlPoints()
@@ -58,6 +60,8 @@ namespace vr
 				m_transferfunction[v][g].w = -DBL_MAX;
 			}
 		}
+
+    m_built = false;
 	}
 
 	gl::GLTexture2D* TransferFunction2D::GenerateTexture_RGBA ()
@@ -342,18 +346,15 @@ namespace vr
 		{
 			for (int j = 0; j < MAX_V; ++j)
 			{
-				double x = m_distances[i][j];
-				if (x == -DBL_MAX)
-				{
-					data[j + MAX_V*i] = 0.0f;
-					continue;
-				}
-
 				double a = 0.0f;
-				if (m_gaussian_bx)
-					a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, i, j);
-				else
-					a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0, i, j);
+				double x = m_distances[i][j];
+        if (x != -DBL_MAX)
+        {
+          if (m_gaussian_bx)
+            a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, i, j);
+          else
+            a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0, i, j);
+        }
 
 				AddAlphaControlPoint(a, i, j);
 				data[j + MAX_V*i] = a;
@@ -373,7 +374,7 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Gradient");
 		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Scalar Value");
 		IupSetAttribute(m_tf_plot, "AXS_ZLABEL", "Alpha");
-		IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
+		//IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
 		IupSetAttribute(m_tf_plot, "REDRAW", NULL);
 
 		delete[] data;

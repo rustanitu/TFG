@@ -146,8 +146,8 @@ void Viewer::GenerateATFG()
 #else
 	vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
 	m_gui.CleanPlot();
-	tf->SetTransferFunctionPlot(m_gui.m_tf_plot);
 #endif
+	tf->SetTransferFunctionPlot(m_gui.m_tf_plot);
 	tf->SetBoundaryThickness(m_boundary_thickness);
 	if (Viewer::Instance()->m_bx_func)
 		tf->SetGaussianFunction();

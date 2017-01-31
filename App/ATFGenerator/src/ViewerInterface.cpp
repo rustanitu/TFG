@@ -47,13 +47,15 @@ int ViewerInterface::CLOSE_CB_Derivatives(Ihandle* ih)
 
 void ViewerInterface::CleanPlot()
 {
+#ifdef TF2D
 	char* rotation = IupGetAttribute(m_tf_plot, "ROTATE");
 	char* zoom = IupGetAttribute(m_tf_plot, "ZOOM");
 	IupHide(m_tf_plot_dialog);
 
 	IupSetAttribute(m_tf_plot, "CLEAR", NULL);
-	//delete m_tf_plot;
-	//delete m_tf_plot_dialog;
+  
+	IupDestroy(m_tf_plot);
+	IupDestroy(m_tf_plot_dialog);
 
 	m_tf_plot = IupMglPlot();
 
@@ -62,6 +64,7 @@ void ViewerInterface::CleanPlot()
 	IupSetAttribute(m_tf_plot, "LEGENDBOX", "NO");
 	IupSetAttribute(m_tf_plot, "VIEWPORTSQUARE", "YES");
 	IupSetAttribute(m_tf_plot, "ZOOM", zoom);
+  //IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
 	IupSetAttribute(m_tf_plot, "ROTATE", rotation);
 	//free(rotation);
 	//free(zoom);
@@ -70,6 +73,7 @@ void ViewerInterface::CleanPlot()
 	IupSetAttribute(m_tf_plot_dialog, "TITLE", "Transfer Function");
 	IupSetAttribute(m_tf_plot_dialog, "SIZE", "HALFxFULL");
 	IupSetCallback(m_tf_plot_dialog, "CLOSE_CB", CLOSE_CB_TransferFunction);
+#endif
 }
 
 int ViewerInterface::Motion_CB (Ihandle *ih, int x, int y, char *status)

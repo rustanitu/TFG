@@ -1181,10 +1181,10 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
 	printf("Sigma: %.2f\n", sigma);
 
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
+	  double g = m_average_gradient[i];
 		for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
-			double g = m_average_gradient[i];
 			double l = m_average_h[i][j];
-			
+
 			if (l == -DBL_MAX)
 				l = m_average_laplacian[i];
 

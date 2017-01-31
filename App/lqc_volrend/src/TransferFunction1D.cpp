@@ -308,7 +308,7 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-		double top = 1.0f;// / sqrt(PI * 2 * base * base / 9);
+		double top = 1.0f / sqrt(PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_values[v];
 		if (x >= -base && x <= base)
@@ -333,7 +333,7 @@ namespace vr
 		double sigma = base / 3.0f;
 		double two_sigma_quad = 2 * sigma * sigma;
 		double x = m_values[v];
-		double g = exp(-(x - u)*(x - u) / two_sigma_quad);// / sqrt(PI * two_sigma_quad);
+		double g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(PI * two_sigma_quad);
 		return fmin(g, max);
 	}
 
@@ -367,7 +367,7 @@ namespace vr
 		IupPlotAdd(m_tf_plot, 0, 1.0f);
 
 		// Assign opacity to transfer function
-		for ( int i = 0; i < m_values_size; ++i )
+    for (int i = 0; i < m_values_size; ++i)
 		{
 			int value = m_indexes[i];
 			double x = m_values[value];
