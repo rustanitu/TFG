@@ -300,7 +300,7 @@ namespace vr
 		//        / \       |
 		//       / | \      |
 		//      /  |  \     |
-		//     /   |   \    | top
+		//     /   |   \    | max
 		//    /    |    \   |
 		//   /     |     \  |
 		//  /      |      \ |
@@ -308,33 +308,31 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-    double top = 1.0f / sqrt(2 * PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_values[v];
 		if (x >= -base && x <= base)
 		{
 			if (x >= center && center < base)
 			{
-				a = -(top * x) / (base - center);
-				a += (top * base) / (base - center);
+        a = -(max * x) / (base - center);
+        a += (max * base) / (base - center);
 			}
 			else
 			{
-				a = (top * x) / (base + center);
-				a += (top * base) / (base + center);
+        a = (max * x) / (base + center);
+        a += (max * base) / (base + center);
 			}
 		}
 
-		return fmin(a, max);
+		return fmin(a, 1.0f);
 	}
 
 	double TransferFunction1D::CenteredGaussianFunction(double max, double base, double u, const int& v)
 	{
 		double sigma = base / 3.0f;
-		double two_sigma_quad = 2 * sigma * sigma;
 		double x = m_values[v];
-		double g = exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(2 * PI * two_sigma_quad);
-		return fmin(g, max);
+    double gauss = max * exp(((-(x - u)*(x - u)) / (2 * sigma * sigma)));
+    return fmin(gauss, 1.0f);
 	}
 
 	/// <summary>

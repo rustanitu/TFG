@@ -47,8 +47,10 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_dist_plot(NULL)
 , m_max_average_gradient(-DBL_MAX)
 , m_min_average_gradient(DBL_MAX)
-, m_max_average_laplacian(-DBL_MAX)
-, m_min_average_laplacian(DBL_MAX)
+, m_max_average_laplacian_1D(-DBL_MAX)
+, m_min_average_laplacian_1D(DBL_MAX)
+, m_max_average_laplacian_2D(-DBL_MAX)
+, m_min_average_laplacian_2D(DBL_MAX)
 , m_max_size(0)
 , m_max_indexes(NULL)
 , m_inflct_size(0)
@@ -939,8 +941,10 @@ bool ATFGenerator::EstimateAverageValues()
 
   m_max_average_gradient = -DBL_MAX;
   m_min_average_gradient = DBL_MAX;
-  m_max_average_laplacian = -DBL_MAX;
-  m_min_average_laplacian = DBL_MAX;
+  m_max_average_laplacian_1D = -DBL_MAX;
+  m_min_average_laplacian_1D = DBL_MAX;
+  m_max_average_laplacian_2D = -DBL_MAX;
+  m_min_average_laplacian_2D = DBL_MAX;
 
   // Calculate average laplacian and gradient
   for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
@@ -970,8 +974,8 @@ bool ATFGenerator::EstimateAverageValues()
         hvg = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * hvg / ATFG_V_MAX;
         hvg += m_scalarfield->GetMinLaplacian();
         m_average_h[i][j] = hvg;
-        m_max_average_laplacian = fmax(m_max_average_laplacian, hvg);
-        m_min_average_laplacian = fmin(m_min_average_laplacian, hvg);
+        m_max_average_laplacian_2D = fmax(m_max_average_laplacian_2D, hvg);
+        m_min_average_laplacian_2D = fmin(m_min_average_laplacian_2D, hvg);
       }
     }
 
@@ -986,15 +990,10 @@ bool ATFGenerator::EstimateAverageValues()
       h = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * h / ATFG_V_MAX;
       h += m_scalarfield->GetMinLaplacian();
       m_average_laplacian[i] = h;
-      m_max_average_laplacian = fmax(m_max_average_laplacian, h);
-      m_min_average_laplacian = fmin(m_min_average_laplacian, h);
+      m_max_average_laplacian_1D = fmax(m_max_average_laplacian_1D, h);
+      m_min_average_laplacian_1D = fmin(m_min_average_laplacian_1D, h);
     }
-
-    printf("g(%d): %.2f,\th(%d): %.2f\n", i, m_average_gradient[i], i, m_average_laplacian[i]);
   }
-
-  printf("G(v): %.2f\t-\t%.2f\n", m_min_average_gradient, m_max_average_gradient);
-  printf("H(v): %.2f\t-\t%.2f\n", m_min_average_laplacian, m_max_average_laplacian);
   return true;
 }
 
@@ -1071,8 +1070,7 @@ void ATFGenerator::GetBoundaryDistancies(double * x, double* h, int *v, UINT32 *
 {
 	assert(m_scalar_histogram && x);
 
-	//double sigma = m_max_average_gradient / (m_max_average_laplacian * SQRT_E);
-	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
+	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_1D - m_min_average_laplacian_1D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
 	UINT32 c = 0;
@@ -1089,12 +1087,12 @@ void ATFGenerator::GetBoundaryDistancies(double * x, double* h, int *v, UINT32 *
 			//x[i] = fmin(-sigma * sigma * ((l+m_gtresh) / fmax(g, 0.000001)), -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)));
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
 			h[i] = 0.0f;
-			if (i > 0 && i < ATFG_V_MAX) {
-				h[i] = x[i];
-				h[i] -= -sigma * sigma * (((m_average_gradient[i + 1] - m_average_gradient[i - 1]) / 2.0f) / fmax(g - m_gtresh, 0.000001));
-				h[i] /= 2.0f;
-				h[i] = 0.0f;
-			}
+			//if (i > 0 && i < ATFG_V_MAX) {
+			//	h[i] = x[i];
+			//	h[i] -= -sigma * sigma * (((m_average_gradient[i + 1] - m_average_gradient[i - 1]) / 2.0f) / fmax(g - m_gtresh, 0.000001));
+			//	h[i] /= 2.0f;
+			//	h[i] = 0.0f;
+			//}
 		}
 
 		v[c] = i;
@@ -1108,7 +1106,7 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
 {
 	assert(m_scalar_histogram && x);
 
-	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian - m_min_average_laplacian) * SQRT_E);
+	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_2D - m_min_average_laplacian_2D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
@@ -1116,8 +1114,8 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
 		for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
 			double l = m_average_h[i][j];
 
-			if (l == -DBL_MAX)
-				l = m_average_laplacian[i];
+			//if (l == -DBL_MAX)
+			//	l = m_average_laplacian[i];
 
 			if (g == -DBL_MAX || l == -DBL_MAX)
 				x[i][j] = -DBL_MAX;

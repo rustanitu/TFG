@@ -156,13 +156,16 @@ namespace vr
 		printf("  - File .den Path: %s\n", filename.c_str());
 
 		FILE* file = NULL;
-		if (fopen_s(&file, filename.c_str(), "r") == 0) {
+    FILE* out = NULL;
+    if (fopen_s(&file, filename.c_str(), "r") == 0)// && fopen_s(&out, "Engine.den", "wb") == 0)
+    {
 			short map_version;
 			fread_s(&map_version, sizeof(short), sizeof(short), 1, file);
 
 			bool need_swap = false;
 			if (map_version == 256)
 				need_swap = true;
+      map_version = 1;
 
 			short trash[24];
 			fread_s(trash, 24 * sizeof(short), sizeof(short), 24, file);
@@ -181,11 +184,32 @@ namespace vr
 
 			int size;
 			fread_s(&size, sizeof(int), sizeof(int), 1, file);
+
 			if (need_swap)
 				swap_buffer(&size, sizeof(int));
 
 			unsigned char* data = new unsigned char[size];
 			fread_s(data, size * sizeof(unsigned char), sizeof(unsigned char), size, file);
+      
+      /*************************************************************
+      int width = 211 - 56 + 1;
+      int height = 224 - 16 + 1;
+      int newsize = width * height * dimensions[2];
+      short newdimensions[3] = {width, height, dimensions[2]};
+      fwrite(&map_version, sizeof(short), 1, out);
+      fwrite(trash, sizeof(short), 24, out);
+      fwrite(newdimensions, sizeof(short), 3, out);
+      fwrite(&warps, sizeof(short), 1, out);
+      fwrite(&newsize, sizeof(int), 1, out);
+      unsigned char* newdata = new unsigned char[newsize];
+      int i = 0;
+      for (int z = 0; z < dimensions[2]; ++z)
+        for (int y = 16; y < 16 + height; ++y)
+          for (int x = 56; x < 56 + width; ++x)
+            newdata[i++] = data[x + y * dimensions[0] + z * dimensions[0] * dimensions[1]];
+      fwrite(newdata, sizeof(unsigned char), newsize, out);
+      fclose(out);
+      /*************************************************************/
 
 			fclose(file);
 

@@ -251,8 +251,10 @@ private:
 
   double m_max_average_gradient;
 	double m_min_average_gradient;
-	double m_max_average_laplacian;
-	double m_min_average_laplacian;
+	double m_max_average_laplacian_1D;
+	double m_min_average_laplacian_1D;
+  double m_max_average_laplacian_2D;
+  double m_min_average_laplacian_2D;
 
 	/// <summary>
 	/// The gradient of each scalarfield voxel.

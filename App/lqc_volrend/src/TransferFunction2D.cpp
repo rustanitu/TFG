@@ -285,7 +285,7 @@ namespace vr
 		//        / \       |
 		//       / | \      |
 		//      /  |  \     |
-		//     /   |   \    | top
+		//     /   |   \    | max
 		//    /    |    \   |
 		//   /     |     \  |
 		//  /      |      \ |
@@ -293,32 +293,31 @@ namespace vr
 		// |-------|-------|
 		//       base
 
-    double top = 1.0f / sqrt(2 * PI * 2 * base * base / 9);
 		double a = 0.0f;
 		double x = m_distances[v][g];
-		if (x >= -base && x <= base)
-		{
-			if (x >= center && center < base)
-			{
-				a = -(top * x) / (base - center);
-				a += (top * base) / (base - center);
-			}
-			else
-			{
-				a = (top * x) / (base + center);
-				a += (top * base) / (base + center);
-			}
-		}
+    if (x >= -base && x <= base)
+    {
+      if (x >= center && center < base)
+      {
+        a = -(max * x) / (base - center);
+        a += (max * base) / (base - center);
+      }
+      else
+      {
+        a = (max * x) / (base + center);
+        a += (max * base) / (base + center);
+      }
+    }
 
-		return fmin(a, max);
+    return fmin(a, 1.0f);
 	}
 
 	double TransferFunction2D::CenteredGaussianFunction(double max, double base, double u, const int& v, const int& g)
 	{
 		double sigma = base / 3.0f;
-		double two_sigma_quad = 2 * sigma * sigma;
-		double x = m_distances[v][g];
-    return fmin(max, exp(-(x - u)*(x - u) / two_sigma_quad) / sqrt(2 * PI * two_sigma_quad));
+    double x = m_distances[v][g];
+    double gauss = max * exp(((-(x - u)*(x - u)) / (2 * sigma * sigma)));
+    return fmin(gauss, 1.0f);
 	}
 
 	/// <summary>
@@ -374,6 +373,7 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Gradient");
 		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Scalar Value");
 		IupSetAttribute(m_tf_plot, "AXS_ZLABEL", "Alpha");
+    IupSetAttribute(m_tf_plot, "COLORSCHEME", "kw");
 		//IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
 		IupSetAttribute(m_tf_plot, "REDRAW", NULL);
 
