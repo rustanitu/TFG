@@ -101,6 +101,7 @@ namespace vr
 			{ 2.0f, 0.0f, 2.0f },
 			{ 1.0f, 2.0f, 1.0f },
 		};
+
 		for (int v = 0; v < m_height; v++)
 		{
 			for (int g = 0; g < m_width; g++)
@@ -130,21 +131,23 @@ namespace vr
 				if (m_transferfunction[v][g].w == -DBL_MAX)
 				{
 					m_transferfunction[v][g].w = 0.0f;
-					continue;
 					float average = 0.0f;
 					float w = 0.0f;
-					for (int i = 0; i < 3; i++) {
-						for (int j = 0; j < 3; j++) {
+					for (int i = 0; i < 3; i++)
+          {
+						for (int j = 0; j < 3; j++)
+            {
 							if (v + i - 1 >= 0 && v + i - 1 < m_width &&
 								g + j - 1 >= 0 && g + j - 1 < m_height &&
-								m_transferfunction[v + i - 1][g + j - 1].w != -DBL_MAX) {
+								m_transferfunction[v + i - 1][g + j - 1].w != -DBL_MAX)
+              {
 								average += gauss[i][j] * m_transferfunction[v + i - 1][g + j - 1].w;
 								w += gauss[i][j];
 							}
 						}
 					}
 					if (w > 0.0f)
-						m_transferfunction[v][g].z = average / w;
+						m_transferfunction[v][g].w = average / w;
 				}
 			}
 		}
@@ -345,20 +348,28 @@ namespace vr
 		{
 			for (int j = 0; j < MAX_V; ++j)
 			{
-				double a = 0.0f;
 				double x = m_distances[i][j];
-        if (x != -DBL_MAX)
-        {
-          if (m_gaussian_bx)
-            a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, i, j);
-          else
-            a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0, i, j);
-        }
+        if (x == -DBL_MAX)
+          continue;
+
+				double a = 0.0f;
+        if (m_gaussian_bx)
+          a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, i, j);
+        else
+          a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0, i, j);
 
 				AddAlphaControlPoint(a, i, j);
-				data[j + MAX_V*i] = a;
+				//data[j + MAX_V*i] = a;
 			}
 		}
+
+    Build(LINEAR);
+
+    for (int i = 0; i < MAX_V; ++i) {
+      for (int j = 0; j < MAX_V; ++j) {
+        data[j + MAX_V*i] = m_transferfunction[i][j].w;
+      }
+    }
 
 		IupMglPlotSetData(m_tf_plot, index, data, MAX_V, MAX_V, 1);
 
