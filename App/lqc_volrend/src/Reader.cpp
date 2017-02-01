@@ -156,8 +156,7 @@ namespace vr
 		printf("  - File .den Path: %s\n", filename.c_str());
 
 		FILE* file = NULL;
-    FILE* out = NULL;
-    if (fopen_s(&file, filename.c_str(), "r") == 0)// && fopen_s(&out, "Engine.den", "wb") == 0)
+    if (fopen_s(&file, filename.c_str(), "r") == 0)
     {
 			short map_version;
 			fread_s(&map_version, sizeof(short), sizeof(short), 1, file);
@@ -191,26 +190,6 @@ namespace vr
 			unsigned char* data = new unsigned char[size];
 			fread_s(data, size * sizeof(unsigned char), sizeof(unsigned char), size, file);
       
-      /*************************************************************
-      int width = 211 - 56 + 1;
-      int height = 224 - 16 + 1;
-      int newsize = width * height * dimensions[2];
-      short newdimensions[3] = {width, height, dimensions[2]};
-      fwrite(&map_version, sizeof(short), 1, out);
-      fwrite(trash, sizeof(short), 24, out);
-      fwrite(newdimensions, sizeof(short), 3, out);
-      fwrite(&warps, sizeof(short), 1, out);
-      fwrite(&newsize, sizeof(int), 1, out);
-      unsigned char* newdata = new unsigned char[newsize];
-      int i = 0;
-      for (int z = 0; z < dimensions[2]; ++z)
-        for (int y = 16; y < 16 + height; ++y)
-          for (int x = 56; x < 56 + width; ++x)
-            newdata[i++] = data[x + y * dimensions[0] + z * dimensions[0] * dimensions[1]];
-      fwrite(newdata, sizeof(unsigned char), newsize, out);
-      fclose(out);
-      /*************************************************************/
-
 			fclose(file);
 
 			ret = new Volume(dimensions[0], dimensions[1], dimensions[2], data);

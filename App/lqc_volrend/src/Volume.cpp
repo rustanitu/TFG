@@ -11,7 +11,6 @@
 #include <fstream>
 
 #define HESSIAN
-//#define ENGINE
 
 namespace vr
 {
@@ -61,7 +60,6 @@ namespace vr
 		}
 	}
 
-#ifndef ENGINE
   Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, unsigned char* scalars)
     : ScalarField(width, height, depth)
   {
@@ -81,30 +79,6 @@ namespace vr
       //m_scalar_fz[i] = 0.0f;
     }
   }
-#else
-	Volume::Volume(const UINT32& width, const UINT32& height, const UINT32& depth, unsigned char* scalars)
-		: ScalarField(156, 209, 110)
-	{
-		int size = m_width * m_height * m_depth;
-		m_scalar_values = new double[size];
-		//m_scalar_fx = new double[size];
-		//m_scalar_fy = new double[size];
-		//m_scalar_fz = new double[size];
-    int i = 0;
-    for (int z = 0; z < m_depth; ++z)
-      for (int y = 16; y < 16 + m_height; ++y)
-        for (int x = 56; x < 56 + m_width; ++x, ++i)
-		{
-      double v = scalars[x + y * width + z * width * height];
-			m_scalar_values[i] = v;
-			m_max_value = fmax(m_max_value, v);
-			m_min_value = fmin(m_min_value, v);
-			//m_scalar_fx[i] = 0.0f;
-			//m_scalar_fy[i] = 0.0f;
-			//m_scalar_fz[i] = 0.0f;
-		}
-	}
-#endif
 
 	Volume::~Volume()
 	{
