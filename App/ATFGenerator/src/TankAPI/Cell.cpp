@@ -68,3 +68,49 @@ bool Cell::SetValue(const int& step, const double& value)
   m_value = value;
   return true;
 }
+
+int* Cell::GetFaceVertices(const int& face) const
+{
+  int* vertices = new int[4];
+  switch (face) {
+    case 0:
+      vertices[0] = 0;
+      vertices[1] = 1;
+      vertices[2] = 3;
+      vertices[3] = 2;
+      break;
+    case 1:
+      vertices[0] = 4;
+      vertices[1] = 6;
+      vertices[2] = 7;
+      vertices[3] = 5;
+      break;
+    case 2:
+      vertices[0] = 0;
+      vertices[1] = 2;
+      vertices[2] = 6;
+      vertices[3] = 4;
+      break;
+    case 3:
+      vertices[0] = 1;
+      vertices[1] = 5;
+      vertices[2] = 7;
+      vertices[3] = 3;
+      break;
+    case 4:
+      vertices[0] = 0;
+      vertices[1] = 4;
+      vertices[2] = 5;
+      vertices[3] = 1;
+      break;
+    case 5:
+      vertices[0] = 2;
+      vertices[1] = 3;
+      vertices[2] = 7;
+      vertices[3] = 6;
+      break;
+    default:
+      return NULL;
+  }
+  return vertices;
+}

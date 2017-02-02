@@ -115,12 +115,12 @@ bool Tank::Read(const char* filepath)
 		}
 
 		int siblids[6] = {
-			GetId(i + 1, j, k),
-			GetId(i - 1, j, k),
-			GetId(i, j + 1, k),
-			GetId(i, j - 1, k),
-			GetId(i, j, k + 1),
-			GetId(i, j, k - 1),
+			GetId(i + 1, j, k), // face 3
+			GetId(i - 1, j, k), // face 2
+			GetId(i, j + 1, k), // face 5
+			GetId(i, j - 1, k), // face 4
+			GetId(i, j, k + 1), // face 1
+			GetId(i, j, k - 1), // face 0
 		};
 
 		// It sets the index of the adjacent ith cell
@@ -132,8 +132,10 @@ bool Tank::Read(const char* filepath)
 
 			if (index != -1) {
 				bool match = false;
-				for (int b = 0; b < 6; ++b) {
-					if (index == siblids[b]) {
+				for (int b = 0; b < 6; ++b)
+        {
+					if (index == siblids[b])
+          {
 						match = true;
 						break;
 					}
@@ -303,15 +305,15 @@ void Tank::FillCellAdjCenter(Cell& cell)
 {
 	//midle edge definition
 	//
-	//         6____ub____7
-	//        /|         /
-	//      ul |       ur|
-	//      /  lb      / rb
-	//    2/___|uf____/3 |
-	//    |   4|___db|___|5
-	//    |   /      |   /
-	//    lf dl      rf dr
-	//    | /        | /
+	//         6____ub____7              5   1
+	//        /|         /               ^  /!
+	//      ul |       ur|               |  /
+	//      /  lb      / rb              | /
+	//    2/___|uf____/3 |       2 ------|-------> 3
+	//    |   4|___db|___|5             /|
+	//    |   /      |   /             / |
+	//    lf dl      rf dr            /  |
+	//    | /        | /             0   4
 	//    |/____df___|/
 	//    0          1
 	//
@@ -675,6 +677,96 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 #endif
 }
 
+glm::vec3* Tank::GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const
+{
+  return GetFaceVertices(m_cells[GetId(x, y, z)], face);
+}
+
+glm::vec3* Tank::GetFaceVertices(const Cell& cell, const int& face) const
+{
+  int* vertices_idx = cell.GetFaceVertices(face);
+  if (vertices_idx)
+  {
+    glm::vec3* vertices = new glm::vec3[4];
+    if (vertices)
+    {
+      vertices[0] = m_vertices[cell.GetIthVertexIndex(vertices_idx[0])];
+      vertices[1] = m_vertices[cell.GetIthVertexIndex(vertices_idx[1])];
+      vertices[2] = m_vertices[cell.GetIthVertexIndex(vertices_idx[2])];
+      vertices[3] = m_vertices[cell.GetIthVertexIndex(vertices_idx[3])];
+      delete[] vertices_idx;
+      return vertices;
+    }
+  }
+  return NULL;
+}
+
+bool Tank::IsParallelPlanes(const glm::vec3& p0a, const glm::vec3& p1a, const glm::vec3& p0b, const glm::vec3& p1b)
+{
+  glm::vec3 pa_normal = glm::normalize(glm::cross(p0a, p1a));
+  glm::vec3 pb_normal = glm::normalize(glm::cross(p0b, p1b));
+  bool is_parallel = pa_normal == -pb_normal;
+  return is_parallel;
+}
+
+bool Tank::IsFaceToFaceCells(const int& x, const int& y, const int& z, const int& i, const int& j, const int& k)
+{
+  int face = -1;
+  int opposite = -1;
+  int diffx = i - x;
+  int diffy = j - y;
+  int diffz = k - z;
+  if (diffx != 0 ^ diffy != 0 ^ diffz != 0)
+  {
+    if (diffx > 0)
+    {
+      face = 3;
+      opposite = 2;
+    }
+    else if (diffx < 0)
+    {
+      face = 2;
+      opposite = 3;
+    }
+    else if (diffy > 0)
+    {
+      face = 5;
+      opposite = 4;
+    }
+    else if (diffy < 0)
+    {
+      face = 4;
+      opposite = 5;
+    }
+    else if (diffz > 0)
+    {
+      face = 1;
+      opposite = 0;
+    }
+    else if (diffz < 0)
+    {
+      face = 0;
+      opposite = 1;
+    }
+  }
+
+  if (face == -1)
+    return false;
+
+  glm::vec3* cell_verts = GetFaceVertices(x, y, z, face);
+  glm::vec3* opposite_verts = GetFaceVertices(i, j, k, opposite);
+  if (!cell_verts || !opposite_verts)
+    return false;
+
+  bool is_parallel = IsParallelPlanes(cell_verts[0] - cell_verts[1], cell_verts[2] - cell_verts[1],
+    opposite_verts[0] - opposite_verts[1], opposite_verts[2] - opposite_verts[1]);
+
+  delete[] cell_verts;
+  delete[] opposite_verts;
+
+  return is_parallel;
+}
+
 void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l)
 {
 	double fdx = 0.0f;
@@ -721,7 +813,7 @@ void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& 
 				double dzdz = m_derivativeMask.GetDzdzAt(i - xinit, j - yinit, k - zinit);
 
 				double v = GetValue(i, j, k);
-				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+				if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() || !IsFaceToFaceCells(x, y, z, i, j, k))
 				{
 					v = GetValue(x, y, z);
 				}

@@ -6,6 +6,22 @@
 
 class Cell
 {
+
+  //midle edge definition
+  //
+  //         6____ub____7              5   1
+  //        /|         /               ^  /!
+  //      ul |       ur|               |  /
+  //      /  lb      / rb              | /
+  //    2/___|uf____/3 |       2 ------|-------> 3
+  //    |   4|___db|___|5             /|
+  //    |   /      |   /             / |
+  //    lf dl      rf dr            /  |
+  //    | /        | /             0   4
+  //    |/____df___|/
+  //    0          1
+  //
+
 public:
   Cell();
 
@@ -56,6 +72,8 @@ public:
   {
     m_adjface[face] = center;
   }
+
+  int* GetFaceVertices(const int& face) const;
 
 private:
   int m_i;

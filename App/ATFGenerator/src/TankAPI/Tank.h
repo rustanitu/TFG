@@ -39,10 +39,15 @@ public:
 		return m_cells[GetId(x, y, z)].IsActive();
 	}
 
+  glm::vec3* GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const;
+  glm::vec3* GetFaceVertices(const Cell& cell, const int& face) const;
+
 private:
+  bool IsParallelPlanes(const glm::vec3& p0a, const glm::vec3& p1a, const glm::vec3& p0b, const glm::vec3& p1b);
 	void FillCellAdjCenter(Cell& cell);
 	bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
 	glm::mat3 GetCellJacobianInverse(const Cell& cell);
+  bool IsFaceToFaceCells(const int& x, const int& y, const int& z, const int& i, const int& j, const int& k);
 
 	struct TankComp
 	{

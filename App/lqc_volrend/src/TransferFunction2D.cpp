@@ -98,13 +98,13 @@ namespace vr
 	{
 		double gauss[3][3] = {
 			{ 1.0f, 2.0f, 1.0f },
-			{ 2.0f, 0.0f, 2.0f },
+			{ 2.0f, 4.0f, 2.0f },
 			{ 1.0f, 2.0f, 1.0f },
 		};
 
-		for (int v = 0; v < m_height; v++)
+    for (int v = m_height-1; v >= 0; v--)
 		{
-			for (int g = 0; g < m_width; g++)
+      for (int g = m_width-1; g >= 0; g--)
 			{
 				if (m_transferfunction[v][g].x == -DBL_MAX)
 				{
@@ -137,11 +137,10 @@ namespace vr
           {
 						for (int j = 0; j < 3; j++)
             {
-							if (v + i - 1 >= 0 && v + i - 1 < m_width &&
-								g + j - 1 >= 0 && g + j - 1 < m_height &&
-								m_transferfunction[v + i - 1][g + j - 1].w != -DBL_MAX)
+							if (v + i - 1 >= 0 && v + i - 1 < m_width && g + j - 1 >= 0 && g + j - 1 < m_height)
               {
-								average += gauss[i][j] * m_transferfunction[v + i - 1][g + j - 1].w;
+                if (m_transferfunction[v + i - 1][g + j - 1].w != -DBL_MAX)
+								  average += gauss[i][j] * m_transferfunction[v + i - 1][g + j - 1].w;
 								w += gauss[i][j];
 							}
 						}
@@ -354,12 +353,11 @@ namespace vr
 
 				double a = 0.0f;
         if (m_gaussian_bx)
-          a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0, i, j);
+          a = CenteredGaussianFunction(amax, 1.0f / m_thickness, -0.1f, i, j);
         else
           a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0, i, j);
 
 				AddAlphaControlPoint(a, i, j);
-				//data[j + MAX_V*i] = a;
 			}
 		}
 
@@ -367,7 +365,7 @@ namespace vr
 
     for (int i = 0; i < MAX_V; ++i) {
       for (int j = 0; j < MAX_V; ++j) {
-        data[j + MAX_V*i] = m_transferfunction[i][j].w;
+        data[i + MAX_V*j] = m_transferfunction[i][j].w;
       }
     }
 
@@ -381,8 +379,8 @@ namespace vr
 		IupSetAttribute(m_tf_plot, "AXS_ZMIN", "-0.001");
 		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMAX", "NO");
 		IupSetAttribute(m_tf_plot, "AXS_ZMAX", "1.001");
-		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Gradient");
-		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Scalar Value");
+		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Scalar Value");
+		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Gradient");
 		IupSetAttribute(m_tf_plot, "AXS_ZLABEL", "Alpha");
     IupSetAttribute(m_tf_plot, "COLORSCHEME", "kw");
 		//IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
