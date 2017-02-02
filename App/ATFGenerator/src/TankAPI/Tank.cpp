@@ -677,17 +677,17 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 #endif
 }
 
-glm::vec3* Tank::GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const
+glm::dvec3* Tank::GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const
 {
   return GetFaceVertices(m_cells[GetId(x, y, z)], face);
 }
 
-glm::vec3* Tank::GetFaceVertices(const Cell& cell, const int& face) const
+glm::dvec3* Tank::GetFaceVertices(const Cell& cell, const int& face) const
 {
   int* vertices_idx = cell.GetFaceVertices(face);
   if (vertices_idx)
   {
-    glm::vec3* vertices = new glm::vec3[4];
+    glm::dvec3* vertices = new glm::dvec3[4];
     if (vertices)
     {
       vertices[0] = m_vertices[cell.GetIthVertexIndex(vertices_idx[0])];
@@ -701,12 +701,14 @@ glm::vec3* Tank::GetFaceVertices(const Cell& cell, const int& face) const
   return NULL;
 }
 
-bool Tank::IsParallelPlanes(const glm::vec3& p0a, const glm::vec3& p1a, const glm::vec3& p0b, const glm::vec3& p1b)
+bool Tank::IsParallelPlanes(const glm::dvec3& p0a, const glm::dvec3& p1a, const glm::dvec3& p0b, const glm::dvec3& p1b)
 {
-  glm::vec3 pa_normal = glm::normalize(glm::cross(p0a, p1a));
-  glm::vec3 pb_normal = glm::normalize(glm::cross(p0b, p1b));
-  bool is_parallel = pa_normal == -pb_normal;
-  return is_parallel;
+  glm::dvec3 pa_normal = glm::normalize(glm::cross(p0a, p1a));
+  glm::dvec3 pb_normal = glm::normalize(glm::cross(p0b, p1b));
+  glm::dvec3 diff = pa_normal + pb_normal;
+  if (glm::bvec3(true) == glm::lessThanEqual(diff, glm::dvec3(0.001f)))
+    return true;
+  return false;
 }
 
 bool Tank::IsFaceToFaceCells(const int& x, const int& y, const int& z, const int& i, const int& j, const int& k)
@@ -753,8 +755,8 @@ bool Tank::IsFaceToFaceCells(const int& x, const int& y, const int& z, const int
   if (face == -1)
     return false;
 
-  glm::vec3* cell_verts = GetFaceVertices(x, y, z, face);
-  glm::vec3* opposite_verts = GetFaceVertices(i, j, k, opposite);
+  glm::dvec3* cell_verts = GetFaceVertices(x, y, z, face);
+  glm::dvec3* opposite_verts = GetFaceVertices(i, j, k, opposite);
   if (!cell_verts || !opposite_verts)
     return false;
 

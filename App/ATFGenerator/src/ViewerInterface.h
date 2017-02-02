@@ -90,7 +90,9 @@ public:
 	void ShowTransferFunctionViewer ();
 
 	void UpdateBThickLabel(int bthick);
+  void UpdateSigmaLabel(double gtresh);
 	void UpdateGTreshLabel(double gtresh);
+  void UpdateGTresh(double gtresh);
 
 	Ihandle* m_iup_main_dialog;
 
@@ -193,11 +195,13 @@ private:
 
 	Ihandle* m_bthick_label;
 	Ihandle* m_gtresh_label;
+  Ihandle* m_sigma_label;
 	Ihandle* m_deriv_plot_dialog;
 	Ihandle* m_dist_plot_dialog;
 	Ihandle* m_tf_plot1d_dialog;
   Ihandle* m_tf_plot2d_dialog;
 	Ihandle* m_gtresh_bar;
+  Ihandle* m_sigma_bar;
 
 	bool m_show_tf_dialog;
 	bool m_show_derivative_dialog;

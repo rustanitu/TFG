@@ -39,11 +39,11 @@ public:
 		return m_cells[GetId(x, y, z)].IsActive();
 	}
 
-  glm::vec3* GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const;
-  glm::vec3* GetFaceVertices(const Cell& cell, const int& face) const;
+  glm::dvec3* GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const;
+  glm::dvec3* GetFaceVertices(const Cell& cell, const int& face) const;
 
 private:
-  bool IsParallelPlanes(const glm::vec3& p0a, const glm::vec3& p1a, const glm::vec3& p0b, const glm::vec3& p1b);
+  bool IsParallelPlanes(const glm::dvec3& p0a, const glm::dvec3& p1a, const glm::dvec3& p0b, const glm::dvec3& p1b);
 	void FillCellAdjCenter(Cell& cell);
 	bool GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t);
 	glm::mat3 GetCellJacobianInverse(const Cell& cell);
@@ -75,7 +75,7 @@ private:
 	int m_ncells;
 	int m_nsteps;
 	int m_nvertices;
-	glm::vec3* m_vertices;
+  glm::vec3* m_vertices;
 	Cell* m_cells;
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;

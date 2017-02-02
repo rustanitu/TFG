@@ -156,6 +156,7 @@ void Viewer::GenerateATFG()
     tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
     m_gui.CleanPlot();
 	  tf->SetTransferFunctionPlot(m_gui.m_tf_plot2d);
+    ((vr::TransferFunction2D*)tf)->SetSigma(Viewer::Instance()->m_sigma);
   }
 	tf->SetBoundaryThickness(m_boundary_thickness);
 	if (Viewer::Instance()->m_bx_func)
@@ -210,7 +211,7 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 				m_atfg->GenerateGradientSummedHistogram();
 				m_atfg->GenerateLaplacianSummedHistogram();
 				Viewer::Instance()->m_gtresh = (double)m_atfg->GetMinAverageGradient() / (double)m_atfg->GetMaxAverageGradient() * 100.0f;
-				Viewer::Instance()->m_gui.UpdateGTreshLabel(Viewer::Instance()->m_gtresh);
+				Viewer::Instance()->m_gui.UpdateGTresh(Viewer::Instance()->m_gtresh);
 				ExtractATFG();
 				return;
 			}
@@ -261,6 +262,18 @@ int Viewer::SetGTresh(Ihandle* ih, double val)
 	}
 #endif
 	return IUP_DEFAULT;
+}
+
+int Viewer::SetSigma(Ihandle* ih, double val)
+{
+#ifdef ATFG
+  if (val != Viewer::Instance()->m_sigma) {
+    Viewer::Instance()->m_sigma = val;
+    Viewer::Instance()->m_gui.UpdateSigmaLabel(val);
+    Viewer::Instance()->m_extract_atfg = true;
+  }
+#endif
+  return IUP_DEFAULT;
 }
 
 int Viewer::SetBoundary(Ihandle* ih, int boundary)

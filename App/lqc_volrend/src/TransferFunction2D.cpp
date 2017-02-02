@@ -8,7 +8,7 @@ namespace vr
 {
 	TransferFunction2D::TransferFunction2D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_distances(NULL)
+    , m_distances(NULL), m_sigma(0.0f)
 	{
 		printf("TransferFunction2D criado.\n");
 		m_width = m_height = MAX_V;
@@ -102,9 +102,9 @@ namespace vr
 			{ 1.0f, 2.0f, 1.0f },
 		};
 
-    for (int v = m_height-1; v >= 0; v--)
+    for (int v = 0; v < m_width; ++v)
 		{
-      for (int g = m_width-1; g >= 0; g--)
+      for (int g = 0; g < m_height; ++g)
 			{
 				if (m_transferfunction[v][g].x == -DBL_MAX)
 				{
@@ -353,9 +353,9 @@ namespace vr
 
 				double a = 0.0f;
         if (m_gaussian_bx)
-          a = CenteredGaussianFunction(amax, 1.0f / m_thickness, -0.1f, i, j);
+          a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
         else
-          a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0, i, j);
+          a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
 
 				AddAlphaControlPoint(a, i, j);
 			}

@@ -142,6 +142,7 @@ public:
 
 	static int SetBoundaryThickness(Ihandle* ih, double val);
 	static int SetGTresh(Ihandle* ih, double val);
+  static int SetSigma(Ihandle* ih, double val);
 	static int SetBoundary(Ihandle* ih, int boundary);
 	static int SetBxFunction(int set);
   static int SetTF1D(int set);
@@ -175,6 +176,7 @@ private:
 	int m_boundary;
 	int m_boundary_thickness;
 	double m_gtresh;
+  double m_sigma;
 	float m_min_hist;
 	bool m_extract_atfg;
 	bool m_generate_atfg;

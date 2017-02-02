@@ -48,6 +48,11 @@ namespace vr
 
 		void SetClosestBoundaryDistances(double** distances);
 
+    void SetSigma(double sigma)
+    {
+      m_sigma = sigma;
+    }
+
 	private:
 		double CenteredTriangleFunction(double max, double base, double center, const int& v, const int& g);
 		double CenteredGaussianFunction(double max, double sigma, double u, const int& v, const int& g);
@@ -55,6 +60,7 @@ namespace vr
 	private:
 		double** m_distances;
 		int m_width, m_height;
+    double m_sigma;
 	};
 
 }

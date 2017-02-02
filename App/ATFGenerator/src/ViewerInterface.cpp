@@ -514,6 +514,18 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetCallback(m_gtresh_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetGTresh);
 	IupSetCallback(m_gtresh_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
 
+  m_sigma_bar = IupVal("VERTICAL");
+  IupSetAttribute(m_sigma_bar, "ACTIVE", "YES");
+  IupSetAttribute(m_sigma_bar, "SHOWTICKS", "101");
+  IupSetAttribute(m_sigma_bar, "MAX", "1");
+  IupSetAttribute(m_sigma_bar, "MIN", "-1");
+  IupSetAttribute(m_sigma_bar, "VALUE", "0.0");
+  IupSetAttribute(m_sigma_bar, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(m_sigma_bar, "ALIGNMENT", "ACENTER");
+  IupSetAttribute(m_sigma_bar, "RASTERSIZE", "0x200");
+  IupSetCallback(m_sigma_bar, "MOUSEMOVE_CB", (Icallback)Viewer::SetSigma);
+  IupSetCallback(m_sigma_bar, "BUTTON_RELEASE_CB", (Icallback)ViewerInterface::Slider_Button_CB);
+
 	Ihandle* atfg_label = IupLabel("BThick    GTresh");
 	Ihandle* atfg_boundary_label = IupLabel("Boundary");
 	IupSetAttribute(atfg_boundary_label, "ALIGNMENT", "ACENTER");
@@ -537,10 +549,13 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 
 	m_bthick_label = IupLabel("BThick: 1   ");
 	m_gtresh_label = IupLabel("GTresh: 0.0f");
+  m_sigma_label = IupLabel("Sigma: 0.0f");
 
+  //Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, m_sigma_label, radius, radius_tf, NULL);
   Ihandle* vbox_atfg = IupVbox(atfg_boundary_label, spinbox_boundary, m_bthick_label, m_gtresh_label, radius, radius_tf, NULL);
 	IupSetAttribute(vbox_atfg, "EXPAND", "VERTICAL");
-	Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
+	//Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, m_sigma_bar, vbox_atfg, NULL);
+  Ihandle* hbox_atfg = IupHbox(sgima_bar, m_gtresh_bar, vbox_atfg, NULL);
 	IupSetAttribute(hbox_atfg, "EXPAND", "HORIZONTAL");
 
 	Ihandle* selected_int_label = IupLabel ("Interface do método ativo");
@@ -549,7 +564,6 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	
 	m_iup_frame_adinterface = Viewer::Instance ()->m_viewmethods[Viewer::Instance ()->m_current_view]->GetIupUserInterface ();
 	m_iup_vbox_GUI = IupVbox(common_int_label, m_iup_vbox_commoninterface, vbox_sep, atfg_label, hbox_atfg, selected_int_label, m_iup_frame_adinterface, m_iup_vbox_atf, NULL);
-	//IupSetAttribute (m_iup_vbox_GUI, "NGAP", "20");
 	IupSetAttribute(m_iup_vbox_GUI, "EXPAND", "NO");
 	IupSetAttribute (m_iup_vbox_GUI, "NMARGIN", "1x1");
 	m_iup_hbox_dialog = 
@@ -822,10 +836,23 @@ void ViewerInterface::UpdateBThickLabel(int bthick)
 void ViewerInterface::UpdateGTreshLabel(double gtresh)
 {
 	char *val = new char[15];
-	sprintf(val, "%.2f ", gtresh);
-	IupSetAttribute(m_gtresh_bar, "VALUE", val);
 	sprintf(val, "GTresh: %.2f ", gtresh);
 	IupSetAttribute(m_gtresh_label, "TITLE", val);
+}
+
+void ViewerInterface::UpdateGTresh(double gtresh)
+{
+  char *val = new char[15];
+  sprintf(val, "%.2f", gtresh);
+  IupSetAttribute(m_gtresh_bar, "VALUE", val);
+  UpdateGTreshLabel(gtresh);
+}
+
+void ViewerInterface::UpdateSigmaLabel(double gtresh)
+{
+  char *val = new char[15];
+  sprintf(val, "Sigma: %.2f ", gtresh);
+  IupSetAttribute(m_sigma_label, "TITLE", val);
 }
 
 Ihandle* ViewerInterface::GetCanvasRenderer ()
