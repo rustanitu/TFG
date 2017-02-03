@@ -114,6 +114,7 @@ int ViewMethodGLSL2P::Keyboard_CB (Ihandle *ih, int c, int press)
 				m_renderer.SetYTranslation (0.0f);
 				m_renderer.SetXTranslation (0.0f);
 				m_renderer.SetScale (1.0f);
+        m_scale = 1.0f;
 				m_redisplay = true;
 				break;
 			case K_SP:

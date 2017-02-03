@@ -706,7 +706,7 @@ bool Tank::IsParallelPlanes(const glm::dvec3& p0a, const glm::dvec3& p1a, const 
   glm::dvec3 pa_normal = glm::normalize(glm::cross(p0a, p1a));
   glm::dvec3 pb_normal = glm::normalize(glm::cross(p0b, p1b));
   glm::dvec3 diff = pa_normal + pb_normal;
-  if (glm::bvec3(true) == glm::lessThanEqual(diff, glm::dvec3(0.001f)))
+  if (glm::bvec3(true) == glm::lessThanEqual(diff, glm::dvec3(0.0001f)))
     return true;
   return false;
 }

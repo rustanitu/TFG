@@ -130,53 +130,48 @@ void ATFGenerator::SmoothCurves()
 
 void ATFGenerator::SetDefaultColor()
 {
+  lqc::Vector3f colors[19] = 
+  {
+    lqc::Vector3f(2u, 96u, 203u) / 255.0f,
+    lqc::Vector3f(0u, 127u, 206u) / 255.0f,
+    lqc::Vector3f(0u, 152u, 193u) / 255.0f,
+    lqc::Vector3f(11u, 171u, 152u) / 255.0f,
+    lqc::Vector3f(83u, 175u, 30u) / 255.0f,
+    lqc::Vector3f(129u, 178u, 0u) / 255.0f,
+    lqc::Vector3f(165u, 181u, 15u) / 255.0f,
+    lqc::Vector3f(195u, 183u, 160u) / 255.0f,
+    lqc::Vector3f(216u, 184u, 22u) / 255.0f,
+    lqc::Vector3f(236u, 184u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 182u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 164u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 149u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 133u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 112u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 90u, 0u) / 255.0f,
+    lqc::Vector3f(255u, 66u, 11u) / 255.0f,
+    lqc::Vector3f(255u, 40u, 40u) / 255.0f,
+    lqc::Vector3f(255u, 0u, 0u) / 255.0f
+  };
+  double step = ATFG_V_RANGE / 19.f;
+  int ncolors = 19;
+
   if (!m_tf1d)
   {
     vr::TransferFunction2D* tf = (vr::TransferFunction2D*)m_transfer_function;
-    for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      tf->AddRGBControlPoint(lqc::Vector3f(2u, 96u, 203u) / 255.0f, 0, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(0u, 127u, 206u) / 255.0f, 14, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(0u, 152u, 193u) / 255.0f, 28, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(11u, 171u, 152u) / 255.0f, 42, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(83u, 175u, 30u) / 255.0f, 57, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(129u, 178u, 0u) / 255.0f, 71, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(165u, 181u, 15u) / 255.0f, 85, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(195u, 183u, 160u) / 255.0f, 99, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(216u, 184u, 22u) / 255.0f, 113, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(236u, 184u, 0u) / 255.0f, 127, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 182u, 0u) / 255.0f, 142, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 164u, 0u) / 255.0f, 156, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 149u, 0u) / 255.0f, 170, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 133u, 0u) / 255.0f, 184, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 112u, 0u) / 255.0f, 198, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 90u, 0u) / 255.0f, 212, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 66u, 11u) / 255.0f, 227, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 40u, 40u) / 255.0f, 240, i);
-      tf->AddRGBControlPoint(lqc::Vector3f(255u, 0u, 0u) / 255.0f, 255, i);
+    for (int i = 0; i < ncolors; ++i)
+    {
+      for (int j = i*step; j < (int)((i + 1)*step); ++j)
+        for (int k = 0; k < ATFG_V_RANGE; ++k)
+          tf->AddRGBControlPoint(colors[i], j, k);
     }
   }
   else
   {
     vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_transfer_function;
-    tf->AddRGBControlPoint(vr::TransferControlPoint(2u, 96u, 203u, 0));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(0u, 127u, 206u, 14));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(0u, 152u, 193u, 28));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(11u, 171u, 152u, 42));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(83u, 175u, 30u, 57));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(129u, 178u, 0u, 71));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(165u, 181u, 15u, 85));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(195u, 183u, 160u, 99));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(216u, 184u, 22u, 113));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(236u, 184u, 0u, 127));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 182u, 0u, 142));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 164u, 0u, 156));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 149u, 0u, 170));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 133u, 0u, 184));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 112u, 0u, 198));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 90u, 0u, 212));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 66u, 11u, 227));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 40u, 40u, 240));
-    tf->AddRGBControlPoint(vr::TransferControlPoint(255u, 0u, 0u, 255));
+    for (int i = 0; i < ncolors; ++i) {
+      for (int j = i*step; j < (int)((i + 1)*step); ++j)
+        tf->AddRGBControlPoint(vr::TransferControlPoint(colors[i].x, colors[i].y, colors[i].z, j));
+    }
   }
 }
 
@@ -1112,6 +1107,7 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
 	  double g = m_average_gradient[i];
 		for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
+      g = m_scalarfield->GetMaxGradient() * j / ATFG_V_MAX;
 			double l = m_average_h[i][j];
 
 			//if (l == -DBL_MAX)

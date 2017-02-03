@@ -494,7 +494,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	Ihandle* sgima_bar = IupVal("VERTICAL");
 	IupSetAttribute(sgima_bar, "ACTIVE", "YES");
 	IupSetAttribute(sgima_bar, "SHOWTICKS", "48");
-	IupSetAttribute(sgima_bar, "MAX", "150");
+	IupSetAttribute(sgima_bar, "MAX", "100");
 	IupSetAttribute(sgima_bar, "MIN", "1");
 	IupSetAttribute(sgima_bar, "VALUE", "1");
 	IupSetAttribute(sgima_bar, "EXPAND", "HORIZONTAL");
