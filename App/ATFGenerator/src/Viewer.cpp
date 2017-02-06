@@ -580,6 +580,7 @@ Viewer::Viewer()
 	m_boundary = 0;
 	m_boundary_thickness = 1;
 	m_gtresh = 0.0f;
+  m_sigma = 0.0f;
 	m_min_hist = 0;
 	m_CurrentWidth = 800;
 	m_CurrentHeight = 600;

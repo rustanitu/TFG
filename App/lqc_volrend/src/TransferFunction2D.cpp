@@ -18,7 +18,11 @@ namespace vr
 	TransferFunction2D::~TransferFunction2D ()
 	{
 		printf("TransferFunction2D destruido.\n");
-		delete[] m_transferfunction;
+    if (m_distances) {
+      for (int i = 0; i < m_width; ++i)
+        delete[] m_distances[i];
+      delete[] m_distances;
+    }
 	}
 
 	const char* TransferFunction2D::GetNameClass ()
