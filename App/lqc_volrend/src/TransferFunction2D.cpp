@@ -345,7 +345,7 @@ namespace vr
 
 		double* data = new double[MAX_V*MAX_V];
 
-		double amax = 1.0f;
+		double amax = 50.0f;
 		// Assign opacity to transfer function
 		for ( int i = 0; i < MAX_V; ++i )
 		{

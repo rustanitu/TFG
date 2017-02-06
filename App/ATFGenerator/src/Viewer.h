@@ -160,7 +160,7 @@ public:
 private:
 	void ExtractATFG();
 	void GenerateATFG();
-	int m_bx_func;
+	int m_gaussian_func;
   int m_tf1d;
 
 protected:

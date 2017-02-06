@@ -130,7 +130,7 @@ void ATFGenerator::SmoothCurves()
 
 void ATFGenerator::SetDefaultColor()
 {
-  lqc::Vector3f colors[19] = 
+  lqc::Vector3f colors[18] = 
   {
     lqc::Vector3f(2u, 96u, 203u) / 255.0f,
     lqc::Vector3f(0u, 127u, 206u) / 255.0f,
@@ -139,7 +139,7 @@ void ATFGenerator::SetDefaultColor()
     lqc::Vector3f(83u, 175u, 30u) / 255.0f,
     lqc::Vector3f(129u, 178u, 0u) / 255.0f,
     lqc::Vector3f(165u, 181u, 15u) / 255.0f,
-    lqc::Vector3f(195u, 183u, 160u) / 255.0f,
+    //lqc::Vector3f(195u, 183u, 160u) / 255.0f,
     lqc::Vector3f(216u, 184u, 22u) / 255.0f,
     lqc::Vector3f(236u, 184u, 0u) / 255.0f,
     lqc::Vector3f(255u, 182u, 0u) / 255.0f,
@@ -152,8 +152,8 @@ void ATFGenerator::SetDefaultColor()
     lqc::Vector3f(255u, 40u, 40u) / 255.0f,
     lqc::Vector3f(255u, 0u, 0u) / 255.0f
   };
-  double step = ATFG_V_RANGE / 19.f;
-  int ncolors = 19;
+  double step = ATFG_V_RANGE / 18.f;
+  int ncolors = 18;
 
   if (!m_tf1d)
   {
@@ -1110,8 +1110,8 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
       g = m_scalarfield->GetMaxGradient() * j / ATFG_V_MAX;
 			double l = m_average_h[i][j];
 
-			//if (l == -DBL_MAX)
-			//	l = m_average_laplacian[i];
+			if (l == -DBL_MAX)
+				l = m_average_laplacian[i];
 
 			if (g == -DBL_MAX || l == -DBL_MAX)
 				x[i][j] = -DBL_MAX;

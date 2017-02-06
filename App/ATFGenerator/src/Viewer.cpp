@@ -159,7 +159,7 @@ void Viewer::GenerateATFG()
     ((vr::TransferFunction2D*)tf)->SetSigma(Viewer::Instance()->m_sigma);
   }
 	tf->SetBoundaryThickness(m_boundary_thickness);
-	if (Viewer::Instance()->m_bx_func)
+	if (Viewer::Instance()->m_gaussian_func)
 		tf->SetGaussianFunction();
 	else
 		tf->SetTriangularFunction();
@@ -289,7 +289,7 @@ int Viewer::SetBoundary(Ihandle* ih, int boundary)
 int Viewer::SetBxFunction(int set)
 {
 #ifdef ATFG
-	Viewer::Instance()->m_bx_func = set;
+	Viewer::Instance()->m_gaussian_func = set;
 	Viewer::Instance()->m_extract_atfg = true;
 	Viewer::MarkOutdated();
 #endif
@@ -584,6 +584,8 @@ Viewer::Viewer()
 	m_min_hist = 0;
 	m_CurrentWidth = 800;
 	m_CurrentHeight = 600;
+  m_tf1d = false;
+  m_gaussian_func = true;
 
 	m_rendererClearColor = lqc::Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
 

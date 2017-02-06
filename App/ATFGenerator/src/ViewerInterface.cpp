@@ -536,6 +536,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	IupSetCallback(spinbox_boundary, "SPIN_CB", (Icallback)Viewer::SetBoundary);
 
 	Ihandle* gaussian_bx = IupToggle("Gaussian", NULL);
+  IupSetAttribute(gaussian_bx, "VALUE", "ON");
 	IupSetCallback(gaussian_bx, "ACTION", (Icallback)tgl_SetGaussianFunction_CB);
 	Ihandle* triangle_bx = IupToggle("Triangular", NULL);
 	IupSetCallback(triangle_bx, "ACTION", (Icallback)tgl_SetTriangularFunction_CB);
@@ -544,6 +545,7 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
   Ihandle* tf1d = IupToggle("1D", NULL);
   IupSetCallback(tf1d, "ACTION", (Icallback)tgl_Set1D_CB);
   Ihandle* tf2d = IupToggle("2D", NULL);
+  IupSetAttribute(tf2d, "VALUE", "ON");
   IupSetCallback(tf2d, "ACTION", (Icallback)tgl_Set2D_CB);
   Ihandle* radius_tf = IupRadio(IupVbox(tf1d, tf2d, NULL));
 

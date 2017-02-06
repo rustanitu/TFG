@@ -123,8 +123,21 @@ int ViewMethodGLSL2P::Keyboard_CB (Ihandle *ih, int c, int press)
 				m_gui.SetIterateToggle (m_renderer.m_iterate);
 				break;
 			case K_Z:
-			case K_z:
 				m_auto_redisplay = !m_auto_redisplay;
+			case K_x:
+        m_renderer.SetCubeWidth(m_renderer.GetCubeWidth() * 1.5f);
+        m_renderer.ResetGeometry();
+        m_renderer.Resize(Viewer::Instance()->m_CurrentWidth, Viewer::Instance()->m_CurrentHeight);
+        break;
+      case K_y:
+        m_renderer.SetCubeHeight(m_renderer.GetCubeHeight() * 1.5f);
+        m_renderer.ResetGeometry();
+        m_renderer.Resize(Viewer::Instance()->m_CurrentWidth, Viewer::Instance()->m_CurrentHeight);
+        break;
+      case K_z:
+        m_renderer.SetCubeDepth(m_renderer.GetCubeDepth() * 1.5f);
+        m_renderer.ResetGeometry();
+        m_renderer.Resize(Viewer::Instance()->m_CurrentWidth, Viewer::Instance()->m_CurrentHeight);
 				break;
 			case K_ESC:
 				exit (EXIT_SUCCESS);
