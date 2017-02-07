@@ -225,25 +225,24 @@ namespace vr
 	double* ReadSyntheticModelTXT(std::string volfilename, int w, int h, int d)
 	{
 		double* scalar_values = NULL;
-		FILE* file = NULL;
-		int stderror = fopen_s(&file, volfilename.c_str(), "rb");
-		if ( stderror == 0 )
+    std::ifstream file(volfilename.c_str());
+    if (file.is_open())
 		{
 			int size = w*h*d;
 			scalar_values = new double[size];
 
 			char trash[100];
-			fscanf_s(file, "%s", trash, sizeof(trash));
-			fscanf_s(file, "%s", trash, sizeof(trash));
-			fscanf_s(file, "%s", trash, sizeof(trash));
-			fscanf_s(file, "%s", trash, sizeof(trash));
-			fscanf_s(file, "%s", trash, sizeof(trash));
-			fscanf_s(file, "%s", trash, sizeof(trash));
+      file >> trash;
+      file >> trash;
+      file >> trash;
+      file >> trash;
+      file >> trash;
+      file >> trash;
 
 			double value;
 			for ( int i = 0; i < size; ++i )
 			{
-				fscanf_s(file, "%f", &value);
+				file >> value;
 				scalar_values[i] = value;
 			}
 		}

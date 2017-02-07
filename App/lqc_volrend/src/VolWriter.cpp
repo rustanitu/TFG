@@ -123,6 +123,20 @@ void VolWriter::WriteQuads()
   }
 }
 
+void VolWriter::WriteLine()
+{
+  for (int z = 0; z < m_depth; z++) {
+    for (int y = 0; y < m_height; y++) {
+      for (int x = 0; x < m_width; x++) {
+        if (x >= m_width / 2)
+          Write(10.0f);
+        else
+          Write(5.0f);
+      }
+    }
+  }
+}
+
 /// <summary>
 /// Writes a byte to the image. The file must be openned
 /// before.

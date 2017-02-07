@@ -43,6 +43,7 @@ public:
 
   void WriteSphere();
   void WriteQuads();
+  void WriteLine();
 
   void Write(int x, int y, int z, float value);
 	void Write(const float& value);

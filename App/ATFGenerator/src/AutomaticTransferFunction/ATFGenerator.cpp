@@ -742,7 +742,8 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "h(v)");
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "0 128 0");
 
-	IupPlotBegin(m_deriv_plot, 0);
+  /*******************************************************
+  IupPlotBegin(m_deriv_plot, 0);
 	for (UINT32 i = 0; i < m_max_size; i++)
 		IupPlotAdd(m_deriv_plot, m_max_indexes[i], m_average_gradient[m_max_indexes[i]]);
 	IupPlotEnd(m_deriv_plot);
@@ -761,6 +762,7 @@ void ATFGenerator::GenerateDataChart()
 	IupSetAttribute(m_deriv_plot, "DS_MARKSIZE", "3");
 	IupSetAttribute(m_deriv_plot, "DS_NAME", "Inflct(v)");
 	IupSetAttribute(m_deriv_plot, "DS_COLOR", "255 0 255");
+  //*******************************************************/
 
 	IupSetAttribute(m_deriv_plot, "REDRAW", "YES");
 }
@@ -885,11 +887,8 @@ bool ATFGenerator::GenerateHistogram()
 	printf("--------------------------------------------------\n");
 	printf("Gerando histograma.\n");
 
-	int hits[ATFG_V_RANGE];
-
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
 	{
-		hits[i] = 0;
 		for ( UINT32 j = 0; j < ATFG_V_RANGE; ++j )
 		{
 			for ( UINT32 k = 0; k < ATFG_V_RANGE; ++k )
@@ -913,11 +912,12 @@ bool ATFGenerator::GenerateHistogram()
 
 				unsigned char v = m_scalarfield->GetScalarValue(vol_id, ATFG_V_MAX);
 				unsigned char g = m_scalarfield->GetScalarGradient(m_scalar_gradient[vol_id], ATFG_V_MAX);
-				unsigned char l = m_scalarfield->GetScalarLaplacian(m_scalar_laplacian[vol_id], ATFG_V_MAX);
+        unsigned char l = 0;
+        if (m_scalar_laplacian[vol_id] != -DBL_MAX)
+          l = m_scalarfield->GetScalarLaplacian(m_scalar_laplacian[vol_id], ATFG_V_MAX);
 
 				if ( m_scalar_histogram[v][g][l] < ATFG_V_MAX )
 				{
-					hits[v]++;
 					m_scalar_histogram[v][g][l]++;
 				}
 			}
