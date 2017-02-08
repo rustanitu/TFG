@@ -7,11 +7,10 @@
 namespace vr
 {
 	TransferFunction2D::TransferFunction2D (double v0, double v1)
-		: m_v0(v0), m_v1(v1), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-    , m_distances(NULL), m_sigma(0.0f)
+		: m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
+    , m_distances(NULL), m_sigma(0.0f), m_has_rgb(false), m_has_alpha(false)
 	{
 		printf("TransferFunction2D criado.\n");
-		m_width = m_height = MAX_V;
 		ClearRGBControlPoints();
 	}
 
@@ -19,7 +18,7 @@ namespace vr
 	{
 		printf("TransferFunction2D destruido.\n");
     if (m_distances) {
-      for (int i = 0; i < m_width; ++i)
+      for (int i = 0; i < MAX_V; ++i)
         delete[] m_distances[i];
       delete[] m_distances;
     }
@@ -32,40 +31,54 @@ namespace vr
 
 	void TransferFunction2D::AddRGBControlPoint(lqc::Vector3f rgb, int v, int g)
 	{ 
-		m_transferfunction[v][g].x = rgb.x;
-		m_transferfunction[v][g].y = rgb.y;
-		m_transferfunction[v][g].z = rgb.z;
+		m_transferfunction[v][g].rgb.x = rgb.x;
+		m_transferfunction[v][g].rgb.y = rgb.y;
+		m_transferfunction[v][g].rgb.z = rgb.z;
+    m_transferfunction[v][g].defined_rgb = true;
+    m_has_rgb = true;
 	}
 
 	void TransferFunction2D::AddAlphaControlPoint(double alpha, int v, int g)
 	{
-		m_transferfunction[v][g].w = alpha;
+		m_transferfunction[v][g].alpha = alpha;
+    m_transferfunction[v][g].defined_alpha = true;
+    m_has_alpha = true;
 	}
 
 	void TransferFunction2D::ClearRGBControlPoints ()
 	{
-		for (int v = 0; v < m_height; ++v)
+    if (!m_has_rgb)
+      return;
+
+    for (int v = 0; v < MAX_V; ++v)
 		{
-			for (int g = 0; g < m_width; ++g)
+      for (int g = 0; g < MAX_V; ++g)
 			{
-				m_transferfunction[v][g].x = -DBL_MAX;
-				m_transferfunction[v][g].y = -DBL_MAX;
-				m_transferfunction[v][g].z = -DBL_MAX;
+				m_transferfunction[v][g].rgb.x = 0.0f;
+				m_transferfunction[v][g].rgb.y = 0.0f;
+				m_transferfunction[v][g].rgb.z = 0.0f;
+        m_transferfunction[v][g].defined_rgb = false;
 			}
 		}
 
     m_built = false;
+    m_has_rgb = false;
 	}
 
 	void TransferFunction2D::ClearAlphaControlPoints()
 	{
-		for (int v = 0; v < m_height; ++v) {
-			for (int g = 0; g < m_width; ++g) {
-				m_transferfunction[v][g].w = -DBL_MAX;
+    if (!m_has_alpha)
+      return;
+
+		for (int v = 0; v < MAX_V; ++v) {
+			for (int g = 0; g < MAX_V; ++g) {
+        m_transferfunction[v][g].alpha = 0.0f;
+        m_transferfunction[v][g].defined_alpha = false;
 			}
 		}
 
     m_built = false;
+    m_has_alpha = false;
 	}
 
 	gl::GLTexture2D* TransferFunction2D::GenerateTexture_RGBA ()
@@ -77,18 +90,18 @@ namespace vr
 
 		if (m_transferfunction)
 		{
-			gl::GLTexture2D* ret = new gl::GLTexture2D (m_width, m_height);
+			gl::GLTexture2D* ret = new gl::GLTexture2D (MAX_V, MAX_V);
 			ret->GenerateTexture(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
-			float* data = new float[m_width * m_height * 4];
+			float* data = new float[MAX_V * MAX_V * 4];
 			int c = 0;
-			for (int v = 0; v < m_height; v++)
+			for (int v = 0; v < MAX_V; v++)
 			{
-				for (int g = 0; g < m_width; g++)
+				for (int g = 0; g < MAX_V; g++)
 				{
-					data[c++] = (float)(m_transferfunction[v][g].x);
-					data[c++] = (float)(m_transferfunction[v][g].y);
-					data[c++] = (float)(m_transferfunction[v][g].z);
-					data[c++] = (float)(m_transferfunction[v][g].w);
+					data[c++] = (float)(m_transferfunction[v][g].rgb.x);
+					data[c++] = (float)(m_transferfunction[v][g].rgb.y);
+					data[c++] = (float)(m_transferfunction[v][g].rgb.z);
+					data[c++] = (float)(m_transferfunction[v][g].alpha);
 				}
 			}
 			ret->SetData ((void*)data, GL_RGBA32F, GL_RGBA, GL_FLOAT);
@@ -100,60 +113,133 @@ namespace vr
 
 	void TransferFunction2D::Build (TFInterpolationType type)
 	{
-		double gauss[3][3] = {
-			{ 1.0f, 2.0f, 1.0f },
-			{ 2.0f, 0.0f, 2.0f },
-			{ 1.0f, 2.0f, 1.0f },
-		};
-
-    for (int v = 0; v < m_width; ++v)
+    /*************************************************************/
+    for (int v = 0; v < MAX_V; ++v)
 		{
-      for (int g = 0; g < m_height; ++g)
-			{
-				if (m_transferfunction[v][g].x == -DBL_MAX)
-				{
-					lqc::Vector4d average = lqc::Vector4d::Zero();
-					float w = 0.0f;
-					for (int i = 0; i < 3; i++) {
-						for (int j = 0; j < 3; j++) {
-							if (v + i - 1 >= 0 && v + i - 1 < m_width &&
-								g + j - 1 >= 0 && g + j - 1 < m_height &&
-								m_transferfunction[v + i - 1][g + j - 1].x != -DBL_MAX) {
-								average += gauss[i][j] * m_transferfunction[v + i - 1][g + j - 1];
-								w += gauss[i][j];
-							}
-						}
-					}
-					if (w > 0.0f)
-					{
-						m_transferfunction[v][g].x = average.x / w;
-						m_transferfunction[v][g].y = average.y / w;
-						m_transferfunction[v][g].z = average.z / w;
-					}
-				}
-
-				if (m_transferfunction[v][g].w == -DBL_MAX)
-				{
-					m_transferfunction[v][g].w = 0.0f;
-					float average = 0.0f;
-					float w = 0.0f;
-					for (int i = 0; i < 3; i++)
+      int j = 0;
+      int begin = 0;
+      while (begin < MAX_V - 1) {
+        int end = MAX_V - 1;
+        while (j < MAX_V) {
+          if (m_transferfunction[v][j].defined_rgb)
           {
-						for (int j = 0; j < 3; j++)
-            {
-							if (v + i - 1 >= 0 && v + i - 1 < m_width && g + j - 1 >= 0 && g + j - 1 < m_height)
-              {
-                if (m_transferfunction[v + i - 1][g + j - 1].w != -DBL_MAX)
-								  average += gauss[i][j] * m_transferfunction[v + i - 1][g + j - 1].w;
-								w += gauss[i][j];
-							}
-						}
-					}
-					if (w > 0.0f)
-						m_transferfunction[v][g].w = average / w;
-				}
-			}
+            end = j++;
+            break;
+          }
+          else
+            j++;
+        }
+
+        if (!m_transferfunction[v][begin].defined_rgb)
+          m_transferfunction[v][begin].rgb = m_transferfunction[v][end].rgb;
+        else if (!m_transferfunction[v][end].defined_rgb)
+          m_transferfunction[v][end].rgb = m_transferfunction[v][begin].rgb;
+
+        int steps = end - begin;
+        lqc::Vector3d diff = m_transferfunction[v][end].rgb - m_transferfunction[v][begin].rgb;
+        for (int g = begin + 1; g < end; g++) {
+          float k = (float)(g - begin) / (float)(steps);
+          diff = diff * k;
+          m_transferfunction[v][g].rgb += m_transferfunction[v][begin].rgb + diff;
+        }
+
+        begin = end;
+      }
+
+      j = 0;
+      begin = 0;
+      while (begin < MAX_V - 1) {
+        int end = MAX_V - 1;
+        while (j < MAX_V) {
+          if (m_transferfunction[v][j].defined_alpha)
+          {
+            end = j++;
+            break;
+          }
+          else
+            j++;
+        }
+
+        if (!m_transferfunction[v][begin].defined_alpha)
+          m_transferfunction[v][begin].alpha = m_transferfunction[v][end].alpha;
+        else if (!m_transferfunction[v][end].defined_alpha)
+          m_transferfunction[v][end].alpha = m_transferfunction[v][begin].alpha;
+
+        int steps = end - begin;
+        double diff = m_transferfunction[v][end].alpha - m_transferfunction[v][begin].alpha;
+        for (int g = begin + 1; g < end; g++) {
+          float k = (float)(g - begin) / (float)(steps);
+          diff = diff * k;
+          m_transferfunction[v][g].alpha += m_transferfunction[v][begin].alpha + diff;
+        }
+
+        begin = end;
+      }
 		}
+    /*************************************************************/
+    /*************************************************************/
+    for (int g = 0; g < MAX_V; ++g) {
+      int i = 0;
+      int begin = 0;
+      while (begin < MAX_V - 1) {
+        int end = MAX_V - 1;
+        while (i < MAX_V) {
+          if (m_transferfunction[i][g].defined_rgb) {
+            end = i++;
+            break;
+          }
+          else
+            i++;
+        }
+
+        if (!m_transferfunction[begin][g].defined_rgb)
+          m_transferfunction[begin][g].rgb = m_transferfunction[end][g].rgb;
+        else if (!m_transferfunction[end][g].defined_rgb)
+          m_transferfunction[end][g].rgb = m_transferfunction[begin][g].rgb;
+
+        int steps = end - begin;
+        lqc::Vector3d diff = m_transferfunction[end][g].rgb - m_transferfunction[begin][g].rgb;
+        for (int v = begin + 1; v < end; v++) {
+          float k = (float)(v - begin) / (float)(steps);
+          diff = diff * k;
+          m_transferfunction[v][g].rgb += m_transferfunction[begin][g].rgb + diff;
+          m_transferfunction[v][g].rgb = m_transferfunction[v][g].rgb * (double)0.5f;
+        }
+
+        begin = end;
+      }
+
+      i = 0;
+      begin = 0;
+      while (begin < MAX_V - 1) {
+        int end = MAX_V - 1;
+        while (i < MAX_V) {
+          if (m_transferfunction[i][g].defined_alpha) {
+            end = i++;
+            break;
+          }
+          else
+            i++;
+        }
+
+        if (!m_transferfunction[begin][g].defined_alpha)
+          m_transferfunction[begin][g].alpha = m_transferfunction[end][g].alpha;
+        else if (!m_transferfunction[end][g].defined_alpha)
+          m_transferfunction[end][g].alpha = m_transferfunction[begin][g].alpha;
+
+        int steps = end - begin;
+        double diff = m_transferfunction[end][g].alpha - m_transferfunction[begin][g].alpha;
+        for (int v = begin + 1; v < end; v++) {
+          float k = (float)(v - begin) / (float)(steps);
+          diff = diff * k;
+          m_transferfunction[v][g].alpha += m_transferfunction[begin][g].alpha + diff;
+          m_transferfunction[v][g].alpha = m_transferfunction[begin][g].alpha * (double) 0.5f;
+        }
+
+        begin = end;
+      }
+    }
+    /*************************************************************/
 
 		printf ("TransferFunction2D: Build!\n");
 		m_built = true;
@@ -195,11 +281,11 @@ namespace vr
 	{
 		printf ("Print Transfer Function: Control Points\n");
 		printf ("  Format: \"IsoValue: Red Green Blue, Alpha\"\n");
-		for (int i = 0; i < m_width; i++)
+		for (int i = 0; i < MAX_V; i++)
 		{
-			for (int j = 0; j < m_width; j++) {
-				printf("[%d][%d]: %.2f %.2f %.2f, %.2f\n", i, j, m_transferfunction[i][j].x
-					, m_transferfunction[i][j].y, m_transferfunction[i][j].z, m_transferfunction[i][j].w);
+			for (int j = 0; j < MAX_V; j++) {
+        printf("[%d][%d]: %.2f %.2f %.2f, %.2f\n", i, j, m_transferfunction[i][j].rgb.x
+          , m_transferfunction[i][j].rgb.y, m_transferfunction[i][j].rgb.z, m_transferfunction[i][j].alpha);
 			}
 		}
 	}
@@ -345,7 +431,7 @@ namespace vr
 
 		double* data = new double[MAX_V*MAX_V];
 
-		double amax = 50.0f;
+		double amax = 1.0f;
 		// Assign opacity to transfer function
 		for ( int i = 0; i < MAX_V; ++i )
 		{
@@ -369,7 +455,7 @@ namespace vr
 
     for (int i = 0; i < MAX_V; ++i) {
       for (int j = 0; j < MAX_V; ++j) {
-        data[i + MAX_V*j] = m_transferfunction[i][j].w;
+        data[i + MAX_V*j] = m_transferfunction[i][j].alpha;
       }
     }
 
@@ -414,12 +500,10 @@ namespace vr
 	void TransferFunction2D::SetClosestBoundaryDistances(double** distances)
 	{
 		if (m_distances) {
-			for (int i = 0; i < m_width; ++i)
+			for (int i = 0; i < MAX_V; ++i)
 				delete[] m_distances[i];
 			delete[] m_distances;
 		}
-
-		m_width = m_height = MAX_V;
 
 		if (distances)
 			m_distances = distances;

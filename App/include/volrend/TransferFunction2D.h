@@ -33,15 +33,7 @@ namespace vr
 
 		void PrintControlPoints ();
 		void PrintTransferFunction ();
-
-		TFInterpolationType m_interpolation_type;
-		bool m_built;
-	private:
 		
-		lqc::Vector4d m_transferfunction[MAX_V][MAX_V];
-		double m_v0, m_v1;
-
-	public:
 		virtual bool GenerateGordonBased();
 
 		virtual bool Generate();
@@ -56,10 +48,23 @@ namespace vr
 	private:
 		double CenteredTriangleFunction(double max, double base, double center, const int& v, const int& g);
 		double CenteredGaussianFunction(double max, double sigma, double u, const int& v, const int& g);
+    
+    struct TFInfo
+    {
+      lqc::Vector3d rgb;
+      bool defined_rgb;
+      double alpha;
+      bool defined_alpha;
+      TFInfo() : defined_rgb(false), rgb(), alpha(0.0f), defined_alpha(false) {}
+    };
 
 	private:
+    TFInterpolationType m_interpolation_type;
+    bool m_built;
+    bool m_has_rgb;
+    bool m_has_alpha;
+    TFInfo m_transferfunction[MAX_V][MAX_V];
 		double** m_distances;
-		int m_width, m_height;
     double m_sigma;
 	};
 
