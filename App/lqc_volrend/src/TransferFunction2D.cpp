@@ -121,8 +121,7 @@ namespace vr
       while (begin < MAX_V - 1) {
         int end = MAX_V - 1;
         while (j < MAX_V) {
-          if (m_transferfunction[v][j].defined_rgb)
-          {
+          if (m_transferfunction[v][j].defined_rgb) {
             end = j++;
             break;
           }
@@ -130,10 +129,17 @@ namespace vr
             j++;
         }
 
-        if (!m_transferfunction[v][begin].defined_rgb)
-          m_transferfunction[v][begin].rgb = m_transferfunction[v][end].rgb;
+        if (!m_transferfunction[v][begin].defined_rgb && !m_transferfunction[v][end].defined_rgb)
+          break;
+        else if (!m_transferfunction[v][begin].defined_rgb) {
+          m_transferfunction[v][begin].rgb += m_transferfunction[v][end].rgb;
+          m_transferfunction[v][begin].weight_rgb++;
+        }
         else if (!m_transferfunction[v][end].defined_rgb)
-          m_transferfunction[v][end].rgb = m_transferfunction[v][begin].rgb;
+        {
+          m_transferfunction[v][end].rgb += m_transferfunction[v][begin].rgb;
+          m_transferfunction[v][end].weight_rgb++;
+        }
 
         int steps = end - begin;
         lqc::Vector3d diff = m_transferfunction[v][end].rgb - m_transferfunction[v][begin].rgb;
@@ -141,6 +147,7 @@ namespace vr
           float k = (float)(g - begin) / (float)(steps);
           diff = diff * k;
           m_transferfunction[v][g].rgb += m_transferfunction[v][begin].rgb + diff;
+          m_transferfunction[v][g].weight_rgb++;
         }
 
         begin = end;
@@ -151,8 +158,7 @@ namespace vr
       while (begin < MAX_V - 1) {
         int end = MAX_V - 1;
         while (j < MAX_V) {
-          if (m_transferfunction[v][j].defined_alpha)
-          {
+          if (m_transferfunction[v][j].defined_alpha) {
             end = j++;
             break;
           }
@@ -160,10 +166,18 @@ namespace vr
             j++;
         }
 
-        if (!m_transferfunction[v][begin].defined_alpha)
-          m_transferfunction[v][begin].alpha = m_transferfunction[v][end].alpha;
+        if (!m_transferfunction[v][begin].defined_alpha && !m_transferfunction[v][end].defined_alpha)
+          break;
+        else if (!m_transferfunction[v][begin].defined_alpha)
+        {
+          m_transferfunction[v][begin].alpha += m_transferfunction[v][end].alpha;
+          m_transferfunction[v][begin].weight_alpha++;
+        }
         else if (!m_transferfunction[v][end].defined_alpha)
-          m_transferfunction[v][end].alpha = m_transferfunction[v][begin].alpha;
+        {
+          m_transferfunction[v][end].alpha += m_transferfunction[v][begin].alpha;
+          m_transferfunction[v][end].weight_alpha++;
+        }
 
         int steps = end - begin;
         double diff = m_transferfunction[v][end].alpha - m_transferfunction[v][begin].alpha;
@@ -171,6 +185,7 @@ namespace vr
           float k = (float)(g - begin) / (float)(steps);
           diff = diff * k;
           m_transferfunction[v][g].alpha += m_transferfunction[v][begin].alpha + diff;
+          m_transferfunction[v][g].weight_alpha++;
         }
 
         begin = end;
@@ -192,10 +207,18 @@ namespace vr
             i++;
         }
 
-        if (!m_transferfunction[begin][g].defined_rgb)
+        if (!m_transferfunction[begin][g].defined_rgb && !m_transferfunction[end][g].defined_rgb)
+          break;
+        else if (!m_transferfunction[begin][g].defined_rgb)
+        {
           m_transferfunction[begin][g].rgb = m_transferfunction[end][g].rgb;
+          m_transferfunction[begin][g].weight_rgb++;
+        }
         else if (!m_transferfunction[end][g].defined_rgb)
+        {
           m_transferfunction[end][g].rgb = m_transferfunction[begin][g].rgb;
+          m_transferfunction[end][g].weight_rgb++;
+        }
 
         int steps = end - begin;
         lqc::Vector3d diff = m_transferfunction[end][g].rgb - m_transferfunction[begin][g].rgb;
@@ -203,7 +226,7 @@ namespace vr
           float k = (float)(v - begin) / (float)(steps);
           diff = diff * k;
           m_transferfunction[v][g].rgb += m_transferfunction[begin][g].rgb + diff;
-          m_transferfunction[v][g].rgb = m_transferfunction[v][g].rgb * (double)0.5f;
+          m_transferfunction[v][g].weight_rgb++;
         }
 
         begin = end;
@@ -222,10 +245,19 @@ namespace vr
             i++;
         }
 
-        if (!m_transferfunction[begin][g].defined_alpha)
-          m_transferfunction[begin][g].alpha = m_transferfunction[end][g].alpha;
+        
+        if (!m_transferfunction[begin][g].defined_alpha && !m_transferfunction[end][g].defined_alpha)
+          break;
+        else if (!m_transferfunction[begin][g].defined_alpha)
+        {
+          m_transferfunction[begin][g].alpha += m_transferfunction[end][g].alpha;
+          m_transferfunction[begin][g].weight_alpha++;
+        }
         else if (!m_transferfunction[end][g].defined_alpha)
-          m_transferfunction[end][g].alpha = m_transferfunction[begin][g].alpha;
+        {
+          m_transferfunction[end][g].alpha += m_transferfunction[begin][g].alpha;
+          m_transferfunction[end][g].weight_alpha++;
+        }
 
         int steps = end - begin;
         double diff = m_transferfunction[end][g].alpha - m_transferfunction[begin][g].alpha;
@@ -233,10 +265,25 @@ namespace vr
           float k = (float)(v - begin) / (float)(steps);
           diff = diff * k;
           m_transferfunction[v][g].alpha += m_transferfunction[begin][g].alpha + diff;
-          m_transferfunction[v][g].alpha = m_transferfunction[begin][g].alpha * (double) 0.5f;
+          m_transferfunction[v][g].weight_alpha++;
         }
 
         begin = end;
+      }
+    }
+    /*************************************************************/
+
+    /*************************************************************/
+    for (int v = 0; v < MAX_V; v++)
+    {
+      for (int g = 0; g < MAX_V; g++)
+      {
+        if (!m_transferfunction[v][g].defined_rgb && m_transferfunction[v][g].weight_rgb > 1)
+          m_transferfunction[v][g].rgb = m_transferfunction[v][g].rgb / (double)m_transferfunction[v][g].weight_rgb;
+        if (!m_transferfunction[v][g].defined_alpha && m_transferfunction[v][g].weight_alpha > 1)
+          m_transferfunction[v][g].alpha = m_transferfunction[v][g].alpha / (double)m_transferfunction[v][g].weight_alpha;
+        if (m_transferfunction[v][g].alpha > 1.0f)
+          printf("");
       }
     }
     /*************************************************************/

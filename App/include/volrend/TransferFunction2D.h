@@ -53,9 +53,11 @@ namespace vr
     {
       lqc::Vector3d rgb;
       bool defined_rgb;
+      int weight_rgb;
       double alpha;
       bool defined_alpha;
-      TFInfo() : defined_rgb(false), rgb(), alpha(0.0f), defined_alpha(false) {}
+      int weight_alpha;
+      TFInfo() : defined_rgb(false), rgb(), alpha(0.0f), defined_alpha(false), weight_rgb(0), weight_alpha(0) {}
     };
 
 	private:
