@@ -126,7 +126,8 @@ namespace vr
 		double ConvertScalarToValue(const int& histo_value, const int& max_histo_value)
 		{
 			double p = histo_value / double(max_histo_value);
-			return m_max_value* p;
+      double v = p * (m_max_value - m_min_value);
+			return v + m_min_value;
 		}
 
 		double ConvertScalarToGradient(const int& histo_value, const int& max_histo_value)

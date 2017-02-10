@@ -56,7 +56,7 @@ namespace vr
 			m_boundary = boundary;
 		}
 
-		void SetClosestBoundaryDistances(int* values, double* distances, double* h, const int& n);
+		void SetClosestBoundaryDistances(int* values, double* distances, const int& n);
 
 		void SetAlphaValues(int* values, double* alphas, const int& n);
 		
@@ -77,7 +77,6 @@ namespace vr
 		/// SetClosestBoundaryDistances.
 		/// </summary>
 		double* m_values;
-		double* m_center;
 		bool m_direct_tf;
 		bool m_peakbased_tf;
 		bool m_gordon_tf;

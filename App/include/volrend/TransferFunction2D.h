@@ -29,7 +29,7 @@ namespace vr
 		lqc::Vector3f GetAlphaPointOnSpline (float s);
 
 		//If we don't have a file with the values of the TF, we need to compute the TF
-		void Build (TFInterpolationType type);
+		void Interpolate ();
 
 		void PrintControlPoints ();
 		void PrintTransferFunction ();
@@ -62,7 +62,6 @@ namespace vr
 
 	private:
     TFInterpolationType m_interpolation_type;
-    bool m_built;
     bool m_has_rgb;
     bool m_has_alpha;
     TFInfo m_transferfunction[MAX_V][MAX_V];

@@ -8,7 +8,7 @@ namespace vr
 {
 	TransferFunction1D::TransferFunction1D (double v0, double v1)
 		: m_v0(v0), m_v1(v1), m_values_size(0), m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
-		, m_indexes(NULL), m_values(NULL), m_center(NULL), m_boundary(0)
+		, m_indexes(NULL), m_values(NULL), m_boundary(0)
     , m_direct_tf(false), m_gordon_tf(false), m_peakbased_tf(false)
 	{
 		m_cpt_rgb.clear ();
@@ -28,7 +28,6 @@ namespace vr
 
 		delete[] m_indexes;
 		delete[] m_values;
-		delete[] m_center;
 	}
 
 	const char* TransferFunction1D::GetNameClass ()
@@ -372,9 +371,9 @@ namespace vr
 
 			double a = 0.0f;
 			if (m_gaussian_bx)
-				a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_center[value], value);
+				a = CenteredGaussianFunction(amax, 1.0f / m_thickness, 0.0f, value);
 			else
-				a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_center[value], value);
+				a = CenteredTriangleFunction(amax, 1.0f / m_thickness, 0.0f, value);
 
 			if ( m_boundary != 0 )
 			{
@@ -484,7 +483,7 @@ namespace vr
 	/// <param name="distances">The distances to the closest boundaries.</param>
 	/// <param name="sigmas">The sigmas of the boundaries.</param>
 	/// <param name="n">The input arrays' size.</param>
-	void TransferFunction1D::SetClosestBoundaryDistances(int* values, double* distances, double* h, const int& n)
+	void TransferFunction1D::SetClosestBoundaryDistances(int* values, double* distances, const int& n)
 	{
 		if (n < 2 || n > MAX_V)
 			throw std::length_error("At least 2 values are needed to interpolate the transfer function!");
@@ -497,16 +496,12 @@ namespace vr
 
 		delete[] m_indexes;
 		delete[] m_values;
-		delete[] m_center;
 
 		if (values)
 			m_indexes = values;
 
 		if (distances)
 			m_values = distances;
-
-		if (h)
-			m_center = h;
 	}
 
 	void TransferFunction1D::SetAlphaValues(int* values, double* alphas, const int& n)

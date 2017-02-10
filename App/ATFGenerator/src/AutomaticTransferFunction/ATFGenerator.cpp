@@ -206,15 +206,14 @@ bool ATFGenerator::ExtractGordonTransferFunction()
   {
     // Gordon Transfer Function
     double* x = new double[ATFG_V_RANGE];
-    double* h = new double[ATFG_V_RANGE];
     int* v = new int[ATFG_V_RANGE];
-    if (!x || !v || !h) {
+    if (!x || !v) {
       printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
       return false;
     }
     UINT32 n_v;
-    GetBoundaryDistancies(x, h, v, &n_v);
-    ((vr::TransferFunction1D*)m_transfer_function)->SetClosestBoundaryDistances(v, x, h, n_v);
+    GetBoundaryDistancies(x, v, &n_v);
+    ((vr::TransferFunction1D*)m_transfer_function)->SetClosestBoundaryDistances(v, x, n_v);
   }
   else
   {
@@ -1061,7 +1060,7 @@ void ATFGenerator::GetValidValuesAndIndexes(double* vin, const int& nin, double*
 /// </summary>
 /// <returns>Returns a double array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-void ATFGenerator::GetBoundaryDistancies(double * x, double* h, int *v, UINT32 *n)
+void ATFGenerator::GetBoundaryDistancies(double * x, int *v, UINT32 *n)
 {
 	assert(m_scalar_histogram && x);
 
@@ -1079,15 +1078,7 @@ void ATFGenerator::GetBoundaryDistancies(double * x, double* h, int *v, UINT32 *
 		}
 		else
 		{
-			//x[i] = fmin(-sigma * sigma * ((l+m_gtresh) / fmax(g, 0.000001)), -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)));
 			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
-			h[i] = 0.0f;
-			//if (i > 0 && i < ATFG_V_MAX) {
-			//	h[i] = x[i];
-			//	h[i] -= -sigma * sigma * (((m_average_gradient[i + 1] - m_average_gradient[i - 1]) / 2.0f) / fmax(g - m_gtresh, 0.000001));
-			//	h[i] /= 2.0f;
-			//	h[i] = 0.0f;
-			//}
 		}
 
 		v[c] = i;
@@ -1105,15 +1096,11 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
 	printf("Sigma: %.2f\n", sigma);
 
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
-	  double g = m_average_gradient[i];
 		for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
-      g = m_scalarfield->GetMaxGradient() * j / ATFG_V_MAX;
+      double g = m_scalarfield->GetMaxGradient() * j / (double)ATFG_V_MAX;
 			double l = m_average_h[i][j];
 
 			if (l == -DBL_MAX)
-				l = m_average_laplacian[i];
-
-			if (g == -DBL_MAX || l == -DBL_MAX)
 				x[i][j] = -DBL_MAX;
 			else
 				x[i][j] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));

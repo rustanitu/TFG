@@ -228,7 +228,7 @@ private:
 	/// </summary>
 	/// <returns>Returns a double array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
-	void GetBoundaryDistancies(double* x, double* h, int *v, UINT32 *n);
+	void GetBoundaryDistancies(double* x, int *v, UINT32 *n);
 	void GetBoundaryDistancies2D(double** x);
 
 	void SmoothCurves();

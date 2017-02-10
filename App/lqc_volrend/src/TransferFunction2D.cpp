@@ -7,7 +7,7 @@
 namespace vr
 {
 	TransferFunction2D::TransferFunction2D (double v0, double v1)
-		: m_built(false), m_interpolation_type(TFInterpolationType::LINEAR)
+		: m_interpolation_type(TFInterpolationType::LINEAR)
     , m_distances(NULL), m_sigma(0.0f), m_has_rgb(false), m_has_alpha(false)
 	{
 		printf("TransferFunction2D criado.\n");
@@ -61,7 +61,6 @@ namespace vr
 			}
 		}
 
-    m_built = false;
     m_has_rgb = false;
 	}
 
@@ -77,16 +76,12 @@ namespace vr
 			}
 		}
 
-    m_built = false;
     m_has_alpha = false;
 	}
 
 	gl::GLTexture2D* TransferFunction2D::GenerateTexture_RGBA ()
 	{
 		printf("TransferFunction2D: GenerateTexture_RGBA.\n");
-
-		if (!m_built)
-			Build (m_interpolation_type);
 
 		if (m_transferfunction)
 		{
@@ -101,7 +96,7 @@ namespace vr
 					data[c++] = (float)(m_transferfunction[v][g].rgb.x);
 					data[c++] = (float)(m_transferfunction[v][g].rgb.y);
 					data[c++] = (float)(m_transferfunction[v][g].rgb.z);
-					data[c++] = (float)(m_transferfunction[v][g].alpha);
+          data[c++] = (float)(m_transferfunction[v][g].alpha);
 				}
 			}
 			ret->SetData ((void*)data, GL_RGBA32F, GL_RGBA, GL_FLOAT);
@@ -111,7 +106,7 @@ namespace vr
 		return NULL;
 	}
 
-	void TransferFunction2D::Build (TFInterpolationType type)
+  void TransferFunction2D::Interpolate()
 	{
     /*************************************************************/
     for (int v = 0; v < MAX_V; ++v)
@@ -129,6 +124,13 @@ namespace vr
             j++;
         }
 
+        int steps = end - begin;
+        if (steps < 2)
+        {
+          begin = end;
+          continue;
+        }
+
         if (!m_transferfunction[v][begin].defined_rgb && !m_transferfunction[v][end].defined_rgb)
           break;
         else if (!m_transferfunction[v][begin].defined_rgb) {
@@ -141,7 +143,6 @@ namespace vr
           m_transferfunction[v][end].weight_rgb++;
         }
 
-        int steps = end - begin;
         lqc::Vector3d diff = m_transferfunction[v][end].rgb - m_transferfunction[v][begin].rgb;
         for (int g = begin + 1; g < end; g++) {
           float k = (float)(g - begin) / (float)(steps);
@@ -166,6 +167,12 @@ namespace vr
             j++;
         }
 
+        int steps = end - begin;
+        if (steps < 2) {
+          begin = end;
+          continue;
+        }
+
         if (!m_transferfunction[v][begin].defined_alpha && !m_transferfunction[v][end].defined_alpha)
           break;
         else if (!m_transferfunction[v][begin].defined_alpha)
@@ -179,7 +186,6 @@ namespace vr
           m_transferfunction[v][end].weight_alpha++;
         }
 
-        int steps = end - begin;
         double diff = m_transferfunction[v][end].alpha - m_transferfunction[v][begin].alpha;
         for (int g = begin + 1; g < end; g++) {
           float k = (float)(g - begin) / (float)(steps);
@@ -191,8 +197,7 @@ namespace vr
         begin = end;
       }
 		}
-    /*************************************************************/
-    /*************************************************************/
+
     for (int g = 0; g < MAX_V; ++g) {
       int i = 0;
       int begin = 0;
@@ -205,6 +210,12 @@ namespace vr
           }
           else
             i++;
+        }
+
+        int steps = end - begin;
+        if (steps < 2) {
+          begin = end;
+          continue;
         }
 
         if (!m_transferfunction[begin][g].defined_rgb && !m_transferfunction[end][g].defined_rgb)
@@ -220,7 +231,6 @@ namespace vr
           m_transferfunction[end][g].weight_rgb++;
         }
 
-        int steps = end - begin;
         lqc::Vector3d diff = m_transferfunction[end][g].rgb - m_transferfunction[begin][g].rgb;
         for (int v = begin + 1; v < end; v++) {
           float k = (float)(v - begin) / (float)(steps);
@@ -245,6 +255,11 @@ namespace vr
             i++;
         }
 
+        int steps = end - begin;
+        if (steps < 2) {
+          begin = end;
+          continue;
+        }
         
         if (!m_transferfunction[begin][g].defined_alpha && !m_transferfunction[end][g].defined_alpha)
           break;
@@ -259,7 +274,6 @@ namespace vr
           m_transferfunction[end][g].weight_alpha++;
         }
 
-        int steps = end - begin;
         double diff = m_transferfunction[end][g].alpha - m_transferfunction[begin][g].alpha;
         for (int v = begin + 1; v < end; v++) {
           float k = (float)(v - begin) / (float)(steps);
@@ -271,9 +285,7 @@ namespace vr
         begin = end;
       }
     }
-    /*************************************************************/
 
-    /*************************************************************/
     for (int v = 0; v < MAX_V; v++)
     {
       for (int g = 0; g < MAX_V; g++)
@@ -282,21 +294,18 @@ namespace vr
           m_transferfunction[v][g].rgb = m_transferfunction[v][g].rgb / (double)m_transferfunction[v][g].weight_rgb;
         if (!m_transferfunction[v][g].defined_alpha && m_transferfunction[v][g].weight_alpha > 1)
           m_transferfunction[v][g].alpha = m_transferfunction[v][g].alpha / (double)m_transferfunction[v][g].weight_alpha;
-        if (m_transferfunction[v][g].alpha > 1.0f)
-          printf("");
+        
+        m_transferfunction[v][g].defined_rgb = true;
+        m_transferfunction[v][g].defined_alpha = true;
       }
     }
     /*************************************************************/
 
 		printf ("TransferFunction2D: Build!\n");
-		m_built = true;
 	}
 
 	lqc::Vector4d TransferFunction2D::Get (double value)
 	{
-		if (!m_built)
-			Build (m_interpolation_type);
-
 		return lqc::Vector4d(0);
 	}
 
@@ -487,18 +496,17 @@ namespace vr
 				double x = m_distances[i][j];
         if (x == -DBL_MAX)
           continue;
-
-				double a = 0.0f;
+				
+        double a = 0.0f;
         if (m_gaussian_bx)
           a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
         else
           a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
-
 				AddAlphaControlPoint(a, i, j);
 			}
 		}
 
-    Build(LINEAR);
+    Interpolate();
 
     for (int i = 0; i < MAX_V; ++i) {
       for (int j = 0; j < MAX_V; ++j) {
