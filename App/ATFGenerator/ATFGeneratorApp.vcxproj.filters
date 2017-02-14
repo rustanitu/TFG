@@ -425,6 +425,12 @@
     <ClInclude Include="src\TankAPI\Tank.h">
       <Filter>Source Files\TankAPI</Filter>
     </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\PMCell.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\PredictionMap.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\StructuredDataset\ERN\backface.frag">

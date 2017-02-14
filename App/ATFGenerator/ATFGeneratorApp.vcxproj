@@ -164,6 +164,8 @@
     <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
     <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\PMCell.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\PredictionMap.h" />
     <ClInclude Include="src\CPUTimer.h" />
     <ClInclude Include="src\CPU\CommonSimpsonIntegrationFunctions.hpp" />
     <ClInclude Include="src\CPU\defines.h" />

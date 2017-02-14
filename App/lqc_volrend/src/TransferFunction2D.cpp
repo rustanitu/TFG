@@ -17,11 +17,7 @@ namespace vr
 	TransferFunction2D::~TransferFunction2D ()
 	{
 		printf("TransferFunction2D destruido.\n");
-    if (m_distances) {
-      for (int i = 0; i < MAX_V; ++i)
-        delete[] m_distances[i];
-      delete[] m_distances;
-    }
+    delete m_distances;
 	}
 
 	const char* TransferFunction2D::GetNameClass ()
@@ -34,14 +30,12 @@ namespace vr
 		m_transferfunction[v][g].rgb.x = rgb.x;
 		m_transferfunction[v][g].rgb.y = rgb.y;
 		m_transferfunction[v][g].rgb.z = rgb.z;
-    m_transferfunction[v][g].defined_rgb = true;
     m_has_rgb = true;
 	}
 
 	void TransferFunction2D::AddAlphaControlPoint(double alpha, int v, int g)
 	{
 		m_transferfunction[v][g].alpha = alpha;
-    m_transferfunction[v][g].defined_alpha = true;
     m_has_alpha = true;
 	}
 
@@ -57,7 +51,6 @@ namespace vr
 				m_transferfunction[v][g].rgb.x = 0.0f;
 				m_transferfunction[v][g].rgb.y = 0.0f;
 				m_transferfunction[v][g].rgb.z = 0.0f;
-        m_transferfunction[v][g].defined_rgb = false;
 			}
 		}
 
@@ -72,7 +65,6 @@ namespace vr
 		for (int v = 0; v < MAX_V; ++v) {
 			for (int g = 0; g < MAX_V; ++g) {
         m_transferfunction[v][g].alpha = 0.0f;
-        m_transferfunction[v][g].defined_alpha = false;
 			}
 		}
 
@@ -108,200 +100,6 @@ namespace vr
 
   void TransferFunction2D::Interpolate()
 	{
-    /*************************************************************/
-    for (int v = 0; v < MAX_V; ++v)
-		{
-      int j = 0;
-      int begin = 0;
-      while (begin < MAX_V - 1) {
-        int end = MAX_V - 1;
-        while (j < MAX_V) {
-          if (m_transferfunction[v][j].defined_rgb) {
-            end = j++;
-            break;
-          }
-          else
-            j++;
-        }
-
-        int steps = end - begin;
-        if (steps < 2)
-        {
-          begin = end;
-          continue;
-        }
-
-        if (!m_transferfunction[v][begin].defined_rgb && !m_transferfunction[v][end].defined_rgb)
-          break;
-        else if (!m_transferfunction[v][begin].defined_rgb) {
-          m_transferfunction[v][begin].rgb += m_transferfunction[v][end].rgb;
-          m_transferfunction[v][begin].weight_rgb++;
-        }
-        else if (!m_transferfunction[v][end].defined_rgb)
-        {
-          m_transferfunction[v][end].rgb += m_transferfunction[v][begin].rgb;
-          m_transferfunction[v][end].weight_rgb++;
-        }
-
-        lqc::Vector3d diff = m_transferfunction[v][end].rgb - m_transferfunction[v][begin].rgb;
-        for (int g = begin + 1; g < end; g++) {
-          float k = (float)(g - begin) / (float)(steps);
-          diff = diff * k;
-          m_transferfunction[v][g].rgb += m_transferfunction[v][begin].rgb + diff;
-          m_transferfunction[v][g].weight_rgb++;
-        }
-
-        begin = end;
-      }
-
-      j = 0;
-      begin = 0;
-      while (begin < MAX_V - 1) {
-        int end = MAX_V - 1;
-        while (j < MAX_V) {
-          if (m_transferfunction[v][j].defined_alpha) {
-            end = j++;
-            break;
-          }
-          else
-            j++;
-        }
-
-        int steps = end - begin;
-        if (steps < 2) {
-          begin = end;
-          continue;
-        }
-
-        if (!m_transferfunction[v][begin].defined_alpha && !m_transferfunction[v][end].defined_alpha)
-          break;
-        else if (!m_transferfunction[v][begin].defined_alpha)
-        {
-          m_transferfunction[v][begin].alpha += m_transferfunction[v][end].alpha;
-          m_transferfunction[v][begin].weight_alpha++;
-        }
-        else if (!m_transferfunction[v][end].defined_alpha)
-        {
-          m_transferfunction[v][end].alpha += m_transferfunction[v][begin].alpha;
-          m_transferfunction[v][end].weight_alpha++;
-        }
-
-        double diff = m_transferfunction[v][end].alpha - m_transferfunction[v][begin].alpha;
-        for (int g = begin + 1; g < end; g++) {
-          float k = (float)(g - begin) / (float)(steps);
-          diff = diff * k;
-          m_transferfunction[v][g].alpha += m_transferfunction[v][begin].alpha + diff;
-          m_transferfunction[v][g].weight_alpha++;
-        }
-
-        begin = end;
-      }
-		}
-
-    for (int g = 0; g < MAX_V; ++g) {
-      int i = 0;
-      int begin = 0;
-      while (begin < MAX_V - 1) {
-        int end = MAX_V - 1;
-        while (i < MAX_V) {
-          if (m_transferfunction[i][g].defined_rgb) {
-            end = i++;
-            break;
-          }
-          else
-            i++;
-        }
-
-        int steps = end - begin;
-        if (steps < 2) {
-          begin = end;
-          continue;
-        }
-
-        if (!m_transferfunction[begin][g].defined_rgb && !m_transferfunction[end][g].defined_rgb)
-          break;
-        else if (!m_transferfunction[begin][g].defined_rgb)
-        {
-          m_transferfunction[begin][g].rgb = m_transferfunction[end][g].rgb;
-          m_transferfunction[begin][g].weight_rgb++;
-        }
-        else if (!m_transferfunction[end][g].defined_rgb)
-        {
-          m_transferfunction[end][g].rgb = m_transferfunction[begin][g].rgb;
-          m_transferfunction[end][g].weight_rgb++;
-        }
-
-        lqc::Vector3d diff = m_transferfunction[end][g].rgb - m_transferfunction[begin][g].rgb;
-        for (int v = begin + 1; v < end; v++) {
-          float k = (float)(v - begin) / (float)(steps);
-          diff = diff * k;
-          m_transferfunction[v][g].rgb += m_transferfunction[begin][g].rgb + diff;
-          m_transferfunction[v][g].weight_rgb++;
-        }
-
-        begin = end;
-      }
-
-      i = 0;
-      begin = 0;
-      while (begin < MAX_V - 1) {
-        int end = MAX_V - 1;
-        while (i < MAX_V) {
-          if (m_transferfunction[i][g].defined_alpha) {
-            end = i++;
-            break;
-          }
-          else
-            i++;
-        }
-
-        int steps = end - begin;
-        if (steps < 2) {
-          begin = end;
-          continue;
-        }
-        
-        if (!m_transferfunction[begin][g].defined_alpha && !m_transferfunction[end][g].defined_alpha)
-          break;
-        else if (!m_transferfunction[begin][g].defined_alpha)
-        {
-          m_transferfunction[begin][g].alpha += m_transferfunction[end][g].alpha;
-          m_transferfunction[begin][g].weight_alpha++;
-        }
-        else if (!m_transferfunction[end][g].defined_alpha)
-        {
-          m_transferfunction[end][g].alpha += m_transferfunction[begin][g].alpha;
-          m_transferfunction[end][g].weight_alpha++;
-        }
-
-        double diff = m_transferfunction[end][g].alpha - m_transferfunction[begin][g].alpha;
-        for (int v = begin + 1; v < end; v++) {
-          float k = (float)(v - begin) / (float)(steps);
-          diff = diff * k;
-          m_transferfunction[v][g].alpha += m_transferfunction[begin][g].alpha + diff;
-          m_transferfunction[v][g].weight_alpha++;
-        }
-
-        begin = end;
-      }
-    }
-
-    for (int v = 0; v < MAX_V; v++)
-    {
-      for (int g = 0; g < MAX_V; g++)
-      {
-        if (!m_transferfunction[v][g].defined_rgb && m_transferfunction[v][g].weight_rgb > 1)
-          m_transferfunction[v][g].rgb = m_transferfunction[v][g].rgb / (double)m_transferfunction[v][g].weight_rgb;
-        if (!m_transferfunction[v][g].defined_alpha && m_transferfunction[v][g].weight_alpha > 1)
-          m_transferfunction[v][g].alpha = m_transferfunction[v][g].alpha / (double)m_transferfunction[v][g].weight_alpha;
-        
-        m_transferfunction[v][g].defined_rgb = true;
-        m_transferfunction[v][g].defined_alpha = true;
-      }
-    }
-    /*************************************************************/
-
-		printf ("TransferFunction2D: Build!\n");
 	}
 
 	lqc::Vector4d TransferFunction2D::Get (double value)
@@ -442,7 +240,7 @@ namespace vr
 		//       base
 
 		double a = 0.0f;
-		double x = m_distances[v][g];
+		double x = m_distances->GetValue(v, g);
     if (x >= -base && x <= base)
     {
       if (x >= center && center < base)
@@ -463,7 +261,7 @@ namespace vr
 	double TransferFunction2D::CenteredGaussianFunction(double max, double base, double u, const int& v, const int& g)
 	{
 		double sigma = base / 3.0f;
-    double x = m_distances[v][g];
+    double x = m_distances->GetValue(v, g);
     double gauss = max * exp(((-(x - u)*(x - u)) / (2 * sigma * sigma)));
     return fmin(gauss, 1.0f);
 	}
@@ -493,26 +291,16 @@ namespace vr
 		{
 			for (int j = 0; j < MAX_V; ++j)
 			{
-				double x = m_distances[i][j];
-        if (x == -DBL_MAX)
-          continue;
-				
+				double x = m_distances->GetValue(i, j);
         double a = 0.0f;
         if (m_gaussian_bx)
           a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
         else
           a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
 				AddAlphaControlPoint(a, i, j);
+        data[i + MAX_V*j] = a;
 			}
 		}
-
-    Interpolate();
-
-    for (int i = 0; i < MAX_V; ++i) {
-      for (int j = 0; j < MAX_V; ++j) {
-        data[i + MAX_V*j] = m_transferfunction[i][j].alpha;
-      }
-    }
 
 		IupMglPlotSetData(m_tf_plot, index, data, MAX_V, MAX_V, 1);
 
@@ -540,27 +328,5 @@ namespace vr
 	{
 		// TO COPY FROM 1D
 		return true;
-	}
-
-	/// <summary>
-	/// Specifies the distance between a intensity value
-	/// and its closest boundary. Thus, the input arrays'
-	/// size must range from 2 to MAX_V. Any array content
-	/// whose index is greater than 255, it'll be ignored.
-	/// </summary>
-	/// <param name="values">The values array.</param>
-	/// <param name="distances">The distances to the closest boundaries.</param>
-	/// <param name="sigmas">The sigmas of the boundaries.</param>
-	/// <param name="n">The input arrays' size.</param>
-	void TransferFunction2D::SetClosestBoundaryDistances(double** distances)
-	{
-		if (m_distances) {
-			for (int i = 0; i < MAX_V; ++i)
-				delete[] m_distances[i];
-			delete[] m_distances;
-		}
-
-		if (distances)
-			m_distances = distances;
 	}
 }

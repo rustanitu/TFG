@@ -210,7 +210,7 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 				//m_atfg->GenerateHistogramSlices();
 				m_atfg->GenerateGradientSummedHistogram();
 				m_atfg->GenerateLaplacianSummedHistogram();
-				Viewer::Instance()->m_gtresh = (double)m_atfg->GetMinAverageGradient() / (double)m_atfg->GetMaxAverageGradient() * 100.0f;
+				Viewer::Instance()->m_gtresh = (double)m_atfg->GetGTresh() / (double)m_atfg->GetMaxAverageGradient() * 100.0f;
 				Viewer::Instance()->m_gui.UpdateGTresh(Viewer::Instance()->m_gtresh);
 				ExtractATFG();
 				return;

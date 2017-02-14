@@ -95,9 +95,7 @@ bool ATFGenerator::Init()
   if (!EstimateAverageValues())
     return false;
 
-#ifdef SMOOTH_CURVES
 	SmoothCurves();
-#endif
 
 	m_initialized = true;
 	printf("ATFGenerator Inicializado.\n");
@@ -112,20 +110,34 @@ void ATFGenerator::SmoothCurves()
 	double* values;
 	int* indexes;
 
-	double* curves[2] = {m_average_gradient, m_average_laplacian};
-	for ( int k = 0; k < 2; ++k )
-	{
-		GetValidValuesAndIndexes(curves[k], ATFG_V_RANGE, values, indexes, size);
-		SmoothCurveWithGaussian(values, size, times);
+	GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
+	SmoothCurveWithGaussian(values, size, times);
 
-		for ( int i = 0; i < size; ++i )
-			curves[k][indexes[i]] = values[i];
+	for ( int i = 0; i < size; ++i )
+    m_average_laplacian[indexes[i]] = values[i];
 
-		delete[] values;
-		values = NULL;
-		delete[] indexes;
-		indexes = NULL;
-	}
+	delete[] values;
+	delete[] indexes;
+
+  GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
+  SmoothCurveWithGaussian(values, size, times);
+
+  for (int i = 0; i < size; ++i)
+    m_average_gradient[indexes[i]] = values[i];
+
+  //*
+  double min = DBL_MAX;
+  int* min_indexes;
+  size = GetMinPoints(values, indexes, size, min_indexes);
+  for (int i = 0; i < size; ++i)
+    min = fmin(min, m_average_gradient[min_indexes[i]]);
+  
+  m_gtresh = min;
+
+  delete[] values;
+  delete[] indexes;
+  delete[] min_indexes;
+  //*/
 }
 
 void ATFGenerator::SetDefaultColor()
@@ -217,22 +229,11 @@ bool ATFGenerator::ExtractGordonTransferFunction()
   }
   else
   {
-    double** x = new double*[ATFG_V_RANGE];
-    if (!x) {
-      printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-      return false;
-    }
-
-    for (int i = 0; i < ATFG_V_RANGE; ++i) {
-      x[i] = new double[ATFG_V_RANGE];
-      if (!x[i]) {
-        printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-        return false;
-      }
-    }
-
-    GetBoundaryDistancies2D(x);
-    ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(x);
+    PredictionMap<double, DoubleCell>* map = new PredictionMap<double, DoubleCell>(ATFG_V_RANGE, ATFG_V_RANGE);
+    map->Init();
+    GetBoundaryDistancies2D(*map);
+    map->PredictWithInverseDistanceWeighting(3);
+    ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(map);
   }
 	return true;
 }
@@ -1088,9 +1089,9 @@ void ATFGenerator::GetBoundaryDistancies(double * x, int *v, UINT32 *n)
 	*n = c;
 }
 
-void ATFGenerator::GetBoundaryDistancies2D(double** x)
+void ATFGenerator::GetBoundaryDistancies2D(PredictionMap<double, DoubleCell>& map)
 {
-	assert(m_scalar_histogram && x);
+	assert(m_scalar_histogram);
 
 	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_2D - m_min_average_laplacian_2D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
@@ -1100,10 +1101,8 @@ void ATFGenerator::GetBoundaryDistancies2D(double** x)
       double g = m_scalarfield->GetMaxGradient() * j / (double)ATFG_V_MAX;
 			double l = m_average_h[i][j];
 
-			if (l == -DBL_MAX)
-				x[i][j] = -DBL_MAX;
-			else
-				x[i][j] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
+			if (l != -DBL_MAX)
+        map.SetValue((-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001))), i, j);
 		}
 	}
 }
@@ -1154,6 +1153,58 @@ int ATFGenerator::GetMaxPoints(const double* curve, const int* indexes, const in
 
 	max_indexes = res;
 	return max_indices_size;
+}
+
+int ATFGenerator::GetMinPoints(const double* curve, const int* indexes, const int& curve_size, int*& max_indexes)
+{
+  double* first_derivative = new double[curve_size];
+  first_derivative[0] = first_derivative[curve_size - 1] = 0.0f;
+  for (int i = 1; i < curve_size - 1; ++i)
+  {
+    first_derivative[i] = (curve[i + 1] - curve[i - 1]) / 2.0f;
+  }
+
+  double* second_derivative = new double[curve_size];
+  second_derivative[0] = second_derivative[curve_size - 1] = 0.0f;
+  for (int i = 1; i < curve_size - 1; ++i)
+  {
+    second_derivative[i] = (first_derivative[i + 1] - first_derivative[i - 1]) / 2.0f;
+  }
+
+  int up = 0, down = 0;
+  int* min_indices = new int[curve_size];
+  int min_indices_size = 0;
+  for (int i = 0; i < curve_size - 1; ++i)
+  {
+    if (!signbit(first_derivative[i]) ^ !signbit(first_derivative[i + 1]))
+    {
+      if (second_derivative[i] > 0 && second_derivative[i + 1] > 0)
+      {
+        if (curve[i] < curve[i + 1])
+          min_indices[min_indices_size++] = indexes[i];
+        else
+          min_indices[min_indices_size++] = indexes[i + 1];
+      }
+      else if (second_derivative[i] > 0)
+      {
+        min_indices[min_indices_size++] = indexes[i];
+      }
+      else if (second_derivative[i + 1] > 0)
+      {
+        min_indices[min_indices_size++] = indexes[i + 1];
+      }
+    }
+  }
+
+  int* res = new int[min_indices_size];
+  memcpy(res, min_indices, min_indices_size*sizeof(int));
+
+  delete[] first_derivative;
+  delete[] second_derivative;
+  delete[] min_indices;
+
+  max_indexes = res;
+  return min_indices_size;
 }
 
 int ATFGenerator::GetInflectionPoints(const double* curve, const int* indexes, const int& curve_size, int*& inflct_indexes)

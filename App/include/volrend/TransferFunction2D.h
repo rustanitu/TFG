@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <iup.h>
+#include "../../ATFGenerator/src/AutomaticTransferFunction/PredictionMap.h"
 
 namespace vr
 {
@@ -38,7 +39,10 @@ namespace vr
 
 		virtual bool Generate();
 
-		void SetClosestBoundaryDistances(double** distances);
+    void SetClosestBoundaryDistances(PredictionMap<double, DoubleCell>* distances)
+    {
+      m_distances = distances;
+    }
 
     void SetSigma(double sigma)
     {
@@ -52,12 +56,8 @@ namespace vr
     struct TFInfo
     {
       lqc::Vector3d rgb;
-      bool defined_rgb;
-      int weight_rgb;
       double alpha;
-      bool defined_alpha;
-      int weight_alpha;
-      TFInfo() : defined_rgb(false), rgb(), alpha(0.0f), defined_alpha(false), weight_rgb(0), weight_alpha(0) {}
+      TFInfo() : rgb(), alpha(0.0f) {}
     };
 
 	private:
@@ -65,7 +65,7 @@ namespace vr
     bool m_has_rgb;
     bool m_has_alpha;
     TFInfo m_transferfunction[MAX_V][MAX_V];
-		double** m_distances;
+    PredictionMap<double, DoubleCell>* m_distances;
     double m_sigma;
 	};
 

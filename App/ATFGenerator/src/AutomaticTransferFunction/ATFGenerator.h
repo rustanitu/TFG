@@ -9,6 +9,7 @@
 #include <volrend\TransferFunction1D.h>
 #include <volrend\TransferFunction2D.h>
 #include <iup.h>
+#include "PredictionMap.h"
 
 /*************************/
 /* Constants Definitions */
@@ -162,6 +163,11 @@ public:
 		m_gtresh = gt * GetMaxAverageGradient() * 0.01f;
 	}
 
+  double GetGTresh()
+  {
+    return m_gtresh;
+  }
+
 	void SetMinimumHistogramValue(UINT32 min)
 	{
 		m_min_hist = min;
@@ -229,7 +235,7 @@ private:
 	/// <returns>Returns a double array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
 	void GetBoundaryDistancies(double* x, int *v, UINT32 *n);
-	void GetBoundaryDistancies2D(double** x);
+  void GetBoundaryDistancies2D(PredictionMap<double, DoubleCell>& map);
 
 	void SmoothCurves();
 
@@ -243,6 +249,7 @@ private:
 	void SetDefaultColor();
 
 	int GetMaxPoints(const double* curve, const int* indexes, const int& curve_size, int*& max_indexes);
+  int GetMinPoints(const double* curve, const int* indexes, const int& curve_size, int*& max_indexes);
 	int GetInflectionPoints(const double* curve, const int* indexes, const int& curve_size, int*& inflct_indexes);
 
 private:
