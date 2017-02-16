@@ -6,9 +6,10 @@
 
 namespace vr
 {
-	TransferFunction2D::TransferFunction2D (double v0, double v1)
-		: m_interpolation_type(TFInterpolationType::LINEAR)
-    , m_distances(NULL), m_sigma(0.0f), m_has_rgb(false), m_has_alpha(false)
+  TransferFunction2D::TransferFunction2D(double v0, double v1)
+    : m_interpolation_type(TFInterpolationType::LINEAR)
+    , m_sigma(0.0f), m_has_rgb(false), m_has_alpha(false)
+    , m_distances(NULL), m_indexes(NULL)
 	{
 		printf("TransferFunction2D criado.\n");
 		ClearRGBControlPoints();
@@ -224,7 +225,7 @@ namespace vr
 	return false;
 	}*/
 
-	double TransferFunction2D::CenteredTriangleFunction(double max, double base, double center, const int& v, const int& g)
+  double TransferFunction2D::CenteredTriangleFunction(double x, double max, double base, double center)
 	{
 		//  boundary center
 		//         .
@@ -240,7 +241,6 @@ namespace vr
 		//       base
 
 		double a = 0.0f;
-		double x = m_distances->GetValue(v, g);
     if (x >= -base && x <= base)
     {
       if (x >= center && center < base)
@@ -258,10 +258,9 @@ namespace vr
     return fmin(a, 1.0f);
 	}
 
-	double TransferFunction2D::CenteredGaussianFunction(double max, double base, double u, const int& v, const int& g)
+	double TransferFunction2D::CenteredGaussianFunction(double x, double max, double base, double u)
 	{
 		double sigma = base / 3.0f;
-    double x = m_distances->GetValue(v, g);
     double gauss = max * exp(((-(x - u)*(x - u)) / (2 * sigma * sigma)));
     return fmin(gauss, 1.0f);
 	}
@@ -277,45 +276,55 @@ namespace vr
 	{
 		printf("TransferFunction2D: GenerateGordonBased (from ATFG).\n");
 
-		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
+    PredictionMap<double, DoubleCell> map(MAX_V, MAX_V);
+    if (!map.Init())
+      return false;
 
-		int index = IupMglPlotNewDataSet(m_tf_plot, 1);
+    for (int k = 0; k < m_distances->size(); ++k)
+    {
+      double x = m_distances->at(k);
+      std::pair<int, int> pair = m_indexes->at(k);
+      int i = pair.first;
+      int j = pair.second;
 
+      double a = 0.0f;
+      if (m_gaussian_bx)
+        a = CenteredGaussianFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);
+      else
+        a = CenteredTriangleFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);
+        
+      map.SetValue(a, i, j);
+    }
+
+    map.PredictWithInverseDistanceWeighting(1.8f);
 		ClearAlphaControlPoints();
-
 		double* data = new double[MAX_V*MAX_V];
 
-		double amax = 1.0f;
-		// Assign opacity to transfer function
-		for ( int i = 0; i < MAX_V; ++i )
-		{
-			for (int j = 0; j < MAX_V; ++j)
-			{
-				double x = m_distances->GetValue(i, j);
-        double a = 0.0f;
-        if (m_gaussian_bx)
-          a = CenteredGaussianFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
-        else
-          a = CenteredTriangleFunction(amax, 1.0f / m_thickness, m_sigma, i, j);
-				AddAlphaControlPoint(a, i, j);
+    for (int i = 0; i < MAX_V; ++i)
+    {
+      for (int j = 0; j < MAX_V; ++j)
+      {
+        double a = map.GetValue(i, j);
+        AddAlphaControlPoint(a, i, j);
         data[i + MAX_V*j] = a;
-			}
-		}
+      }
+    }
 
+		IupSetAttribute(m_tf_plot, "CLEAR", "YES");
+		int index = IupMglPlotNewDataSet(m_tf_plot, 1);
 		IupMglPlotSetData(m_tf_plot, index, data, MAX_V, MAX_V, 1);
-
 		IupSetAttribute(m_tf_plot, "DS_MODE", "PLANAR_SURFACE");
 		IupSetAttribute(m_tf_plot, "LEGEND", "NO");
 		//IupSetAttribute(m_tf_plot, "OPENGL", "YES");
 		IupSetAttribute(m_tf_plot, "LIGHT", "NO");
 		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMIN", "NO");
-		IupSetAttribute(m_tf_plot, "AXS_ZMIN", "-0.001");
+		IupSetAttribute(m_tf_plot, "AXS_ZMIN", "-1.001");
 		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMAX", "NO");
 		IupSetAttribute(m_tf_plot, "AXS_ZMAX", "1.001");
 		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Scalar Value");
 		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Gradient");
 		IupSetAttribute(m_tf_plot, "AXS_ZLABEL", "Alpha");
-    IupSetAttribute(m_tf_plot, "COLORSCHEME", "kw");
+    //IupSetAttribute(m_tf_plot, "COLORSCHEME", "kw");
 		//IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
 		IupSetAttribute(m_tf_plot, "REDRAW", NULL);
 

@@ -39,9 +39,19 @@ namespace vr
 
 		virtual bool Generate();
 
-    void SetClosestBoundaryDistances(PredictionMap<double, DoubleCell>* distances)
+    void SetClosestBoundaryDistances(std::vector<double>* distances, std::vector<std::pair<int, int>>* indexes)
     {
+      if (m_distances)
+        m_distances->clear();
+      delete m_distances;
+
       m_distances = distances;
+      
+      if (m_indexes)
+        m_indexes->clear();
+      delete m_indexes;
+
+      m_indexes = indexes;
     }
 
     void SetSigma(double sigma)
@@ -49,9 +59,8 @@ namespace vr
       m_sigma = sigma;
     }
 
-	private:
-		double CenteredTriangleFunction(double max, double base, double center, const int& v, const int& g);
-		double CenteredGaussianFunction(double max, double sigma, double u, const int& v, const int& g);
+		static double CenteredTriangleFunction(double x, double max, double base, double center);
+		static double CenteredGaussianFunction(double x, double max, double sigma, double u);
     
     struct TFInfo
     {
@@ -65,7 +74,8 @@ namespace vr
     bool m_has_rgb;
     bool m_has_alpha;
     TFInfo m_transferfunction[MAX_V][MAX_V];
-    PredictionMap<double, DoubleCell>* m_distances;
+    std::vector<double>* m_distances;
+    std::vector<std::pair<int, int>>* m_indexes;
     double m_sigma;
 	};
 

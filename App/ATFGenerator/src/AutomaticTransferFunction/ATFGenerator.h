@@ -235,7 +235,7 @@ private:
 	/// <returns>Returns a double array with the distances associated 
 	/// to all 256 values, ordered by value.</returns>
 	void GetBoundaryDistancies(double* x, int *v, UINT32 *n);
-  void GetBoundaryDistancies2D(PredictionMap<double, DoubleCell>& map);
+  void GetBoundaryDistancies2D(std::vector<double>* distances, std::vector<std::pair<int, int>>* indexes);
 
 	void SmoothCurves();
 

@@ -229,11 +229,11 @@ bool ATFGenerator::ExtractGordonTransferFunction()
   }
   else
   {
-    PredictionMap<double, DoubleCell>* map = new PredictionMap<double, DoubleCell>(ATFG_V_RANGE, ATFG_V_RANGE);
-    map->Init();
-    GetBoundaryDistancies2D(*map);
-    map->PredictWithInverseDistanceWeighting(3);
-    ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(map);
+    std::vector<double>* distances = new std::vector<double>();
+    std::vector<std::pair<int, int>>* indexes = new std::vector<std::pair<int, int>>();
+
+    GetBoundaryDistancies2D(distances, indexes);
+    ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(distances, indexes);
   }
 	return true;
 }
@@ -1089,7 +1089,7 @@ void ATFGenerator::GetBoundaryDistancies(double * x, int *v, UINT32 *n)
 	*n = c;
 }
 
-void ATFGenerator::GetBoundaryDistancies2D(PredictionMap<double, DoubleCell>& map)
+void ATFGenerator::GetBoundaryDistancies2D(std::vector<double>* distances, std::vector<std::pair<int, int>>* indexes)
 {
 	assert(m_scalar_histogram);
 
@@ -1101,8 +1101,11 @@ void ATFGenerator::GetBoundaryDistancies2D(PredictionMap<double, DoubleCell>& ma
       double g = m_scalarfield->GetMaxGradient() * j / (double)ATFG_V_MAX;
 			double l = m_average_h[i][j];
 
-			if (l != -DBL_MAX)
-        map.SetValue((-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001))), i, j);
+      if (l != -DBL_MAX)
+      {
+        distances->push_back(-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)));
+        indexes->push_back(std::make_pair(i,j));
+      }
 		}
 	}
 }

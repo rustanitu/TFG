@@ -13,9 +13,9 @@ class PredictionMap
 {
 public:
   PredictionMap(int coldim, int rowdim)
-    : m_cells(NULL)
-    , m_width(coldim)
-    , m_height(rowdim)
+  : m_cells(NULL)
+  , m_width(coldim)
+  , m_height(rowdim)
   {
   }
 
@@ -76,12 +76,11 @@ public:
 
     delete[] m_cells;
     m_cells = NULL;
-
     m_defined_cells.clear();
     m_undefined_cells.clear();
   }
 
-  void PredictWithInverseDistanceWeighting(const int& p)
+  void PredictWithInverseDistanceWeighting(const double& p, const double& d = 0)
   {
     while (!m_undefined_cells.empty())
     {
@@ -92,24 +91,19 @@ public:
 
       T val = 0;
       double wij = 0;
-      for (std::forward_list<std::pair<int, int>>::iterator it = m_defined_cells.begin(); it != m_defined_cells.end(); it++)
+      for (auto it = m_defined_cells.begin(); it != m_defined_cells.end(); ++it)
       {
         int l = it->first;
         int m = it->second;
 
-        if (i == l && j == m)
-        {
-          val = val + m_cells[l][m].GetValue();
-          wij += 1;
-        }
-        else
-        {
-          double w = InverseDistanceWeight(i, j, l, m, p);
-          val = val + (w * m_cells[l][m].GetValue());
-          wij += w;
-        }
+        double distance = sqrt(((i - l)*(i - l)) + ((j - m)*(j - m)));
+        double w = (double)1.0f / pow(distance, p);
+        val += (w * m_cells[l][m].GetValue());
+        wij += w;
       }
-      m_cells[i][j].SetValue(val / wij);
+
+      if (wij > 0)
+        m_cells[i][j].SetValue(val / wij);
     }
     m_defined_cells.clear();
   }
@@ -120,6 +114,7 @@ public:
       return;
 
     m_cells[i][j].SetValue(value);
+    m_cells[i][j].SetDefined(true);
     m_defined_cells.push_front(std::make_pair(i, j));
     m_undefined_cells.remove(std::make_pair(i, j));
   }
@@ -132,12 +127,6 @@ public:
   bool IsDefined(const int& i, const int& j)
   {
     return m_cells[i][j].IsDefined();
-  }
-
-private:
-  double InverseDistanceWeight(const int& i, const int& j, const int& l, const int& m, const int& p)
-  {
-    return (double)1.0f / pow(sqrt(((i - l)*(i - l)) + ((j - m)*(j - m))), p);
   }
 
 private:

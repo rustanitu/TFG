@@ -13,19 +13,23 @@ class PMCell
 public:
   PMCell()
   {
+    m_value = T(-DBL_MAX);
     m_defined = false;
   }
 
-  bool SetValue(const T& value)
+  void SetValue(const T& value)
   {
     m_value = value;
-    m_defined = true;
-    return true;
   }
 
   T GetValue()
   { 
     return m_value;
+  }
+
+  void SetDefined(bool defined)
+  {
+    m_defined = defined;
   }
 
   bool IsDefined()
