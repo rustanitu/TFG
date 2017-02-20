@@ -151,6 +151,11 @@ public:
 	ViewerInterface m_gui;
 
 	void UpdateATFG();
+  void SetTransferFunctionOutdated()
+  {
+    m_extract_atfg = true;
+    MarkOutdated();
+  }
 
   bool IsTF1D()
   {

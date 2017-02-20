@@ -436,11 +436,11 @@ void RendererGLSL2P::CreateSecondPass ()
 
 	if (USE_DOUBLE_PRECISION)
 	{
-		m_shader_secondpass->SetUniformDouble ("step_size", .5);
+		m_shader_secondpass->SetUniformDouble ("step_size", .25);
 	}
 	else
 	{
-		m_shader_secondpass->SetUniformFloat ("step_size", .5f);
+		m_shader_secondpass->SetUniformFloat ("step_size", .25f);
 	}
 	
 	gl::ExitOnGLError ("ERROR: Could not get shader uniform locations");
@@ -695,6 +695,9 @@ void RendererGLSL2P::AutoModeling (vr::ScalarField* volume)
 		m_cube_width  = (float)m_glsl_volume->GetWidth () / (float)max;
 		m_cube_height = (float)m_glsl_volume->GetHeight () / (float)max;
 		m_cube_depth  = (float)m_glsl_volume->GetDepth () / (float)max;
+    if (Viewer::Instance()->m_volume->ResetScale())
+      if (Viewer::Instance()->m_atfg->UpdateVolumeDerivatives())
+        Viewer::Instance()->SetTransferFunctionOutdated();
 	}
 	else
 	{
@@ -728,17 +731,17 @@ void RendererGLSL2P::ApplyModeling (float xw, float yh, float zd)
 
 void RendererGLSL2P::SetCubeWidth (float w)
 {
-	m_cube_width = w;
+	m_cube_width = fmin(w, 1.0f);
 }
 
 void RendererGLSL2P::SetCubeHeight (float h)
 {
-	m_cube_height = h;
+  m_cube_height = fmin(h, 1.0f);
 }
 
 void RendererGLSL2P::SetCubeDepth (float z)
 {
-	m_cube_depth = z;
+  m_cube_depth = fmin(z, 1.0f);
 }
 
 float RendererGLSL2P::GetCubeWidth ()

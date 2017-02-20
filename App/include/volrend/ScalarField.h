@@ -17,7 +17,8 @@ namespace vr
 	public:
 		ScalarField() : m_width(0), m_height(0), m_depth(0), 
 			m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_gradient(DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
-			, m_derivativeMask(MASK_SIZE)
+      , m_derivativeMask(MASK_SIZE)
+      , m_scale(1.0f)
 		{
 			printf("ScalarField criado.\n");
 		}
@@ -25,7 +26,8 @@ namespace vr
 		ScalarField(const UINT32& width, const UINT32& height, const UINT32& depth)
 			: m_width(width), m_height(height), m_depth(depth)
 			, m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_gradient(DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
-			, m_derivativeMask(MASK_SIZE)
+      , m_derivativeMask(MASK_SIZE)
+      , m_scale(1.0f)
 		{
 			printf("ScalarField criado.\n");
 		}
@@ -102,6 +104,45 @@ namespace vr
 				&& (z >= 0 && z < m_depth));
 		}
 
+    bool ResetScale()
+    {
+      if (m_scale == glm::vec3(1.0f))
+        return false;
+      
+      m_scale = glm::vec3(1.0f);
+      return true;
+    }
+
+    float GetXScale()
+    {
+      return m_scale.x;
+    }
+
+    void SetXScale(float s)
+    {
+      m_scale.x = s;
+    }
+
+    float GetYScale()
+    {
+      return m_scale.y;
+    }
+
+    void SetYScale(float s)
+    {
+      m_scale.y = s;
+    }
+
+    float GetZScale()
+    {
+      return m_scale.z;
+    }
+
+    void SetZScale(float s)
+    {
+      m_scale.z = s;
+    }
+
 		int GetScalarValue(const UINT32& id, const int& max_histo_value)
 		{
 			double value = GetValue(id);
@@ -157,6 +198,11 @@ namespace vr
 
 		virtual bool Validate() = 0;
 
+    virtual bool IsTank()
+    {
+      return false;
+    }
+
 	protected:
 		unsigned int m_width, m_height, m_depth;
 		double m_max_value;
@@ -166,7 +212,9 @@ namespace vr
 		double m_min_laplacian;
 		double m_max_laplacian;
 		std::string m_name;
-		DerivativeMask m_derivativeMask;
+    DerivativeMask m_derivativeMask;
+
+    glm::vec3 m_scale;
 	};
 }
 

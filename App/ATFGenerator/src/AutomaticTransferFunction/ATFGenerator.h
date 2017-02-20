@@ -206,6 +206,8 @@ public:
     m_tfmode_changed = true;
   }
 
+  bool UpdateVolumeDerivatives();
+
 private:
 	/// <summary>
 	/// Iterates over the scalarfield, calculating the gradient 

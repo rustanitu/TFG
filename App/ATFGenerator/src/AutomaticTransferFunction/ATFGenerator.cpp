@@ -15,6 +15,7 @@
 
 #include "PGMFile.h"
 #include "Histogram.h"
+#include "../TankAPI/Tank.h"
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
@@ -812,39 +813,6 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 		return false;
 	}
 
-	/*
-	for ( UINT32 x = 0; x < m_width; ++x )
-	{
-		for ( UINT32 y = 0; y < m_height; ++y )
-		{
-			for ( UINT32 z = 0; z < m_depth; ++z )
-			{
-				UINT32 id = m_scalarfield->GetId(x, y, z);
-				//if ( x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1 )
-				//	m_scalar_gradient[id] = 0.0f;
-				//else
-					m_scalar_gradient[id] = m_scalarfield->CalculateGradient(x, y, z);
-			}
-		}
-	}
-
-	for ( UINT32 x = 0; x < m_width; ++x )
-	{
-		for ( UINT32 y = 0; y < m_height; ++y )
-		{
-			for ( UINT32 z = 0; z < m_depth; ++z )
-			{
-				UINT32 id = m_scalarfield->GetId(x, y, z);
-				//if (x * y * z == 0 || x == m_width - 1 || y == m_height - 1 || z == m_depth - 1)
-				//	m_scalar_laplacian[id] = -DBL_MAX;
-				//else
-					m_scalar_laplacian[id] = m_scalarfield->CalculateLaplacian(x, y, z);
-			}
-		}
-	}
-	//*/
-
-	//*
 	for ( UINT32 x = 0; x < m_width; ++x )
 	{
 		for ( UINT32 y = 0; y < m_height; ++y )
@@ -862,7 +830,6 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			}
 		}
 	}
-	//*/
 
 	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
 	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());
@@ -872,6 +839,47 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 	printf("--------------------------------------------------\n");
 
 	return true;
+}
+
+bool ATFGenerator::UpdateVolumeDerivatives()
+{
+  assert(m_scalar_gradient && m_scalar_laplacian);
+
+  if (!m_scalarfield->IsTank())
+    return true;
+
+  Tank* tank = (Tank*)m_scalarfield;
+  tank->ResetExtremeDerivatives();
+
+  printf("--------------------------------------------------\n");
+  printf("Atualizando derivadas do campo escalar.\n");
+
+  for (UINT32 x = 0; x < m_width; ++x)
+  {
+    for (UINT32 y = 0; y < m_height; ++y)
+    {
+      for (UINT32 z = 0; z < m_depth; ++z)
+      {
+        UINT32 id = tank->GetId(x, y, z);
+        if (tank->IsActive(x, y, z))
+          tank->UpdateDerivatives(x, y, z, &m_scalar_gradient[id], &m_scalar_laplacian[id]);
+        else
+        {
+          m_scalar_gradient[id] = -DBL_MAX;
+          m_scalar_laplacian[id] = -DBL_MAX;
+        }
+      }
+    }
+  }
+
+  printf("MaxGradient: %.2f\n", tank->GetMaxGradient());
+  printf("MinLaplacian: %.2f\n", tank->GetMinLaplacian());
+  printf("MaxLaplacian: %.2f\n", tank->GetMaxLaplacian());
+
+  printf("Derivadas atualizadas.\n");
+  printf("--------------------------------------------------\n");
+
+  return true;
 }
 
 /// <summary>

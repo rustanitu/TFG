@@ -15,14 +15,13 @@ public:
 
 	bool Read(const char* file);
 
-	bool ReadFromVolume(const UINT32& width, const UINT32& height, const UINT32& depth, double* values);
-
 	double GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
 	double GetValue(const UINT32& id);
 
 	double CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 	double CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
 	void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l);
+  void UpdateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l);
 
 	void SetCurrentTimeStep(const UINT32& step)
 	{
@@ -41,6 +40,19 @@ public:
 
   glm::dvec3* GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const;
   glm::dvec3* GetFaceVertices(const Cell& cell, const int& face) const;
+
+  void ResetExtremeDerivatives()
+  {
+    m_max_gradient = -DBL_MAX;
+    m_min_gradient = DBL_MAX;
+    m_min_laplacian = DBL_MAX;
+    m_max_laplacian = -DBL_MAX;
+  }
+
+  virtual bool IsTank()
+  {
+    return true;
+  }
 
 private:
   bool IsParallelPlanes(const glm::dvec3& p0a, const glm::dvec3& p1a, const glm::dvec3& p0b, const glm::dvec3& p1b);
@@ -80,9 +92,8 @@ private:
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
 
-	//double* m_scalar_fx;
-	//double* m_scalar_fy;
-	//double* m_scalar_fz;
+  glm::vec3* m_grad;
+  glm::mat3* m_hess;
 };
 
 #endif
