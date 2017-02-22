@@ -5,10 +5,10 @@
 
 namespace spf
 {
-  lqc::Vector4d ExternalIntegration (lqc::Vector4d Cinit, lqc::Vector4d Cmid,lqc::Vector4d C, double h, double pre_integrated)
+  glm::dvec4 ExternalIntegration (glm::dvec4 Cinit, glm::dvec4 Cmid,glm::dvec4 C, double h, double pre_integrated)
   {
     double alphachannel = C.w*exp (-(pre_integrated + ((h / 6.0) * (Cinit.w + 4.0 * Cmid.w + C.w))));
-    return lqc::Vector4d (alphachannel * C.x, alphachannel * C.y, alphachannel * C.z, alphachannel);
+    return glm::dvec4 (alphachannel * C.x, alphachannel * C.y, alphachannel * C.z, alphachannel);
   }
 }
 

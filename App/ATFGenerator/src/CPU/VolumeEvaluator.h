@@ -50,7 +50,7 @@ public:
   \param minpos the initial position of evaluation
   \param maxpos the last position of evaluation
   */
-  bool EvaluateIntegral (lqc::Vector4d *returncolor, vr::Volume *volume,
+  bool EvaluateIntegral (glm::dvec4 *returncolor, vr::Volume *volume,
                          lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data = NULL);
 
   void BeginErrorTestStructures (int width, int height);
@@ -131,7 +131,7 @@ public:
   \param value the amplitude (0~255) to be returned in a color value (rgba).
   \return the color (rgba) got by transfer function.
   */
-  lqc::Vector4d TransferFunction (double value);
+  glm::dvec4 TransferFunction(double value);
   /*! Get the respective amplitude value in volume at a received position inside the volume.
   \param volume the current volume being evaluated.
   \param pos the position being evaluated (the point MUST be inside the volume).
@@ -167,35 +167,35 @@ public:
 
 
 private:
-  lqc::Vector4d C_Riemann (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d C_RiemannWithExpCalc (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d C_SimpsonRule(vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 C_Riemann (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 C_RiemannWithExpCalc (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 C_SimpsonRule(vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
   
-  lqc::Vector4d I_Recursive_Adaptive_Simpson (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d I_Recursive_Adaptive_Simpson_Particioned (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 I_Recursive_Adaptive_Simpson (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 I_Recursive_Adaptive_Simpson_Particioned (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
   
-  lqc::Vector4d A_Simpson_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Error_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Error_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Error_Half_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Error_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Error_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Error_Half_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
 
-  lqc::Vector4d A_Simpson_Half_Queue (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Queue_Internal_Projected (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Queue_Iteration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Queue (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Queue_Internal_Projected (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Queue_Iteration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
 
-  lqc::Vector4d A_Simpson_Error_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Error_Quadratic_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Error_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Error_Quadratic_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
 
-  lqc::Vector4d A_Simpson_Half_Iterate_Riemann_Error (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Iterate (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d VolEval_AdaptiveSimpsonCoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Iterate_Simple_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Iterate_Complex_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Iterate_Exp (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d A_Simpson_Half_Iterate_Separated (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
-  lqc::Vector4d VolEval_AdaptiveSimpsonDecoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Iterate_Riemann_Error (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Iterate (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 VolEval_AdaptiveSimpsonCoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Iterate_Simple_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Iterate_Complex_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Iterate_Exp (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 A_Simpson_Half_Iterate_Separated (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
+  glm::dvec4 VolEval_AdaptiveSimpsonDecoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos);
 
-  lqc::Vector4d E_Tests (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data = NULL);
+  glm::dvec4 E_Tests (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data = NULL);
 
 private:
   SimpsonHalfIntegrator a_shi;

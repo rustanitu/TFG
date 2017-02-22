@@ -21,29 +21,29 @@ public:
   SimpsonIntegrator (VolumeEvaluator* veva);
   ~SimpsonIntegrator ();
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
 
 protected:
-  void Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf);
-  lqc::Vector4d ExternalEvaluationAnchor ();
-  lqc::Vector4d ExternalEvaluation (double p_d, lqc::Vector4d C, lqc::Vector4d Cmid);
-  lqc::Vector4d ExternalEvaluation (double p_d, lqc::Vector4d C, double Cmid_w);
-  lqc::Vector4d ExternalEvaluation (double p_d, lqc::Vector4d C, lqc::Vector4d Cmid, double* pre_alpha);
-  lqc::Vector4d ExternalEvaluationInnerPreCalculated (double p_d, lqc::Vector4d C, double inner);
-  lqc::Vector4d ExternalEvaluationApprox (double p_d, lqc::Vector4d C, lqc::Vector4d Cmid);
-  lqc::Vector4d GetFromTransferFunction (double p_d);
+  void Init (glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf);
+  glm::dvec4 ExternalEvaluationAnchor ();
+  glm::dvec4 ExternalEvaluation (double p_d, glm::dvec4 C, glm::dvec4 Cmid);
+  glm::dvec4 ExternalEvaluation (double p_d, glm::dvec4 C, double Cmid_w);
+  glm::dvec4 ExternalEvaluation (double p_d, glm::dvec4 C, glm::dvec4 Cmid, double* pre_alpha);
+  glm::dvec4 ExternalEvaluationInnerPreCalculated (double p_d, glm::dvec4 C, double inner);
+  glm::dvec4 ExternalEvaluationApprox (double p_d, glm::dvec4 C, glm::dvec4 Cmid);
+  glm::dvec4 GetFromTransferFunction (double p_d);
 
   double anchor;
-  lqc::Vector4d anchor_color;
+  glm::dvec4 anchor_color;
   double pre_integrated;
 
   VolumeEvaluator* volume_evaluator;
   vr::Volume* volume;
   vr::TransferFunction* transfer_function;
 
-  lqc::Vector3d minpos;
-  lqc::Vector3d maxpos;
-  lqc::Vector3d normalized_step;
+  glm::dvec3 minpos;
+  glm::dvec3 maxpos;
+  glm::dvec3 normalized_step;
 
 private:
 };

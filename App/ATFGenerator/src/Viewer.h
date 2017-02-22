@@ -61,9 +61,6 @@ public:
 
 	/*! Read all Transfer Functions from Resources folder.
 	*/
-	void ReloadTransferFunction ();
-	void SetTransferFunction (vr::TransferFunction* tf, std::string file);
-	
 	void SetVolumeModel(vr::ScalarField* vol, std::string file);
 
 	/*! Build all viewers added to Viewer.
@@ -109,7 +106,7 @@ public:
 	int m_CurrentWidth, m_CurrentHeight;
 
 	/*! Clear color*/
-	lqc::Vector4f m_rendererClearColor;
+	glm::vec4 m_rendererClearColor;
 
 	std::vector<std::string> m_vr_transfer_function;
 
@@ -127,7 +124,7 @@ public:
 	void UpdateAdInterface ();
 
 	void SetClearColor (float r, float g, float b, float a);
-	lqc::Vector4f GetClearColor ();
+	glm::vec4 GetClearColor ();
 
 	void InitIup (int argc, char *argv[]);
 	void InitGL (int argc, char *argv[]);
@@ -136,7 +133,6 @@ public:
 	void LoadViewerState ();
 
 	bool FileDlg_VolumeModel ();
-	bool FileDlg_TransferFunction ();
 
 	bool SaveSnapshot (char* filename);
 

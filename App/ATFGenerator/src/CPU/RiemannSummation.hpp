@@ -13,9 +13,9 @@ public:
   RiemannSummation (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf);
   ~RiemannSummation ();
 
-  void Composite (lqc::Vector4d* color, lqc::Vector3d pos, double stepdistance);
+  void Composite (glm::dvec4* color, glm::dvec3 pos, double stepdistance);
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
   double opacity;
 
 #ifdef ANALYSIS__RGBA_ALONG_THE_RAY
@@ -36,18 +36,18 @@ public:
   RiemannManualSummation (VolumeEvaluator* veva);
   ~RiemannManualSummation ();
 
-  void Init (vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step);
-  lqc::Vector4d EstipulateSum (double s0, double s1, double stepdistance);
-  lqc::Vector4d GetFromTransferFunction (double p_d);
+  void Init (vr::Volume* vol, vr::TransferFunction* tf, glm::dvec3 minp, glm::dvec3 n_step);
+  glm::dvec4 EstipulateSum (double s0, double s1, double stepdistance);
+  glm::dvec4 GetFromTransferFunction (double p_d);
   void Composite ();
 
-  lqc::Vector3d norm_step;
-  lqc::Vector3d minpos;
+  glm::dvec3 norm_step;
+  glm::dvec3 minpos;
 
-  lqc::Vector4d aux_color;
+  glm::dvec4 aux_color;
   double aux_opacity;
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
   double opacity;
 protected:
 private:
@@ -62,20 +62,20 @@ public:
   RiemannExpManualSummation (VolumeEvaluator* veva);
   ~RiemannExpManualSummation ();
 
-  void Init (vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step);
-  lqc::Vector4d EstipulateSum (double s0, double s1, double stepdistance);
-  void SumAndComposite (lqc::Vector4d* color, lqc::Vector3d pos, double stepdistance);
-  lqc::Vector4d GetFromTransferFunction (double p_d);
+  void Init (vr::Volume* vol, vr::TransferFunction* tf, glm::dvec3 minp, glm::dvec3 n_step);
+  glm::dvec4 EstipulateSum (double s0, double s1, double stepdistance);
+  void SumAndComposite (glm::dvec4* color, glm::dvec3 pos, double stepdistance);
+  glm::dvec4 GetFromTransferFunction (double p_d);
   void Composite ();
 
-  lqc::Vector3d norm_step;
-  lqc::Vector3d minpos;
+  glm::dvec3 norm_step;
+  glm::dvec3 minpos;
 
-  lqc::Vector4d aux_color;
+  glm::dvec4 aux_color;
   double aux_opacity;
   double pre_integrated2;
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
   double pre_integrated;
 protected:
 private:

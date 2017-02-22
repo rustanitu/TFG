@@ -105,7 +105,7 @@ void TransferFunctionsViewer::Redraw ()
   {
     for (int i = 0; i < 256; i++)
     {
-      lqc::Vector4d c = tf->Get (i);
+      glm::dvec4 c = tf->Get (i);
       for (int j = 0; j < 50; j++)
       {
         if (id < 2)

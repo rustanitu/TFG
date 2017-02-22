@@ -13,9 +13,9 @@ public:
   SimpsonRuleSummation (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf);
   ~SimpsonRuleSummation ();
 
-  void Composite (lqc::Vector4d* color, double stepdistance, lqc::Vector3d p1, lqc::Vector3d p2, lqc::Vector3d p3);
+  void Composite (glm::dvec4* color, double stepdistance, glm::dvec3 p1, glm::dvec3 p2, glm::dvec3 p3);
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
   double opacity;
   double exp_opacity;
 protected:

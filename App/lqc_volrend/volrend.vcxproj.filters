@@ -14,25 +14,13 @@
     <ClInclude Include="..\include\volrend\TransferFunction1D.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\volrend\TransferFunctions_tf.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\volrend\Reader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\volrend\UnstructuredVolume.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\volrend\Volume.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\volrend\TransferFunction.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\volrend\TransferFunctionGroups.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\volrend\TransferFunctionGersa.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\volrend\Utils.h">
@@ -65,12 +53,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TransferFunction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TransferFunctionGroups.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TransferFunctionGersa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils.cpp">

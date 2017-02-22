@@ -83,7 +83,7 @@ void SimpsonHalfIterateIntegrator::PrintStepsEvaluation ()
 #endif
 }
 
-void SimpsonHalfIterateIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfIterateIntegrator::Init(glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   SimpsonIntegrator::Init (minp, maxp, vol, tf);
 
@@ -102,17 +102,17 @@ void SimpsonHalfIterateIntegrator::IntegrateSimple (double s0, double s1, double
   anchor_color = GetFromTransferFunction (anchor);
 
   float Salfa, S2alfa;
-  lqc::Vector4d S, S2;
+  glm::dvec4 S, S2;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b, S2S;
-  lqc::Vector4d tf_ad, tf_ae;
-  lqc::Vector4d F_d, F_c, F_e, F_b;
-  lqc::Vector4d F_a = lqc::Vector4d (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b, S2S;
+  glm::dvec4 tf_ad, tf_ae;
+  glm::dvec4 F_d, F_c, F_e, F_b;
+  glm::dvec4 F_a = glm::dvec4 (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
 
   double hproj = h;
 
   double h_6, h_12, S2left;
-  lqc::Vector4d S2Eleft;
+  glm::dvec4 S2Eleft;
 
   double tol_multiplier = tol_int / s1;
 
@@ -277,18 +277,18 @@ void SimpsonHalfIterateIntegrator::IntegrateSimpleExtStep (double s0, double s1,
   anchor_color = GetFromTransferFunction (anchor);
 
   float Salfa, S2alfa;
-  lqc::Vector4d S, S2;
+  glm::dvec4 S, S2;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b, S2S;
-  lqc::Vector4d tf_ad, tf_ae;
-  lqc::Vector4d F_d, F_c, F_e, F_b;
-  lqc::Vector4d F_a = lqc::Vector4d (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b, S2S;
+  glm::dvec4 tf_ad, tf_ae;
+  glm::dvec4 F_d, F_c, F_e, F_b;
+  glm::dvec4 F_a = glm::dvec4 (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
 
   double hproj = h;
   double hext = h;
 
   double h_6, h_12, S2left;
-  lqc::Vector4d S2Eleft;
+  glm::dvec4 S2Eleft;
 
   double tol_multiplier = tol_int / s1;
 
@@ -461,18 +461,18 @@ void SimpsonHalfIterateIntegrator::IntegrateComplexExtStep (double s0, double s1
   anchor_color = GetFromTransferFunction (anchor);
 
   float Salfa, S2alfa;
-  lqc::Vector4d S, S2;
+  glm::dvec4 S, S2;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b, S2S;
-  lqc::Vector4d tf_ad, tf_ae;
-  lqc::Vector4d F_d, F_c, F_e, F_b;
-  lqc::Vector4d F_a = lqc::Vector4d (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b, S2S;
+  glm::dvec4 tf_ad, tf_ae;
+  glm::dvec4 F_d, F_c, F_e, F_b;
+  glm::dvec4 F_a = glm::dvec4 (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
 
   double hproj = h;
   double hext = h;
 
   double h_6, h_12, S2left;
-  lqc::Vector4d S2Eleft;
+  glm::dvec4 S2Eleft;
 
   double tol_multiplier = tol_int / s1;
 
@@ -541,7 +541,7 @@ void SimpsonHalfIterateIntegrator::IntegrateComplexExtStep (double s0, double s1
 #endif
         anchor_color = tf_b;
         anchor = anchor + h;
-        F_a = lqc::Vector4d (0.0);
+        F_a = glm::dvec4 (0.0);
       }
       else
       {
@@ -830,16 +830,16 @@ void SimpsonHalfIterateIntegrator::IntegrateExp (double s0, double s1, double to
   anchor_color = GetFromTransferFunction (anchor);
 
   float Salfa, S2alfa;
-  lqc::Vector4d S, S2;
+  glm::dvec4 S, S2;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b, S2S;
-  lqc::Vector4d F_d, F_c, F_e, F_b;
-  lqc::Vector4d F_a = lqc::Vector4d (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b, S2S;
+  glm::dvec4 F_d, F_c, F_e, F_b;
+  glm::dvec4 F_a = glm::dvec4 (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
 
   double hproj = h;
 
   double h_6, h_12, S2left;
-  lqc::Vector4d S2Eleft;
+  glm::dvec4 S2Eleft;
 
   double tol_multiplier = tol_int / s1;
 
@@ -894,17 +894,17 @@ void SimpsonHalfIterateIntegrator::IntegrateExp (double s0, double s1, double to
     {
       anchor_color = tf_b;
       anchor = anchor + h;
-      F_a = lqc::Vector4d (0.0);
+      F_a = glm::dvec4 (0.0);
     }
     else
     {
       b = anchor + h; c = anchor + h * 0.5;
       d = anchor + h * 0.25; e = anchor + h * 0.75;
 
-      F_d = ExternalEvaluationApprox (d, tf_d, GetFromTransferFunction (anchor + h * 0.125).w);
-      F_c = ExternalEvaluationApprox (c, tf_c, tf_d.w);
-      F_e = ExternalEvaluationApprox (e, tf_e, GetFromTransferFunction (anchor + h * 0.375).w);
-      F_b = ExternalEvaluationApprox (b, tf_b, tf_c.w);
+      F_d = ExternalEvaluationApprox (d, tf_d, GetFromTransferFunction (anchor + h * 0.125));
+      F_c = ExternalEvaluationApprox (c, tf_c, tf_d);
+      F_e = ExternalEvaluationApprox (e, tf_e, GetFromTransferFunction (anchor + h * 0.375));
+      F_b = ExternalEvaluationApprox (b, tf_b, tf_c);
 
       S = h_6 * (F_a + 4.0 * F_c + F_b);
       S2Eleft = h_12 * (F_a + 4.0 * F_d + F_c);
@@ -939,10 +939,10 @@ void SimpsonHalfIterateIntegrator::IntegrateExp (double s0, double s1, double to
           tf_e = GetFromTransferFunction (e);
           tf_b = GetFromTransferFunction (b);
 
-          F_d = ExternalEvaluationApprox (d, tf_d, GetFromTransferFunction (anchor + h * 0.125).w);
-          F_c = ExternalEvaluationApprox (c, tf_c, tf_d.w);
-          F_e = ExternalEvaluationApprox (e, tf_e, GetFromTransferFunction (anchor + h * 0.375).w);
-          F_b = ExternalEvaluationApprox (b, tf_b, tf_c.w);
+          F_d = ExternalEvaluationApprox (d, tf_d, GetFromTransferFunction (anchor + h * 0.125));
+          F_c = ExternalEvaluationApprox (c, tf_c, tf_d);
+          F_e = ExternalEvaluationApprox (e, tf_e, GetFromTransferFunction (anchor + h * 0.375));
+          F_b = ExternalEvaluationApprox (b, tf_b, tf_c);
 
           h_6 = h / 6.00;
           h_12 = h_6 * 0.5;
@@ -987,8 +987,8 @@ void SimpsonHalfIterateIntegrator::IntegrateExp (double s0, double s1, double to
               F_b = F_c;
               F_c = F_d;
 
-              F_d = ExternalEvaluationApprox (d, tf_d, GetFromTransferFunction ((anchor + d) * 0.5).w);
-              F_e = ExternalEvaluationApprox (e, tf_e, GetFromTransferFunction ((anchor + e) * 0.5).w);
+              F_d = ExternalEvaluationApprox (d, tf_d, GetFromTransferFunction ((anchor + d) * 0.5));
+              F_e = ExternalEvaluationApprox (e, tf_e, GetFromTransferFunction ((anchor + e) * 0.5));
 
               S = S2Eleft;
               S2Eleft = h_12 * (F_a + 4.0 * F_d + F_c);
@@ -1022,14 +1022,14 @@ void SimpsonHalfIterateIntegrator::IntegrateSeparated (double s0, double s1, dou
 
   anchor = s0;
   anchor_color = GetFromTransferFunction (anchor);
-  lqc::Vector4d F_a = ExternalEvaluationAnchor ();
+  glm::dvec4 F_a = ExternalEvaluationAnchor ();
 
   double tol_int_multiplier = tol_int / s1;
   double tol_ext_multiplier = tol_ext / s1;
 
   double b, c, d, e, h_6, h_12,
     Salfa, S2alfa, S2left;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b,
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b,
     F_d, F_c, F_e, F_b,
     S, S2, S2S, S2Eleft;
 
@@ -1118,7 +1118,7 @@ void SimpsonHalfIterateIntegrator::IntegrateSeparated (double s0, double s1, dou
 #endif
           anchor_color = tf_b;
           anchor = anchor + h;
-          F_a = lqc::Vector4d (0.0);
+          F_a = glm::dvec4 (0.0);
           hext = std::max (hext, hproj);
           continue;
         }
@@ -1309,17 +1309,17 @@ void SimpsonHalfIterateIntegrator::IntegrateScount (double s0, double s1, double
   anchor_color = GetFromTransferFunction (anchor);
 
   float Salfa, S2alfa;
-  lqc::Vector4d S, S2;
+  glm::dvec4 S, S2;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b, S2S;
-  lqc::Vector4d tf_ad, tf_ae;
-  lqc::Vector4d F_d, F_c, F_e, F_b;
-  lqc::Vector4d F_a = lqc::Vector4d (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b, S2S;
+  glm::dvec4 tf_ad, tf_ae;
+  glm::dvec4 F_d, F_c, F_e, F_b;
+  glm::dvec4 F_a = glm::dvec4 (anchor_color.w * anchor_color.x, anchor_color.w * anchor_color.y, anchor_color.w * anchor_color.z, anchor_color.w);
 
   double  hproj = h;
 
   double h_6, h_12, S2left;
-  lqc::Vector4d S2Eleft;
+  glm::dvec4 S2Eleft;
 
   double tol_multiplier = tol_int / s1;
 
@@ -1402,7 +1402,7 @@ void SimpsonHalfIterateIntegrator::IntegrateScount (double s0, double s1, double
 #endif
       anchor_color = tf_b;
       anchor = anchor + h;
-      F_a = lqc::Vector4d (0.0);
+      F_a = glm::dvec4 (0.0);
     }
     else
     {

@@ -18,10 +18,6 @@
 
 #include <cstdlib>
 
-#define ATFG "AutomaticTransferFunction"
-//#define FAST_TFG
-#define GORDON
-
 Viewer *Viewer::m_instance = 0;
 
 ////////////////////
@@ -68,8 +64,6 @@ void Viewer::Init(int argc, char *argv[])
 
 	while (!m_volume)
 		FileDlg_VolumeModel();
-	while (!m_transfer_function)
-		FileDlg_TransferFunction();
 
 	m_instance->m_viewmethods[m_current_view]->BuildViewer();
 	UpdateIupUserInterfaces();
@@ -93,28 +87,6 @@ void Viewer::InitAndStart(int argc, char **argv)
 	Start();
 }
 
-void Viewer::ReloadTransferFunction()
-{
-	if (m_transfer_function && !m_atfg) {
-		delete m_transfer_function;
-		m_transfer_function = NULL;
-		vr::TransferFunction* v = vr::ReadTransferFunction(m_transfer_function_file);
-		SetTransferFunction(v, m_transfer_function_file);
-	}
-}
-
-void Viewer::SetTransferFunction(vr::TransferFunction* tf, std::string file)
-{
-	if (tf) {
-		if (m_transfer_function)
-			delete m_transfer_function;
-
-		m_transfer_function = tf;
-		m_tf_name = tf->GetName();
-		m_transfer_function_file = file;
-	}
-}
-
 void Viewer::UpdateATFG()
 {
 	if (m_extract_atfg)
@@ -132,11 +104,8 @@ void Viewer::ExtractATFG()
     m_atfg->SetTF1D();
   else
     m_atfg->SetTF2D();
-#ifdef GORDON
-	if (!m_atfg->ExtractGordonTransferFunction())
-#else
-	if ( !m_atfg->ExtractTransferFunction() )
-#endif
+	
+  if ( !m_atfg->ExtractTransferFunction() )
 		return;
 
 	GenerateATFG();
@@ -156,21 +125,16 @@ void Viewer::GenerateATFG()
     tf = (vr::TransferFunction2D*)m_atfg->GetTransferFunction();
     m_gui.CleanPlot();
 	  tf->SetTransferFunctionPlot(m_gui.m_tf_plot2d);
-    ((vr::TransferFunction2D*)tf)->SetSigma(Viewer::Instance()->m_sigma);
   }
+  tf->SetSigma(Viewer::Instance()->m_sigma);
 	tf->SetBoundaryThickness(m_boundary_thickness);
 	if (Viewer::Instance()->m_gaussian_func)
 		tf->SetGaussianFunction();
 	else
 		tf->SetTriangularFunction();
 
-#ifdef GORDON
-	if (tf->GenerateGordonBased())
-	{
-#else
 	if ( tf->Generate() )
 	{
-#endif
 		Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->CleanTransferFunctionTexture();
 		m_transfer_function = tf;
 	}
@@ -190,8 +154,6 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 		m_volume_file = file;
 
 		Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->CleanVolumeTexture();
-
-#ifdef ATFG
 
 		delete m_atfg;
 		m_atfg = NULL;
@@ -213,6 +175,7 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 				Viewer::Instance()->m_gtresh = (double)m_atfg->GetGTresh() / (double)m_atfg->GetMaxAverageGradient() * 100.0f;
 				Viewer::Instance()->m_gui.UpdateGTresh(Viewer::Instance()->m_gtresh);
 				ExtractATFG();
+
 				return;
 			}
 		}
@@ -223,15 +186,7 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 			printf("\nOcorreu um erro inesperado!\n\n");
 			printf("Exception Message:\n%s\n", ex.what());
 		}
-#elif defined(FAST_TFG)
-		m_fast_tfg = new FastTFGenerator(m_volume);
-		m_fast_tfg->SetMainPlot(Viewer::Instance()->m_gui.m_iup_main_plot_dialog);
-		m_fast_tfg->SetBoundaryFunctionPlot(Viewer::Instance()->m_gui.m_iup_bx_plot_dialog);
-		if (m_fast_tfg->Init())
-		{
-			m_fast_tfg->ExtractTransferFunction();
-		}
-#endif
+
 		delete m_atfg;
 		m_atfg = NULL;
 		delete m_fast_tfg;
@@ -242,57 +197,47 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 
 int Viewer::SetBoundaryThickness(Ihandle* ih, double val)
 {
-#ifdef ATFG
 	if (val != Viewer::Instance()->m_boundary_thickness) {
 		Viewer::Instance()->m_boundary_thickness = val;
 		Viewer::Instance()->m_gui.UpdateBThickLabel(val);
 		Viewer::Instance()->m_generate_atfg = true;
 	}
-#endif
 	return IUP_DEFAULT;
 }
 
 int Viewer::SetGTresh(Ihandle* ih, double val)
 {
-#ifdef ATFG
 	if (val != Viewer::Instance()->m_gtresh) {
 		Viewer::Instance()->m_gtresh = val;
 		Viewer::Instance()->m_gui.UpdateGTreshLabel(val);
 		Viewer::Instance()->m_extract_atfg = true;
 	}
-#endif
 	return IUP_DEFAULT;
 }
 
 int Viewer::SetSigma(Ihandle* ih, double val)
 {
-#ifdef ATFG
   if (val != Viewer::Instance()->m_sigma) {
     Viewer::Instance()->m_sigma = val;
     Viewer::Instance()->m_gui.UpdateSigmaLabel(val);
     Viewer::Instance()->m_extract_atfg = true;
   }
-#endif
   return IUP_DEFAULT;
 }
 
 int Viewer::SetBoundary(Ihandle* ih, int boundary)
 {
-#ifdef ATFG
 	Viewer::Instance()->m_boundary = boundary;
 	Viewer::Instance()->m_generate_atfg = true;
 	Viewer::MarkOutdated();
-#endif
 	return IUP_DEFAULT;
 }
 
 int Viewer::SetBxFunction(int set)
 {
-#ifdef ATFG
 	Viewer::Instance()->m_gaussian_func = set;
 	Viewer::Instance()->m_extract_atfg = true;
 	Viewer::MarkOutdated();
-#endif
 	return IUP_DEFAULT;
 }
 
@@ -306,10 +251,8 @@ int Viewer::SetTF1D(int tf)
 
 int Viewer::MarkOutdated()
 {
-#ifdef ATFG
 	if (Viewer::Instance()->m_generate_atfg || Viewer::Instance()->m_extract_atfg)
 		Viewer::Instance()->m_viewmethods[Viewer::Instance()->m_current_view]->MarkOutdated();
-#endif
 	return IUP_DEFAULT;
 }
 
@@ -446,11 +389,11 @@ void Viewer::UpdateAdInterface()
 
 void Viewer::SetClearColor(float r, float g, float b, float a)
 {
-	m_rendererClearColor = lqc::Vector4f(r, g, b, a);
+  m_rendererClearColor = glm::vec4(r, g, b, a);
 	glClearColor(r, g, b, a);
 }
 
-lqc::Vector4f Viewer::GetClearColor()
+glm::vec4 Viewer::GetClearColor()
 {
 	return m_rendererClearColor;
 }
@@ -519,34 +462,6 @@ bool Viewer::FileDlg_VolumeModel()
 	return ret;
 }
 
-bool Viewer::FileDlg_TransferFunction()
-{
-	bool ret = false;
-
-	Ihandle *dlg = IupFileDlg();
-
-	IupSetAttribute(dlg, "DIRECTORY", "../../Modelos/TransferFunctions");
-	IupSetAttribute(dlg, "DIALOGTYPE", "OPEN");
-	IupSetAttribute(dlg, "TITLE", "Load Transfer Function");
-	IupSetAttributes(dlg, "FILTER = \"*.tf1d;*.tf;*.tfg1d;*.tfgersa\", FILTERINFO = \"TF1D Files;TF Files\"");
-
-	IupPopup(dlg, IUP_CURRENT, IUP_CURRENT);
-
-	if (IupGetInt(dlg, "STATUS") != -1) {
-		std::string file(IupGetAttribute(dlg, "VALUE"));
-
-		vr::TransferFunction* v = vr::ReadTransferFunction(file);
-		if (v) {
-			Viewer::Instance()->SetTransferFunction(v, file);
-			ret = true;
-		}
-	}
-
-	IupDestroy(dlg);
-
-	return ret;
-}
-
 bool Viewer::SaveSnapshot(char* filename)
 {
 	int width = Viewer::Instance()->m_CurrentWidth;
@@ -587,7 +502,7 @@ Viewer::Viewer()
   m_tf1d = false;
   m_gaussian_func = true;
 
-	m_rendererClearColor = lqc::Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+  m_rendererClearColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	for (int VRViewsInt = 0; VRViewsInt != VRVIEWS::_LastToIter; VRViewsInt++)
 		m_viewmethods[static_cast<VRVIEWS>(VRViewsInt)] = NULL;
@@ -673,7 +588,7 @@ void Viewer::InitGL(int argc, char *argv[])
 
 	glGetError();
 
-	lqc::Vector4f a = m_rendererClearColor;
+  glm::vec4 a = m_rendererClearColor;
 	glClearColor(a.x, a.y, a.z, a.w);
 	//gluOrtho2D (0, m_CurrentWidth, 0, m_CurrentHeight);
 

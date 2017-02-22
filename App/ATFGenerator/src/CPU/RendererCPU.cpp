@@ -246,7 +246,7 @@ lqc::Vector4f RendererCPU::Shade(rt::RTObject* object, lqc::Vector3f minpoint, l
     float StepSize = (lqc::Distance(minpoint, maxpoint) / m_voleval.m_samples);
     lqc::Vector3f Step = lqc::Vector3f::Normalize(eyedirection)*StepSize;
     lqc::Vector3f pos = minpoint;
-    lqc::Vector4d dst;
+    glm::dvec4 dst;
     m_voleval.EvaluateIntegral(&dst, m_voleval.m_volume, minpoint, maxpoint, NULL);
 
     //m_inner_integral_minor_step = MIN (m_inner_integral_minor_step, m_voleval.m_inner_minstep);

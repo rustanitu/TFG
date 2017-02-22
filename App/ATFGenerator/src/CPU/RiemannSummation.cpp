@@ -12,7 +12,7 @@ RiemannSummation::RiemannSummation(VolumeEvaluator* veva, vr::Volume* vol, vr::T
   transfer_function = tf;
 
   opacity = 1.0;
-  color = lqc::Vector4d (0);
+  color = glm::dvec4 (0);
 
 #ifdef ANALYSIS__RGBA_ALONG_THE_RAY
   s = 0;
@@ -23,13 +23,13 @@ RiemannSummation::RiemannSummation(VolumeEvaluator* veva, vr::Volume* vol, vr::T
 
 RiemannSummation::~RiemannSummation () {}
 
-void RiemannSummation::Composite (lqc::Vector4d* color, lqc::Vector3d pos, double stepdistance)
+void RiemannSummation::Composite (glm::dvec4* color, glm::dvec3 pos, double stepdistance)
 {
   lqc::Vector3f p = lqc::Vector3f (pos.x, pos.y, pos.z);
   float value = volume_evaluator->GetValueFromVolume(volume, p);
-  lqc::Vector4d src;
-  lqc::Vector4d tfsrc = volume_evaluator->TransferFunction (value);
-  src = lqc::Vector4d (tfsrc.x, tfsrc.y, tfsrc.z, tfsrc.w);
+  glm::dvec4 src;
+  glm::dvec4 tfsrc = volume_evaluator->TransferFunction (value);
+  src = glm::dvec4 (tfsrc.x, tfsrc.y, tfsrc.z, tfsrc.w);
 
   double d = stepdistance;
 
@@ -62,25 +62,25 @@ RiemannManualSummation::RiemannManualSummation (VolumeEvaluator* veva)
 
 RiemannManualSummation::~RiemannManualSummation () {}
 
-void RiemannManualSummation::Init(vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step)
+void RiemannManualSummation::Init(vr::Volume* vol, vr::TransferFunction* tf, glm::dvec3 minp, glm::dvec3 n_step)
 {
   volume = vol;
   transfer_function = tf;
 
   opacity = 1.0;
-  color = lqc::Vector4d (0);
+  color = glm::dvec4 (0);
 
   norm_step = n_step;
   minpos = minp;
 }
 
-lqc::Vector4d RiemannManualSummation::EstipulateSum (double s0, double s1, double stepdistance)
+glm::dvec4 RiemannManualSummation::EstipulateSum (double s0, double s1, double stepdistance)
 {
-  aux_color = lqc::Vector4d (0);
+  aux_color = glm::dvec4 (0);
   aux_opacity = opacity;
 
   double s = s0;
-  lqc::Vector4d src;
+  glm::dvec4 src;
   double h = std::min (stepdistance, fabs (s1 - s0));
 
   while (s < s1)
@@ -102,11 +102,11 @@ lqc::Vector4d RiemannManualSummation::EstipulateSum (double s0, double s1, doubl
   return aux_color;
 }
 
-lqc::Vector4d RiemannManualSummation::GetFromTransferFunction (double p_d)
+glm::dvec4 RiemannManualSummation::GetFromTransferFunction (double p_d)
 {
-  lqc::Vector4d ret;
-  lqc::Vector3d p = minpos + p_d * norm_step;
-  if (!transfer_function || !volume) ret = lqc::Vector4d (0.0);
+  glm::dvec4 ret;
+  glm::dvec3 p = minpos + p_d * norm_step;
+  if (!transfer_function || !volume) ret = glm::dvec4 (0.0);
   else ret = transfer_function->Get(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
@@ -124,26 +124,26 @@ RiemannExpManualSummation::RiemannExpManualSummation (VolumeEvaluator* veva)
 
 RiemannExpManualSummation::~RiemannExpManualSummation () {}
 
-void RiemannExpManualSummation::Init(vr::Volume* vol, vr::TransferFunction* tf, lqc::Vector3d minp, lqc::Vector3d n_step)
+void RiemannExpManualSummation::Init(vr::Volume* vol, vr::TransferFunction* tf, glm::dvec3 minp, glm::dvec3 n_step)
 {
   volume = vol;
   transfer_function = tf;
 
   pre_integrated = 0.0;
-  color = lqc::Vector4d (0);
+  color = glm::dvec4 (0);
 
   norm_step = n_step;
   minpos = minp;
   pre_integrated2 = 1.0;
 }
 
-lqc::Vector4d RiemannExpManualSummation::EstipulateSum (double s0, double s1, double stepdistance)
+glm::dvec4 RiemannExpManualSummation::EstipulateSum (double s0, double s1, double stepdistance)
 {
-  aux_color = lqc::Vector4d (0);
+  aux_color = glm::dvec4 (0);
   aux_opacity = 0;
 
   double s = s0;
-  lqc::Vector4d src;
+  glm::dvec4 src;
   double h = std::min (stepdistance, fabs (s1 - s0));
 
   while (s < s1)
@@ -166,11 +166,11 @@ lqc::Vector4d RiemannExpManualSummation::EstipulateSum (double s0, double s1, do
   return aux_color;
 }
 
-lqc::Vector4d RiemannExpManualSummation::GetFromTransferFunction (double p_d)
+glm::dvec4 RiemannExpManualSummation::GetFromTransferFunction (double p_d)
 {
-  lqc::Vector4d ret;
-  lqc::Vector3d p = minpos + p_d * norm_step;
-  if (!transfer_function || !volume) ret = lqc::Vector4d (0.0);
+  glm::dvec4 ret;
+  glm::dvec3 p = minpos + p_d * norm_step;
+  if (!transfer_function || !volume) ret = glm::dvec4 (0.0);
   else ret = transfer_function->Get(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }
@@ -181,9 +181,9 @@ void RiemannExpManualSummation::Composite ()
   pre_integrated += aux_opacity;
 }
 
-void RiemannExpManualSummation::SumAndComposite (lqc::Vector4d* color, lqc::Vector3d pos, double stepdistance)
+void RiemannExpManualSummation::SumAndComposite (glm::dvec4* color, glm::dvec3 pos, double stepdistance)
 {
-  lqc::Vector4d src = volume_evaluator->TransferFunction(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(pos.x, pos.y, pos.z)));
+  glm::dvec4 src = volume_evaluator->TransferFunction(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(pos.x, pos.y, pos.z)));
 
   double opacity = exp (-(src.w*stepdistance));
 

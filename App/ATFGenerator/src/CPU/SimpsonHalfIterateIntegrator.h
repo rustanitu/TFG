@@ -30,7 +30,7 @@ public:
 
   void Reset ();
 
-  void Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf);
+  void Init (glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf);
   void IntegrateSimple (double s0, double s1, double tol, double h0, double hmint, double hmaxt);
   void CoupledIntegration (double s0, double s1, double tol, double h0, double hmint, double hmaxt);
   void IntegrateSimpleExtStep (double s0, double s1, double tol, double h0, double hmint, double hmaxt);

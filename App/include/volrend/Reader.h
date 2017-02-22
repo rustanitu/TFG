@@ -26,12 +26,6 @@ namespace vr
 	Volume* ReadRawFile(std::string filepath);
 
 	Volume* ReadMedFile(std::string filepath);
-
-	TransferFunction* ReadTransferFunction (std::string file);
-	TransferFunction* ReadTransferFunction_tf1d (std::string file);
-	TransferFunction* ReadTransferFunction_tf (std::string file);
-	TransferFunction* ReadTransferFunction_tfg1d (std::string file);
-	TransferFunction* ReadTransferFunction_tfgersa (std::string file);
 }
 
 #endif

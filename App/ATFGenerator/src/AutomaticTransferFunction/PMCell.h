@@ -53,6 +53,6 @@ private:
 };
 
 #define DoubleCell PMCell<double>
-#define RGBCell PMCell<lqc::Vector3d>
+#define RGBCell PMCell<glm::dvec3>
 
 #endif

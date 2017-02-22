@@ -35,50 +35,50 @@ public:
 
   void Reset ();
 
-  void Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf);
+  void Init (glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf);
   void Integrate (double s0, double s1, double tol, double h0);
   
-  lqc::Vector4d color;
+  glm::dvec4 color;
 
   double m_clc_proj_newinternalprojection;
   double m_clc_proj_internal_error;
-  lqc::Vector4d m_clc_proj_external_error;
+  glm::dvec4 m_clc_proj_external_error;
 
 protected:
   int m_integrate_method;
   void IntegrateError (double s0, double s1, double tol, double h0);
   
-  bool ColorErrorEvalFunc (lqc::Vector4d a, lqc::Vector4d b, double tol);
+  bool ColorErrorEvalFunc (glm::dvec4 a, glm::dvec4 b, double tol);
   double IntegrateInternalInterval (double s, double h, double tol);
 
-  lqc::Vector4d ExtenalEvaluation (double p_d, lqc::Vector4d C, double* pre_alpha = NULL);
-  lqc::Vector4d ExtenalEvaluationMiddle (double p_d, lqc::Vector4d C, lqc::Vector4d Cmid, double* pre_alpha = NULL);
+  glm::dvec4 ExtenalEvaluation (double p_d, glm::dvec4 C, double* pre_alpha = NULL);
+  glm::dvec4 ExtenalEvaluationMiddle (double p_d, glm::dvec4 C, glm::dvec4 Cmid, double* pre_alpha = NULL);
   bool IntegrateExternalInterval (double s, double h, double tol, double* pre_alpha, bool minorstep);
 
-  lqc::Vector4d GetFromTransferFunction (double p_d);
+  glm::dvec4 GetFromTransferFunction (double p_d);
 
   double CalculateInternalError (double s, double h, double tol, bool higher = false);
-  lqc::Vector4d CalculateExternalError (double s, double h, double tol);
+  glm::dvec4 CalculateExternalError (double s, double h, double tol);
 
 private:
-  double MaxExternalError (lqc::Vector4d err)
+  double MaxExternalError (glm::dvec4 err)
   {
     return std::max (std::max (err.x, err.y), std::max (err.z, err.w));
   }
 
   double pre_integrated;
   double minpost;
-  lqc::Vector4d Cminpost;
+  glm::dvec4 Cminpost;
 
   VolumeEvaluator* volume_evaluator;
   vr::Volume* volume;
   vr::TransferFunction* transfer_function;
 
-  lqc::Vector3d minpos;
-  lqc::Vector3d maxpos;
-  lqc::Vector3d normalized_step;
+  glm::dvec3 minpos;
+  glm::dvec3 maxpos;
+  glm::dvec3 normalized_step;
 
-  lqc::Vector4d external_error_aux;
+  glm::dvec4 external_error_aux;
 };
 
 #endif

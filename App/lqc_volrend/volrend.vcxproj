@@ -18,10 +18,6 @@
     <ClInclude Include="..\include\volrend\TransferFunction.h" />
     <ClInclude Include="..\include\volrend\TransferFunction1D.h" />
     <ClInclude Include="..\include\volrend\TransferFunction2D.h" />
-    <ClInclude Include="..\include\volrend\TransferFunctionGersa.h" />
-    <ClInclude Include="..\include\volrend\TransferFunctionGroups.h" />
-    <ClInclude Include="..\include\volrend\TransferFunctions_tf.h" />
-    <ClInclude Include="..\include\volrend\UnstructuredVolume.h" />
     <ClInclude Include="..\include\volrend\Utils.h" />
     <ClInclude Include="..\include\volrend\Volume.h" />
     <ClInclude Include="..\include\volrend\VolWriter.h" />
@@ -32,8 +28,6 @@
     <ClCompile Include="src\TransferFunction.cpp" />
     <ClCompile Include="src\TransferFunction1D.cpp" />
     <ClCompile Include="src\TransferFunction2D.cpp" />
-    <ClCompile Include="src\TransferFunctionGersa.cpp" />
-    <ClCompile Include="src\TransferFunctionGroups.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Volume.cpp" />
     <ClCompile Include="src\VolWriter.cpp" />

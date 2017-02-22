@@ -39,9 +39,9 @@ void VolumeEvaluator::SetModelAndTransferFunction(vr::Volume* ivolume, vr::Trans
   m_transfer_function = itransfer_function;
 }
 
-bool VolumeEvaluator::EvaluateIntegral(lqc::Vector4d *returncolor, vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data)
+bool VolumeEvaluator::EvaluateIntegral(glm::dvec4 *returncolor, vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data)
 {
-  (*returncolor) = lqc::Vector4d (-1.f);
+  (*returncolor) = glm::dvec4 (-1.f);
   if (!volume) return false;
   if (!m_transfer_function) return false;
 
@@ -321,7 +321,7 @@ void VolumeEvaluator::PrintErrorTestResults ()
 #endif
 }
 
-lqc::Vector4d VolumeEvaluator::TransferFunction (double value)
+glm::dvec4 VolumeEvaluator::TransferFunction(double value)
 {
 #ifdef STATISTICS_GETS
   m_statistics.n_gets_tf_values++;
@@ -337,11 +337,11 @@ float VolumeEvaluator::GetValueFromVolume (vr::Volume* volume, lqc::Vector3f pos
   return volume->InterpolatedValue (pos);
 }
 
-lqc::Vector4d VolumeEvaluator::C_Riemann (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::C_Riemann (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  lqc::Vector4d color (0);
-  lqc::Vector3d step = lqc::Vector3d::Normalize (lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z) - lqc::Vector3d (minpos.x, minpos.y, minpos.z));
-  lqc::Vector3d dminpos = lqc::Vector3d (minpos.x, minpos.y, minpos.z);
+  glm::dvec4 color (0);
+  glm::dvec3 step = glm::normalize (glm::dvec3 (maxpos.x, maxpos.y, maxpos.z) - glm::dvec3 (minpos.x, minpos.y, minpos.z));
+  glm::dvec3 dminpos = glm::dvec3 (minpos.x, minpos.y, minpos.z);
 
   double s1 = lqc::Distance (minpos, maxpos);
   double s0 = 0;
@@ -351,21 +351,21 @@ lqc::Vector4d VolumeEvaluator::C_Riemann (vr::Volume *volume, lqc::Vector3f minp
 
   while (s + h < s1)
   {
-    lqc::Vector3d p = dminpos + (s + h)*step;
+    glm::dvec3 p = dminpos + (s + h)*step;
     rs.Composite (&color, p, h);
     s = s + h;
   }
-  lqc::Vector3d p = dminpos + (s1)*step;
+  glm::dvec3 p = dminpos + (s1)*step;
   rs.Composite (&color, p, s1 - s);
 
   return color;
 }
 
-lqc::Vector4d VolumeEvaluator::C_RiemannWithExpCalc (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::C_RiemannWithExpCalc (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  lqc::Vector4d color (0);
-  lqc::Vector3d step = lqc::Vector3d::Normalize (lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z) - lqc::Vector3d (minpos.x, minpos.y, minpos.z));
-  lqc::Vector3d dminpos = lqc::Vector3d (minpos.x, minpos.y, minpos.z);
+  glm::dvec4 color (0);
+  glm::dvec3 step = glm::normalize (glm::dvec3 (maxpos.x, maxpos.y, maxpos.z) - glm::dvec3 (minpos.x, minpos.y, minpos.z));
+  glm::dvec3 dminpos = glm::dvec3 (minpos.x, minpos.y, minpos.z);
 
   double s1 = lqc::Distance (minpos, maxpos);
   double s0 = 0;
@@ -379,7 +379,7 @@ lqc::Vector4d VolumeEvaluator::C_RiemannWithExpCalc (vr::Volume *volume, lqc::Ve
   {
     h = MIN (h, s1 - s);
 
-    lqc::Vector3d p = dminpos + (s + h)*step;
+    glm::dvec3 p = dminpos + (s + h)*step;
     res.SumAndComposite (&color, p, h);
 
     s = s + h;
@@ -387,11 +387,11 @@ lqc::Vector4d VolumeEvaluator::C_RiemannWithExpCalc (vr::Volume *volume, lqc::Ve
   return color;
 }
 
-lqc::Vector4d VolumeEvaluator::C_SimpsonRule(vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::C_SimpsonRule(vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  lqc::Vector4d color (0);
-  lqc::Vector3d step = lqc::Vector3d::Normalize (lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z) - lqc::Vector3d (minpos.x, minpos.y, minpos.z));
-  lqc::Vector3d dminpos = lqc::Vector3d (minpos.x, minpos.y, minpos.z);
+  glm::dvec4 color (0);
+  glm::dvec3 step = glm::normalize (glm::dvec3 (maxpos.x, maxpos.y, maxpos.z) - glm::dvec3 (minpos.x, minpos.y, minpos.z));
+  glm::dvec3 dminpos = glm::dvec3 (minpos.x, minpos.y, minpos.z);
 
   double s1 = lqc::Distance (minpos, maxpos);
   double s0 = 0;
@@ -402,11 +402,11 @@ lqc::Vector4d VolumeEvaluator::C_SimpsonRule(vr::Volume *volume, lqc::Vector3f m
   double opacity = 0.0;
   double a_internal, h_12;
 
-  lqc::Vector3d p2, p1;
-  lqc::Vector3d p3 = dminpos;
+  glm::dvec3 p2, p1;
+  glm::dvec3 p3 = dminpos;
 
-  lqc::Vector4d tf_a, tf_c, tf_d, tf_e, F_a, F_c, F_b;
-  lqc::Vector4d tf_b = TransferFunction (GetValueFromVolume (volume, lqc::Vector3f (p3.x, p3.y, p3.z)));
+  glm::dvec4 tf_a, tf_c, tf_d, tf_e, F_a, F_c, F_b;
+  glm::dvec4 tf_b = TransferFunction (GetValueFromVolume (volume, lqc::Vector3f (p3.x, p3.y, p3.z)));
 
   while (s < s1)
   {
@@ -424,16 +424,16 @@ lqc::Vector4d VolumeEvaluator::C_SimpsonRule(vr::Volume *volume, lqc::Vector3f m
     tf_e = TransferFunction (GetValueFromVolume (volume, lqc::Vector3f ((p3.x + p2.x) * 0.5, (p3.y + p2.y) * 0.5, (p3.z + p2.z) * 0.5)));
 
     a_internal = tf_a.w * exp_opacity;
-    F_a = lqc::Vector4d (tf_a.x*a_internal, tf_a.y*a_internal, tf_a.z*a_internal, a_internal);
+    F_a = glm::dvec4 (tf_a.x*a_internal, tf_a.y*a_internal, tf_a.z*a_internal, a_internal);
 
     opacity += h_12*(tf_a.w + 4.0 * tf_d.w + tf_c.w);
     a_internal = tf_c.w * std::exp (-opacity);
-    F_c = lqc::Vector4d (tf_c.x*a_internal, tf_c.y*a_internal, tf_c.z*a_internal, a_internal);
+    F_c = glm::dvec4 (tf_c.x*a_internal, tf_c.y*a_internal, tf_c.z*a_internal, a_internal);
 
     opacity += h_12*(tf_c.w + 4.0 * tf_e.w + tf_b.w);
     exp_opacity = std::exp (-opacity);
     a_internal = tf_b.w * exp_opacity;
-    F_b = lqc::Vector4d (tf_b.x*a_internal, tf_b.y*a_internal, tf_b.z*a_internal, a_internal);
+    F_b = glm::dvec4 (tf_b.x*a_internal, tf_b.y*a_internal, tf_b.z*a_internal, a_internal);
 
     color += (h_12 * 2.0) * (F_a + 4.0 * F_c + F_b);
 
@@ -442,14 +442,14 @@ lqc::Vector4d VolumeEvaluator::C_SimpsonRule(vr::Volume *volume, lqc::Vector3f m
   return color;
 }
 
-lqc::Vector4d VolumeEvaluator::I_Recursive_Adaptive_Simpson (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::I_Recursive_Adaptive_Simpson (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
   a_spe.SetParameters (AdaptiveSimpsonParticionedEvaluator::Parameters (
     m_integral_error, m_error_inner_integral, m_adaptive_distance_intervals,
     m_adaptive_simpson_max_depth, volume, m_transfer_function, this));
 
-  a_spe.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z),
-    lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z));
+  a_spe.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z),
+    glm::dvec3 (maxpos.x, maxpos.y, maxpos.z));
 
   a_spe.RunEvaluation (0, lqc::Distance (minpos, maxpos));
 
@@ -459,14 +459,14 @@ lqc::Vector4d VolumeEvaluator::I_Recursive_Adaptive_Simpson (vr::Volume *volume,
   return result.color;
 }
 
-lqc::Vector4d VolumeEvaluator::I_Recursive_Adaptive_Simpson_Particioned (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::I_Recursive_Adaptive_Simpson_Particioned (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
   a_spe.SetParameters (AdaptiveSimpsonParticionedEvaluator::Parameters (
     m_integral_error, m_error_inner_integral, m_adaptive_distance_intervals, 
     m_adaptive_simpson_max_depth, volume, m_transfer_function, this));
 
-  a_spe.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z),
-    lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z));
+  a_spe.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z),
+    glm::dvec3 (maxpos.x, maxpos.y, maxpos.z));
   
   a_spe.RunEvaluation (0, lqc::Distance (minpos, maxpos));
   
@@ -476,155 +476,155 @@ lqc::Vector4d VolumeEvaluator::I_Recursive_Adaptive_Simpson_Particioned (vr::Vol
   return result.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z),
-    lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z),
+    glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shi.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP);
   return a_shi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Error_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Error_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_sei.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_sei.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_sei.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP);
   return a_sei.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Error_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Error_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_sepi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_sepi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_sepi.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP);
   return a_sepi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Error_Half_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Error_Half_Projection_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_sehpi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_sehpi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_sehpi.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP);
   return a_sehpi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Queue (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Queue (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shqi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shqi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shqi.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
   return a_shqi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Queue_Internal_Projected (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Queue_Internal_Projected (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shqi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shqi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shqi.IntegrateInternalProjected (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
   
   return a_shqi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Queue_Iteration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Queue_Iteration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shqi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shqi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shqi.IntegrateIterated (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
 
   return a_shqi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Error_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Error_Half_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_sehi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_sehi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_sehi.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP);
   return a_sehi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Error_Quadratic_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Error_Quadratic_Integration (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_seqi.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_seqi.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_seqi.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP);
   return a_seqi.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Iterate_Riemann_Error (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Iterate_Riemann_Error (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shire.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shire.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shire.Integrate (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
   return a_shire.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Iterate (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Iterate (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shii.CoupledIntegration (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
   return a_shii.color;
 }
 
-lqc::Vector4d VolumeEvaluator::VolEval_AdaptiveSimpsonCoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::VolEval_AdaptiveSimpsonCoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
   SimpsonHalfIterateIntegrator shit (this);
-  shit.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  shit.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   shit.CoupledIntegration (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
   return shit.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Iterate_Simple_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Iterate_Simple_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shii.IntegrateScount (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
 
   return a_shii.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Iterate_Complex_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Iterate_Complex_ExtStep (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shii.IntegrateComplexExtStep (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
 
   return a_shii.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Iterate_Exp (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Iterate_Exp (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shii.IntegrateExp (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
 
   return a_shii.color;
 }
 
-lqc::Vector4d VolumeEvaluator::A_Simpson_Half_Iterate_Separated (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::A_Simpson_Half_Iterate_Separated (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shii.IntegrateSeparated (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
 
   return a_shii.color;
 }
 
-lqc::Vector4d VolumeEvaluator::VolEval_AdaptiveSimpsonDecoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
+glm::dvec4 VolumeEvaluator::VolEval_AdaptiveSimpsonDecoupled (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos)
 {
-  a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+  a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
   double s1 = lqc::Distance (minpos, maxpos);
   a_shii.DecoupledIntegration (0, s1, m_integral_error, INTEGRATOR_INITIAL_STEP, m_min_h_step, m_max_h_step);
 
   return a_shii.color;
 }
 
-lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data)
+glm::dvec4 VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos, lqc::Vector3f maxpos, void* data)
 {
-  lqc::Vector3d step = lqc::Vector3d::Normalize (lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z) - lqc::Vector3d (minpos.x, minpos.y, minpos.z));
-  lqc::Vector3d dminpos = lqc::Vector3d (minpos.x, minpos.y, minpos.z);
+  glm::dvec3 step = glm::normalize (glm::dvec3 (maxpos.x, maxpos.y, maxpos.z) - glm::dvec3 (minpos.x, minpos.y, minpos.z));
+  glm::dvec3 dminpos = glm::dvec3 (minpos.x, minpos.y, minpos.z);
 
   double s1 = lqc::Distance (minpos, maxpos);
   double s0 = 0;
@@ -649,13 +649,13 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
 #endif
     h = 0.01;
     s = s0;
-    lqc::Vector4d rs_0_01_color (0);
+    glm::dvec4 rs_0_01_color (0);
 
     while (s < s1)
     {
       h = MIN (h, s1 - s);
 
-      lqc::Vector3d p = dminpos + (s + h)*step;
+      glm::dvec3 p = dminpos + (s + h)*step;
       rs.Composite (&rs_0_01_color, p, h);
       s = s + h;
     }
@@ -682,13 +682,13 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
 #endif
     h = 1.0;
     s = s0;
-    lqc::Vector4d rs_1_color (0);
+    glm::dvec4 rs_1_color (0);
 
     while (s < s1)
     {
       h = MIN (h, s1 - s);
 
-      lqc::Vector3d p = dminpos + (s + h)*step;
+      glm::dvec3 p = dminpos + (s + h)*step;
       rs.Composite (&rs_1_color, p, h);
       s = s + h;
     }
@@ -715,12 +715,12 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
 #endif
     h = 0.5;
     s = s0;
-    lqc::Vector4d rs_0_5_color (0);
+    glm::dvec4 rs_0_5_color (0);
     while (s < s1)
     {
       h = MIN (h, s1 - s);
 
-      lqc::Vector3d p = dminpos + (s + h)*step;
+      glm::dvec3 p = dminpos + (s + h)*step;
       rs.Composite (&rs_0_5_color, p, h);
       s = s + h;
     }
@@ -732,7 +732,7 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
   //////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////
   {
-    a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+    a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
 #ifdef ANALYSIS__RGBA_ALONG_THE_RAY
     std::ofstream rgba_rfile_ext;
     rgba_rfile_ext.open ("Coupled Adaptive 0_01 EXT.txt");
@@ -766,7 +766,7 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
   //////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////
     {
-      a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+      a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
 #ifdef ANALYSIS__RGBA_ALONG_THE_RAY
       std::ofstream rgba_rfile_ext;
       rgba_rfile_ext.open ("Coupled Adaptive 0_001 EXT.txt");
@@ -800,7 +800,7 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
     //////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////
       {
-        a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+        a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
 #ifdef ANALYSIS__RGBA_ALONG_THE_RAY
         std::ofstream rgba_rfile_ext;
         rgba_rfile_ext.open ("Decoupled Adaptive 0_01 EXT.txt");
@@ -834,7 +834,7 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
       //////////////////////////////////////////////////////////////////
       //////////////////////////////////////////////////////////////////
     {
-      a_shii.Init (lqc::Vector3d (minpos.x, minpos.y, minpos.z), lqc::Vector3d (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
+      a_shii.Init (glm::dvec3 (minpos.x, minpos.y, minpos.z), glm::dvec3 (maxpos.x, maxpos.y, maxpos.z), m_volume, m_transfer_function);
 #ifdef ANALYSIS__RGBA_ALONG_THE_RAY
       std::ofstream rgba_rfile_ext;
       rgba_rfile_ext.open ("Decoupled Adaptive 0_001 EXT.txt");
@@ -869,5 +869,5 @@ lqc::Vector4d VolumeEvaluator::E_Tests (vr::Volume *volume, lqc::Vector3f minpos
     //////////////////////////////////////////////////////////////////
 
 
-  return lqc::Vector4d (0);
+  return glm::dvec4 (0);
 }

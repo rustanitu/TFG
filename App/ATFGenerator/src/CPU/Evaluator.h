@@ -32,15 +32,15 @@ public:
   Evaluator (VolumeEvaluator* veva, vr::Volume* vol, vr::TransferFunction* tf);
   ~Evaluator ();
 
-  void SetMinMaxPositions (lqc::Vector3d min, lqc::Vector3d max);
+  void SetMinMaxPositions (glm::dvec3 min, glm::dvec3 max);
   void ScaleNormalizedStep (double distmax);
   void SetMaxDepth (int md);
 
   static double DistanceFunc (double a, double b);
   static double AlphaErrorEvalFunc (double a, double b, double tol_15, double* everror);
-  static double ColorErrorEvalFunc (lqc::Vector4d a, lqc::Vector4d b, double tol_15, lqc::Vector3d* everror);
+  static double ColorErrorEvalFunc (glm::dvec4 a, glm::dvec4 b, double tol_15, glm::dvec3* everror);
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
 
 protected:
   template <class T>
@@ -59,25 +59,25 @@ protected:
   class ColorAlongRay
   {
   public:
-    ColorAlongRay (double ia, double ib, lqc::Vector4d icolor)
+    ColorAlongRay (double ia, double ib, glm::dvec4 icolor)
       : s (ia), h (ib), color (icolor)
     {}
 
     double s, h;
-    lqc::Vector4d color;
+    glm::dvec4 color;
   };
 
 
-  double GetOpacity (lqc::Vector4d color);
-  lqc::Vector4d GetFromTransferFunction (lqc::Vector3d p);
+  double GetOpacity (glm::dvec4 color);
+  glm::dvec4 GetFromTransferFunction (glm::dvec3 p);
   
   VolumeEvaluator* m_volumeevaluator;
   vr::Volume* volume;
   vr::TransferFunction* transferFunction;
 
-  lqc::Vector3d m_minpos;
-  lqc::Vector3d m_maxpos;
-  lqc::Vector3d m_normalized_step;
+  glm::dvec3 m_minpos;
+  glm::dvec3 m_maxpos;
+  glm::dvec3 m_normalized_step;
 
   int maxdepth;
 
@@ -101,22 +101,22 @@ public:
     return d->GetOpacity (d->GetFromTransferFunction (d->m_minpos + p * d->m_normalized_step));
   }
 
-  static lqc::Vector4d f_OuterIntegral (double p, double h, double epsilon, void* data)
+  static glm::dvec4 f_OuterIntegral (double p, double h, double epsilon, void* data)
   {
     ASEvaluator* d = (ASEvaluator*)data;
     return d->OuterIntegral (p, h, epsilon, data);
   }
   
-  lqc::Vector4d OuterIntegral (double p_d, double h, double epsilon, void* data);
+  glm::dvec4 OuterIntegral (double p_d, double h, double epsilon, void* data);
 
-  static void whenreturn (lqc::Vector4d clr,
+  static void whenreturn (glm::dvec4 clr,
                           double a,
                           double b,
                           double errorevaluated,
                           double errorthreshold,
                           int reclevel,
                           double h,
-                          lqc::Vector3d err,
+                          glm::dvec3 err,
                           void* data);
 
   static void InnerReturnFunc (double alpha,
@@ -146,12 +146,12 @@ public:
   double inner_estimated_error;
   double inner_evaluated_error;
 
-  void ResetNormalizedStep (lqc::Vector3d min, lqc::Vector3d max, double dmax, bool normalized = false)
+  void ResetNormalizedStep (glm::dvec3 min, glm::dvec3 max, double dmax, bool normalized = false)
   {
     if (!normalized)
-      m_normalized_step = lqc::Vector3d::Normalize (m_maxpos - m_minpos);
+      m_normalized_step = glm::normalize (m_maxpos - m_minpos);
     else
-      m_normalized_step = dmax * lqc::Vector3d::Normalize (m_maxpos - m_minpos);
+      m_normalized_step = dmax * glm::normalize (m_maxpos - m_minpos);
   }
 
   void SetAdaptiveInnerIntervalValues (double innerror, double distinterval, int maxd)
@@ -167,7 +167,7 @@ public:
     stay_1_inner_counter = stay1_innercounter;
   }
 
-  std::vector<ErrorAlongRay<lqc::Vector3d>> m_error_ray;
+  std::vector<ErrorAlongRay<glm::dvec3>> m_error_ray;
   std::vector<ErrorAlongRay<double>> m_inner_error_ray;
   std::vector<ColorAlongRay> m_color_ray;
 protected:
@@ -242,7 +242,7 @@ public:
   class Result
   {
   public:
-    lqc::Vector4d color;
+    glm::dvec4 color;
 
     double internal_minstep;
     double external_minstep;
@@ -288,9 +288,9 @@ public:
     m_parameters.volume_evaluator = i_volume_evaluator;
   }
 
-  void Init (lqc::Vector3d minpos, lqc::Vector3d maxpos)
+  void Init (glm::dvec3 minpos, glm::dvec3 maxpos)
   {
-    m_result.color = lqc::Vector4d::Zero ();
+    m_result.color = glm::dvec4();
 
     data = ASEvaluator (m_parameters.volume_evaluator,
       m_parameters.volume, m_parameters.transfer_function);
@@ -410,7 +410,7 @@ private:
   AdaptiveSimpsonParticionedEvaluator::Result m_result;
 
   ASEvaluator data;
-  AdaptiveSimpsonEvaluator<lqc::Vector4d, double, lqc::Vector3d> se;
+  AdaptiveSimpsonEvaluator<glm::dvec4, double, glm::dvec3> se;
 };
 
 #endif

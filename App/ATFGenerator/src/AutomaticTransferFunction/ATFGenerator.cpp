@@ -26,11 +26,6 @@
 
 #define SMOOTH_CURVES
 
-//#define ALPHA
-#ifndef ALPHA
-#define PEAKS
-#endif
-
 /// <summary>
 /// Initializes a new instance of the 
 /// <see cref="ATFGenerator" /> class.
@@ -58,8 +53,10 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_inflct_indexes(NULL)
 , m_tf1d(true)
 , m_tfmode_changed(false)
+, m_average_hmap(NULL)
 {
 	printf("ATFGenerator criado.\n");
+  m_average_hmap = new PredictionMap<double, DoubleCell>(ATFG_V_RANGE, ATFG_V_RANGE);
 }
 
 /// <summary>
@@ -71,6 +68,7 @@ ATFGenerator::~ATFGenerator()
 	delete m_transfer_function;
 	delete[] m_scalar_gradient;
 	delete[] m_scalar_laplacian;
+  delete m_average_hmap;
 	printf("ATFGenerator destruido.\n");
 }
 
@@ -143,27 +141,27 @@ void ATFGenerator::SmoothCurves()
 
 void ATFGenerator::SetDefaultColor()
 {
-  lqc::Vector3f colors[18] = 
+  glm::vec3 colors[18] = 
   {
-    lqc::Vector3f(2u, 96u, 203u) / 255.0f,
-    lqc::Vector3f(0u, 127u, 206u) / 255.0f,
-    lqc::Vector3f(0u, 152u, 193u) / 255.0f,
-    lqc::Vector3f(11u, 171u, 152u) / 255.0f,
-    lqc::Vector3f(83u, 175u, 30u) / 255.0f,
-    lqc::Vector3f(129u, 178u, 0u) / 255.0f,
-    lqc::Vector3f(165u, 181u, 15u) / 255.0f,
-    //lqc::Vector3f(195u, 183u, 160u) / 255.0f,
-    lqc::Vector3f(216u, 184u, 22u) / 255.0f,
-    lqc::Vector3f(236u, 184u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 182u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 164u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 149u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 133u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 112u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 90u, 0u) / 255.0f,
-    lqc::Vector3f(255u, 66u, 11u) / 255.0f,
-    lqc::Vector3f(255u, 40u, 40u) / 255.0f,
-    lqc::Vector3f(255u, 0u, 0u) / 255.0f
+    glm::vec3(2u, 96u, 203u) / 255.0f,
+    glm::vec3(0u, 127u, 206u) / 255.0f,
+    glm::vec3(0u, 152u, 193u) / 255.0f,
+    glm::vec3(11u, 171u, 152u) / 255.0f,
+    glm::vec3(83u, 175u, 30u) / 255.0f,
+    glm::vec3(129u, 178u, 0u) / 255.0f,
+    glm::vec3(165u, 181u, 15u) / 255.0f,
+    //glm::vec3(195u, 183u, 160u) / 255.0f,
+    glm::vec3(216u, 184u, 22u) / 255.0f,
+    glm::vec3(236u, 184u, 0u) / 255.0f,
+    glm::vec3(255u, 182u, 0u) / 255.0f,
+    glm::vec3(255u, 164u, 0u) / 255.0f,
+    glm::vec3(255u, 149u, 0u) / 255.0f,
+    glm::vec3(255u, 133u, 0u) / 255.0f,
+    glm::vec3(255u, 112u, 0u) / 255.0f,
+    glm::vec3(255u, 90u, 0u) / 255.0f,
+    glm::vec3(255u, 66u, 11u) / 255.0f,
+    glm::vec3(255u, 40u, 40u) / 255.0f,
+    glm::vec3(255u, 0u, 0u) / 255.0f
   };
   double step = ATFG_V_RANGE / 18.f;
   int ncolors = 18;
@@ -183,7 +181,7 @@ void ATFGenerator::SetDefaultColor()
     vr::TransferFunction1D* tf = (vr::TransferFunction1D*)m_transfer_function;
     for (int i = 0; i < ncolors; ++i) {
       for (int j = i*step; j < (int)((i + 1)*step); ++j)
-        tf->AddRGBControlPoint(vr::TransferControlPoint(colors[i].x, colors[i].y, colors[i].z, j));
+        tf->AddRGBControlPoint(colors[i], j);
     }
   }
 }
@@ -194,7 +192,7 @@ void ATFGenerator::SetDefaultColor()
 /// </summary>
 /// <returns>Returns true if the transfer function can be
 /// generated. False, otherwise.</returns>
-bool ATFGenerator::ExtractGordonTransferFunction()
+bool ATFGenerator::ExtractTransferFunction()
 {
 	if ( !m_initialized )
 		throw std::domain_error("Instance not initialized. Init must be called once!\n");
@@ -215,143 +213,16 @@ bool ATFGenerator::ExtractGordonTransferFunction()
 
 	GenerateDataChart();
 
+  PredictionMap<double, DoubleCell>* distmap = NULL;
   if (m_tf1d)
-  {
-    // Gordon Transfer Function
-    double* x = new double[ATFG_V_RANGE];
-    int* v = new int[ATFG_V_RANGE];
-    if (!x || !v) {
-      printf("Erro - Nao ha memoria suficiente para extrair a funcao de transferencia!\n");
-      return false;
-    }
-    UINT32 n_v;
-    GetBoundaryDistancies(x, v, &n_v);
-    ((vr::TransferFunction1D*)m_transfer_function)->SetClosestBoundaryDistances(v, x, n_v);
-  }
+    distmap = GetBoundaryDistancies();
   else
-  {
-    std::vector<double>* distances = new std::vector<double>();
-    std::vector<std::pair<int, int>>* indexes = new std::vector<std::pair<int, int>>();
+    distmap = GetBoundaryDistancies2D();
 
-    GetBoundaryDistancies2D(distances, indexes);
-    ((vr::TransferFunction2D*)m_transfer_function)->SetClosestBoundaryDistances(distances, indexes);
-  }
-	return true;
-}
-
-bool ATFGenerator::ExtractTransferFunction()
-{
-	if ( !m_initialized )
-		throw std::domain_error("Instance not initialized. Init must be called once!\n");
-
-	delete m_transfer_function;
-	m_transfer_function = new vr::TransferFunction1D();
-	m_transfer_function->SetName(std::string("AutomaticTransferFunction"));
-	SetDefaultColor();
-
-	GenerateDataChart();
-
-	int size;
-	double* values;
-	int* indexes;
-
-	m_inflct_size = 0;
-	delete[] m_inflct_indexes;
-	m_inflct_indexes = NULL;
-	GetValidValuesAndIndexes(m_average_laplacian, ATFG_V_RANGE, values, indexes, size);
-	m_inflct_size = GetInflectionPoints(values, indexes, size, m_inflct_indexes);
-
-	delete[] values;
-	delete[] indexes;
-
-	m_max_size = 0;
-	delete[] m_max_indexes;
-	m_max_indexes = NULL;
-	GetValidValuesAndIndexes(m_average_gradient, ATFG_V_RANGE, values, indexes, size);
-	m_max_size = GetMaxPoints(values, indexes, size, m_max_indexes); 
-
-#ifdef ALPHA
-	m_transfer_function->SetAlphaValues(indexes, values, size);
-	return true;
-#endif
-
-	double max_grad = 0.0f;
-	for (int i = 0; i < size; ++i)
-	{
-		max_grad = fmax(max_grad, m_average_gradient[indexes[i]]);
-	}
-
-#ifdef PEAKS
-#if 0
-	double* aux_values = new double[size];
-	int* aux_indexes = new int[size];
-
-	int match = 0;
-	int max_idx = 0;
-	int inflct_idx = 0;
-	while (max_idx < m_max_size || inflct_idx < m_inflct_size) {
-		if (max_idx < m_max_size && inflct_idx < m_inflct_size && m_max_indexes[max_idx] == m_inflct_indexes[inflct_idx])
-		{
-			aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
-			aux_indexes[match] = m_max_indexes[max_idx];
-			++match;
-			++max_idx;
-			++inflct_idx;
-		}
-		else if (max_idx < m_max_size && m_max_indexes[max_idx] < m_inflct_indexes[inflct_idx])
-		{
-			++max_idx;
-		}
-		else
-		{
-			++inflct_idx;
-		}
-	}
-#else
-	double* aux_values = new double[m_max_size + m_inflct_size];
-	int* aux_indexes = new int[m_max_size + m_inflct_size];
-
-	int match = 0;
-	int max_idx = 0;
-	int inflct_idx = 0;
-	while (max_idx < m_max_size || inflct_idx < m_inflct_size) {
-		if (max_idx < m_max_size && inflct_idx < m_inflct_size && m_max_indexes[max_idx] == m_inflct_indexes[inflct_idx])
-		{
-			aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
-			aux_indexes[match] = m_max_indexes[max_idx];
-			++max_idx;
-			++inflct_idx;
-		}
-		else if (max_idx < m_max_size && m_max_indexes[max_idx] < m_inflct_indexes[inflct_idx])
-		{
-			aux_values[match] = m_average_gradient[m_max_indexes[max_idx]] / max_grad;
-			aux_indexes[match] = m_max_indexes[max_idx];
-			++max_idx;
-		}
-		else
-		{
-			aux_values[match] = 0.0f;
-			aux_indexes[match] = m_inflct_indexes[inflct_idx];
-			++inflct_idx;
-		}
-
-		++match;
-	}
-#endif
-#endif
-
-	double* peaks_vals = new double[match];
-	int* peaks_ids = new int[match];
-
-	memcpy(peaks_vals, aux_values, match * sizeof(double));
-	memcpy(peaks_ids, aux_indexes, match * sizeof(int));
-
-	delete[] aux_values;
-	delete[] aux_indexes;
-
-	((vr::TransferFunction1D*)m_transfer_function)->SetPeakPoints(peaks_ids, peaks_vals, match);
-
-	return true;
+  distmap->PredictWithInverseDistanceWeighting(1.8f);
+  m_transfer_function->SetClosestBoundaryDistances(distmap);
+	
+  return true;
 }
 
 /// <summary>
@@ -949,6 +820,9 @@ bool ATFGenerator::EstimateAverageValues()
   m_max_average_laplacian_2D = -DBL_MAX;
   m_min_average_laplacian_2D = DBL_MAX;
 
+  if (!m_average_hmap->Init())
+    return false;
+
   // Calculate average laplacian and gradient
   for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
     m_average_gradient[i] = -DBL_MAX;
@@ -958,7 +832,7 @@ bool ATFGenerator::EstimateAverageValues()
     double h = 0.0f;
     for (UINT32 j = 0; j < ATFG_V_RANGE; ++j)
     {
-      m_average_h[i][j] = -DBL_MAX;
+      //m_average_h[i][j] = -DBL_MAX;
       UINT32 hvg_sum = 0;
       double hvg = 0.0f;
 
@@ -976,7 +850,8 @@ bool ATFGenerator::EstimateAverageValues()
         hvg /= hvg_sum;
         hvg = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * hvg / ATFG_V_MAX;
         hvg += m_scalarfield->GetMinLaplacian();
-        m_average_h[i][j] = hvg;
+        //m_average_h[i][j] = hvg;
+        m_average_hmap->SetValue(hvg, i, j);
         m_max_average_laplacian_2D = fmax(m_max_average_laplacian_2D, hvg);
         m_min_average_laplacian_2D = fmin(m_min_average_laplacian_2D, hvg);
       }
@@ -1069,14 +944,17 @@ void ATFGenerator::GetValidValuesAndIndexes(double* vin, const int& nin, double*
 /// </summary>
 /// <returns>Returns a double array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-void ATFGenerator::GetBoundaryDistancies(double * x, int *v, UINT32 *n)
+PredictionMap<double, DoubleCell>* ATFGenerator::GetBoundaryDistancies()
 {
-	assert(m_scalar_histogram && x);
+	assert(m_scalar_histogram);
+
+  PredictionMap<double, DoubleCell>* distmap = new PredictionMap<double, DoubleCell>(1, ATFG_V_RANGE);
+  if (!distmap->Init())
+    return NULL;
 
 	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_1D - m_min_average_laplacian_1D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
-	UINT32 c = 0;
 	for ( UINT32 i = 0; i < ATFG_V_RANGE; ++i )
 	{
 		double g = m_average_gradient[i];
@@ -1087,19 +965,22 @@ void ATFGenerator::GetBoundaryDistancies(double * x, int *v, UINT32 *n)
 		}
 		else
 		{
-			x[i] = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
+      double val = -sigma * sigma * (l / fmax(g - m_gtresh, 0.000001));
+      if (val <= 0.2f && val >= -0.2f)
+        distmap->SetValue(val, 0, i);
 		}
-
-		v[c] = i;
-		++c;
 	}
 
-	*n = c;
+  return distmap;
 }
 
-void ATFGenerator::GetBoundaryDistancies2D(std::vector<double>* distances, std::vector<std::pair<int, int>>* indexes)
+PredictionMap<double, DoubleCell>* ATFGenerator::GetBoundaryDistancies2D()
 {
 	assert(m_scalar_histogram);
+
+  PredictionMap<double, DoubleCell>* distmap = new PredictionMap<double, DoubleCell>(ATFG_V_RANGE, ATFG_V_RANGE);
+  if (!distmap->Init())
+    return NULL;
 
 	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_2D - m_min_average_laplacian_2D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
@@ -1107,15 +988,13 @@ void ATFGenerator::GetBoundaryDistancies2D(std::vector<double>* distances, std::
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
 		for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
       double g = m_scalarfield->GetMaxGradient() * j / (double)ATFG_V_MAX;
-			double l = m_average_h[i][j];
+      double l = m_average_hmap->GetValue(i, j);
 
       if (l != -DBL_MAX)
-      {
-        distances->push_back(-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)));
-        indexes->push_back(std::make_pair(i,j));
-      }
+        distmap->SetValue(-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)), i, j);
 		}
 	}
+  return distmap;
 }
 
 int ATFGenerator::GetMaxPoints(const double* curve, const int* indexes, const int& curve_size, int*& max_indexes)

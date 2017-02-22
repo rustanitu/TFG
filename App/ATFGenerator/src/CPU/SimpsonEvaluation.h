@@ -77,7 +77,7 @@ private:
 public:
   double estimated_cumulative_error;
   double evaluated_cumulative_error;
-  lqc::Vector3d evaluated_cumulative_error_ER;
+  glm::dvec3 evaluated_cumulative_error_ER;
   double errordivthreshold;
   AdaptiveSimpsonEvaluator ()
     : m_return_func (NULL),

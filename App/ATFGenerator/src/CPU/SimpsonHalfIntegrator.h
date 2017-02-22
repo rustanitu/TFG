@@ -34,7 +34,7 @@ public:
   public:
     double s;
     double h;
-    lqc::Vector4d err;
+    glm::dvec4 err;
   };
   std::vector<ExternalCumulativeError> m_excumulative_error;
 
@@ -46,12 +46,12 @@ public:
     class Ext_IntervalError
     {
     public:
-      Ext_IntervalError (double s2, double h2, lqc::Vector4d err2)
+      Ext_IntervalError (double s2, double h2, glm::dvec4 err2)
         : err (err2), s (s2), h (h2) {}
       Ext_IntervalError () : err (0), s (0), h (0) {}
       double s;
       double h;
-      lqc::Vector4d err;
+      glm::dvec4 err;
     };
 
     class Int_IntervalError
@@ -82,7 +82,7 @@ public:
    
       std::ofstream external_error_file;
       external_error_file.open (external_file);
-      lqc::Vector4d exterr (0);
+      glm::dvec4 exterr (0);
       for (int i = 0; i < m_ext_errorintervals.size (); i++)
       {
         exterr += m_ext_errorintervals[i].err;
@@ -107,10 +107,10 @@ public:
   SimpsonHalfIntegrator (VolumeEvaluator* veva);
   ~SimpsonHalfIntegrator ();
 
-  void Init (lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf);
+  void Init (glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf);
   void Integrate (double s0, double s1, double tol, double h0);
 
-  bool ColorErrorEvalFunc (lqc::Vector4d a, lqc::Vector4d b, double tol)
+  bool ColorErrorEvalFunc (glm::dvec4 a, glm::dvec4 b, double tol)
   {
     tol = 15.0 * tol;
 
@@ -120,7 +120,7 @@ public:
     double error_a = fabs (a.w - b.w);
 
 #ifdef ANALYSIS__ERROR_ALONG_THE_RAY
-    ext_aux_error = lqc::Vector4d (error_r, error_g, error_b, error_a);
+    ext_aux_error = glm::dvec4 (error_r, error_g, error_b, error_a);
 #endif
 
 #ifdef INTEGRATOR__STEP_BASED_ON_ERROR
@@ -147,23 +147,23 @@ public:
     return tol >= alphaerror;
   }
 
-  lqc::Vector4d color;
+  glm::dvec4 color;
   double pre_integrated;
   double minpost;
-  lqc::Vector4d Cminpost;
+  glm::dvec4 Cminpost;
 protected:
-  bool IntegrateInternalInterval (double a, double b, double tol, double* pS, double* pSleft, double* pSright, lqc::Vector4d clr[], bool force, double Sprecalculated);
-  double AdaptiveInternalIntegration (double s, double h0, double tol, double values[], lqc::Vector4d clr[]);
+  bool IntegrateInternalInterval (double a, double b, double tol, double* pS, double* pSleft, double* pSright, glm::dvec4 clr[], bool force, double Sprecalculated);
+  double AdaptiveInternalIntegration (double s, double h0, double tol, double values[], glm::dvec4 clr[]);
 
-  lqc::Vector4d ExternalIntegration (lqc::Vector4d C, double p_d, double inner);
-  bool TryExternaIntegration (double s, double h, double tol, double v[], lqc::Vector4d clr[]);
+  glm::dvec4 ExternalIntegration (glm::dvec4 C, double p_d, double inner);
+  bool TryExternaIntegration (double s, double h, double tol, double v[], glm::dvec4 clr[]);
 
   void AdaptiveExternalIntegration (double s, double h, double tol, double* pre_integrated);
-  lqc::Vector4d ExtenalEvaluation (double p_d, lqc::Vector4d C);
-  bool IntegrateExternalInterval (double a, double b, double tol, lqc::Vector4d* pS, lqc::Vector4d clr[], bool force, lqc::Vector4d Spre);
+  glm::dvec4 ExtenalEvaluation (double p_d, glm::dvec4 C);
+  bool IntegrateExternalInterval (double a, double b, double tol, glm::dvec4* pS, glm::dvec4 clr[], bool force, glm::dvec4 Spre);
   double Aux_AdaptiveExternalIntegration (double s, double h, double tol, double* pre_integrated);
 
-  lqc::Vector4d GetFromTransferFunction (double p_d);
+  glm::dvec4 GetFromTransferFunction (double p_d);
 
   void InternalIntegration_SetLeftAuxVariables ();
   void InternalIntegration_SetRightAuxVariables ();
@@ -177,21 +177,21 @@ private:
   vr::Volume* volume;
   vr::TransferFunction* transfer_function;
 
-  lqc::Vector3d minpos;
-  lqc::Vector3d maxpos;
-  lqc::Vector3d normalized_step;
+  glm::dvec3 minpos;
+  glm::dvec3 maxpos;
+  glm::dvec3 normalized_step;
 
 #ifdef ANALYSIS__ERROR_ALONG_THE_RAY
   Analysis_ErrorAlongTheRay error_along_the_ray;
-  lqc::Vector4d ext_aux_error;
-  lqc::Vector4d ext_left_error;
-  lqc::Vector4d ext_right_error;
+  glm::dvec4 ext_aux_error;
+  glm::dvec4 ext_left_error;
+  glm::dvec4 ext_right_error;
   double int_aux_error;
   double int_left_error;
   double int_right_error;
 #endif
 
-  lqc::Vector4d last_color;
+  glm::dvec4 last_color;
 
 };
 

@@ -17,23 +17,23 @@ SimpsonHalfIntegrator::SimpsonHalfIntegrator (VolumeEvaluator* veva)
 SimpsonHalfIntegrator::~SimpsonHalfIntegrator ()
 {}
 
-void SimpsonHalfIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfIntegrator::Init(glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   volume = vol;
   transfer_function = tf;
 
   minpos = minp;
   maxpos = maxp;
-  normalized_step = lqc::Vector3d::Normalize (maxpos - minpos);
+  normalized_step = glm::normalize (maxpos - minpos);
 
   pre_integrated = 0.0;
-  color = lqc::Vector4d (0);
+  color = glm::dvec4 (0);
 }
 
 void SimpsonHalfIntegrator::Integrate (double s0, double s1, double tol, double h0)
 {
   double v[6] = { -1, -1, -1, -1, -1, -1 };
-  lqc::Vector4d clr[5];
+  glm::dvec4 clr[5];
   double s = s0;
 
 #ifdef ANALYSIS__ERROR_ALONG_THE_RAY
@@ -67,7 +67,7 @@ void SimpsonHalfIntegrator::Integrate (double s0, double s1, double tol, double 
 }
 
 float aint_left_S, aint_right_S;
-bool SimpsonHalfIntegrator::IntegrateInternalInterval (double a, double b, double tol, double* pS, double* pSleft, double* pSright, lqc::Vector4d clr[], bool force, double Sprecalculated)
+bool SimpsonHalfIntegrator::IntegrateInternalInterval (double a, double b, double tol, double* pS, double* pSleft, double* pSright, glm::dvec4 clr[], bool force, double Sprecalculated)
 {
 #ifdef ANALYSIS__STORE_INTEGRATE_INTERVAL_TIMES
   SimpsonHalfIntegrator::s_IntegrativeInternalTimes++;
@@ -98,13 +98,13 @@ bool SimpsonHalfIntegrator::IntegrateInternalInterval (double a, double b, doubl
   return false;
 }
 
-double SimpsonHalfIntegrator::AdaptiveInternalIntegration (double s, double h0, double tol, double v[], lqc::Vector4d clr[])
+double SimpsonHalfIntegrator::AdaptiveInternalIntegration (double s, double h0, double tol, double v[], glm::dvec4 clr[])
 {
   double h = h0;
   double h_2 = h / 2.0;
   double scl_error;
-  lqc::Vector4d fleft[5];
-  lqc::Vector4d fright[5];
+  glm::dvec4 fleft[5];
+  glm::dvec4 fright[5];
   aint_left_S = aint_right_S = -1;
 
   double a, b, c, d, e;
@@ -201,12 +201,12 @@ double SimpsonHalfIntegrator::AdaptiveInternalIntegration (double s, double h0, 
   return h;
 }
 
-lqc::Vector4d SimpsonHalfIntegrator::ExternalIntegration (lqc::Vector4d C, double p_d, double inner)
+glm::dvec4 SimpsonHalfIntegrator::ExternalIntegration (glm::dvec4 C, double p_d, double inner)
 {
   double innerint = exp (-(pre_integrated + inner));
 
   double alphachannel = C.w*innerint;
-  return lqc::Vector4d (
+  return glm::dvec4 (
     alphachannel * C.x,
     alphachannel * C.y,
     alphachannel * C.z,
@@ -214,8 +214,8 @@ lqc::Vector4d SimpsonHalfIntegrator::ExternalIntegration (lqc::Vector4d C, doubl
     );
 }
 
-lqc::Vector4d  aext_left_S, aext_right_S;
-bool SimpsonHalfIntegrator::TryExternaIntegration (double s, double h, double tol, double v[], lqc::Vector4d clr[])
+glm::dvec4  aext_left_S, aext_right_S;
+bool SimpsonHalfIntegrator::TryExternaIntegration (double s, double h, double tol, double v[], glm::dvec4 clr[])
 {
 #ifdef ANALYSIS__STORE_INTEGRATE_INTERVAL_TIMES
   SimpsonHalfIntegrator::s_IntegrativeExternalTimes++;
@@ -224,20 +224,20 @@ bool SimpsonHalfIntegrator::TryExternaIntegration (double s, double h, double to
   double a = s, c = (s + h) / 2.0, b = s + h;
   double d = (a + c) / 2.0, e = (c + b) / 2.0;
 
-  lqc::Vector4d fa = ExternalIntegration (clr[0], s, 0);
-  lqc::Vector4d fd = ExternalIntegration (clr[1], s + (h / 4.0), v[2]);
-  lqc::Vector4d fc = ExternalIntegration (clr[2], s + (h / 2.0), v[2] + v[3] + (v[2] + v[3] - v[0]) / 15.0);
-  lqc::Vector4d fe = ExternalIntegration (clr[3], s + (3.0 * h / 4.0), (v[2] + v[3] + (v[2] + v[3] - v[0]) / 15.0) + v[4]);
-  lqc::Vector4d fb = ExternalIntegration (clr[4], s + h, (v[2] + v[3] + (v[2] + v[3] - v[0]) / 15.0) + (v[4] + v[5] + (v[4] + v[5] - v[1]) / 15.0));
+  glm::dvec4 fa = ExternalIntegration (clr[0], s, 0);
+  glm::dvec4 fd = ExternalIntegration (clr[1], s + (h / 4.0), v[2]);
+  glm::dvec4 fc = ExternalIntegration (clr[2], s + (h / 2.0), v[2] + v[3] + (v[2] + v[3] - v[0]) / 15.0);
+  glm::dvec4 fe = ExternalIntegration (clr[3], s + (3.0 * h / 4.0), (v[2] + v[3] + (v[2] + v[3] - v[0]) / 15.0) + v[4]);
+  glm::dvec4 fb = ExternalIntegration (clr[4], s + h, (v[2] + v[3] + (v[2] + v[3] - v[0]) / 15.0) + (v[4] + v[5] + (v[4] + v[5] - v[1]) / 15.0));
 
-  lqc::Vector4d S = (h / 6.0)*(fa + (4.0 * fc) + fb);
-  lqc::Vector4d Sleft = (h / 12.0) * (fa + (4.0 * fd) + fc);
-  lqc::Vector4d Sright = (h / 12.0) * (fc + (4.0 * fe) + fb);
-  lqc::Vector4d S2 = Sleft + Sright;
+  glm::dvec4 S = (h / 6.0)*(fa + (4.0 * fc) + fb);
+  glm::dvec4 Sleft = (h / 12.0) * (fa + (4.0 * fd) + fc);
+  glm::dvec4 Sright = (h / 12.0) * (fc + (4.0 * fe) + fb);
+  glm::dvec4 S2 = Sleft + Sright;
 
   if (ColorErrorEvalFunc (S, S2, tol))
   {
-    lqc::Vector4d Sret = S2 + (S2 - S) / 15.0;
+    glm::dvec4 Sret = S2 + (S2 - S) / 15.0;
     color += Sret;
 
 #ifdef ANALYSIS__ERROR_ALONG_THE_RAY
@@ -270,16 +270,16 @@ void SimpsonHalfIntegrator::AdaptiveExternalIntegration (double s, double h, dou
     s += Aux_AdaptiveExternalIntegration (s, s1 - s, (tol * fabs (s1 - s)) / d, pre_integrated);
 }
 
-lqc::Vector4d SimpsonHalfIntegrator::ExtenalEvaluation (double p_d, lqc::Vector4d C)
+glm::dvec4 SimpsonHalfIntegrator::ExtenalEvaluation (double p_d, glm::dvec4 C)
 {
   double alpha = ((p_d - minpost) / 6.0) * (Cminpost.w +
     4.0 * GetFromTransferFunction ((minpost + p_d) / 2.0).w + C.w);
   return ExternalIntegration (C, p_d, alpha);
 }
 
-lqc::Vector4d R_Sleft;
-lqc::Vector4d R_Sright;
-bool SimpsonHalfIntegrator::IntegrateExternalInterval (double a, double b, double tol, lqc::Vector4d* pS, lqc::Vector4d clr[], bool force, lqc::Vector4d Spre)
+glm::dvec4 R_Sleft;
+glm::dvec4 R_Sright;
+bool SimpsonHalfIntegrator::IntegrateExternalInterval (double a, double b, double tol, glm::dvec4* pS, glm::dvec4 clr[], bool force, glm::dvec4 Spre)
 {
 #ifdef ANALYSIS__STORE_INTEGRATE_INTERVAL_TIMES
   SimpsonHalfIntegrator::s_IntegrativeExternalTimes++;
@@ -287,16 +287,16 @@ bool SimpsonHalfIntegrator::IntegrateExternalInterval (double a, double b, doubl
  
   double h = (b - a), c = (a + b) / 2.0,
     d = (a + c) / 2.0, e = (c + b) / 2.0;
-  lqc::Vector4d fa = ExtenalEvaluation (a, clr[0]);
-  lqc::Vector4d fd = ExtenalEvaluation (d, clr[1]);
-  lqc::Vector4d fc = ExtenalEvaluation (c, clr[2]);
-  lqc::Vector4d fe = ExtenalEvaluation (e, clr[3]);
-  lqc::Vector4d fb = ExtenalEvaluation (b, clr[4]);
+  glm::dvec4 fa = ExtenalEvaluation (a, clr[0]);
+  glm::dvec4 fd = ExtenalEvaluation (d, clr[1]);
+  glm::dvec4 fc = ExtenalEvaluation (c, clr[2]);
+  glm::dvec4 fe = ExtenalEvaluation (e, clr[3]);
+  glm::dvec4 fb = ExtenalEvaluation (b, clr[4]);
 
-  lqc::Vector4d S = Spre.w >= 0 ? Spre : SimpsonRule<lqc::Vector4d> (fa, fc, fb, h);
-  lqc::Vector4d Sleft = SimpsonRule<lqc::Vector4d> (fa, fd, fc, h / 2.0);
-  lqc::Vector4d Sright = SimpsonRule<lqc::Vector4d> (fc, fe, fb, h / 2.0);
-  lqc::Vector4d S2 = Sleft + Sright;
+  glm::dvec4 S = Spre.w >= 0 ? Spre : SimpsonRule<glm::dvec4> (fa, fc, fb, h);
+  glm::dvec4 Sleft = SimpsonRule<glm::dvec4> (fa, fd, fc, h / 2.0);
+  glm::dvec4 Sright = SimpsonRule<glm::dvec4> (fc, fe, fb, h / 2.0);
+  glm::dvec4 S2 = Sleft + Sright;
 
   if (ColorErrorEvalFunc (S, S2, tol) || force)
   {
@@ -316,11 +316,11 @@ double SimpsonHalfIntegrator::Aux_AdaptiveExternalIntegration (double s, double 
   double h_2 = h / 2.0;
   double scl_error;
 
-  lqc::Vector4d fleft[5];
-  lqc::Vector4d fright[5];
+  glm::dvec4 fleft[5];
+  glm::dvec4 fright[5];
   
-  lqc::Vector4d colorleft;
-  lqc::Vector4d colorright;
+  glm::dvec4 colorleft;
+  glm::dvec4 colorright;
 
   aext_left_S.w = aext_right_S.w = -1.f;
 
@@ -356,8 +356,8 @@ double SimpsonHalfIntegrator::Aux_AdaptiveExternalIntegration (double s, double 
     h_2 = h / 2.0;
   }
 
-  lqc::Vector4d aext_Sleft = R_Sleft;
-  lqc::Vector4d aext_Sright = R_Sright;
+  glm::dvec4 aext_Sleft = R_Sleft;
+  glm::dvec4 aext_Sright = R_Sright;
 
   a = s + h_2; b = s + h; c = (a + b) / 2.0;
   d = (a + c) / 2.0; e = (c + b) / 2.0;
@@ -378,13 +378,13 @@ double SimpsonHalfIntegrator::Aux_AdaptiveExternalIntegration (double s, double 
     //////////////////////////////////////////////////////////////////////////////////////////
     //fright[4] = fleft[4];
     //
-    //colorleft = SimpsonRule<lqc::Vector4d> (
+    //colorleft = SimpsonRule<glm::dvec4> (
     //  ExtenalEvaluation (s            , fleft[0]),
     //  ExtenalEvaluation (s + (h_2/2.0), fleft[1]),
     //  ExtenalEvaluation (s + h_2      , fleft[2]),
     //  h_2);
     //
-    //colorright = SimpsonRule<lqc::Vector4d> (
+    //colorright = SimpsonRule<glm::dvec4> (
     //  ExtenalEvaluation (s + h_2              , fleft[2]),
     //  ExtenalEvaluation (s + h_2 + (h_2 / 2.0), fleft[3]),
     //  ExtenalEvaluation (s + h                , fleft[4]),
@@ -442,11 +442,11 @@ double SimpsonHalfIntegrator::Aux_AdaptiveExternalIntegration (double s, double 
   return h;
 }
 
-lqc::Vector4d SimpsonHalfIntegrator::GetFromTransferFunction (double p_d)
+glm::dvec4 SimpsonHalfIntegrator::GetFromTransferFunction (double p_d)
 {
-  lqc::Vector4d ret;
-  lqc::Vector3d p = minpos + p_d * normalized_step;
-  if (!transfer_function || !volume) ret = lqc::Vector4d (0.0);
+  glm::dvec4 ret;
+  glm::dvec3 p = minpos + p_d * normalized_step;
+  if (!transfer_function || !volume) ret = glm::dvec4 (0.0);
   else ret = transfer_function->Get(volume_evaluator->GetValueFromVolume(volume, lqc::Vector3f(p.x, p.y, p.z)));
   return ret;
 }

@@ -17,11 +17,13 @@ int main(int argc, char **argv)
   Ihandle* diag = IupDialog(IupVbox(plot, NULL));
   IupSetAttribute(diag, "SIZE", "HALFxFULL");
 
-  PredictionMap<double, DoubleCell> map(256, 256);
+  PredictionMap<double, DoubleCell> map(1, 256);
   if (!map.Init())
     return 0;
-  map.SetValue(-1.0f, 64, 128);
-  map.SetValue(1.0f, 64 + 128, 128);
+  map.SetValue(-1.0f, 0, 64);
+  map.SetValue(0.5f, 0, 64 + 32);
+  map.SetValue(0.5f, 0, 32 + 128);
+  map.SetValue(1.0f, 0, 64 + 128);
   map.PredictWithInverseDistanceWeighting(1.8);
 
   double* data = new double[MAX_V*MAX_V];
@@ -29,7 +31,7 @@ int main(int argc, char **argv)
   {
     for (int j = 0; j < MAX_V; ++j)
     {
-      double x = map.GetValue(i, j);
+      double x = map.GetValue(0, i);
       data[i + MAX_V*j] = x;
     }
   }

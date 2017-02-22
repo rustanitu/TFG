@@ -244,8 +244,8 @@ int ViewerInterface::ClearColor_Blue_CB (Ihandle* ih)
 
 int ViewerInterface::ButtonCB_ReloadTF (Ihandle* ih)
 {
-	Viewer::Instance ()->ReloadTransferFunction ();
-	Viewer::Instance ()->MarkAllViewMethodsOutdated ();
+	//Viewer::Instance ()->ReloadTransferFunction ();
+	//Viewer::Instance ()->MarkAllViewMethodsOutdated ();
 	return IUP_DEFAULT;
 }
 
@@ -276,8 +276,6 @@ int ViewerInterface::btn_ViewVol_CB (Ihandle* ih)
 
 int ViewerInterface::btn_OpenTF_CB (Ihandle* ih)
 {
-	if (Viewer::Instance ()->FileDlg_TransferFunction ())
-		Viewer::Instance ()->MarkAllViewMethodsOutdated ();
 	return IUP_DEFAULT;
 }
 

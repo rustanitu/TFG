@@ -64,8 +64,6 @@ public:
 	/// </summary>
 	/// <returns>Returns true if the transfer function can be
 	/// generated. False, otherwise.</returns>
-	bool ExtractGordonTransferFunction();
-
 	bool ExtractTransferFunction();
 
 	/// <summary>
@@ -229,15 +227,8 @@ private:
 
   bool EstimateAverageValues();
 
-	/// <summary>
-	/// Gets, for each value, the distance to the closest 
-	/// boundary associated to it. This information is 
-	/// extracted from the summed voxel histogram.
-	/// </summary>
-	/// <returns>Returns a double array with the distances associated 
-	/// to all 256 values, ordered by value.</returns>
-	void GetBoundaryDistancies(double* x, int *v, UINT32 *n);
-  void GetBoundaryDistancies2D(std::vector<double>* distances, std::vector<std::pair<int, int>>* indexes);
+  PredictionMap<double, DoubleCell>* GetBoundaryDistancies();
+  PredictionMap<double, DoubleCell>* GetBoundaryDistancies2D();
 
 	void SmoothCurves();
 
@@ -277,7 +268,8 @@ private:
 
 	double m_average_gradient[ATFG_V_RANGE];
 	double m_average_laplacian[ATFG_V_RANGE];
-	double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
+	//double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
+  PredictionMap<double, DoubleCell>* m_average_hmap;
 
 	int m_max_size;
 	int* m_max_indexes;

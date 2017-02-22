@@ -12,14 +12,14 @@ void SimpsonHalfIterateIntegrator::CoupledIntegration (double s0, double s1, dou
 
   anchor = s0;
   anchor_color = GetFromTransferFunction (anchor);
-  lqc::Vector4d F_a = ExternalEvaluationAnchor ();
+  glm::dvec4 F_a = ExternalEvaluationAnchor ();
 
   double tol_int_multiplier = tol_int / s1;
   double tol_ext_multiplier = tol_ext / s1;
 
   double b, c, d, e, h_6, h_12,
     Salfa, S2alfa, S2left;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b,
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b,
     F_d, F_c, F_e, F_b,
     S, S2, S2S, S2Eleft;
 
@@ -85,7 +85,7 @@ void SimpsonHalfIterateIntegrator::CoupledIntegration (double s0, double s1, dou
 #endif
         anchor_color = tf_b;
         anchor = anchor + h;
-        F_a = lqc::Vector4d (0.0);
+        F_a = glm::dvec4 (0.0);
       }
       else
       {

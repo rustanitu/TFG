@@ -46,7 +46,7 @@ void SimpsonHalfQueueIntegrator::PrintStepsEvaluation ()
 #endif
 }
 
-void SimpsonHalfQueueIntegrator::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfQueueIntegrator::Init(glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   SimpsonIntegrator::Init (minp, maxp, vol, tf);
 }
@@ -202,7 +202,7 @@ double SimpsonHalfQueueIntegrator::InternalIntegral (double s, double h0, double
   return h;
 }
 
-bool SimpsonHalfQueueIntegrator::ColorErrorEvalFunc (lqc::Vector4d a, lqc::Vector4d b, double tol)
+bool SimpsonHalfQueueIntegrator::ColorErrorEvalFunc (glm::dvec4 a, glm::dvec4 b, double tol)
 {
   tol = 15.0 * tol;
   
@@ -215,11 +215,11 @@ bool SimpsonHalfQueueIntegrator::ColorErrorEvalFunc (lqc::Vector4d a, lqc::Vecto
 void SimpsonHalfQueueIntegrator::QueueExternalIntegral (double s, double h0, double error)
 {
   if (h0 == 0.0) return;
-  lqc::Vector4d F_a = ExternalEvaluationAnchor ();
-  lqc::Vector4d F_d, F_c, F_e, F_b;
+  glm::dvec4 F_a = ExternalEvaluationAnchor ();
+  glm::dvec4 F_d, F_c, F_e, F_b;
 
   double a, d, c, e, b;
-  lqc::Vector4d S, Sleft, Sright, S2;
+  glm::dvec4 S, Sleft, Sright, S2;
   double Salfa, S2alfa;
 
   a = s;
@@ -258,7 +258,7 @@ void SimpsonHalfQueueIntegrator::QueueExternalIntegral (double s, double h0, dou
   //Pilha do simpson adaptativo
   simpsonrec queue[100];
   int q_n = 0;
-  lqc::Vector4d tf_d, tf_e;
+  glm::dvec4 tf_d, tf_e;
 
   queue[q_n].h = h0 / 2.0;
   queue[q_n].tf_c = f_int[3];
@@ -332,11 +332,11 @@ void SimpsonHalfQueueIntegrator::IteratedExternalIntegral (double h, double erro
   float s1 = anchor + h;
 
   float S2alfa;
-  lqc::Vector4d S, S2;
-  lqc::Vector4d F_a = ExternalEvaluationAnchor ();
-  lqc::Vector4d F_d, F_c, F_e, F_b;
+  glm::dvec4 S, S2;
+  glm::dvec4 F_a = ExternalEvaluationAnchor ();
+  glm::dvec4 F_d, F_c, F_e, F_b;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b;
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b;
 
   while (s1 > anchor)
   {

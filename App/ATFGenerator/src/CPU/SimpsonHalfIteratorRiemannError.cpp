@@ -38,7 +38,7 @@ void SimpsonHalfIteratorRiemannError::Reset ()
 
   m_clc_proj_newinternalprojection = 0;
   m_clc_proj_internal_error = 0;
-  m_clc_proj_external_error = lqc::Vector4d (0);
+  m_clc_proj_external_error = glm::dvec4 (0);
 }
 
 void SimpsonHalfIteratorRiemannError::PrintStepsEvaluation ()
@@ -50,7 +50,7 @@ void SimpsonHalfIteratorRiemannError::PrintStepsEvaluation ()
 #endif
 }
 
-void SimpsonHalfIteratorRiemannError::Init(lqc::Vector3d minp, lqc::Vector3d maxp, vr::Volume* vol, vr::TransferFunction* tf)
+void SimpsonHalfIteratorRiemannError::Init(glm::dvec3 minp, glm::dvec3 maxp, vr::Volume* vol, vr::TransferFunction* tf)
 {
   SimpsonIntegrator::Init (minp, maxp, vol, tf);
   rms.Init (vol, tf, minpos, normalized_step);
@@ -127,7 +127,7 @@ double SimpsonHalfIteratorRiemannError::InternalIntegral (double s, double h0, d
   return h;
 }
 
-bool SimpsonHalfIteratorRiemannError::ColorErrorEvalFunc (lqc::Vector4d a, lqc::Vector4d b, double tol)
+bool SimpsonHalfIteratorRiemannError::ColorErrorEvalFunc (glm::dvec4 a, glm::dvec4 b, double tol)
 {
   tol = 15.0 * tol;
   
@@ -142,11 +142,11 @@ void SimpsonHalfIteratorRiemannError::IteratedExternalIntegral (double h, double
   float s1 = anchor + h;
 
   float S2alfa;
-  lqc::Vector4d S, S2;
-  lqc::Vector4d F_a = ExternalEvaluationAnchor ();
-  lqc::Vector4d F_d, F_c, F_e, F_b;
+  glm::dvec4 S, S2;
+  glm::dvec4 F_a = ExternalEvaluationAnchor ();
+  glm::dvec4 F_d, F_c, F_e, F_b;
   float b, c, d, e;
-  lqc::Vector4d tf_d, tf_c, tf_e, tf_b;
+  glm::dvec4 tf_d, tf_c, tf_e, tf_b;
 
   while (s1 > anchor)
   {
