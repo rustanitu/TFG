@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <fstream>
 
-//#define HESSIAN
+#define HESSIAN
 
 Tank::Tank()
 : m_cells(NULL)
@@ -403,10 +403,9 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				double dx;
-				double dy;
-				double dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+        double dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+        double dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+        double dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
 
 				double v = GetValue(i, j, k);
 				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
@@ -434,9 +433,7 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
 	glm::vec3 parametric_grad(dfx, dfy, dfz);
 	glm::vec3 grad = jacob_inv * parametric_grad;
 
-	//m_scalar_fx[id] = grad.x;
-	//m_scalar_fy[id] = grad.y;
-	//m_scalar_fz[id] = grad.z;
+  m_grad[id] = grad;
 
 	g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, g);
@@ -474,9 +471,9 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 					gid = GetId(x, y, z);
 				}
 
-				double dgx = 0.0f;//m_scalar_fx[gid];
-				double dgy = 0.0f;//m_scalar_fy[gid];
-				double dgz = 0.0f;//m_scalar_fz[gid];
+				double dgx = m_grad[gid].x;
+				double dgy = m_grad[gid].y;
+				double dgz = m_grad[gid].z;
 				glm::vec3 ggrad(dgx, dgy, dgz);
 				double gv = glm::length(ggrad);
 
@@ -500,7 +497,7 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
 	glm::vec3 parametric_grad(dfx, dfy, dfz);
 	glm::vec3 grad = jacob_inv * parametric_grad;
-  glm::vec3 fgrad(0.0f);// m_scalar_fx[id], m_scalar_fy[id], m_scalar_fz[id]);
+  glm::vec3 fgrad(m_grad[id].x, m_grad[id].y, m_grad[id].z);
 	
 	g = glm::dot(grad, fgrad) / glm::length(fgrad);
 	m_max_laplacian = fmax(m_max_laplacian, g);
@@ -534,22 +531,17 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 		{
 			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
 			{
-				double dx, dy, dz;
-				m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+        double dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+        double dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+        double dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
 
 				int id = GetId(i, j, k);
-				double fdx = m_scalar_fx[id];
-				double fdy = m_scalar_fy[id];
-				double fdz = m_scalar_fz[id];
-
 				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
-				{
 					id = GetId(x, y, z);
-
-					fdx = m_scalar_fx[id];
-					fdy = m_scalar_fy[id];
-					fdz = m_scalar_fz[id];
-				}
+				
+        double fdx = m_grad[id].x;
+				double fdy = m_grad[id].y;
+				double fdz = m_grad[id].z;
 
 				pdx += abs(dx);
 				pdy += abs(dy);
@@ -573,19 +565,19 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 	fdxdx /= pdx;
 	fdxdy /= pdy;
 	fdxdz /= pdz;
-
+              
 	fdydx /= pdx;
 	fdydy /= pdy;
 	fdydz /= pdz;
-
+              
 	fdzdx /= pdx;
 	fdzdy /= pdy;
 	fdzdz /= pdz;
 
 	int id = GetId(x, y, z);
-	double dfx = m_scalar_fx[id];
-	double dfy = m_scalar_fy[id];
-	double dfz = m_scalar_fz[id];
+  double dfx = m_grad[id].x;
+  double dfy = m_grad[id].y;
+  double dfz = m_grad[id].z;
 
 	glm::vec3 parametric_dx_grad(fdxdx, fdxdy, fdxdz);
 	glm::vec3 parametric_dy_grad(fdydx, fdydy, fdydz);
@@ -597,11 +589,10 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 	glm::vec3 dz_grad = jacob_inv * parametric_dz_grad;
 
 	glm::mat3 hess(dx_grad, dy_grad, dz_grad);
-
 	glm::vec3 grad(dfx, dfy, dfz);
 
 	double length = glm::length(grad);
-	double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
+	double sec_deriv = glm::dot((grad * hess), grad) / (length * length);
 
 	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
 	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
@@ -826,7 +817,7 @@ void Tank::UpdateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, 
   //Returning laplacian
   glm::mat3 hess = jacob_inv * m_hess[id];
 
-  double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
+  double sec_deriv = glm::dot((grad * hess), grad) / (length * length);
 
   m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
   m_max_laplacian = fmax(m_max_laplacian, sec_deriv);

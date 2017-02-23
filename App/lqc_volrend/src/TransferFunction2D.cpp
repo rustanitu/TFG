@@ -152,6 +152,8 @@ namespace vr
       for (int j = 0; j < MAX_V; ++j)
       {
         double x = m_distmap->GetValue(i, j);
+        if (x == -DBL_MAX)
+          continue;
         double a = 0.0f;
         if (m_gaussian_bx)
           a = CenteredGaussianFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);

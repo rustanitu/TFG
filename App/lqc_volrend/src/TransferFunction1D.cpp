@@ -124,7 +124,7 @@ namespace vr
 	{
     assert(m_distmap);
 
-		printf("TransferFunction1D: GenerateGordonBased (from ATFG).\n");
+		printf("TransferFunction1D: Generate (from ATFG).\n");
 
 		ClearAlphaControlPoints();
 		IupSetAttribute(m_tf_plot, "CLEAR", "YES");

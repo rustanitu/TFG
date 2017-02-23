@@ -219,7 +219,7 @@ bool ATFGenerator::ExtractTransferFunction()
   else
     distmap = GetBoundaryDistancies2D();
 
-  distmap->PredictWithInverseDistanceWeighting(1.8f);
+  distmap->PredictWithInverseDistanceWeighting(1.8f, 32);
   m_transfer_function->SetClosestBoundaryDistances(distmap);
 	
   return true;
@@ -684,6 +684,37 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 		return false;
 	}
 
+#if 1
+  for (UINT32 x = 0; x < m_width; ++x)
+  {
+    for (UINT32 y = 0; y < m_height; ++y)
+    {
+      for (UINT32 z = 0; z < m_depth; ++z)
+      {
+        UINT32 id = m_scalarfield->GetId(x, y, z);
+        if (m_scalarfield->IsActive(x, y, z))
+          m_scalar_gradient[id] = m_scalarfield->CalculateGradient(x, y, z);
+        else
+          m_scalar_gradient[id] = -DBL_MAX;
+      }
+    }
+  }
+
+  for (UINT32 x = 0; x < m_width; ++x)
+  {
+    for (UINT32 y = 0; y < m_height; ++y)
+    {
+      for (UINT32 z = 0; z < m_depth; ++z)
+      {
+        UINT32 id = m_scalarfield->GetId(x, y, z);
+        if (m_scalarfield->IsActive(x, y, z))
+          m_scalar_laplacian[id] = m_scalarfield->CalculateLaplacian(x, y, z);
+        else
+          m_scalar_laplacian[id] = -DBL_MAX;
+      }
+    }
+  }
+#else
 	for ( UINT32 x = 0; x < m_width; ++x )
 	{
 		for ( UINT32 y = 0; y < m_height; ++y )
@@ -701,6 +732,7 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 			}
 		}
 	}
+#endif
 
 	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
 	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());

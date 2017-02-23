@@ -97,6 +97,8 @@ public:
         int m = it->second;
 
         double distance = sqrt(((i - l)*(i - l)) + ((j - m)*(j - m)));
+        if (d > 0 && distance > d)
+          continue;
         double w = (double)1.0f / pow(distance, p);
         val += (w * m_cells[l][m].GetValue());
         wij += w;
