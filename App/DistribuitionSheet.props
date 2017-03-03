@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_11_1;..\include\cd_5_8\Win32;..\include\im_3_9;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_21;..\include\cd_5_10\Win32;..\include\im_3_11;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\lib;..\lib\raytracer;..\lib\volrend;..\lib\glutils;..\lib\lqc;..\lib\math;..\lib\pthreads_w32\x86;..\lib\iup_3_11_1\Win32;..\lib\cd_5_8\Win32;..\lib\im_3_9;</AdditionalLibraryDirectories>

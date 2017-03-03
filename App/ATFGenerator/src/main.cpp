@@ -5,7 +5,7 @@
 #include <volrend\TransferFunction2D.h>
 #include <iup_mglplot.h>
 
-#if 0
+#if 1
 int main(int argc, char **argv)
 {
   IupOpen(&argc, &argv);
@@ -17,21 +17,23 @@ int main(int argc, char **argv)
   Ihandle* diag = IupDialog(IupVbox(plot, NULL));
   IupSetAttribute(diag, "SIZE", "HALFxFULL");
 
-  PredictionMap<double, DoubleCell> map(1, 256);
+  PredictionMap<double, DoubleCell> map(256, 256);
   if (!map.Init())
     return 0;
-  map.SetValue(-1.0f, 0, 64);
-  map.SetValue(0.5f, 0, 64 + 32);
-  map.SetValue(0.5f, 0, 32 + 128);
-  map.SetValue(1.0f, 0, 64 + 128);
-  map.PredictWithInverseDistanceWeighting(1.8);
+  map.SetValue(-1.0f, 128, 64);
+  map.SetValue(-0.5f, 130, 60);
+  map.SetValue(0.5f, 128 + 64, 64 + 32);
+  map.SetValue(0.5f, 128 - 64, 32 + 128);
+  map.SetValue(1.0f, 128, 64 + 128);
+  map.PredictWithRBF();
+  //map.PredictWithInverseDistanceWeighting(1.8f);
 
   double* data = new double[MAX_V*MAX_V];
   for (int i = 0; i < MAX_V; ++i)
   {
     for (int j = 0; j < MAX_V; ++j)
     {
-      double x = map.GetValue(0, i);
+      double x = map.GetValue(i, j);
       data[i + MAX_V*j] = x;
     }
   }

@@ -219,7 +219,8 @@ bool ATFGenerator::ExtractTransferFunction()
   else
     distmap = GetBoundaryDistancies2D();
 
-  distmap->PredictWithInverseDistanceWeighting(1.8f, 32);
+  //distmap->PredictWithInverseDistanceWeighting(1.8f, 32);
+  distmap->PredictWithRBF();
   m_transfer_function->SetClosestBoundaryDistances(distmap);
 	
   return true;
@@ -748,6 +749,8 @@ bool ATFGenerator::UpdateVolumeDerivatives()
 {
   assert(m_scalar_gradient && m_scalar_laplacian);
 
+  // Para remover esta verificacao basta escalar o "eixo correspondente da identidade".
+  // Se não é tank não precisa da jacobiana inversa, mas ainda assim o gradiente é alterado com o escalar de um eixo.
   if (!m_scalarfield->IsTank())
     return true;
 

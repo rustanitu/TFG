@@ -110,6 +110,8 @@ public:
     m_defined_cells.clear();
   }
 
+  void PredictWithRBF();
+
   void SetValue(const T& value, const int& i, const int& j)
   {
     if (i > m_width || i > m_height || i < 0 || j < 0)

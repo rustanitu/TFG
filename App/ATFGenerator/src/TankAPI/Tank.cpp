@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <fstream>
 
-#define HESSIAN
+//#define HESSIAN
 
 Tank::Tank()
 : m_cells(NULL)
@@ -377,7 +377,6 @@ glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
   y *= m_scale;
   z *= m_scale;
 
-	//glm::mat3 jacob = glm::transpose(glm::mat3(glm::normalize(x), glm::normalize(y), glm::normalize(z)));
   glm::mat3 jacob = glm::transpose(glm::mat3(x, y, z));
   return glm::inverse(jacob);
 }
@@ -423,17 +422,14 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
 	}
 }
 
-	dfx /= pdx;
-	dfy /= pdy;
-	dfz /= pdz;
-
 	int id = GetId(x, y, z);
+  m_grad[id].x = dfx / pdx;
+	m_grad[id].y = dfy / pdy;
+	m_grad[id].z = dfz / pdz;
+
 	
 	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
-	glm::vec3 parametric_grad(dfx, dfy, dfz);
-	glm::vec3 grad = jacob_inv * parametric_grad;
-
-  m_grad[id] = grad;
+  glm::vec3 grad = jacob_inv * m_grad[id];
 
 	g = glm::length(grad);
 	m_max_gradient = fmax(m_max_gradient, g);
@@ -471,11 +467,7 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 					gid = GetId(x, y, z);
 				}
 
-				double dgx = m_grad[gid].x;
-				double dgy = m_grad[gid].y;
-				double dgz = m_grad[gid].z;
-				glm::vec3 ggrad(dgx, dgy, dgz);
-				double gv = glm::length(ggrad);
+        double gv = glm::length(GetCellJacobianInverse(m_cells[gid]) * m_grad[gid]);
 
 				pdx += abs(dx);
 				pdy += abs(dy);
@@ -495,11 +487,10 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 	int id = GetId(x, y, z);
 
 	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
-	glm::vec3 parametric_grad(dfx, dfy, dfz);
-	glm::vec3 grad = jacob_inv * parametric_grad;
-  glm::vec3 fgrad(m_grad[id].x, m_grad[id].y, m_grad[id].z);
+	glm::vec3 parametric_gradgrad(dfx, dfy, dfz);
+  glm::vec3 gradgrad = jacob_inv * parametric_gradgrad;
 	
-	g = glm::dot(grad, fgrad) / glm::length(fgrad);
+  g = glm::dot(gradgrad, m_grad[id]) / glm::length(m_grad[id]);
 	m_max_laplacian = fmax(m_max_laplacian, g);
 	m_min_laplacian = fmin(m_min_laplacian, g);
 
@@ -797,10 +788,9 @@ void Tank::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& 
 
 void Tank::UpdateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l)
 {
+  //Returning gradient
   int id = GetId(x, y, z);
   glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
-
-  //Returning gradient
   glm::vec3 grad = jacob_inv * m_grad[id];
   double length = glm::length(grad);
 
@@ -814,13 +804,59 @@ void Tank::UpdateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, 
     return;
   }
 
-  //Returning laplacian
-  glm::mat3 hess = jacob_inv * m_hess[id];
+  double gg = 0.0f;
+  double dfx = 0.0f;
+  double dfy = 0.0f;
+  double dfz = 0.0f;
 
-  double sec_deriv = glm::dot((grad * hess), grad) / (length * length);
+  double pdx = 0.0f;
+  double pdy = 0.0f;
+  double pdz = 0.0f;
 
-  m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
-  m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
+  int h = MASK_SIZE / 2;
+  int xinit = x - h;
+  int yinit = y - h;
+  int zinit = z - h;
+  for (int i = xinit; i < xinit + MASK_SIZE; ++i)
+  {
+    for (int j = yinit; j < yinit + MASK_SIZE; ++j)
+    {
+      for (int k = zinit; k < zinit + MASK_SIZE; ++k)
+      {
+        double dx;
+        double dy;
+        double dz;
+        m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
-  *l = sec_deriv;
+        int gid = GetId(i, j, k);
+        if (IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive())
+        {
+          gid = GetId(x, y, z);
+        }
+
+        double gv = glm::length(GetCellJacobianInverse(m_cells[gid]) * m_grad[gid]);
+        m_max_gradient = fmax(m_max_gradient, gv);
+        m_min_gradient = fmin(m_min_gradient, gv);
+
+        pdx += abs(dx);
+        pdy += abs(dy);
+        pdz += abs(dz);
+
+        dfx += dx * gv;
+        dfy += dy * gv;
+        dfz += dz * gv;
+      }
+    }
+  }
+
+  dfx /= pdx;
+  dfy /= pdy;
+  dfz /= pdz;
+
+  glm::vec3 parametric_gradgrad(dfx, dfy, dfz);
+  glm::vec3 gradgrad = jacob_inv * parametric_gradgrad;
+
+  *l = glm::dot(gradgrad, m_grad[id]) / glm::length(m_grad[id]);
+  m_max_laplacian = fmax(m_max_laplacian, *l);
+  m_min_laplacian = fmin(m_min_laplacian, *l);
 }

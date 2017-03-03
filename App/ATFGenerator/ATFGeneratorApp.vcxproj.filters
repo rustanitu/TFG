@@ -255,6 +255,9 @@
     <ClCompile Include="src\TankAPI\Tank.cpp">
       <Filter>Source Files\TankAPI</Filter>
     </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\PredictionMap.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ViewMethod\ViewMethod.h">
