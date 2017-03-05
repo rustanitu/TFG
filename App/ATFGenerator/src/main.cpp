@@ -2,7 +2,7 @@
 
 #include <volrend\VolWriter.h>
 
-#include <volrend\TransferFunction2D.h>
+#include <volrend\TransferFunction.h>
 #include <iup_mglplot.h>
 
 #if 1
@@ -21,9 +21,9 @@ int main(int argc, char **argv)
   if (!map.Init())
     return 0;
   map.SetValue(-1.0f, 128, 64);
-  map.SetValue(-0.5f, 130, 60);
-  map.SetValue(0.5f, 128 + 64, 64 + 32);
-  map.SetValue(0.5f, 128 - 64, 32 + 128);
+  //map.SetValue(-0.5f, 130, 60);
+  //map.SetValue(0.5f, 128 + 64, 64 + 32);
+  //map.SetValue(0.5f, 128 - 64, 32 + 128);
   map.SetValue(1.0f, 128, 64 + 128);
   map.PredictWithRBF();
   //map.PredictWithInverseDistanceWeighting(1.8f);
@@ -34,7 +34,8 @@ int main(int argc, char **argv)
     for (int j = 0; j < MAX_V; ++j)
     {
       double x = map.GetValue(i, j);
-      data[i + MAX_V*j] = x;
+			double a = vr::TransferFunction::CenteredGaussianFunction(x, 1.0f, 1.0f, 0.0f);
+      data[i + MAX_V*j] = a;
     }
   }
 
@@ -46,9 +47,9 @@ int main(int argc, char **argv)
   //IupSetAttribute(plot, "OPENGL", "YES");
   IupSetAttribute(plot, "LIGHT", "NO");
   IupSetAttribute(plot, "AXS_ZAUTOMIN", "NO");
-  IupSetAttribute(plot, "AXS_ZMIN", "-1.001");
+  IupSetAttribute(plot, "AXS_ZMIN", "-1.1");
   IupSetAttribute(plot, "AXS_ZAUTOMAX", "NO");
-  IupSetAttribute(plot, "AXS_ZMAX", "1.001");
+  IupSetAttribute(plot, "AXS_ZMAX", "1.1");
   IupSetAttribute(plot, "AXS_XLABEL", "Scalar Value");
   IupSetAttribute(plot, "AXS_YLABEL", "Gradient");
   IupSetAttribute(plot, "AXS_ZLABEL", "Alpha");

@@ -47,7 +47,7 @@ void PredictionMap<double, DoubleCell>::PredictWithRBF()
     ++i;
   }
 
-  arma::Mat<double> inverse_sigma_mat = arma::inv_sympd(sigma_mat);
+  arma::Mat<double> inverse_sigma_mat = arma::inv(sigma_mat);
   arma::Col<double> w = inverse_sigma_mat * p;
 
   while (!m_undefined_cells.empty())
