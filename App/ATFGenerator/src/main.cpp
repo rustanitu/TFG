@@ -20,22 +20,32 @@ int main(int argc, char **argv)
   PredictionMap<double, DoubleCell> map(256, 256);
   if (!map.Init())
     return 0;
-  map.SetValue(-1.0f, 128, 64);
-  //map.SetValue(-0.5f, 130, 60);
-  //map.SetValue(0.5f, 128 + 64, 64 + 32);
-  //map.SetValue(0.5f, 128 - 64, 32 + 128);
-  map.SetValue(1.0f, 128, 64 + 128);
-  map.PredictWithRBF();
-  //map.PredictWithInverseDistanceWeighting(1.8f);
+  map.SetValue(1.0f, 64, 128);
+  map.SetValue(1.0f, 64, 60);
+  map.SetValue(1.0f, 64, 64);
+  map.SetValue(1.0f, 130, 68);
+  map.SetValue(1.0f, 128 + 64, 64 + 32);
+  map.SetValue(1.0f, 128 - 64, 32 + 128);
+  map.SetValue(1.0f, 64, 125);
+  map.SetValue(1.0f, 64 + 128, 128);
+  map.SetValue(1.0f, 64 + 128 - 32, 128);
+  map.Interpolate();
 
   double* data = new double[MAX_V*MAX_V];
   for (int i = 0; i < MAX_V; ++i)
   {
     for (int j = 0; j < MAX_V; ++j)
     {
+#if 1
+      if (!map.IsDefined(i, j))
+      {
+        data[i + MAX_V*j] = -1.0f;
+        continue;
+      }
+#endif
       double x = map.GetValue(i, j);
 			double a = vr::TransferFunction::CenteredGaussianFunction(x, 1.0f, 1.0f, 0.0f);
-      data[i + MAX_V*j] = a;
+      data[i + MAX_V*j] = x;
     }
   }
 
@@ -54,6 +64,7 @@ int main(int argc, char **argv)
   IupSetAttribute(plot, "AXS_YLABEL", "Gradient");
   IupSetAttribute(plot, "AXS_ZLABEL", "Alpha");
   //IupSetAttribute(plot, "COLORSCHEME", "kw");
+  IupSetAttribute(plot, "COLORSCHEME", "kkby");
   IupSetAttribute(plot, "ROTATE", "90:0:0");
   IupSetAttribute(plot, "REDRAW", NULL);
 

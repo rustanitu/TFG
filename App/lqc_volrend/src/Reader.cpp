@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 
+#undef K_J
+
 #include <lqc/File/RAWLoader.h>
 
 #include <volrend/TransferFunction1D.h>

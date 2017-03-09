@@ -1,6 +1,8 @@
 #ifndef VOLREND_READER_H
 #define VOLREND_READER_H
 
+#undef K_J
+
 #include <volrend/TransferFunction.h>
 #include <volrend/Volume.h>
 #include <volrend/ScalarField.h>

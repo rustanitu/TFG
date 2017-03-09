@@ -196,6 +196,8 @@
     <ClCompile Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.cpp" />
     <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\Cluster.cpp" />
+    <ClCompile Include="src\AutomaticTransferFunction\ClusterSet.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\DerivativeMask.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\FastTFGenerator.cpp" />
     <ClCompile Include="src\AutomaticTransferFunction\Histogram.cpp" />
@@ -251,6 +253,8 @@
     <ClInclude Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.h" />
     <ClInclude Include="src\AdaptiveEvaluation\ViewMethodAdaptive.h" />
     <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\ClusterSet.h" />
+    <ClInclude Include="src\AutomaticTransferFunction\Cluster.h" />
     <ClInclude Include="src\AutomaticTransferFunction\DerivativeMask.h" />
     <ClInclude Include="src\AutomaticTransferFunction\FastTFGenerator.h" />
     <ClInclude Include="src\AutomaticTransferFunction\Histogram.h" />

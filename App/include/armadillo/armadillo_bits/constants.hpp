@@ -17,6 +17,9 @@
 //! \addtogroup constants
 //! @{
 
+#ifdef K_J
+#undef K_J
+#endif
 
 namespace priv
   {

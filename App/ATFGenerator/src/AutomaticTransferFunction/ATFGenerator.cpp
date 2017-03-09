@@ -219,8 +219,7 @@ bool ATFGenerator::ExtractTransferFunction()
   else
     distmap = GetBoundaryDistancies2D();
 
-  //distmap->PredictWithInverseDistanceWeighting(1.8f, 32);
-  distmap->PredictWithRBF();
+  distmap->Interpolate();
   m_transfer_function->SetClosestBoundaryDistances(distmap);
 	
   return true;

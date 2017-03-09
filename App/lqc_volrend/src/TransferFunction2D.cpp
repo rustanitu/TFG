@@ -152,8 +152,13 @@ namespace vr
       for (int j = 0; j < MAX_V; ++j)
       {
         double x = m_distmap->GetValue(i, j);
-        if (x == -DBL_MAX)
+#if 1
+        if (!m_distmap->IsDefined(i, j))
+        {
+          data[i + MAX_V*j] = -1.0f;
           continue;
+        }
+#endif
         double a = 0.0f;
         if (m_gaussian_bx)
           a = CenteredGaussianFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);
@@ -172,13 +177,14 @@ namespace vr
 		//IupSetAttribute(m_tf_plot, "OPENGL", "YES");
 		IupSetAttribute(m_tf_plot, "LIGHT", "NO");
 		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMIN", "NO");
-		IupSetAttribute(m_tf_plot, "AXS_ZMIN", "-0.001");
+		IupSetAttribute(m_tf_plot, "AXS_ZMIN", "-1.001");
 		IupSetAttribute(m_tf_plot, "AXS_ZAUTOMAX", "NO");
 		IupSetAttribute(m_tf_plot, "AXS_ZMAX", "1.001");
 		IupSetAttribute(m_tf_plot, "AXS_XLABEL", "Scalar Value");
 		IupSetAttribute(m_tf_plot, "AXS_YLABEL", "Gradient");
 		IupSetAttribute(m_tf_plot, "AXS_ZLABEL", "Alpha");
-    IupSetAttribute(m_tf_plot, "COLORSCHEME", "kw");
+    //IupSetAttribute(m_tf_plot, "COLORSCHEME", "kw");
+    IupSetAttribute(m_tf_plot, "COLORSCHEME", "kkry");
 		//IupSetAttribute(m_tf_plot, "ROTATE", "0:0:-90");
 		IupSetAttribute(m_tf_plot, "REDRAW", NULL);
 

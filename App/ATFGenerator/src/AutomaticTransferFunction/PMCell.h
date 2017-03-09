@@ -6,6 +6,7 @@
 #define PM_CELL_H
 
 #include <lqc/lqcdefines.h>
+#include <float.h>
 
 template <class T>
 class PMCell

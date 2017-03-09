@@ -258,6 +258,12 @@
     <ClCompile Include="src\AutomaticTransferFunction\PredictionMap.cpp">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\Cluster.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AutomaticTransferFunction\ClusterSet.cpp">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ViewMethod\ViewMethod.h">
@@ -432,6 +438,12 @@
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
     <ClInclude Include="src\AutomaticTransferFunction\PredictionMap.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\Cluster.h">
+      <Filter>Source Files\AutomaticTransferFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AutomaticTransferFunction\ClusterSet.h">
       <Filter>Source Files\AutomaticTransferFunction</Filter>
     </ClInclude>
   </ItemGroup>
