@@ -2,7 +2,7 @@
 /// Rustam Mesquita
 /// rustam@tecgraf.puc-rio.br
 
-#include <volrend\VolWriter.h>
+#include "VolWriter.h"
 #include <assert.h>
 #include <string.h>
 #include <math.h>

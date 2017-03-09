@@ -1,4 +1,4 @@
-#include <volrend/TransferFunction1D.h>
+#include "TransferFunction1D.h"
 
 #include <fstream>
 #include <cstdlib>

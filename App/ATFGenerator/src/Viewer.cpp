@@ -157,8 +157,6 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 
 		delete m_atfg;
 		m_atfg = NULL;
-		delete m_fast_tfg;
-		m_fast_tfg = NULL;
 		m_transfer_function = NULL;
 
 		try {
@@ -189,8 +187,6 @@ void Viewer::SetVolumeModel(vr::ScalarField* vol, std::string file)
 
 		delete m_atfg;
 		m_atfg = NULL;
-		delete m_fast_tfg;
-		m_fast_tfg = NULL;
 		m_transfer_function = NULL;
 	}
 }
@@ -542,7 +538,6 @@ Viewer::Viewer()
 	m_volumename = "NULL";
 
 	m_atfg = NULL;
-	m_fast_tfg = NULL;
 	m_extract_atfg = false;
 	m_generate_atfg = false;
 }

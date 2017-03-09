@@ -1,4 +1,4 @@
-#include <volrend/TransferFunction.h>
+#include "TransferFunction.h"
 
 namespace vr
 {

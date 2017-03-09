@@ -13,6 +13,7 @@
 #include <glutils/GLTexture1D.h>
 #include <glutils/GLTexture2D.h>
 #include <glutils/GLTexture3D.h>
+#include <volrend/ATFGenerator.h>
 #include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 
@@ -24,7 +25,6 @@
 #include <glutils/GLArrayObject.h>
 #include <glutils/GLBufferObject.h>
 
-#include "../AutomaticTransferFunction/ATFGenerator.h"
 
 #include <iup.h>
 #include <iupgl.h>

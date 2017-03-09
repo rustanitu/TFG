@@ -4,7 +4,7 @@
 #include <glutils/GLTexture3D.h>|
 #include <volrend/transferfunction.h>
 #include <volrend/ScalarField.h>
-#include "../../ATFGenerator/src/AutomaticTransferFunction/ATFGenerator.h"
+#include <volrend/ATFGenerator.h>
 
 namespace vr
 {

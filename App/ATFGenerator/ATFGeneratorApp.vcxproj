@@ -5,17 +5,9 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -32,22 +24,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>Sequential</UseIntelMKL>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>Sequential</UseIntelMKL>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -62,27 +39,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\DistribuitionSheet.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\DistribuitionSheet.props" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\DistribuitionSheet.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\DistribuitionSheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(MKLIncludeDir);$(IncludePath);$(MKLIncludeDir)</IncludePath>
-    <LibraryPath>$(MKLLibDir);$(LibraryPath);$(MKLLibDir)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
@@ -98,15 +60,6 @@
     <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VCInstallDir)UnitTest\include;$(IncludePath);$(MKLIncludeDir)</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);;$(VCInstallDir)UnitTest\lib$(LibraryPath);$(MKLLibDir)</LibraryPath>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
@@ -115,22 +68,6 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_21;..\include\cd_5_10\Win32;..\include\im_3_11;..\include\armadillo</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\lib;..\lib\raytracer;..\lib\volrend;..\lib\glutils;..\lib\lqc;..\lib\math;..\lib\pthreads_w32\x86;..\lib\iup_3_21\$(Platform);..\lib\cd_5_10\$(Platform);..\lib\im_3_11</AdditionalLibraryDirectories>
-      <AdditionalDependencies>iup_plot.lib;iupgl.lib;iup.lib;im.lib;pthreadVC2.lib;raytracer_d.lib;volrend_d.lib;glutils_d.lib;lqc_d.lib;math_d.lib;glew32.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_21;..\include\cd_5_10;..\include\im_3_11;..\include\armadillo</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,45 +102,10 @@
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include;..\include\pthreads_w32;..\include\iup_3_21;..\include\cd_5_10;..\include\im_3_11;..\include\armadillo</AdditionalIncludeDirectories>
-      <EnablePREfast>false</EnablePREfast>
-      <BrowseInformation>true</BrowseInformation>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\lib;..\lib\raytracer;..\lib\volrend;..\lib\glutils;..\lib\lqc;..\lib\math;..\lib\pthreads_w32\x86;..\lib\iup_3_21\$(Platform);..\lib\cd_5_10\$(Platform);..\lib\im_3_11</AdditionalLibraryDirectories>
-      <AdditionalDependencies>iupgl.lib;iup_plot.lib;iup.lib;im.lib;pthreadVSE2.lib;raytracer.lib;volrend.lib;glutils.lib;lqc.lib;math.lib;glew32.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>false</Profile>
-    </Link>
-    <Bscmake>
-      <PreserveSbr>true</PreserveSbr>
-    </Bscmake>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AdaptiveEvaluation\RendererAdaptive.cpp" />
     <ClCompile Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.cpp" />
     <ClCompile Include="src\AdaptiveEvaluation\ViewMethodAdaptive.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\ATFGenerator.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\Cluster.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\ClusterSet.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\DerivativeMask.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\FastTFGenerator.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\Histogram.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\PGMFile.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\FunctionDesigner.cpp" />
-    <ClCompile Include="src\AutomaticTransferFunction\PredictionMap.cpp" />
     <ClCompile Include="src\CPUTimer.cpp" />
     <ClCompile Include="src\CPU\Coupled.cpp" />
     <ClCompile Include="src\CPU\Decoupled.cpp" />
@@ -242,8 +144,6 @@
     <ClCompile Include="src\IAS\UserInterfaceIAS.cpp" />
     <ClCompile Include="src\IAS\ViewMethodIAS.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\TankAPI\Cell.cpp" />
-    <ClCompile Include="src\TankAPI\Tank.cpp" />
     <ClCompile Include="src\TransferFunctionViewer\TransferFunctionsViewer.cpp" />
     <ClCompile Include="src\Viewer.cpp" />
     <ClCompile Include="src\ViewerInterface.cpp" />
@@ -252,18 +152,6 @@
     <ClInclude Include="src\AdaptiveEvaluation\RendererAdaptive.h" />
     <ClInclude Include="src\AdaptiveEvaluation\UserInterfaceAdaptive.h" />
     <ClInclude Include="src\AdaptiveEvaluation\ViewMethodAdaptive.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\ATFGenerator.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\ClusterSet.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\Cluster.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\DerivativeMask.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\FastTFGenerator.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\Histogram.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\ITransferFunction.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\FunctionDesigner.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\IATFGenerator.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\PGMFile.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\PMCell.h" />
-    <ClInclude Include="src\AutomaticTransferFunction\PredictionMap.h" />
     <ClInclude Include="src\CPUTimer.h" />
     <ClInclude Include="src\CPU\CommonSimpsonIntegrationFunctions.hpp" />
     <ClInclude Include="src\CPU\defines.h" />
@@ -302,8 +190,6 @@
     <ClInclude Include="src\IAS\RendererIAS.h" />
     <ClInclude Include="src\IAS\UserInterfaceIAS.h" />
     <ClInclude Include="src\IAS\ViewMethodIAS.h" />
-    <ClInclude Include="src\TankAPI\Cell.h" />
-    <ClInclude Include="src\TankAPI\Tank.h" />
     <ClInclude Include="src\TransferFunctionViewer\TransferFunctionsViewer.h" />
     <ClInclude Include="src\Viewer.h" />
     <ClInclude Include="src\ViewerInterface.h" />

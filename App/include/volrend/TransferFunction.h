@@ -6,7 +6,7 @@
 #include <vector>
 #include <iup.h>
 #include <glutils/GLTexture1D.h>
-#include "../../ATFGenerator/src/AutomaticTransferFunction/PredictionMap.h"
+#include <volrend/PredictionMap.h>
 
 #define MAX_V 256
 #define PI 3.1415926535897932384626433832795

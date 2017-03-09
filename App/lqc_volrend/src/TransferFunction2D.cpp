@@ -1,4 +1,4 @@
-#include <volrend/TransferFunction2D.h>
+#include "TransferFunction2D.h"
 
 #include <fstream>
 #include <cstdlib>

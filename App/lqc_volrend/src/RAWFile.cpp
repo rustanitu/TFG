@@ -2,7 +2,7 @@
 /// Rustam Mesquita
 /// rustam@tecgraf.puc-rio.br
 
-#include <volrend\RAWFile.h>
+#include "RAWFile.h"
 #include <assert.h>
 #include <string.h>
 

@@ -1,16 +1,14 @@
-#include <volrend/Reader.h>
+#include "Reader.h"
+
+#include "TransferFunction1D.h"
+#include "Tank.h"
+
+#include <lqc/File/RAWLoader.h>
 
 #include <cstdio>
 #include <stdio.h>
 #include <fstream>
 #include <string>
-
-#undef K_J
-
-#include <lqc/File/RAWLoader.h>
-
-#include <volrend/TransferFunction1D.h>
-#include "../../ATFGenerator/src/TankAPI/Tank.h"
 
 namespace vr
 {

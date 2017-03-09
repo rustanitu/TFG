@@ -5,40 +5,52 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\glutils\GLTexture.h" />
-    <ClInclude Include="..\include\volrend\RAWFile.h" />
-    <ClInclude Include="..\include\volrend\Reader.h" />
-    <ClInclude Include="..\include\volrend\ScalarField.h" />
-    <ClInclude Include="..\include\volrend\TransferFunction.h" />
-    <ClInclude Include="..\include\volrend\TransferFunction1D.h" />
-    <ClInclude Include="..\include\volrend\TransferFunction2D.h" />
-    <ClInclude Include="..\include\volrend\Utils.h" />
-    <ClInclude Include="..\include\volrend\Volume.h" />
-    <ClInclude Include="..\include\volrend\VolWriter.h" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="src\ATFGenerator.cpp" />
+    <ClCompile Include="src\Cell.cpp" />
+    <ClCompile Include="src\Cluster.cpp" />
+    <ClCompile Include="src\ClusterSet.cpp" />
+    <ClCompile Include="src\DerivativeMask.cpp" />
+    <ClCompile Include="src\Histogram.cpp" />
+    <ClCompile Include="src\PGMFile.cpp" />
+    <ClCompile Include="src\PredictionMap.cpp" />
     <ClCompile Include="src\RAWFile.cpp" />
     <ClCompile Include="src\Reader.cpp" />
+    <ClCompile Include="src\Tank.cpp" />
     <ClCompile Include="src\TransferFunction.cpp" />
     <ClCompile Include="src\TransferFunction1D.cpp" />
     <ClCompile Include="src\TransferFunction2D.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Volume.cpp" />
     <ClCompile Include="src\VolWriter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ATFGenerator.h" />
+    <ClInclude Include="src\Cell.h" />
+    <ClInclude Include="src\Cluster.h" />
+    <ClInclude Include="src\ClusterSet.h" />
+    <ClInclude Include="src\DerivativeMask.h" />
+    <ClInclude Include="src\Histogram.h" />
+    <ClInclude Include="src\IATFGenerator.h" />
+    <ClInclude Include="src\ITransferFunction.h" />
+    <ClInclude Include="src\PGMFile.h" />
+    <ClInclude Include="src\PMCell.h" />
+    <ClInclude Include="src\PredictionMap.h" />
+    <ClInclude Include="src\RAWFile.h" />
+    <ClInclude Include="src\Reader.h" />
+    <ClInclude Include="src\ScalarField.h" />
+    <ClInclude Include="src\Tank.h" />
+    <ClInclude Include="src\TransferFunction.h" />
+    <ClInclude Include="src\TransferFunction1D.h" />
+    <ClInclude Include="src\TransferFunction2D.h" />
+    <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\Volume.h" />
+    <ClInclude Include="src\VolWriter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{391CCFF5-EAF5-4262-B47A-F9DB0B220605}</ProjectGuid>
@@ -54,22 +66,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>Sequential</UseIntelMKL>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseIntelMKL>Sequential</UseIntelMKL>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -83,13 +80,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -98,22 +89,12 @@
     <OutDir>$(SolutionDir)\lib\volrend\</OutDir>
     <TargetName>volrend_d</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>volrend_d</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MKLIncludeDir)</IncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MKLIncludeDir)</IncludePath>
     <OutDir>$(SolutionDir)\lib\volrend\</OutDir>
     <TargetName>volrend</TargetName>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>volrend</TargetName>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MKLIncludeDir)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,48 +114,7 @@
       <AdditionalDependencies>math\math_d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include; ..\include\iup_3_21;..\include\armadillo</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-    <Lib>
-      <AdditionalLibraryDirectories>..\lib; ..\lib\iup_3_21\$(Platform)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>math\math_d.lib</AdditionalDependencies>
-    </Lib>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\include; ..\include\iup_3_21;..\include\armadillo</AdditionalIncludeDirectories>
-      <EnablePREfast>false</EnablePREfast>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-    <Lib>
-      <AdditionalLibraryDirectories>..\lib; ..\lib\iup_3_19_1\Win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>math\math.lib</AdditionalDependencies>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>

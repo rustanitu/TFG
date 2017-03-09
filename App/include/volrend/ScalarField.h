@@ -5,7 +5,7 @@
 #include <string>
 #include <math/MUtils.h>
 
-#include "../../ATFGenerator/src/AutomaticTransferFunction/DerivativeMask.h"
+#include <volrend/DerivativeMask.h>
 
 #define MASK_SIZE 3
 

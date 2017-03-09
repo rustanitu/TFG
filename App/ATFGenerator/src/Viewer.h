@@ -15,13 +15,12 @@
 
 #include "ViewerInterface.h"
 #include "ViewMethod/ViewMethod.h"
-#include "AutomaticTransferFunction\ATFGenerator.h"
-#include "AutomaticTransferFunction\FastTFGenerator.h"
 
 #include <iup.h>
 #include <iup_plot.h>
 #include <iupgl.h>
 
+#include <volrend/ATFGenerator.h>
 #include <volrend/ScalarField.h>
 #include <volrend/TransferFunction.h>
 
@@ -91,7 +90,6 @@ public:
 
 	/*! Automatic Transfer Function Generator*/
 	ATFGenerator* m_atfg;
-	FastTFGenerator* m_fast_tfg;
 
 	/*! The current ViewMethod being used.*/
 	VRVIEWS m_current_view;
