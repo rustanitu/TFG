@@ -62,6 +62,9 @@
     <ClCompile Include="src\Tank.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Brick8.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\atfg\ATFGenerator.h">
@@ -137,6 +140,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\atfg\VolWriter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\atfg\Brick8.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include <atfg\TransferFunction.h>
 #include <iup_mglplot.h>
 
-#if 1
+#if 0
 int main(int argc, char **argv)
 {
   IupOpen(&argc, &argv);

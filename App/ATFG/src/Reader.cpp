@@ -2,6 +2,7 @@
 
 #include "TransferFunction1D.h"
 #include "Tank.h"
+#include "Brick8.h"
 
 #include <lqc/File/RAWLoader.h>
 
@@ -39,6 +40,8 @@ namespace vr
 			if ( tank->Read(filepath.c_str()) )
 			{
 				ret = tank;
+        Brick8 b(tank);
+        b.WriteNeutralFile(std::string(filepath + ".pos").c_str());
 			}
 		}
 		else

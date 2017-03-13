@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ATFGenerator.cpp" />
+    <ClCompile Include="src\Brick8.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\ClusterSet.cpp" />
@@ -39,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\atfg\ATFGenerator.h" />
+    <ClInclude Include="..\include\atfg\Brick8.h" />
     <ClInclude Include="..\include\atfg\Cell.h" />
     <ClInclude Include="..\include\atfg\Cluster.h" />
     <ClInclude Include="..\include\atfg\ClusterSet.h" />
@@ -119,12 +121,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MKLIncludeDir)</IncludePath>
-    <OutDir>$(SolutionDir)\lib\$(Platform)\atfg\</OutDir>
+    <OutDir>$(SolutionDir)\lib\atfg\$(Platform)</OutDir>
     <TargetName>atfg_d</TargetName>
+    <IntDir>$(Configuration)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>atfg_d</TargetName>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MKLIncludeDir)</IncludePath>
+    <OutDir>$(SolutionDir)\lib\atfg\$(Platform)</OutDir>
+    <IntDir>$(Configuration)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MKLIncludeDir)</IncludePath>

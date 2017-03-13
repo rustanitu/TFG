@@ -18,6 +18,24 @@ public:
 	double GetValue(const UINT32& x, const UINT32& y, const UINT32& z);
 	double GetValue(const UINT32& id);
 
+  const Cell& GetCell(const UINT32& x, const UINT32& y, const UINT32& z);
+  const Cell& GetCell(const UINT32& id);
+
+  int GetCellsNum()
+  {
+    return m_ncells;
+  }
+  
+  glm::vec3* GetVertices()
+  {
+    return m_vertices;
+  }
+
+  int GetVerticesNum()
+  {
+    return m_nvertices;
+  }
+
 	double CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z);
 	double CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z);
 	void CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l);

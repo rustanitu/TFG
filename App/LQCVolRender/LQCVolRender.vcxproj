@@ -134,7 +134,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>iup_plot.lib;iup_mglplot_d.lib;cd.lib;iupgl.lib;iup.lib;im.lib;raytracer_d.lib;atfg_d.lib;glutils_d.lib;lqc_d.lib;glew32.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>iup_plot.lib;iup_mglplot.lib;cd.lib;iupgl.lib;iup.lib;im.lib;raytracer_d.lib;atfg_d.lib;glutils_d.lib;lqc_d.lib;glew32.lib;glew32s.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\lib;..\lib\atfg\$(Platform);..\lib\cd_5_11\$(Platform);..\lib\glutils\$(Platform);..\lib\im_3_12\$(Platform);..\lib\iup_3_21\$(Platform);..\lib\lqc\$(Platform);..\lib\opengl\$(Platform);..\lib\raytracer\$(Platform);..\lib\math\$(Platform);</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

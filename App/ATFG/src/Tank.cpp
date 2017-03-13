@@ -94,6 +94,12 @@ bool Tank::Read(const char* filepath)
 			return false;
 
 		int id = GetId(i, j, k);
+    if (id != c)
+    {
+      printf("O mapeamento do volume difere do experado.\n");
+      return false;
+    }
+
 		Cell* cell = &(m_cells[id]);
 		cell->Init(i, j, k, active, m_nsteps);
 
@@ -187,6 +193,16 @@ double Tank::GetValue(const UINT32& id)
 	return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : -DBL_MAX;
 }
 
+const Cell& Tank::GetCell(const UINT32& x, const UINT32& y, const UINT32& z)
+{
+  return GetCell(GetId(x, y, z));
+}
+
+const Cell& Tank::GetCell(const UINT32& id)
+{
+  return m_cells[id];
+}
+
 bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const glm::vec3& m, const glm::vec3& n, float* s, float* t)
 {
 	double det;
@@ -246,19 +262,47 @@ bool Tank::GetSegmentIntersection(const glm::vec3& k, const glm::vec3& l, const 
 void Tank::FillCellAdjCenter(Cell& cell)
 {
 	//midle edge definition
-	//
-	//         6____ub____7              5   1
-	//        /|         /               ^  /!
-	//      ul |       ur|               |  /
-	//      /  lb      / rb              | /
-	//    2/___|uf____/3 |       2 ------|-------> 3
-	//    |   4|___db|___|5             /|
-	//    |   /      |   /             / |
-	//    lf dl      rf dr            /  |
-	//    | /        | /             0   4
-	//    |/____df___|/
-	//    0          1
-	//
+	/*                                   e2
+   *                  v2              <--                 v3
+   *                  n2----------------------------------n3
+   *                  /.                                  /| 
+   *                 / .                                 / |
+   *                /  .                                /  |
+   *               /   .                               /   |
+   *        e3 /  /    .         f0                ^  /    |
+   *          v  /     .                       e1 /  /     |    
+   *            /      . |e10                       /      |   | e9
+   *           /       . v              f5         /       |   v
+   *          /        .                          /        |
+   *        n0----------------------------------n1         |
+   *        v0         .      -->               v1         |
+   *         |         .      e0                 |         |
+   *         |   f3    .              e6         |    f2   |
+   *         |         . /           <--         |         |
+   *         |        n6 . . . . . . . . . . . . | . . . .n7
+   *         |       .v6                         |        v7
+   *   e11|  |      .       f4             e8 |  |       /
+   *      v  | e7/ .                          v  |      /
+   *         |  v .                              |     /   ^
+   *         |   .               f1              |    /   /e5 
+   *         |  .                                |   /
+   *         | .                                 |  /
+   *         |.                                  | /
+   *        n4-----------------------------------n5
+   *        v4                -->                v5
+   *                          e4
+   *        Kdir up ^ 
+   *                |  ^ J regular
+   *                | /
+   *   I inverted   |/    
+   *          <-----* ----->  
+   *               /|      I regular
+   *              / |
+   * J inverted  v  |
+   *                |
+   *      Kdir down v
+   */
+
 	glm::vec3 uf = (m_vertices[cell.GetIthVertexIndex(2)] + m_vertices[cell.GetIthVertexIndex(3)]) / 2.0f;
 	glm::vec3 df = (m_vertices[cell.GetIthVertexIndex(0)] + m_vertices[cell.GetIthVertexIndex(1)]) / 2.0f;
 	glm::vec3 rf = (m_vertices[cell.GetIthVertexIndex(1)] + m_vertices[cell.GetIthVertexIndex(3)]) / 2.0f;
@@ -278,99 +322,49 @@ void Tank::FillCellAdjCenter(Cell& cell)
 	float psega = -1;
 	float psegb = -1;
 
-	// Front face center
-	glm::vec3 ffc(0);
+	glm::vec3 k_up_center(0);
 	if (GetSegmentIntersection(uf, df, rf, lf, &psega, &psegb))
-		ffc = uf + psega * (df - uf);
+    k_up_center = uf + psega * (df - uf);
+  cell.SetFaceCenter(0, k_up_center);
 
-	// Back face center
-	glm::vec3 bfc(0);
+  glm::vec3 k_down_center(0);
 	if (GetSegmentIntersection(ub, db, rb, lb, &psega, &psegb))
-		bfc = ub + psega * (db - ub);
+    k_down_center = ub + psega * (db - ub);
+  cell.SetFaceCenter(1, k_down_center);
 
-	// Up face center
-	glm::vec3 ufc(0);
+	glm::vec3 j_regular_center(0);
 	if (GetSegmentIntersection(uf, ub, ul, ur, &psega, &psegb))
-		ufc = uf + psega * (ub - uf);
+    j_regular_center = uf + psega * (ub - uf);
+  cell.SetFaceCenter(5, j_regular_center);
 
-	// Down face center
-	glm::vec3 dfc(0);
+	glm::vec3 j_inverted_center(0);
 	if (GetSegmentIntersection(df, db, dl, dr, &psega, &psegb))
-		dfc = df + psega * (db - df);
+    j_inverted_center = df + psega * (db - df);
+  cell.SetFaceCenter(4, j_inverted_center);
 
-	// Redudant Code
-	/*
-	// Right face center
-	glm::vec3 rfc(0);
+	glm::vec3 x_regular_center(0);
 	if (GetSegmentIntersection(rf, rb, ur, dr, &psega, &psegb))
-		rfc = rf + psega * (rb - rf);
+    x_regular_center = rf + psega * (rb - rf);
+  cell.SetFaceCenter(2, x_regular_center);
 
-	// Left face center
-	glm::vec3 lfc(0);
+  glm::vec3 x_inverted_center(0);
 	if (GetSegmentIntersection(lf, lb, ul, dl, &psega, &psegb))
-		lfc = lf + psega * (lb - lf);
-
-	// Vertical-Horizontal Intersection
-	glm::vec3 vhi(0);
-	if (GetSegmentIntersection(ufc, dfc, lfc, rfc, &psega, &psegb))
-		vhi = ufc + psega * (dfc - ufc);
-
-	// Depth-Horizontal Intersection
-	glm::vec3 dhi(0);
-	if (GetSegmentIntersection(ffc, bfc, lfc, rfc, &psega, &psegb))
-		dhi = ffc + psega * (bfc - ffc);
-	 
-	 //*/
+    x_inverted_center = lf + psega * (lb - lf);
+  cell.SetFaceCenter(3, x_inverted_center);
 
 	// Vertical-Depth Intersection
-	glm::vec3 vdi(-FLT_MAX);
-	if (GetSegmentIntersection(ufc, dfc, ffc, bfc, &psega, &psegb))
-		vdi = ufc + psega * (dfc - ufc);
-	cell.SetCenter(vdi);
-
-	// Right Face Intersection
-	glm::vec3 rfi(-FLT_MAX);
-	if (GetSegmentIntersection(rf, rb, dr, ur, &psega, &psegb))
-		rfi = rf + psega * (rb - rf);
-	cell.SetFaceCenter(2, rfi);
-
-	// Left Face Intersection
-	glm::vec3 lfi(-FLT_MAX);
-	if (GetSegmentIntersection(lf, lb, dl, ul, &psega, &psegb))
-		lfi = lf + psega * (lb - lf);
-	cell.SetFaceCenter(3, lfi);
-
-	// Front Face Intersection
-	glm::vec3 ffi(-FLT_MAX);
-	if (GetSegmentIntersection(uf, df, rf, lf, &psega, &psegb))
-		ffi = uf + psega * (df - uf);
-	cell.SetFaceCenter(0, ffi);
-
-	// Back Face Intersection
-	glm::vec3 bfi(-FLT_MAX);
-	if (GetSegmentIntersection(ub, db, rb, lb, &psega, &psegb))
-		bfi = ub + psega * (db - ub);
-	cell.SetFaceCenter(1, bfi);
-
-	// Up Face Intersection
-	glm::vec3 ufi(-FLT_MAX);
-	if (GetSegmentIntersection(uf, ub, ur, ul, &psega, &psegb))
-		ufi = uf + psega * (ub - uf);
-	cell.SetFaceCenter(5, ufi);
-
-	// Up Face Intersection
-	glm::vec3 dfi(-FLT_MAX);
-	if (GetSegmentIntersection(df, db, dr, dl, &psega, &psegb))
-		dfi = df + psega * (db - df);
-	cell.SetFaceCenter(4, dfi);
+	glm::vec3 center(-FLT_MAX);
+  if (GetSegmentIntersection(k_down_center, k_up_center, j_inverted_center, j_regular_center, &psega, &psegb))
+    center = k_down_center + psega * (k_up_center - k_down_center);
+  cell.SetCenter(center);
 }
 
 glm::mat3 Tank::GetCellJacobianInverse(const Cell& cell)
 {
 	//return glm::mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
 	
-	glm::vec3 x = cell.GetFaceCenter(3) - cell.GetFaceCenter(2);
-	glm::vec3 y = cell.GetFaceCenter(4) - cell.GetFaceCenter(5);
+	glm::vec3 x = cell.GetFaceCenter(2) - cell.GetFaceCenter(3);
+	glm::vec3 y = cell.GetFaceCenter(5) - cell.GetFaceCenter(4);
 	glm::vec3 z = cell.GetFaceCenter(0) - cell.GetFaceCenter(1);
 
   x *= m_scale;
