@@ -635,33 +635,33 @@ void ViewerInterface::BuildInterface (int argc, char *argv[])
 	m_iup_item_vis_glslriemann = IupItem ("GLSL - Equidistante", NULL);
 	m_iup_item_vis_glslsimpson = IupItem ("GLSL - Simpson Adaptativo", NULL);
 
-	IupSetAttribute(m_iup_item_vis_glslriemann, "ACTIVE", "YES");
-	if (!Viewer::Instance()->m_viewmethods[VRVIEWS::EQUIDISTANT_GLSL])
-		IupSetAttribute(m_iup_item_vis_glslriemann, "ACTIVE", "YES");
+	IupSetAttribute(m_iup_item_vis_glslriemann, "ACTIVE", "NO");
+	//if (!Viewer::Instance()->m_viewmethods[VRVIEWS::EQUIDISTANT_GLSL])
+	//	IupSetAttribute(m_iup_item_vis_glslriemann, "ACTIVE", "YES");
 
-	IupSetAttribute(m_iup_item_vis_glslsimpson, "ACTIVE", "YES");
-	if (!Viewer::Instance()->m_viewmethods[VRVIEWS::ADAPTIVE_GLSL])
-		IupSetAttribute(m_iup_item_vis_glslsimpson, "ACTIVE", "YES");
+	IupSetAttribute(m_iup_item_vis_glslsimpson, "ACTIVE", "NO");
+	//if (!Viewer::Instance()->m_viewmethods[VRVIEWS::ADAPTIVE_GLSL])
+	//	IupSetAttribute(m_iup_item_vis_glslsimpson, "ACTIVE", "YES");
 
-	IupSetAttribute (m_iup_item_vis_cpu, "ACTIVE", "YES");
-	if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::CPU])
-		IupSetAttribute (m_iup_item_vis_cpu, "ACTIVE", "YES");
+	IupSetAttribute (m_iup_item_vis_cpu, "ACTIVE", "NO");
+	//if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::CPU])
+	//	IupSetAttribute (m_iup_item_vis_cpu, "ACTIVE", "YES");
 	
 	IupSetAttribute (m_iup_item_vis_glsl2p, "ACTIVE", "YES");
 	if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::GLSL2P])
 		IupSetAttribute (m_iup_item_vis_glsl2p, "ACTIVE", "YES");
 
-	IupSetAttribute (m_iup_item_vis_ias, "ACTIVE", "YES");
-	if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::IAS])
-		IupSetAttribute (m_iup_item_vis_ias, "ACTIVE", "YES");
+	IupSetAttribute (m_iup_item_vis_ias, "ACTIVE", "NO");
+	//if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::IAS])
+	//	IupSetAttribute (m_iup_item_vis_ias, "ACTIVE", "YES");
 
-	IupSetAttribute (m_iup_item_vis_ern2D, "ACTIVE", "YES");
-	if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::ERN2D])
-		IupSetAttribute (m_iup_item_vis_ern2D, "ACTIVE", "NO");
+	IupSetAttribute (m_iup_item_vis_ern2D, "ACTIVE", "NO");
+	//if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::ERN2D])
+	//	IupSetAttribute (m_iup_item_vis_ern2D, "ACTIVE", "NO");
 
-	IupSetAttribute (m_iup_item_vis_ern3D, "ACTIVE", "YES");
-	if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::ERN])
-		IupSetAttribute (m_iup_item_vis_ern3D, "ACTIVE", "NO");
+	IupSetAttribute (m_iup_item_vis_ern3D, "ACTIVE", "NO");
+	//if (!Viewer::Instance ()->m_viewmethods[VRVIEWS::ERN])
+	//	IupSetAttribute (m_iup_item_vis_ern3D, "ACTIVE", "NO");
 
 	IupSetCallback (m_iup_item_vis_cpu, "ACTION", (Icallback)ViewerInterface::CPUVisualizationChange_CB);
 	//IupSetCallback (m_iup_item_vis_glsl, "ACTION", (Icallback)ViewerInterface::GLSLVisualizationChange_CB);
