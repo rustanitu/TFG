@@ -8,138 +8,176 @@
 #include <vector>
 #include <forward_list>
 
-ClusterSet::ClusterSet(const std::forward_list<Cluster>& collection, int n)
+ClusterSet::ClusterSet()
 : m_min(DBL_MAX)
-, m_size(n)
-, m_matrix(n, n)
+, m_matrix(NULL)
+, m_size(0)
 {
-  int i = 0;
-  for (auto it = collection.begin(); it != collection.end(); ++it, ++i)
+}
+
+bool ClusterSet::MergeSets(ClusterSet& clusterset)
+{
+  if (MergeSets(clusterset.m_clusters))
   {
-    m_nodes.push_back(new Cluster(*it));
-    const auto& cellsi = it->GetCells();
+    clusterset.m_size--;
+    return true;
+  }
+  return false;
+}
+
+bool ClusterSet::MergeSets(std::forward_list<Cluster*>& collection)
+{
+  auto before_cluster1 = collection.before_begin();
+  for (auto cluster1 = collection.begin(); cluster1 != collection.end(); ++cluster1)
+  {
+    const auto& cells_cluster1 = (*cluster1)->GetCells();
+    for (auto cell1 = cells_cluster1.begin(); cell1 != cells_cluster1.end(); ++cell1)
+    {
+      auto before_cluster2 = cluster1;
+      for (auto cluster2 = std::next(cluster1); cluster2 != collection.end(); ++cluster2)
+      {
+        const auto& cells_cluster2 = (*cluster2)->GetCells();
+        for (auto cell2 = cells_cluster2.begin(); cell2 != cells_cluster2.end(); ++cell2)
+        {
+          int xi = (*cell1)->GetX();
+          int yi = (*cell1)->GetY();
+          int xj = (*cell2)->GetX();
+          int yj = (*cell2)->GetY();
+
+          // Square Distance
+          double sqrdist = (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj);
+          if (sqrdist <= SQRT2)
+          {
+            Cluster* c1 = *cluster1;
+            Cluster* c2 = *cluster2;
+            collection.erase_after(before_cluster2);
+            collection.erase_after(before_cluster1);
+            collection.push_front(Cluster::Merge(&c1, &c2));
+            return true;
+          }
+        }
+        before_cluster2 = cluster2;
+      }
+    }
+    before_cluster1 = cluster1;
+  }
+
+  return false;
+}
+
+std::forward_list<Cluster*> ClusterSet::TakeClosestClusters()
+{
+  if (m_size == 0)
+    return std::forward_list<Cluster*>();
+
+  if (m_size == 1)
+  {
+    std::forward_list<Cluster*> lst;
+    lst.splice_after(lst.before_begin(), m_clusters);
+    m_size = 0;
+    return lst;
+  }
+  
+  m_min = DBL_MAX;
+  delete m_matrix;
+  m_matrix = new arma::Mat<double>(m_size, m_size);
+
+  int i = 0;
+  for (auto it = m_clusters.begin(); it != m_clusters.end(); ++it, ++i)
+  {
+    m_nodes.push_back(*it);
+    const auto& cellsi = (*it)->GetCells();
     int j = i;
-    for (auto itt = it; itt != collection.end(); ++itt, ++j)
+    for (auto itt = it; itt != m_clusters.end(); ++itt, ++j)
     {
       if (i == j)
       {
-        m_matrix(i, j) = 0.0f;
+        m_matrix->at(i, j) = 0.0f;
         continue;
       }
 
       double min = DBL_MAX;
-      const auto& cellsj = itt->GetCells();
+      const auto& cellsj = (*itt)->GetCells();
       for (auto cell_i = cellsi.begin(); cell_i != cellsi.end(); ++cell_i)
       {
         for (auto cell_j = cellsj.begin(); cell_j != cellsj.end(); ++cell_j)
         {
-          int xi = cell_i->first;
-          int yi = cell_i->second;
-          int xj = cell_j->first;
-          int yj = cell_j->second;
+          int xi = (*cell_i)->GetX();
+          int yi = (*cell_i)->GetY();
+          int xj = (*cell_j)->GetX();
+          int yj = (*cell_j)->GetY();
           // Square Distance
           double sqrdist = (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj);
           min = fmin(min, sqrdist);
         }
       }
-      m_matrix(i, j) = m_matrix(j, i) = min;
-      if (min > SQRT2 + DBL_EPSILON)
-        m_min = fmin(m_min, min);
+      m_matrix->at(i, j) = m_matrix->at(j, i) = min;
+      m_min = fmin(m_min, min);
     }
   }
 
-  m_visited = std::vector<bool>(n, false);
-}
+  m_visited = std::vector<bool>(m_size, false);
 
-void ClusterSet::MergeSets(std::forward_list<Cluster>& collection, Cluster& set)
-{
-  int i = 0;
-  const auto& cellsj = set.GetCells();
-  for (auto cell_i = collection.begin(); cell_i != collection.end(); ++cell_i, ++i)
-  {
-    const auto& cellsi = cell_i->GetCells();
-    double min = DBL_MAX;
-    for (auto cell_i = cellsi.begin(); cell_i != cellsi.end(); ++cell_i)
-    {
-      for (auto cell_j = cellsi.begin(); cell_j != cellsi.end(); ++cell_j)
-      {
-        int xi = cell_i->first;
-        int yi = cell_i->second;
-        int xj = cell_j->first;
-        int yj = cell_j->second;
-        // Square Distance
-        double sqrdist = (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj);
-        min = fmin(min, sqrdist);
-      }
-    }
-    if (min > SQRT2 + DBL_EPSILON)
-    {
-      cell_i->Merge(set);
-      return;
-    }
-  }
-  collection.push_front(set);
-}
-
-std::forward_list<Cluster> ClusterSet::GetClustersList()
-{
-  std::forward_list<Cluster> clusterSet(1);
+  std::forward_list<Cluster*> list;
   for (int e = 0; e < m_size; ++e)
   {
     if (!m_visited[e])
     {
-      if (!clusterSet.front().IsEmpty())
-        clusterSet.push_front(Cluster());
-      DFS(e, clusterSet.front());
+      Cluster* cluster = NULL;
+      DFS(e, &cluster);
+      if (cluster)
+        list.push_front(cluster);
     }
   }
+  m_visited.clear();
 
-  if (clusterSet.front().IsEmpty())
-    clusterSet.pop_front();
-
-  return clusterSet;
-}
-
-std::forward_list<Cluster> ClusterSet::GetNonMergedClusters()
-{
-  std::forward_list<Cluster> lst;
+  m_clusters.clear();
+  m_size = 0;
   for (int i = 0; i < m_nodes.size(); ++i)
   {
     if (m_nodes[i])
     {
-      lst.push_front(*m_nodes[i]);
+      m_clusters.push_front(m_nodes[i]);
+      m_size++;
     }
   }
   m_nodes.clear();
 
-  return lst;
+  return list;
 }
 
-double ClusterSet::GetMin()
-{
-  return m_min;
-}
-
-void ClusterSet::DFS(int e, Cluster& set)
+void ClusterSet::DFS(int e, Cluster** set)
 {
   m_visited[e] = true;
   for (int i = 0; i < m_size; ++i)
   {
-    if (m_matrix(e, i) <= m_min + DBL_EPSILON && !m_visited[i])
+    if (m_matrix->at(e, i) <= m_min + DBL_EPSILON && !m_visited[i])
     {
       if (m_nodes[e])
       {
-        set.Merge((*m_nodes[e]));
-        delete m_nodes[e];
+        *set = Cluster::Merge(set, &m_nodes[e]);
         m_nodes[e] = NULL;
       }
       if (m_nodes[i])
       {
-        set.Merge((*m_nodes[i]));
-        delete m_nodes[i];
+        *set = Cluster::Merge(set, &m_nodes[i]);
         m_nodes[i] = NULL;
       }
+
       DFS(i, set);
     }
   }
+}
+
+void ClusterSet::Insert(Cluster* cluster)
+{
+  m_clusters.push_front(cluster);
+  m_size++;
+}
+
+void ClusterSet::Insert(std::forward_list<Cluster*> list, int n)
+{
+  list.splice_after(list.before_begin(), m_clusters);
+  m_clusters.splice_after(m_clusters.before_begin(), list);
+  m_size += n;
 }

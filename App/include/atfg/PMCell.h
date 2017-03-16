@@ -8,52 +8,72 @@
 #include <lqc/lqcdefines.h>
 #include <float.h>
 
-template <class T>
 class PMCell
 {
 public:
-  PMCell()
+  PMCell(const int& x, const int& y, const int& base)
+  : m_x(x), m_y(y), m_base(base)
   {
-    m_value = T(-DBL_MAX);
+    m_value = -DBL_MAX;
     m_defined = false;
   }
 
-  void SetValue(const T& value)
+  void SetValue(const double& value)
   {
     m_value = value;
+    m_defined = true;
   }
 
-  T GetValue()
+  double GetValue() const
   { 
     return m_value;
   }
 
-  void SetDefined(bool defined)
-  {
-    m_defined = defined;
-  }
+  //void SetDefined(bool defined)
+  //{
+  //  m_defined = defined;
+  //}
 
-  bool IsDefined()
+  bool IsDefined() const
   {
     return m_defined;
   }
 
-  int GetRow()
+  int GetX() const
   {
-    return m_row;
+    return m_x;
   }
   
-  int GetColumn()
+  int GetY() const
   {
-    return m_col;
+    return m_y;
+  }
+  
+  int GetBase() const
+  {
+    return m_base;
   }
   
 private:
-  T m_value;
+  int m_x;
+  int m_y;
+  int m_base;
+  double m_value;
   bool m_defined;
 };
 
-#define DoubleCell PMCell<double>
-#define RGBCell PMCell<glm::dvec3>
+struct PMCellHash
+{
+  size_t operator()(PMCell* p) const {
+    return p->GetX() + p->GetY() * p->GetBase();
+  }
+};
+
+struct PMCellComparator
+{
+  size_t operator()(PMCell* p1, PMCell* p2) const {
+    return p1->GetX() == p2->GetX() && p1->GetY() == p2->GetY();
+  }
+};
 
 #endif

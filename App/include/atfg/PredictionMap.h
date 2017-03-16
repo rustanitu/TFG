@@ -9,9 +9,8 @@
 #include "ClusterSet.h"
 #include <forward_list>
 
-#define GAUSSIAN_SPREAD 8.0f
+#define GAUSSIAN_SPREAD 16.0f
 
-template <class T, typename Cell = PMCell<T>>
 class PredictionMap
 {
 public:
@@ -25,26 +24,31 @@ public:
 
   void CleanUp();
 
-  //void PredictWithInverseDistanceWeighting(const double& p, const double& d = 0);
+  void PredictWithInverseDistanceWeighting(const std::forward_list<PMCell*>& defined_cells,
+    const std::forward_list<PMCell*>& undefined_cells, const double& p, const double& d = 0);
 
   void Interpolate();
   
-  void PredictWithRBF(const std::unordered_set<std::pair<int, int>, SimpleHash>& defined_cells,
-    const std::unordered_set<std::pair<int, int>, SimpleHash>& undefined_cells);
+  void PredictWithRBF(const std::forward_list<PMCell*>& defined_cells,
+    const std::forward_list<PMCell*>& undefined_cells);
   //void PredictWithRBF(arma::Col<double>* w);
 
-  void SetValue(const T& value, const int& i, const int& j);
+  std::forward_list<PMCell*> GetNeighborCells(Cluster* cluster, double dist) const;
 
-  T GetValue(const int& i, const int& j);
+  void SetValue(const double& value, const int& i, const int& j);
 
+  double GetValue(const int& i, const int& j);
+  
   bool IsDefined(const int& i, const int& j);
+
+//private:
+  PMCell* GetCell(const int& i, const int& j) const;
 
 private:
   int m_width;
   int m_height;
-  Cell** m_cells;
-  std::forward_list<Cluster> m_undefined_clusters;
-  //std::forward_list<std::pair<int, int>> m_undefined_cells;
+  std::unordered_set<PMCell*, PMCellHash, PMCellComparator> m_cells_set;
+  ClusterSet m_clusterset;
 };
 
 #endif

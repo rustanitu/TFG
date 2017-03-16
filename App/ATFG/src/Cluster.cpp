@@ -5,41 +5,82 @@
 #include "Cluster.h"
 #include <unordered_set>
 
-Cluster::Cluster()
+Cluster::Cluster(const int& base)
+: m_base(base), m_size(0)
 {
-
 }
 
-void Cluster::Insert(int x, int y)
+void Cluster::Insert(PMCell* cell)
 {
-  m_cluster.insert(std::make_pair(x, y));
+  if (Has(cell))
+  {
+    //printf("Valor ja definido para a celula (%d, %d)\n", cell->GetX(), cell->GetY());
+    return;
+  }
+
+  m_set.insert(cell);
+  m_list.push_front(cell);
+  m_size++;
 }
 
-void Cluster::Insert(const std::pair<int, int>& pair)
+Cluster* Cluster::Merge(Cluster** cluster1, Cluster** cluster2)
 {
-  m_cluster.insert(pair);
+  if (*cluster1 == NULL)
+  {
+    delete *cluster1;
+    *cluster1 = NULL;
+    return *cluster2;
+  }
+  
+  if (*cluster2 == NULL)
+  {
+    delete *cluster2;
+    *cluster2 = NULL;
+    return *cluster1;
+  }
+
+  Cluster* receiver = *cluster1;
+  Cluster* giver = *cluster2;
+  if (giver->m_size > receiver->m_size)
+  {
+    Cluster* aux = receiver;
+    receiver = giver;
+    giver = aux;
+  }
+
+  receiver->m_list.splice_after(receiver->m_list.before_begin(), giver->m_list);
+  receiver->m_set.insert(giver->m_set.begin(), giver->m_set.end());
+  receiver->m_size += giver->m_size;
+
+  giver->m_set.clear();
+  giver->m_size = 0;
+  
+  if (receiver == *cluster1)
+  {
+    delete *cluster2;
+    *cluster2 = NULL;
+  }
+  else
+  {
+    delete *cluster1;
+    *cluster1 = NULL;
+  }
+
+  return receiver;
 }
 
-void Cluster::Merge(const Cluster& cluster)
+bool Cluster::Has(const int& i, const int& j)
 {
-  auto list = cluster.GetCells();
-  for (auto it = list.begin(); it != list.end(); ++it)
-    Insert(*it);
-}
-
-bool Cluster::Has(int x, int y)
-{
-  auto it = m_cluster.find(std::make_pair(x, y));
-  if (it != m_cluster.end())
+  if (GetCell(i, j) != NULL)
     return true;
-    
+
   return false;
 }
 
-bool Cluster::Has(const std::pair<int, int>& pair)
+bool Cluster::Has(PMCell* cell)
 {
-  auto it = m_cluster.find(pair);
-  if (it != m_cluster.end())
+  auto it = m_set.find(cell);
+  if (it != m_set.end())
     return true;
 
   return false;
@@ -47,60 +88,38 @@ bool Cluster::Has(const std::pair<int, int>& pair)
 
 bool Cluster::IsEmpty()
 {
-  return m_cluster.empty();
+  return m_set.empty();
 }
 
-const std::unordered_set<std::pair<int, int>, SimpleHash>& Cluster::GetCells() const
+const std::unordered_set<PMCell*, PMCellHash, PMCellComparator>& Cluster::GetCells() const
 {
-  return m_cluster;
+  return m_set;
 }
 
-std::unordered_set<std::pair<int, int>, SimpleHash> Cluster::GetNeighborCells(double dist) const
+std::forward_list<PMCell*>& Cluster::GetCellsList()
 {
-  std::unordered_set<std::pair<int, int>, SimpleHash> undefined_cells;
+  return m_list;
+}
 
-  for (auto it = m_cluster.begin(); it != m_cluster.end(); ++it)
+double Cluster::GetValue(const int& i, const int& j)
+{
+  return GetCell(i, j)->GetValue();
+}
+
+bool Cluster::IsDefined(const int& i, const int& j)
+{
+  return GetCell(i, j)->IsDefined();
+}
+
+PMCell* Cluster::GetCell(const int& i, const int& j)
+{
+  PMCell* dummy_cell = new PMCell(i, j, m_base);
+  auto it = m_set.find(dummy_cell);
+  delete dummy_cell;
+  if (it != m_set.end())
   {
-    const std::pair<int, int> pair = *it;
-    int xi = pair.first;
-    int yi = pair.second;
-
-    for (auto itt = it; itt != m_cluster.end(); ++itt)
-    {
-      const std::pair<int, int> pair = *itt;
-      int xj = pair.first;
-      int yj = pair.second;
-
-      // Square Distance
-      double sqrdist = (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj);
-      dist = fmax(dist, sqrdist);
-    }
+    return *it;
   }
 
-  for (auto it = m_cluster.begin(); it != m_cluster.end(); ++it)
-  {
-    const std::pair<int, int> pair = *it;
-    int x = pair.first;
-    int y = pair.second;
-
-    int radius = sqrt(dist * 0.5f) + 0.5f;
-
-    for (int i = x - radius; i <= x + radius; ++i)
-    {
-      for (int j = y - radius; j <= y + radius; ++j)
-      {
-        if (i >= 0 && i <= 255 && j >= 0 && j <= 255)
-        {
-          double sqr_dist = (i - x) * (i - x) + (y - j) * (y - j);
-          if (sqr_dist <= radius)
-          {
-            const std::pair<int, int> cell = std::make_pair(i, j);
-            undefined_cells.insert(cell);
-          }
-        }
-      }
-    }
-  }
-
-  return undefined_cells;
+  return NULL;
 }

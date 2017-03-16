@@ -50,7 +50,7 @@ namespace vr
       m_gaussian_bx = false;
     }
 
-    void SetClosestBoundaryDistances(PredictionMap<double, DoubleCell>* distmap)
+    void SetClosestBoundaryDistances(PredictionMap* distmap)
     {
       if (m_distmap)
         m_distmap->CleanUp();
@@ -80,7 +80,7 @@ namespace vr
     Ihandle * m_tf_plot;
     int m_thickness;
     int m_gaussian_bx;
-    PredictionMap<double, DoubleCell>* m_distmap;
+    PredictionMap* m_distmap;
     double m_sigma;
 	};
 }

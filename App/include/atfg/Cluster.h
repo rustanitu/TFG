@@ -5,38 +5,40 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
+#include "PMCell.h"
 #include <unordered_set>
-
-struct SimpleHash
-{
-  size_t operator()(const std::pair<int, int>& p) const {
-    return p.first + p.second * 256;
-  }
-};
+#include <forward_list>
 
 class Cluster
 {
 public:
-  Cluster();
+  Cluster(const int& base);
 
-  void Insert(int x, int y);
+  void Insert(PMCell* cell);
 
-  void Insert(const std::pair<int, int>& pair);
+  bool Has(const int& i, const int& j);
 
-  void Merge(const Cluster& cluster);
-
-  bool Has(int x, int y);
-
-  bool Has(const std::pair<int, int>& pair);
+  bool Has(PMCell* cell);
 
   bool IsEmpty();
 
-  const std::unordered_set<std::pair<int, int>, SimpleHash>& GetCells() const;
-
-  std::unordered_set<std::pair<int, int>, SimpleHash> GetNeighborCells(double dist) const;
+  const std::unordered_set<PMCell*, PMCellHash, PMCellComparator>& GetCells() const;
+  std::forward_list<PMCell*>& GetCellsList();
+  
+  double GetValue(const int& i, const int& j);
+  
+  bool IsDefined(const int& i, const int& j);
+  
+  static Cluster* Merge(Cluster** cluster1, Cluster** cluster2);
 
 private:
-  std::unordered_set<std::pair<int, int>, SimpleHash> m_cluster;
+  PMCell* GetCell(const int& i, const int& j);
+
+private:
+  int m_base;
+  int m_size;
+  std::forward_list<PMCell*> m_list;
+  std::unordered_set<PMCell*, PMCellHash, PMCellComparator> m_set;
 };
 
 #endif

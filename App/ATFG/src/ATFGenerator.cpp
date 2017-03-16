@@ -56,7 +56,7 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_average_hmap(NULL)
 {
 	printf("ATFGenerator criado.\n");
-  m_average_hmap = new PredictionMap<double, DoubleCell>(ATFG_V_RANGE, ATFG_V_RANGE);
+  m_average_hmap = new PredictionMap(ATFG_V_RANGE, ATFG_V_RANGE);
 }
 
 /// <summary>
@@ -213,7 +213,7 @@ bool ATFGenerator::ExtractTransferFunction()
 
 	GenerateDataChart();
 
-  PredictionMap<double, DoubleCell>* distmap = NULL;
+  PredictionMap* distmap = NULL;
   if (m_tf1d)
     distmap = GetBoundaryDistancies();
   else
@@ -978,11 +978,11 @@ void ATFGenerator::GetValidValuesAndIndexes(double* vin, const int& nin, double*
 /// </summary>
 /// <returns>Returns a double array with the distances associated 
 /// to all 256 values, ordered by value.</returns>
-PredictionMap<double, DoubleCell>* ATFGenerator::GetBoundaryDistancies()
+PredictionMap* ATFGenerator::GetBoundaryDistancies()
 {
 	assert(m_scalar_histogram);
 
-  PredictionMap<double, DoubleCell>* distmap = new PredictionMap<double, DoubleCell>(1, ATFG_V_RANGE);
+  PredictionMap* distmap = new PredictionMap(1, ATFG_V_RANGE);
   if (!distmap->Init())
     return NULL;
 
@@ -1008,11 +1008,11 @@ PredictionMap<double, DoubleCell>* ATFGenerator::GetBoundaryDistancies()
   return distmap;
 }
 
-PredictionMap<double, DoubleCell>* ATFGenerator::GetBoundaryDistancies2D()
+PredictionMap* ATFGenerator::GetBoundaryDistancies2D()
 {
 	assert(m_scalar_histogram);
 
-  PredictionMap<double, DoubleCell>* distmap = new PredictionMap<double, DoubleCell>(ATFG_V_RANGE, ATFG_V_RANGE);
+  PredictionMap* distmap = new PredictionMap(ATFG_V_RANGE, ATFG_V_RANGE);
   if (!distmap->Init())
     return NULL;
 

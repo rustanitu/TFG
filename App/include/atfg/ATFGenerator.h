@@ -227,8 +227,8 @@ private:
 
   bool EstimateAverageValues();
 
-  PredictionMap<double, DoubleCell>* GetBoundaryDistancies();
-  PredictionMap<double, DoubleCell>* GetBoundaryDistancies2D();
+  PredictionMap* GetBoundaryDistancies();
+  PredictionMap* GetBoundaryDistancies2D();
 
 	void SmoothCurves();
 
@@ -269,7 +269,7 @@ private:
 	double m_average_gradient[ATFG_V_RANGE];
 	double m_average_laplacian[ATFG_V_RANGE];
 	//double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
-  PredictionMap<double, DoubleCell>* m_average_hmap;
+  PredictionMap* m_average_hmap;
 
 	int m_max_size;
 	int* m_max_indexes;
