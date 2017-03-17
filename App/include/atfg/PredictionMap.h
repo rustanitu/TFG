@@ -10,7 +10,7 @@
 #include <forward_list>
 #include <unordered_map>
 
-#define GAUSSIAN_SPREAD 4.0f
+#define GAUSSIAN_SPREAD 16.0f
 
 class PredictionMap
 {

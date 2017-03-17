@@ -98,7 +98,10 @@ int ViewMethodGLSL2P::Keyboard_CB (Ihandle *ih, int c, int press)
 					std::cin >> stepdist;
 					m_renderer.SetStepDistance (stepdist);
 				}
-				break;
+        break;
+      case K_i:
+        Viewer::Instance()->SetTransferFunctionOutdated();
+        break;
 			case K_R:
 			case K_r:
 				m_redisplay = true;

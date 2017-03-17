@@ -62,6 +62,15 @@ void PredictionMap::PredictWithInverseDistanceWeighting(const std::forward_list<
 
 void PredictionMap::Interpolate()
 {
+  int nclusters;
+  std::cout << std::endl;
+  std::cout << "Cluster per dimension: ";
+  std::cin >> nclusters;
+  std::cout << std::endl;
+
+  if (nclusters == 0)
+    return;
+
   std::forward_list<PMCell*> all_undefined_cells;
   for (auto it = m_map.begin(); it != m_map.end(); ++it)
   {
@@ -69,11 +78,6 @@ void PredictionMap::Interpolate()
       all_undefined_cells.push_front(it->second);
   }
 
-	int nclusters;
-  std::cout << std::endl;
-  std::cout << "Cluster per dimension: ";
-  std::cin >> nclusters;
-  std::cout << std::endl;
 	ClusterSet clusterset(m_width, m_height);
   std::forward_list<Cluster> clusters = clusterset.KMeans(nclusters, m_cells, all_undefined_cells);
 
