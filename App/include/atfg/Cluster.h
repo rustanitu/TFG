@@ -6,39 +6,40 @@
 #define CLUSTER_H
 
 #include "PMCell.h"
-#include <unordered_set>
 #include <forward_list>
 
 class Cluster
 {
 public:
-  Cluster(const int& base);
+	Cluster(const int& x, const int& y);
 
-  void Insert(PMCell* cell);
+	void InsertDefinedCells(std::forward_list<PMCell*>& cells, std::forward_list<PMCell*>::iterator& it);
+  void InsertUndefinedCells(std::forward_list<PMCell*>& cells, std::forward_list<PMCell*>::iterator& it);
+	void ReCenter();
+	void RemoveDefinedCells(std::forward_list<PMCell*>& cells);
+  void RemoveUndefinedCells(std::forward_list<PMCell*>& cells);
 
-  bool Has(const int& i, const int& j);
+	int GetX() const
+	{
+		return m_x;
+	}
 
-  bool Has(PMCell* cell);
+	int GetY() const
+	{
+		return m_y;
+	}
 
-  bool IsEmpty();
-
-  const std::unordered_set<PMCell*, PMCellHash, PMCellComparator>& GetCells() const;
-  std::forward_list<PMCell*>& GetCellsList();
-  
-  double GetValue(const int& i, const int& j);
-  
-  bool IsDefined(const int& i, const int& j);
-  
-  static Cluster* Merge(Cluster** cluster1, Cluster** cluster2);
+	float GetMaxDistance() const
+	{
+		return m_maxdist;
+	}
 
 private:
-  PMCell* GetCell(const int& i, const int& j);
-
-private:
-  int m_base;
-  int m_size;
-  std::forward_list<PMCell*> m_list;
-  std::unordered_set<PMCell*, PMCellHash, PMCellComparator> m_set;
+	int m_x;
+	int m_y;
+	float m_maxdist;
+  std::forward_list<PMCell*> m_defined_cells;
+  std::forward_list<PMCell*> m_undefined_cells;
 };
 
 #endif

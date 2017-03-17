@@ -152,16 +152,9 @@ namespace vr
       for (int j = 0; j < MAX_V; ++j)
       {
         double x = m_distmap->GetValue(i, j);
-#if 0
-        if (!m_distmap->IsDefined(i, j))
-        {
-          data[i + MAX_V*j] = -1.0f;
-          continue;
-        }
-#endif
         double a = 0.0f;
         if (m_gaussian_bx)
-          a = CenteredGaussianFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);
+          a = CenteredGaussianFunction(x, 1.0f, 1.0f / (0.5f * m_thickness), m_sigma);
         else
           a = CenteredTriangleFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);
         AddAlphaControlPoint(a, i, j);

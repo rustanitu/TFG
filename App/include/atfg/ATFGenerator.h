@@ -268,8 +268,7 @@ private:
 
 	double m_average_gradient[ATFG_V_RANGE];
 	double m_average_laplacian[ATFG_V_RANGE];
-	//double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
-  PredictionMap* m_average_hmap;
+	double m_average_h[ATFG_V_RANGE][ATFG_V_RANGE];
 
 	int m_max_size;
 	int* m_max_indexes;

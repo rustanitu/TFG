@@ -52,10 +52,7 @@ namespace vr
 
     void SetClosestBoundaryDistances(PredictionMap* distmap)
     {
-      if (m_distmap)
-        m_distmap->CleanUp();
       delete m_distmap;
-
       m_distmap = distmap;
     }
 

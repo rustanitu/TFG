@@ -9,40 +9,25 @@ PredictionMap::PredictionMap(int coldim, int rowdim)
 : m_width(coldim)
 , m_height(rowdim)
 {
+	for ( int i = 0; i < m_width; ++i )
+	{
+		for ( int j = 0; j < m_height; ++j )
+		{
+      m_map.insert(std::pair<int, PMCell*>(GetKey(i, j), new PMCell(i, j)));
+		}
+	}
 }
 
 PredictionMap::~PredictionMap()
 {
-  CleanUp();
 }
 
 double PredictionMap::SigmaFunc(double sqr_dist)
 {
   //return sqrt(sqr_dist);
-  //return sqr_dist * log(sqrt(sqr_dist) + E);
+  return sqr_dist * log(sqrt(sqr_dist) + E);
   double s = GAUSSIAN_SPREAD / 3.0f;
   return exp(-sqr_dist / (s * s)) + 1;
-}
-
-bool PredictionMap::Init()
-{
-  if (m_width < 1 || m_height < 1)
-    return false;
-
-  for (int i = 0; i < m_width; ++i)
-  {
-    for (int j = 0; j < m_height; ++j)
-    {
-      m_cells_set.insert(new PMCell(i, j, m_width));
-    }
-  }
-
-  return true;
-}
-
-void PredictionMap::CleanUp()
-{
-  m_cells_set.clear();
 }
 
 void PredictionMap::PredictWithInverseDistanceWeighting(const std::forward_list<PMCell*>& defined_cells,
@@ -77,77 +62,58 @@ void PredictionMap::PredictWithInverseDistanceWeighting(const std::forward_list<
 
 void PredictionMap::Interpolate()
 {
-  while(ClusterSet::MergeSets(m_clusterset));
-
-  int t = 0;
-  int stop;
-  printf("\nSteps of interpolation: ");
-  scanf_s("%d", &stop);
-  while (t++ < stop)
-  //while (!m_undefined_clusters.empty())
+  std::forward_list<PMCell*> all_undefined_cells;
+  for (auto it = m_map.begin(); it != m_map.end(); ++it)
   {
-    std::forward_list<Cluster*> defined_clusters = m_clusterset.TakeClosestClusters();
-    int nclusters = 0;
-    for (auto cluster_it = defined_clusters.begin(); cluster_it != defined_clusters.end(); ++cluster_it)
-    {
-      auto cluster = *cluster_it;
-      ++nclusters;
-
-      const auto& defined_cells = cluster->GetCellsList();
-      auto undefined_cells = GetNeighborCells(cluster, m_clusterset.GetMin());
-
-      //for (auto cell = defined_cells.begin(); cell != defined_cells.end(); ++cell)
-      //{
-      //  (*cell)->SetValue(1.0f);
-      //}
-      //  
-      //for (auto cell = undefined_cells.begin(); cell != undefined_cells.end(); ++cell)
-      //{
-      //  (*cell)->SetValue(0.0f);
-      //}
-
-      //PredictWithRBF(defined_cells, undefined_cells);
-
-      for (auto cell = undefined_cells.begin(); cell != undefined_cells.end(); ++cell)
-      {
-        cluster->Insert(*cell);
-      }
-    }
-    
-    m_clusterset.Insert(defined_clusters, nclusters);
-    //if (m_clusterset.GetSize() == nclusters)
-    //  break;
+    if (!it->second->IsDefined())
+      all_undefined_cells.push_front(it->second);
   }
 
-  //return;
-  
-  std::forward_list<PMCell*> defined_cells;
-  std::forward_list<PMCell*> undefined_cells;
-  const std::forward_list<Cluster*>& clusters = m_clusterset.GetClusters();
-  for (auto it = clusters.begin(); it != clusters.end(); ++it)
-  {
-    Cluster* cluster = *it;
-    std::forward_list<PMCell*> list = cluster->GetCellsList();
+	int nclusters;
+  std::cout << std::endl;
+  std::cout << "Cluster per dimension: ";
+  std::cin >> nclusters;
+  std::cout << std::endl;
+	ClusterSet clusterset(m_width, m_height);
+  std::forward_list<Cluster> clusters = clusterset.KMeans(nclusters, m_cells, all_undefined_cells);
 
-    while (!list.empty())
+  float val = 0.0f;
+	for ( auto cluster_it = clusters.begin(); cluster_it != clusters.end(); ++cluster_it )
+	{
+		std::forward_list<PMCell*> defined_cells;
+    std::forward_list<PMCell*> undefined_cells;
+    cluster_it->RemoveDefinedCells(defined_cells);
+    cluster_it->RemoveUndefinedCells(undefined_cells);
+
+#if 1
+		PredictWithRBF(defined_cells, undefined_cells);
+#else
+    val += 1.0f;
+    if (!defined_cells.empty())
     {
-      PMCell* cell = list.front();
-      if (cell->IsDefined())
+      defined_cells.splice_after(defined_cells.before_begin(), undefined_cells);
+      for (auto it = defined_cells.begin(); it != defined_cells.end(); ++it)
       {
-        defined_cells.splice_after(defined_cells.before_begin(), list, list.before_begin());
+        (*it)->SetValue(val);
       }
-      else
-      {
-        undefined_cells.splice_after(undefined_cells.before_begin(), list, list.before_begin());
-      }
+
+      int cx = cluster_it->GetX();
+      int cy = cluster_it->GetY();
+      m_map.at(GetKey(cx, cy))->SetValue(0.0f);
     }
-    PredictWithRBF(defined_cells, undefined_cells);
-  }
+#endif
+
+    defined_cells.clear();
+    undefined_cells.clear();
+	}
 }
   
 void PredictionMap::PredictWithRBF(const std::forward_list<PMCell*>& defined_cells,
-  const std::forward_list<PMCell*>& undefined_cells)
+  std::forward_list<PMCell*>& undefined_cells)
 {
+  if (defined_cells.empty())
+    return;
+
   const int n = std::distance(defined_cells.begin(), defined_cells.end());
   arma::Mat<double> sigma_mat(n, n);
   arma::Col<double> p(n);
@@ -155,7 +121,8 @@ void PredictionMap::PredictWithRBF(const std::forward_list<PMCell*>& defined_cel
   int i = 0;
   for (auto row = defined_cells.begin(); row != defined_cells.end(); ++row, ++i)
   {
-    p[i] = (*row)->GetValue();
+    PMCell* celli = *row;
+    p[i] = celli->GetValue();
 
     int j = i;
     for (auto col = row; col != defined_cells.end(); ++col, ++j)
@@ -166,10 +133,11 @@ void PredictionMap::PredictWithRBF(const std::forward_list<PMCell*>& defined_cel
         continue;
       }
 
-      int xi = (*row)->GetX();
-      int yi = (*row)->GetY();
-      int xj = (*col)->GetX();
-      int yj = (*col)->GetY();
+      PMCell* cellj = *col;
+      int xi = celli->GetX();
+      int yi = celli->GetY();
+      int xj = cellj->GetX();
+      int yj = cellj->GetY();
 
       double sqr_dist = (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj);
       sigma_mat(i, j) = sigma_mat(j, i) = SigmaFunc(sqr_dist);
@@ -181,133 +149,56 @@ void PredictionMap::PredictWithRBF(const std::forward_list<PMCell*>& defined_cel
 
   for (auto row = undefined_cells.begin(); row != undefined_cells.end(); ++row)
   {
-    int x = (*row)->GetX();
-    int y = (*row)->GetY();
+    PMCell* celli = *row;
+    int x = celli->GetX();
+    int y = celli->GetY();
 
     arma::Row<double> sigma(n);
     int count = 0;
     for (auto col = defined_cells.begin(); col != defined_cells.end(); ++col)
     {
-      int xi = (*col)->GetX();
-      int yi = (*col)->GetY();
+      PMCell* cellj = *col;
+      int xi = cellj->GetX();
+      int yi = cellj->GetY();
 
       double sqr_dist = (x - xi) * (x - xi) + (y - yi) * (y - yi);
       sigma(count++) = SigmaFunc(sqr_dist);
     }
 
-    (*row)->SetValue(arma::dot(sigma, w));
-    //cluster.Insert(x, y);
+		double val = arma::dot(sigma, w);
+    celli->SetValue(val);
   }
 }
-
-std::forward_list<PMCell*> PredictionMap::GetNeighborCells(Cluster* cluster, double dist) const
-{
-  const std::forward_list<PMCell*> list = cluster->GetCellsList();
-  std::forward_list<PMCell*> undefined_cells;
-
-  //for (auto it = set.begin(); it != set.end(); ++it)
-  //{
-  //  int xi = (*it)->GetX();
-  //  int yi = (*it)->GetY();
-
-  //  for (auto itt = it; itt != set.end(); ++itt)
-  //  {
-  //    int xj = (*it)->GetX();
-  //    int yj = (*it)->GetY();
-
-  //    // Square Distance
-  //    double sqrdist = (xi - xj) * (xi - xj) + (yi - yj) * (yi - yj);
-  //    dist = fmax(dist, sqrdist);
-  //  }
-  //}
- 
-  for (auto it = list.begin(); it != list.end(); ++it)
-  {
-    int x = (*it)->GetX();
-    int y = (*it)->GetY();
-
-    double radius = sqrt(dist) * 0.5f + 0.5f;
-
-    for (int i = x - radius; i <= x + radius; ++i)
-    {
-      for (int j = y - radius; j <= y + radius; ++j)
-      {
-        if (i >= 0 && i <= 255 && j >= 0 && j <= 255)
-        {
-          PMCell* cell = GetCell(i, j);
-          double sqr_dist = (i - x) * (i - x) + (y - j) * (y - j);
-          if (sqrt(sqr_dist) <= radius && !cell->IsDefined())
-          {
-            undefined_cells.push_front(cell);
-          }
-        }
-      }
-    }
-  }
-
-  return undefined_cells;
-}
-
-//void PredictionMap::PredictWithRBF(arma::Col<double>* w);
-//{
-//  const auto first = m_undefined_clusters.begin();
-//  const auto last = m_undefined_clusters.end();
-//  int n = w->size();
-//  
-//  while (!m_undefined_cells.empty())
-//  {
-//    const std::pair<int, int>& pair = m_undefined_cells.front();
-//    int i = pair.first;
-//    int j = pair.second;
-//    m_undefined_cells.pop_front();
-//
-//    arma::Row<double> sigma(n);
-//    int count = 0;
-//    for (auto it = first; it != last; ++it)
-//    {
-//      int x = it->first;
-//      int y = it->second;
-//
-//      double sqr_dist = (x - i) * (x - i) + (y - j) * (y - j);
-//      sigma(count++) = SigmaFunc(sqr_dist);
-//    }
-//
-//    m_cells[i][j].SetValue(arma::dot(sigma, (*w)));
-//  }
-//  m_undefined_clusters.clear();
-//}
 
 void PredictionMap::SetValue(const double& value, const int& i, const int& j)
 {
-  if (i > m_width || i > m_height || i < 0 || j < 0)
-    return;
-
-  PMCell* cell = GetCell(i, j);
+  PMCell* cell = m_map.at(GetKey(i, j));
   cell->SetValue(value);
-  Cluster* cluster = new Cluster(m_width);
-  cluster->Insert(cell);
-  m_clusterset.Insert(cluster);
+  m_cells.push_front(cell);
 }
 
-double PredictionMap::GetValue(const int& i, const int& j)
+std::forward_list<PMCell*> PredictionMap::GetNeighborCells(const Cluster& cluster) const
 {
-  return GetCell(i, j)->GetValue();
-}
+	int cx = cluster.GetX();
+	int cy = cluster.GetY();
+	float maxdist = cluster.GetMaxDistance();
 
-bool PredictionMap::IsDefined(const int& i, const int& j)
-{
-  return GetCell(i, j)->IsDefined();
-}
+	std::forward_list<PMCell*> undefined_cells;
+	for ( int i = cx - maxdist; i <= cx + maxdist; ++i )
+	{
+		for ( int j = cy - maxdist; j <= cy + maxdist; ++j )
+		{
+			if ( i >= 0 && i <= 255 && j >= 0 && j <= 255 )
+			{
+        PMCell* cell = m_map.find(GetKey(i, j))->second;
+				double sqr_dist = (i - cx) * (i - cx) + (cy - j) * (cy - j);
+        if (sqrt(sqr_dist) <= maxdist && !cell->IsDefined())
+				{
+					undefined_cells.push_front(cell);
+				}
+			}
+		}
+	}
 
-PMCell* PredictionMap::GetCell(const int& i, const int& j) const
-{
-  PMCell* dummy_cell = new PMCell(i, j, m_width);
-  auto it = m_cells_set.find(dummy_cell);
-  delete dummy_cell;
-  if (it != m_cells_set.end())
-  {
-    return *it;
-  }
-
-  return NULL;
+	return undefined_cells;
 }

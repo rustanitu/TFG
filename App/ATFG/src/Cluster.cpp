@@ -5,121 +5,52 @@
 #include "Cluster.h"
 #include <unordered_set>
 
-Cluster::Cluster(const int& base)
-: m_base(base), m_size(0)
+Cluster::Cluster(const int& x, const int& y)
+: m_x(x), m_y(y), m_maxdist(0)
 {
 }
 
-void Cluster::Insert(PMCell* cell)
+void Cluster::InsertDefinedCells(std::forward_list<PMCell*>& cells, std::forward_list<PMCell*>::iterator& it)
 {
-  if (Has(cell))
-  {
-    //printf("Valor ja definido para a celula (%d, %d)\n", cell->GetX(), cell->GetY());
-    return;
-  }
-
-  m_set.insert(cell);
-  m_list.push_front(cell);
-  m_size++;
+	m_defined_cells.splice_after(m_defined_cells.before_begin(), cells, it);
 }
 
-Cluster* Cluster::Merge(Cluster** cluster1, Cluster** cluster2)
+void Cluster::InsertUndefinedCells(std::forward_list<PMCell*>& cells, std::forward_list<PMCell*>::iterator& it)
 {
-  if (*cluster1 == NULL)
-  {
-    delete *cluster1;
-    *cluster1 = NULL;
-    return *cluster2;
-  }
-  
-  if (*cluster2 == NULL)
-  {
-    delete *cluster2;
-    *cluster2 = NULL;
-    return *cluster1;
-  }
-
-  Cluster* receiver = *cluster1;
-  Cluster* giver = *cluster2;
-  if (giver->m_size > receiver->m_size)
-  {
-    Cluster* aux = receiver;
-    receiver = giver;
-    giver = aux;
-  }
-
-  receiver->m_list.splice_after(receiver->m_list.before_begin(), giver->m_list);
-  receiver->m_set.insert(giver->m_set.begin(), giver->m_set.end());
-  receiver->m_size += giver->m_size;
-
-  giver->m_set.clear();
-  giver->m_size = 0;
-  
-  if (receiver == *cluster1)
-  {
-    delete *cluster2;
-    *cluster2 = NULL;
-  }
-  else
-  {
-    delete *cluster1;
-    *cluster1 = NULL;
-  }
-
-  return receiver;
+  m_undefined_cells.splice_after(m_undefined_cells.before_begin(), cells, it);
 }
 
-bool Cluster::Has(const int& i, const int& j)
+void Cluster::ReCenter()
 {
-  if (GetCell(i, j) != NULL)
-    return true;
+	float maxdist = 0;
+	float x = 0;
+	float y = 0;
+	int count = 0;
+	for ( auto it = m_defined_cells.begin(); it != m_defined_cells.end(); ++it )
+	{
+    PMCell* cell = *it;
+		x += cell->GetX();
+		y += cell->GetY();
+		float dist = sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y));
+		maxdist = fmax(maxdist, dist);
+		count++;
+	}
 
-  return false;
+	m_maxdist = maxdist;
+
+	if ( count > 0 )
+	{
+		m_x = x / (float)count;
+		m_y = y / (float)count;
+	}
 }
 
-bool Cluster::Has(PMCell* cell)
+void Cluster::RemoveDefinedCells(std::forward_list<PMCell*>& cells)
 {
-  auto it = m_set.find(cell);
-  if (it != m_set.end())
-    return true;
-
-  return false;
+	cells.splice_after(cells.before_begin(), m_defined_cells);
 }
 
-bool Cluster::IsEmpty()
+void Cluster::RemoveUndefinedCells(std::forward_list<PMCell*>& cells)
 {
-  return m_set.empty();
-}
-
-const std::unordered_set<PMCell*, PMCellHash, PMCellComparator>& Cluster::GetCells() const
-{
-  return m_set;
-}
-
-std::forward_list<PMCell*>& Cluster::GetCellsList()
-{
-  return m_list;
-}
-
-double Cluster::GetValue(const int& i, const int& j)
-{
-  return GetCell(i, j)->GetValue();
-}
-
-bool Cluster::IsDefined(const int& i, const int& j)
-{
-  return GetCell(i, j)->IsDefined();
-}
-
-PMCell* Cluster::GetCell(const int& i, const int& j)
-{
-  PMCell* dummy_cell = new PMCell(i, j, m_base);
-  auto it = m_set.find(dummy_cell);
-  delete dummy_cell;
-  if (it != m_set.end())
-  {
-    return *it;
-  }
-
-  return NULL;
+  cells.splice_after(cells.before_begin(), m_undefined_cells);
 }

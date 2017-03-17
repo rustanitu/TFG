@@ -53,10 +53,8 @@ ATFGenerator::ATFGenerator(vr::ScalarField* scalarfield) : IATFGenerator(scalarf
 , m_inflct_indexes(NULL)
 , m_tf1d(true)
 , m_tfmode_changed(false)
-, m_average_hmap(NULL)
 {
 	printf("ATFGenerator criado.\n");
-  m_average_hmap = new PredictionMap(ATFG_V_RANGE, ATFG_V_RANGE);
 }
 
 /// <summary>
@@ -68,7 +66,6 @@ ATFGenerator::~ATFGenerator()
 	delete m_transfer_function;
 	delete[] m_scalar_gradient;
 	delete[] m_scalar_laplacian;
-  delete m_average_hmap;
 	printf("ATFGenerator destruido.\n");
 }
 
@@ -854,9 +851,6 @@ bool ATFGenerator::EstimateAverageValues()
   m_max_average_laplacian_2D = -DBL_MAX;
   m_min_average_laplacian_2D = DBL_MAX;
 
-  if (!m_average_hmap->Init())
-    return false;
-
   // Calculate average laplacian and gradient
   for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
     m_average_gradient[i] = -DBL_MAX;
@@ -866,7 +860,7 @@ bool ATFGenerator::EstimateAverageValues()
     double h = 0.0f;
     for (UINT32 j = 0; j < ATFG_V_RANGE; ++j)
     {
-      //m_average_h[i][j] = -DBL_MAX;
+      m_average_h[i][j] = -DBL_MAX;
       UINT32 hvg_sum = 0;
       double hvg = 0.0f;
 
@@ -884,8 +878,7 @@ bool ATFGenerator::EstimateAverageValues()
         hvg /= hvg_sum;
         hvg = (m_scalarfield->GetMaxLaplacian() - m_scalarfield->GetMinLaplacian()) * hvg / ATFG_V_MAX;
         hvg += m_scalarfield->GetMinLaplacian();
-        //m_average_h[i][j] = hvg;
-        m_average_hmap->SetValue(hvg, i, j);
+        m_average_h[i][j] = hvg;
         m_max_average_laplacian_2D = fmax(m_max_average_laplacian_2D, hvg);
         m_min_average_laplacian_2D = fmin(m_min_average_laplacian_2D, hvg);
       }
@@ -983,8 +976,6 @@ PredictionMap* ATFGenerator::GetBoundaryDistancies()
 	assert(m_scalar_histogram);
 
   PredictionMap* distmap = new PredictionMap(1, ATFG_V_RANGE);
-  if (!distmap->Init())
-    return NULL;
 
 	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_1D - m_min_average_laplacian_1D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
@@ -1013,8 +1004,6 @@ PredictionMap* ATFGenerator::GetBoundaryDistancies2D()
 	assert(m_scalar_histogram);
 
   PredictionMap* distmap = new PredictionMap(ATFG_V_RANGE, ATFG_V_RANGE);
-  if (!distmap->Init())
-    return NULL;
 
 	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_2D - m_min_average_laplacian_2D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
@@ -1022,7 +1011,7 @@ PredictionMap* ATFGenerator::GetBoundaryDistancies2D()
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
 		for (UINT32 j = 0; j < ATFG_V_RANGE; ++j) {
       double g = m_scalarfield->GetMaxGradient() * j / (double)ATFG_V_MAX;
-      double l = m_average_hmap->GetValue(i, j);
+			double l = m_average_h[i][j];
 
       if (l != -DBL_MAX)
         distmap->SetValue(-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)), i, j);

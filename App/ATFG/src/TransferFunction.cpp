@@ -13,8 +13,6 @@ namespace vr
   
   TransferFunction::~TransferFunction()
   {
-    if (m_distmap)
-      m_distmap->CleanUp();
     delete m_distmap;
   }
 

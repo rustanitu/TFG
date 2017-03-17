@@ -16,42 +16,18 @@
 class ClusterSet
 {
 public:
-  ClusterSet();
+	ClusterSet(const int& width, const int& height);
 
-  static bool MergeSets(ClusterSet& clusterset);
-  static bool MergeSets(std::forward_list<Cluster*>& collection);
-
-  std::forward_list<Cluster*> TakeClosestClusters();
-
-  void Insert(Cluster* cluster);
-
-  void Insert(std::forward_list<Cluster*> list, int n);
-
-  double GetMin()
-  {
-    return m_min;
-  }
-
-  int GetSize()
-  {
-    return m_size;
-  }
-
-  const std::forward_list<Cluster*>& GetClusters()
-  {
-    return m_clusters;
-  }
+  std::forward_list<Cluster>& KMeans(const int& k, std::forward_list<PMCell*>& defined_cells, std::forward_list<PMCell*>& undefined_cells);
 
 private:
-  void DFS(int e, Cluster** set);
+	void AssignDefinedCellsToClusters(std::forward_list<PMCell*>& cells);
+  void AssignUndefinedCellsToClusters(std::forward_list<PMCell*>& cells);
 
 private:
-  double m_min;
-  int m_size;
-  std::vector<bool> m_visited;
-  std::vector<Cluster*> m_nodes;
-  arma::Mat<double>* m_matrix;
-  std::forward_list<Cluster*> m_clusters;
+	int m_width;
+	int m_height;
+  std::forward_list<Cluster> m_clusters;
 };
 
 #endif
