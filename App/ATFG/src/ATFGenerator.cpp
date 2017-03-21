@@ -16,6 +16,7 @@
 #include "PGMFile.h"
 #include "Histogram.h"
 #include "Tank.h"
+#include "Brick8.h"
 
 
 #define ATFG_GAMA_CORRECTION 0.33f
@@ -731,9 +732,16 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 	}
 #endif
 
-	printf("MaxGradient: %.2f\n", m_scalarfield->GetMaxGradient());
-	printf("MinLaplacian: %.2f\n", m_scalarfield->GetMinLaplacian());
-	printf("MaxLaplacian: %.2f\n", m_scalarfield->GetMaxLaplacian());
+  //if (m_scalarfield->IsTank())
+  //{
+  //  Tank* tank = (Tank*)m_scalarfield;
+  //  Brick8 brick(tank);
+  //  brick.WriteNeutralFile((m_scalarfield->GetName() + ".pos").c_str());
+  //}
+
+  printf("MaxGradient: %f\n", m_scalarfield->GetMaxGradient());
+  printf("MaxLaplacian: %f\n", m_scalarfield->GetMaxLaplacian());
+  printf("MinLaplacian: %f\n", m_scalarfield->GetMinLaplacian());
 
 	printf("Derivadas calculadas.\n");
 	printf("--------------------------------------------------\n");
@@ -774,9 +782,9 @@ bool ATFGenerator::UpdateVolumeDerivatives()
     }
   }
 
-  printf("MaxGradient: %.2f\n", tank->GetMaxGradient());
-  printf("MinLaplacian: %.2f\n", tank->GetMinLaplacian());
-  printf("MaxLaplacian: %.2f\n", tank->GetMaxLaplacian());
+  printf("MaxGradient: %f\n", tank->GetMaxGradient());
+  printf("MaxLaplacian: %f\n", tank->GetMaxLaplacian());
+  printf("MinLaplacian: %f\n", tank->GetMinLaplacian());
 
   printf("Derivadas atualizadas.\n");
   printf("--------------------------------------------------\n");
@@ -822,9 +830,7 @@ bool ATFGenerator::GenerateHistogram()
 
 				unsigned char v = m_scalarfield->GetScalarValue(vol_id, ATFG_V_MAX);
 				unsigned char g = m_scalarfield->GetScalarGradient(m_scalar_gradient[vol_id], ATFG_V_MAX);
-        unsigned char l = 0;
-        if (m_scalar_laplacian[vol_id] != -DBL_MAX)
-          l = m_scalarfield->GetScalarLaplacian(m_scalar_laplacian[vol_id], ATFG_V_MAX);
+        unsigned char l = m_scalarfield->GetScalarLaplacian(m_scalar_laplacian[vol_id], ATFG_V_MAX);
 
 				if ( m_scalar_histogram[v][g][l] < ATFG_V_MAX )
 				{
@@ -977,6 +983,10 @@ PredictionMap* ATFGenerator::GetBoundaryDistancies()
 
   PredictionMap* distmap = new PredictionMap(1, ATFG_V_RANGE);
 
+  printf("MaxAverageGradient: %.2f\n", m_max_average_gradient);
+  printf("MinAverageLaplacian: %.2f\n", m_min_average_laplacian_1D);
+  printf("MaxAverageLaplacian: %.2f\n", m_max_average_laplacian_1D);
+
 	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_1D - m_min_average_laplacian_1D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
@@ -1005,7 +1015,11 @@ PredictionMap* ATFGenerator::GetBoundaryDistancies2D()
 
   PredictionMap* distmap = new PredictionMap(ATFG_V_RANGE, ATFG_V_RANGE);
 
-	double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_2D - m_min_average_laplacian_2D) * SQRT_E);
+  printf("MaxAverageGradient: %f\n", m_max_average_gradient);
+  printf("MaxAverageLaplacian: %f\n", m_max_average_laplacian_1D);
+  printf("MinAverageLaplacian: %f\n", m_min_average_laplacian_1D);
+
+  double sigma = 2 * m_max_average_gradient / ((m_max_average_laplacian_1D - m_min_average_laplacian_1D) * SQRT_E);
 	printf("Sigma: %.2f\n", sigma);
 
 	for (UINT32 i = 0; i < ATFG_V_RANGE; ++i) {
@@ -1014,7 +1028,7 @@ PredictionMap* ATFGenerator::GetBoundaryDistancies2D()
 			double l = m_average_h[i][j];
 
       if (l != -DBL_MAX)
-        distmap->SetValue(-sigma * sigma * (l / fmax(g - m_gtresh, 0.000001)), i, j);
+        distmap->SetValue(-sigma * sigma * (l / fmax(g - m_gtresh, DBL_EPSILON)), i, j);
 		}
 	}
   return distmap;

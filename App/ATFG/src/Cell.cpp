@@ -8,6 +8,8 @@ Cell::Cell()
 , m_k(-1)
 , m_active(false)
 , m_center(-FLT_MAX)
+, m_value(-DBL_MAX)
+, m_gradient(-DBL_MAX)
 {
 }
 
@@ -33,12 +35,14 @@ int Cell::GetAdjcentCellIndex(const int& face) const
   return m_adjcell_index[face];
 }
 
-double Cell::GetValue(const int& step) const
+double Cell::GetValue() const
 {
-  //if (step < 0 || step > m_nsteps - 1)
-  //  return -1;
-  //return m_values[step];
   return m_value;
+}
+
+double Cell::GetGradient() const
+{
+  return m_gradient;
 }
 
 bool Cell::SetIthVertexIndex(const int& ith_vertex, const int& index)
@@ -59,14 +63,14 @@ bool Cell::SetAdjcentCellIndex(const int& face, const int& index)
   return true;
 }
 
-bool Cell::SetValue(const int& step, const double& value)
+void Cell::SetValue(const double& value)
 {
-  //if (step < 0 || step > m_nsteps - 1)
-  //  return false;
-  //
-  //m_values[step] = value;
   m_value = value;
-  return true;
+}
+
+void Cell::SetGradient(const double& value)
+{
+  m_gradient = value;
 }
 
 int* Cell::GetFaceVertices(const int& face) const
@@ -86,16 +90,16 @@ int* Cell::GetFaceVertices(const int& face) const
       vertices[3] = 5;
       break;
     case 2:
-      vertices[0] = 0;
-      vertices[1] = 2;
-      vertices[2] = 6;
-      vertices[3] = 4;
-      break;
-    case 3:
       vertices[0] = 1;
       vertices[1] = 5;
       vertices[2] = 7;
       vertices[3] = 3;
+      break;
+    case 3:
+      vertices[0] = 0;
+      vertices[1] = 2;
+      vertices[2] = 6;
+      vertices[3] = 4;
       break;
     case 4:
       vertices[0] = 0;

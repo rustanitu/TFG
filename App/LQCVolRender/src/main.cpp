@@ -1,11 +1,16 @@
+#if 1
 #include "Viewer.h"
 
-#include <atfg\VolWriter.h>
-
+int main(int argc, char **argv)
+{
+  Viewer::Instance()->InitAndStart(argc, argv);
+  Viewer::DestroyInstance();
+  return 0;
+}
+#else
 #include <atfg\TransferFunction.h>
 #include <iup_mglplot.h>
 
-#if 0
 int main(int argc, char **argv)
 {
   IupOpen(&argc, &argv);
@@ -39,11 +44,11 @@ int main(int argc, char **argv)
     }
   }
 
-	const std::forward_list<PMCell>& cells = map.GetCells();
-	for ( auto cell = cells.begin(); cell != cells.end(); ++cell )
-	{
-		data[cell->GetX() + MAX_V * cell->GetY()] = cell->GetValue();
-	}
+  const std::forward_list<PMCell>& cells = map.GetCells();
+  for (auto cell = cells.begin(); cell != cells.end(); ++cell)
+  {
+    data[cell->GetX() + MAX_V * cell->GetY()] = cell->GetValue();
+  }
 
   IupSetAttribute(plot, "CLEAR", "YES");
   int index = IupMglPlotNewDataSet(plot, 1);
@@ -65,26 +70,10 @@ int main(int argc, char **argv)
   IupSetAttribute(plot, "REDRAW", NULL);
 
   delete[] data;
-  
+
 
   IupShowXY(diag, IUP_RIGHT, IUP_TOP);
   IupMainLoop();
-	return 0;
-}
-#else
-int main(int argc, char **argv)
-{
-  /********************************
-  VolWriter vol("DividedBox", 56);
-  if (vol.Open())
-  {
-  vol.WriteLine();
-  vol.Close();
-  }
-  //*******************************/
-
-  Viewer::Instance()->InitAndStart(argc, argv);
-  Viewer::DestroyInstance();
   return 0;
 }
 #endif

@@ -162,14 +162,14 @@ bool Tank::Read(const char* filepath)
 			if ( !(file >> value) )
 				return false;
 
-			cell->SetValue(t, value);
+			cell->SetValue(value);
 			if ( active )
 			{
 				m_max_value = fmax(m_max_value, value);
 				m_min_value = fmin(m_min_value, value);
 			}
 			else {
-				cell->SetValue(t, 0.0f);
+				cell->SetValue(0.0f);
 			}
 		}
 	}
@@ -189,8 +189,8 @@ double Tank::GetValue(const UINT32& x, const UINT32& y, const UINT32& z)
 
 double Tank::GetValue(const UINT32& id)
 {
-	return m_cells[id].GetValue(m_current_timestep);
-	return m_cells[id].IsActive() ? m_cells[id].GetValue(m_current_timestep) : -DBL_MAX;
+	return m_cells[id].GetValue();
+	return m_cells[id].IsActive() ? m_cells[id].GetValue() : -DBL_MAX;
 }
 
 const Cell& Tank::GetCell(const UINT32& x, const UINT32& y, const UINT32& z)
@@ -426,6 +426,7 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
   glm::vec3 grad = jacob_inv * m_grad[id];
 
 	g = glm::length(grad);
+  m_cells[id].SetGradient(g);
 	m_max_gradient = fmax(m_max_gradient, g);
 	m_min_gradient = fmin(m_min_gradient, g);
 
@@ -461,7 +462,7 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 					gid = GetId(x, y, z);
 				}
 
-        double gv = glm::length(GetCellJacobianInverse(m_cells[gid]) * m_grad[gid]);
+        double gv = m_cells[gid].GetGradient();
 
 				pdx += abs(dx);
 				pdy += abs(dy);
@@ -482,9 +483,11 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 
 	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
 	glm::vec3 parametric_gradgrad(dfx, dfy, dfz);
+
+  glm::vec3 grad = jacob_inv * m_grad[id];
   glm::vec3 gradgrad = jacob_inv * parametric_gradgrad;
 	
-  g = glm::dot(gradgrad, m_grad[id]) / glm::length(m_grad[id]);
+  g = glm::dot(gradgrad, grad) / fmax(m_cells[id].GetGradient(), DBL_EPSILON);
 	m_max_laplacian = fmax(m_max_laplacian, g);
 	m_min_laplacian = fmin(m_min_laplacian, g);
 

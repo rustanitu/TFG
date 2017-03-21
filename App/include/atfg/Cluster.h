@@ -34,10 +34,23 @@ public:
 		return m_maxdist;
 	}
 
+  int GetDefinedCellsQuantity() const
+  {
+    return m_defined_cells_size;
+  }
+
+  int GetUndefinedCellsQuantity() const
+  {
+    return m_undefined_cells_size;
+  }
+
 private:
 	int m_x;
 	int m_y;
 	float m_maxdist;
+  int m_defined_cells_size;
+  int m_undefined_cells_size;
+  bool m_outdated;
   std::forward_list<PMCell*> m_defined_cells;
   std::forward_list<PMCell*> m_undefined_cells;
 };

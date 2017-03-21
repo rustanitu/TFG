@@ -19,6 +19,7 @@ public:
 	ClusterSet(const int& width, const int& height);
 
   std::forward_list<Cluster>& KMeans(const int& k, std::forward_list<PMCell*>& defined_cells, std::forward_list<PMCell*>& undefined_cells);
+  std::forward_list<Cluster>& KMeans(std::forward_list<PMCell*>& defined_cells, std::forward_list<PMCell*>& undefined_cells);
 
 private:
 	void AssignDefinedCellsToClusters(std::forward_list<PMCell*>& cells);

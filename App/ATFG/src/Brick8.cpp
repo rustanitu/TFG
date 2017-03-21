@@ -174,7 +174,8 @@ void Brick8::WriteNeutralFile(const char* file)
     {
       const int id = cell.GetIthVertexIndex(BRICK8_TO_TANK[j]);
       Write(id + 1);
-      m_nodes[id].value += cell.GetValue(0);
+      m_nodes[id].value += cell.GetValue();
+      m_nodes[id].grad += cell.GetGradient();
       m_nodes[id].refcount++;
     }
     FinishLine();

@@ -156,7 +156,7 @@ namespace vr
 
 		int GetScalarGradient(const double& value, const int& max_histo_value)
 		{
-			return (value / m_max_gradient) * max_histo_value;
+      return (value / m_max_gradient) * max_histo_value;
 		}
 
 		int GetScalarLaplacian(const double& value, const int& max_histo_value)

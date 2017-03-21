@@ -24,8 +24,7 @@ PredictionMap::~PredictionMap()
 
 double PredictionMap::SigmaFunc(double sqr_dist)
 {
-  //return sqrt(sqr_dist);
-  return sqr_dist * log(sqrt(sqr_dist) + E);
+  return sqr_dist * log(sqrt(sqr_dist) + E - 1);
   double s = GAUSSIAN_SPREAD / 3.0f;
   return exp(-sqr_dist / (s * s)) + 1;
 }
@@ -78,9 +77,21 @@ void PredictionMap::Interpolate()
       all_undefined_cells.push_front(it->second);
   }
 
-	ClusterSet clusterset(m_width, m_height);
-  std::forward_list<Cluster> clusters = clusterset.KMeans(nclusters, m_cells, all_undefined_cells);
+  if (nclusters == -1)
+  {
+    PredictWithInverseDistanceWeighting(m_cells, all_undefined_cells, 1.8f);
+    return;
+  }
 
+  std::forward_list<Cluster> clusters;
+	ClusterSet clusterset(m_width, m_height);
+
+  if (nclusters == -2)
+    clusters = clusterset.KMeans(m_cells, all_undefined_cells);
+  else
+    clusters = clusterset.KMeans(nclusters, m_cells, all_undefined_cells);
+
+  float inc = 1.0f / 700;
   float val = 0.0f;
 	for ( auto cluster_it = clusters.begin(); cluster_it != clusters.end(); ++cluster_it )
 	{
@@ -92,7 +103,7 @@ void PredictionMap::Interpolate()
 #if 1
 		PredictWithRBF(defined_cells, undefined_cells);
 #else
-    val += 1.0f;
+    val += inc;
     if (!defined_cells.empty())
     {
       defined_cells.splice_after(defined_cells.before_begin(), undefined_cells);

@@ -15,8 +15,9 @@ struct Node
 {
   int refcount;
   double value;
+  double grad;
   glm::vec3 pos;
-  Node() : refcount(0), value(0) {}
+  Node() : refcount(0), value(0), grad(0) {}
 };
 
 class Brick8
