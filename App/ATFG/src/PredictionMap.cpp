@@ -91,7 +91,7 @@ void PredictionMap::Interpolate()
   else
     clusters = clusterset.KMeans(nclusters, m_cells, all_undefined_cells);
 
-  float inc = 1.0f / 700;
+  float inc = 1.0f / nclusters;
   float val = 0.0f;
 	for ( auto cluster_it = clusters.begin(); cluster_it != clusters.end(); ++cluster_it )
 	{
@@ -101,7 +101,13 @@ void PredictionMap::Interpolate()
     cluster_it->RemoveUndefinedCells(undefined_cells);
 
 #if 1
-		PredictWithRBF(defined_cells, undefined_cells);
+    //if (!(cluster_it->GetX() == m_width * 0.5f && cluster_it->GetY() == m_height * 0.5f))
+    //{
+    //  for (auto undef = undefined_cells.begin(); undef != undefined_cells.end(); ++undef)
+    //    (*undef)->SetValue(-100);
+    //}
+    //else
+		  PredictWithRBF(defined_cells, undefined_cells);
 #else
     val += inc;
     if (!defined_cells.empty())
@@ -160,7 +166,10 @@ void PredictionMap::PredictWithRBF(const std::forward_list<PMCell*>& defined_cel
   }
 
   arma::Mat<double> inverse_sigma_mat = arma::inv(sigma_mat);
+  sigma_mat.clear();
   arma::Col<double> w = inverse_sigma_mat * p;
+  inverse_sigma_mat.clear();
+  p.clear();
 
   for (auto row = undefined_cells.begin(); row != undefined_cells.end(); ++row)
   {

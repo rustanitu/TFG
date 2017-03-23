@@ -10,16 +10,11 @@
 #include <cstdlib>
 #include <fstream>
 
-#define HESSIAN
-
 namespace vr
 {
 
 	Volume::Volume() : ScalarField()
-		, m_scalar_values(NULL)
-		, m_scalar_fx(NULL)
-		, m_scalar_fy(NULL)
-		, m_scalar_fz(NULL)
+	, m_scalar_values(NULL)
 	{
 	}
 
@@ -28,15 +23,10 @@ namespace vr
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new double[size];
-		//m_scalar_fx = new double[size];
-		//m_scalar_fy = new double[size];
-		//m_scalar_fz = new double[size];
+    m_grad = new glm::vec3[size];
 		for ( int i = 0; i < size; i++ )
 		{
 			m_scalar_values[i] = 0.0f;
-			//m_scalar_fx[i] = 0.0f;
-			//m_scalar_fy[i] = 0.0f;
-			//m_scalar_fz[i] = 0.0f;
 		}
 	}
 
@@ -45,18 +35,13 @@ namespace vr
 	{
 		int size = m_width*m_height*m_depth;
 		m_scalar_values = new double[size];
-		//m_scalar_fx = new double[size];
-		//m_scalar_fy = new double[size];
-		//m_scalar_fz = new double[size];
+    m_grad = new glm::vec3[size];
 		for ( int i = 0; i < size; i++ )
 		{
 			double v = scalars[i];
 			m_scalar_values[i] = v;
 			m_max_value = fmax(m_max_value, v);
 			m_min_value = fmin(m_min_value, v);
-			//m_scalar_fx[i] = 0.0f;
-			//m_scalar_fy[i] = 0.0f;
-			//m_scalar_fz[i] = 0.0f;
 		}
 	}
 
@@ -65,18 +50,13 @@ namespace vr
   {
     int size = m_width * m_height * m_depth;
     m_scalar_values = new double[size];
-    //m_scalar_fx = new double[size];
-    //m_scalar_fy = new double[size];
-    //m_scalar_fz = new double[size];
+    m_grad = new glm::vec3[size];
     for (int i = 0; i < size; i++)
     {
       double v = scalars[i];
       m_scalar_values[i] = v;
       m_max_value = fmax(m_max_value, v);
       m_min_value = fmin(m_min_value, v);
-      //m_scalar_fx[i] = 0.0f;
-      //m_scalar_fy[i] = 0.0f;
-      //m_scalar_fz[i] = 0.0f;
     }
   }
 
@@ -111,215 +91,119 @@ namespace vr
 		return m_scalar_values[GetId(xt, yt, zt)];
 	}
 
-	double Volume::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
-	{
-		double g = 0.0f;
-		double dfx = 0.0f;
-		double dfy = 0.0f;
-		double dfz = 0.0f;
+  double Volume::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z)
+  {
+    double g = 0.0f;
+    double dfx = 0.0f;
+    double dfy = 0.0f;
+    double dfz = 0.0f;
 
-		double pdx = 0.0f;
-		double pdy = 0.0f;
-		double pdz = 0.0f;
+    double pdx = 0.0f;
+    double pdy = 0.0f;
+    double pdz = 0.0f;
 
-		int h = MASK_SIZE / 2;
-		int xinit = x - h;
-		int yinit = y - h;
-		int zinit = z - h;
-		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
-			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
-				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					double dx;
-					double dy;
-					double dz;
-					m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+    int h = MASK_SIZE / 2;
+    int xinit = x - h;
+    int yinit = y - h;
+    int zinit = z - h;
+    for (int i = xinit; i < xinit + MASK_SIZE; ++i)
+    {
+      for (int j = yinit; j < yinit + MASK_SIZE; ++j)
+      {
+        for (int k = zinit; k < zinit + MASK_SIZE; ++k)
+        {
+          double dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
+          double dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
+          double dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
 
-					double v = GetValue(i, j, k);
-					if (IsOutOfBoundary(i, j, k)) {
-						v = GetValue(x, y, z);
-					}
-					pdx += abs(dx);
-					pdy += abs(dy);
-					pdz += abs(dz);
+          double v = GetValue(i, j, k);
+          if (IsOutOfBoundary(i, j, k))
+          {
+            v = GetValue(x, y, z);
+          }
+          pdx += abs(dx);
+          pdy += abs(dy);
+          pdz += abs(dz);
 
-					dfx += dx * v;
-					dfy += dy * v;
-					dfz += dz * v;
-				}
-			}
-		}
+          dfx += dx * v;
+          dfy += dy * v;
+          dfz += dz * v;
+        }
+      }
+    }
 
-		dfx /= pdx;
-		dfy /= pdy;
-		dfz /= pdz;
+    int id = GetId(x, y, z);
+    m_grad[id].x = dfx / pdx;
+    m_grad[id].y = dfy / pdy;
+    m_grad[id].z = dfz / pdz;
 
-		int id = GetId(x, y, z);
+    g = glm::length(m_grad[id]);
+    m_max_gradient = fmax(m_max_gradient, g);
+    m_min_gradient = fmin(m_min_gradient, g);
 
-		glm::vec3 grad(dfx, dfy, dfz);
+    return g;
+  }
 
-		//m_scalar_fx[id] = grad.x;
-		//m_scalar_fy[id] = grad.y;
-		//m_scalar_fz[id] = grad.z;
+  double Volume::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
+  {
+    double g = 0.0f;
+    double dfx = 0.0f;
+    double dfy = 0.0f;
+    double dfz = 0.0f;
 
-		g = glm::length(grad);
-		m_max_gradient = fmax(m_max_gradient, g);
-		m_min_gradient = fmin(m_min_gradient, g);
+    double pdx = 0.0f;
+    double pdy = 0.0f;
+    double pdz = 0.0f;
 
-		return g;
-	}
+    int h = MASK_SIZE / 2;
+    int xinit = x - h;
+    int yinit = y - h;
+    int zinit = z - h;
+    for (int i = xinit; i < xinit + MASK_SIZE; ++i)
+    {
+      for (int j = yinit; j < yinit + MASK_SIZE; ++j)
+      {
+        for (int k = zinit; k < zinit + MASK_SIZE; ++k)
+        {
+          double dx;
+          double dy;
+          double dz;
+          m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
 
-	double Volume::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
-	{
-#ifndef HESSIAN
-		double g = 0.0f;
-		double dfx = 0.0f;
-		double dfy = 0.0f;
-		double dfz = 0.0f;
+          int gid = GetId(i, j, k);
+          if (IsOutOfBoundary(i, j, k))
+          {
+            gid = GetId(x, y, z);
+          }
 
-		double pdx = 0.0f;
-		double pdy = 0.0f;
-		double pdz = 0.0f;
+          double gv = glm::length(m_grad[gid]);
 
-		int h = MASK_SIZE / 2;
-		int xinit = x - h;
-		int yinit = y - h;
-		int zinit = z - h;
-		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
-			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
-				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					double dx;
-					double dy;
-					double dz;
-					m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
+          pdx += abs(dx);
+          pdy += abs(dy);
+          pdz += abs(dz);
 
-					int gid = GetId(i, j, k);
-					if (IsOutOfBoundary(i, j, k)) {
-						gid = GetId(x, y, z);
-					}
+          dfx += dx * gv;
+          dfy += dy * gv;
+          dfz += dz * gv;
+        }
+      }
+    }
 
-					double dgx = m_scalar_fx[gid];
-					double dgy = m_scalar_fy[gid];
-					double dgz = m_scalar_fz[gid];
-					glm::vec3 ggrad(dgx, dgy, dgz);
-					double gv = glm::length(ggrad);
+    dfx /= pdx;
+    dfy /= pdy;
+    dfz /= pdz;
 
-					pdx += abs(dx);
-					pdy += abs(dy);
-					pdz += abs(dz);
+    int id = GetId(x, y, z);
 
-					dfx += dx * gv;
-					dfy += dy * gv;
-					dfz += dz * gv;
-				}
-			}
-		}
+    glm::vec3 grad = m_grad[id];
+    glm::vec3 gradgrad(dfx, dfy, dfz);
 
-		dfx /= pdx;
-		dfy /= pdy;
-		dfz /= pdz;
+    g = glm::dot(gradgrad, grad) / fmax(glm::length(grad), DBL_EPSILON);
+    m_max_laplacian = fmax(m_max_laplacian, g);
+    m_min_laplacian = fmin(m_min_laplacian, g);
 
-		int id = GetId(x, y, z);
-
-		glm::vec3 grad(dfx, dfy, dfz);
-		glm::vec3 fgrad(m_scalar_fx[id], m_scalar_fy[id], m_scalar_fz[id]);
-
-		g = glm::dot(grad, fgrad) / glm::length(fgrad);
-		m_max_laplacian = fmax(m_max_laplacian, g);
-		m_min_laplacian = fmin(m_min_laplacian, g);
-
-		return g;
-#else
-		double fdxdx = 0.0f;
-		double fdxdy = 0.0f;
-		double fdxdz = 0.0f;
-
-		double fdydx = 0.0f;
-		double fdydy = 0.0f;
-		double fdydz = 0.0f;
-
-		double fdzdx = 0.0f;
-		double fdzdy = 0.0f;
-		double fdzdz = 0.0f;
-
-		double pdx = 0.0f;
-		double pdy = 0.0f;
-		double pdz = 0.0f;
-
-		int h = MASK_SIZE / 2;
-		int xinit = x - h;
-		int yinit = y - h;
-		int zinit = z - h;
-		for (int i = xinit; i < xinit + MASK_SIZE; ++i) {
-			for (int j = yinit; j < yinit + MASK_SIZE; ++j) {
-				for (int k = zinit; k < zinit + MASK_SIZE; ++k) {
-					double dx, dy, dz;
-					m_derivativeMask.GetGradient(i - xinit, j - yinit, k - zinit, &dx, &dy, &dz);
-
-					int id = GetId(i, j, k);
-					double fdx = m_scalar_fx[id];
-					double fdy = m_scalar_fy[id];
-					double fdz = m_scalar_fz[id];
-
-					if (IsOutOfBoundary(i, j, k)) {
-						id = GetId(x, y, z);
-
-						fdx = m_scalar_fx[id];
-						fdy = m_scalar_fy[id];
-						fdz = m_scalar_fz[id];
-					}
-
-					pdx += abs(dx);
-					pdy += abs(dy);
-					pdz += abs(dz);
-
-					fdxdx += fdx * dx;
-					fdxdy += fdx * dy;
-					fdxdz += fdx * dz;
-
-					fdydx += fdy * dx;
-					fdydy += fdy * dy;
-					fdydz += fdy * dz;
-
-					fdzdx += fdz * dx;
-					fdzdy += fdz * dy;
-					fdzdz += fdz * dz;
-				}
-			}
-		}
-
-		fdxdx /= pdx;
-		fdxdy /= pdy;
-		fdxdz /= pdz;
-
-		fdydx /= pdx;
-		fdydy /= pdy;
-		fdydz /= pdz;
-
-		fdzdx /= pdx;
-		fdzdy /= pdy;
-		fdzdz /= pdz;
-
-		int id = GetId(x, y, z);
-		double dfx = m_scalar_fx[id];
-		double dfy = m_scalar_fy[id];
-		double dfz = m_scalar_fz[id];
-
-		glm::vec3 dx_grad(fdxdx, fdxdy, fdxdz);
-		glm::vec3 dy_grad(fdydx, fdydy, fdydz);
-		glm::vec3 dz_grad(fdzdx, fdzdy, fdzdz);
-
-		glm::mat3 hess(dx_grad, dy_grad, dz_grad);
-
-		glm::vec3 grad(dfx, dfy, dfz);
-
-		double length = glm::length(grad);
-		double sec_deriv = glm::dot(grad, (grad * hess)) / (length * length);
-
-		m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
-		m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
-		return sec_deriv;
-#endif
-	}
+    return g;
+  }
 
 	void Volume::CalculateDerivatives(const UINT32& x, const UINT32& y, const UINT32& z, double* g, double* l)
 	{

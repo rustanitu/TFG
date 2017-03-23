@@ -158,11 +158,11 @@ namespace vr
           a = CenteredGaussianFunction(x, 1.0f, 1.0f / (0.5f * m_thickness), m_sigma);
         else
           a = CenteredTriangleFunction(x, 1.0f, 1.0f / m_thickness, m_sigma);
-        AddAlphaControlPoint(a, i, j);
         
         if (m_distmap->GetValue(i, j) == -DBL_MAX)
-          a = -DBL_MAX;
+          a = 1;
 
+        AddAlphaControlPoint(a, i, j);
         data[i + MAX_V*j] = a;
       }
     }

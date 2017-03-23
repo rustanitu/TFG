@@ -76,9 +76,6 @@ namespace vr
 		lqc::Vector3f m_pmax;
 
 		double* m_scalar_values;
-		double* m_scalar_fx;
-		double* m_scalar_fy;
-		double* m_scalar_fz;
 	};
 }
 

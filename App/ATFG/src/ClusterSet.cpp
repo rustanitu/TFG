@@ -18,9 +18,17 @@ std::forward_list<Cluster>& ClusterSet::KMeans(const int& k,
   std::forward_list<PMCell*>& undefined_cells)
 {
 	m_clusters.clear();
-	srand(time(NULL));
+	//srand(time(NULL));
 
-#if 1
+ // m_clusters.push_front(Cluster(m_width * 0.125f, m_height * 0.0625f));
+ // m_clusters.push_front(Cluster(m_width * 7 * 0.125f, m_height * 0.0625f));
+ // m_clusters.push_front(Cluster(m_width * 0.5f, m_height * 0.5f));
+
+ // AssignDefinedCellsToClusters(defined_cells);
+ // AssignUndefinedCellsToClusters(undefined_cells);
+ // return m_clusters;
+
+#if 0
   for (int i = 0; i < k; ++i)
   {
     int x = rand() % m_width;
@@ -29,19 +37,24 @@ std::forward_list<Cluster>& ClusterSet::KMeans(const int& k,
     m_clusters.push_front(c);
   }
 #else
-	int div = k + 2;
-	int xinc = m_width / div;
-	int yinc = m_height / div;
-	for ( int i = 1; i <= k; ++i )
-	{
-		int x = xinc * i;
-		for ( int j = 1; j <= k; ++j )
-		{
-			int y = yinc * j;
-			Cluster c(x, y);
-			m_clusters.push_front(c);
-		}
-	}
+  if (k > 1)
+  {
+    int div = k + 2;
+    int xinc = m_width / div;
+    int yinc = m_height / div;
+    for (int i = 1; i <= k; ++i)
+    {
+      int x = xinc * i;
+      for (int j = 1; j <= k; ++j)
+      {
+        int y = yinc * j;
+        Cluster c(x, y);
+        m_clusters.push_front(c);
+      }
+    }
+  }
+  else
+    m_clusters.push_front(Cluster(m_width * 0.5f, m_height * 0.5f));
 #endif
 
 	bool repeat = true;
@@ -82,6 +95,12 @@ std::forward_list<Cluster>& ClusterSet::KMeans(std::forward_list<PMCell*>& defin
 {
   m_clusters.clear();
 
+  int neigh;
+  std::cout << std::endl;
+  std::cout << "Vizinhança: ";
+  std::cin >> neigh;
+  std::cout << std::endl;
+
   int a = 0;
   auto cell_it_before = defined_cells.before_begin();
   while (!defined_cells.empty())
@@ -106,7 +125,7 @@ std::forward_list<Cluster>& ClusterSet::KMeans(std::forward_list<PMCell*>& defin
     auto cluster = *std::next(cluster_it_before);
     int def = cluster.GetDefinedCellsQuantity();
     int undef = cluster.GetUndefinedCellsQuantity();
-    if (undef <= 80 * def)
+    if (undef <= neigh * def)
     {
       cluster.RemoveDefinedCells(defined_cells);
       cluster.RemoveUndefinedCells(undefined_cells);

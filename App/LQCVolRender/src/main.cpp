@@ -1,5 +1,5 @@
-#if 1
 #include "Viewer.h"
+#if 1
 
 int main(int argc, char **argv)
 {
@@ -11,7 +11,28 @@ int main(int argc, char **argv)
 #include <atfg\TransferFunction.h>
 #include <iup_mglplot.h>
 
-int main(int argc, char **argv)
+void main0()
+{
+  PredictionMap map(3, 3);
+  map.SetValue(0.8f, 0, 0);
+  map.SetValue(0.724474f, 0, 1);
+  map.SetValue(1.0685f, 0, 2);
+  map.SetValue(0.5f, 1, 2);
+  map.SetValue(0.2f, 2, 0);
+  map.SetValue(0.284706f, 2, 2);
+  map.Interpolate();
+
+  for (int i = 0; i < 3; ++i)
+  {
+    for (int j = 0; j < 3; ++j)
+    {
+      std::cout << map.GetValue(i, j) << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+int main1(int argc, char **argv)
 {
   IupOpen(&argc, &argv);
   IupPlotOpen();
@@ -40,14 +61,8 @@ int main(int argc, char **argv)
   {
     for (int j = 0; j < MAX_V; ++j)
     {
-      data[i + MAX_V*j] = -1;
+      data[i + MAX_V*j] = map.GetValue(i, j);
     }
-  }
-
-  const std::forward_list<PMCell>& cells = map.GetCells();
-  for (auto cell = cells.begin(); cell != cells.end(); ++cell)
-  {
-    data[cell->GetX() + MAX_V * cell->GetY()] = cell->GetValue();
   }
 
   IupSetAttribute(plot, "CLEAR", "YES");

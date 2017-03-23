@@ -204,7 +204,7 @@ void Brick8::WriteNeutralFile(const char* file)
   {
     Write(i + 1);
     Write((float)m_nodes[i].value / m_nodes[i].refcount);
-    Write(0);
+    Write((float)m_nodes[i].grad / m_nodes[i].refcount);
     FinishLine();
   }
   

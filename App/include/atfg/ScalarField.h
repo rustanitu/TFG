@@ -19,6 +19,7 @@ namespace vr
 			m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_gradient(DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
       , m_derivativeMask(MASK_SIZE)
       , m_scale(1.0f)
+      , m_grad(NULL)
 		{
 			printf("ScalarField criado.\n");
 		}
@@ -28,11 +29,16 @@ namespace vr
 			, m_max_value(-DBL_MAX), m_min_value(DBL_MAX), m_max_gradient(-DBL_MAX), m_min_gradient(DBL_MAX), m_min_laplacian(DBL_MAX), m_max_laplacian(-DBL_MAX)
       , m_derivativeMask(MASK_SIZE)
       , m_scale(1.0f)
+      , m_grad(NULL)
 		{
 			printf("ScalarField criado.\n");
 		}
 
-		virtual ~ScalarField() { printf("ScalarField destruido.\n"); }
+    virtual ~ScalarField()
+    {
+      delete[] m_grad;
+      printf("ScalarField destruido.\n");
+    }
 
 		int GetId(const int& x, const int& y, const int& z) const
 		{
@@ -213,7 +219,7 @@ namespace vr
 		double m_max_laplacian;
 		std::string m_name;
     DerivativeMask m_derivativeMask;
-
+    glm::vec3* m_grad;
     glm::vec3 m_scale;
 	};
 }

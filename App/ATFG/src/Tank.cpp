@@ -9,7 +9,6 @@ Tank::Tank()
 : m_cells(NULL)
 , m_vertices(NULL)
 , m_current_timestep(0)
-, m_grad(NULL)
 , m_hess(NULL)
 {
 	printf("Tank criado.\n");
@@ -22,7 +21,6 @@ Tank::~Tank()
 
 	delete[] m_cells;
 	delete[] m_vertices;
-	delete[] m_grad;
 	delete[] m_hess;
 }
 
@@ -33,6 +31,8 @@ bool Tank::Read(const char* filepath)
 	std::ifstream file(filepath);
 	if ( !file || !file.is_open() )
 		return false;
+
+  SetName(filepath);
 
 	// It reads file's header
 	int ni, nj, nk, nactive;
@@ -412,9 +412,9 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
 				dfx += dx * v;
 				dfy += dy * v;
 				dfz += dz * v;
-		}
-	}
-}
+		  }
+	  }
+  }
 
 	int id = GetId(x, y, z);
   m_grad[id].x = dfx / pdx;
@@ -435,7 +435,6 @@ double Tank::CalculateGradient(const UINT32& x, const UINT32& y, const UINT32& z
 
 double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& z)
 {
-#ifndef HESSIAN
 	double g = 0.0f;
 	double dfx = 0.0f;
 	double dfy = 0.0f;
@@ -492,100 +491,6 @@ double Tank::CalculateLaplacian(const UINT32& x, const UINT32& y, const UINT32& 
 	m_min_laplacian = fmin(m_min_laplacian, g);
 
 	return g;
-#else
-	double fdxdx = 0.0f;
-	double fdxdy = 0.0f;
-	double fdxdz = 0.0f;
-
-	double fdydx = 0.0f;
-	double fdydy = 0.0f;
-	double fdydz = 0.0f;
-
-	double fdzdx = 0.0f;
-	double fdzdy = 0.0f;
-	double fdzdz = 0.0f;
-
-	double pdx = 0.0f;
-	double pdy = 0.0f;
-	double pdz = 0.0f;
-
-	int h = MASK_SIZE / 2;
-	int xinit = x - h;
-	int yinit = y - h;
-	int zinit = z - h;
-	for ( int i = xinit; i < xinit + MASK_SIZE; ++i )
-	{
-		for ( int j = yinit; j < yinit + MASK_SIZE; ++j )
-		{
-			for ( int k = zinit; k < zinit + MASK_SIZE; ++k )
-			{
-        double dx = m_derivativeMask.GetDxAt(i - xinit, j - yinit, k - zinit);
-        double dy = m_derivativeMask.GetDyAt(i - xinit, j - yinit, k - zinit);
-        double dz = m_derivativeMask.GetDzAt(i - xinit, j - yinit, k - zinit);
-
-				int id = GetId(i, j, k);
-				if ( IsOutOfBoundary(i, j, k) || !m_cells[GetId(i, j, k)].IsActive() )
-					id = GetId(x, y, z);
-				
-        double fdx = m_grad[id].x;
-				double fdy = m_grad[id].y;
-				double fdz = m_grad[id].z;
-
-				pdx += abs(dx);
-				pdy += abs(dy);
-				pdz += abs(dz);
-
-				fdxdx += fdx * dx;
-				fdxdy += fdx * dy;
-				fdxdz += fdx * dz;
-
-				fdydx += fdy * dx;
-				fdydy += fdy * dy;
-				fdydz += fdy * dz;
-
-				fdzdx += fdz * dx;
-				fdzdy += fdz * dy;
-				fdzdz += fdz * dz;
-		}
-	}
-}
-
-	fdxdx /= pdx;
-	fdxdy /= pdy;
-	fdxdz /= pdz;
-              
-	fdydx /= pdx;
-	fdydy /= pdy;
-	fdydz /= pdz;
-              
-	fdzdx /= pdx;
-	fdzdy /= pdy;
-	fdzdz /= pdz;
-
-	int id = GetId(x, y, z);
-  double dfx = m_grad[id].x;
-  double dfy = m_grad[id].y;
-  double dfz = m_grad[id].z;
-
-	glm::vec3 parametric_dx_grad(fdxdx, fdxdy, fdxdz);
-	glm::vec3 parametric_dy_grad(fdydx, fdydy, fdydz);
-	glm::vec3 parametric_dz_grad(fdzdx, fdzdy, fdzdz);
-
-	glm::mat3 jacob_inv = GetCellJacobianInverse(m_cells[id]);
-	glm::vec3 dx_grad = jacob_inv * parametric_dx_grad;
-	glm::vec3 dy_grad = jacob_inv * parametric_dy_grad;
-	glm::vec3 dz_grad = jacob_inv * parametric_dz_grad;
-
-	glm::mat3 hess(dx_grad, dy_grad, dz_grad);
-	glm::vec3 grad(dfx, dfy, dfz);
-
-	double length = glm::length(grad);
-	double sec_deriv = glm::dot((grad * hess), grad) / (length * length);
-
-	m_min_laplacian = fmin(m_min_laplacian, sec_deriv);
-	m_max_laplacian = fmax(m_max_laplacian, sec_deriv);
-	return sec_deriv;
-#endif
 }
 
 glm::dvec3* Tank::GetFaceVertices(const int& x, const int& y, const int& z, const int& face) const

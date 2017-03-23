@@ -109,8 +109,6 @@ private:
 	Cell* m_cells;
 	UINT32 m_current_timestep;
 	std::vector<std::string> m_steps;
-
-  glm::vec3* m_grad;
   glm::mat3* m_hess;
 };
 

@@ -732,12 +732,12 @@ bool ATFGenerator::CalculateVolumeDerivatives()
 	}
 #endif
 
-  //if (m_scalarfield->IsTank())
-  //{
-  //  Tank* tank = (Tank*)m_scalarfield;
-  //  Brick8 brick(tank);
-  //  brick.WriteNeutralFile((m_scalarfield->GetName() + ".pos").c_str());
-  //}
+  if (m_scalarfield->IsTank())
+  {
+    Tank* tank = (Tank*)m_scalarfield;
+    Brick8 brick(tank);
+    brick.WriteNeutralFile((m_scalarfield->GetName() + ".pos").c_str());
+  }
 
   printf("MaxGradient: %f\n", m_scalarfield->GetMaxGradient());
   printf("MaxLaplacian: %f\n", m_scalarfield->GetMaxLaplacian());
