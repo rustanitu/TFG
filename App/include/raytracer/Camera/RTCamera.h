@@ -10,9 +10,9 @@ namespace rt
 {
   typedef struct Struct_RTCamera_init
   {
-    lqc::Vector3f eye;
-    lqc::Vector3f at;
-    lqc::Vector3f up;
+    glm::vec3 eye;
+    glm::vec3 at;
+    glm::vec3 up;
 
     float fovy;
     float nearp;

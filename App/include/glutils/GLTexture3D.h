@@ -2,10 +2,11 @@
 #define LQC_GL_TEXTURE3D_H
 
 #include <glutils/GLUtils.h>
+#include <glutils/GLTexture.h>
 
 namespace gl
 {
-  class GLTexture3D
+  class GLTexture3D : public GLTexture
   {
   public:
     GLTexture3D (unsigned int width, unsigned int height, unsigned int depth);

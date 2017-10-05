@@ -80,7 +80,7 @@ namespace gl
     void SetUniformInt (std::string name, int value);
     void SetUniformFloat (std::string name, float value);
     void SetUniformDouble (std::string name, double value);
-    void SetUniformVector3f (std::string name, lqc::Vector3f value);
+    void SetUniformVector3f (std::string name, glm::vec3 value);
     void SetUniformMatrix4f (std::string name, lqc::Matrix4f value);
     void SetUniformTexture1D (std::string name, GLuint textureid, GLuint activeTextureid);
     void SetUniformTexture2D (std::string name, GLuint textureid, GLuint activeTextureid);
